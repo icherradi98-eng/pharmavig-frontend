@@ -226,6 +226,25 @@ export default function LandingPage() {
         {/* FAQ */}
         <FAQ />
 
+        {/* CTA final */}
+        <section className="w-full px-8 py-16 text-center" style={{background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)"}}>
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+              Prêt à contribuer à la sécurité des patients ?
+            </h2>
+            <p className="text-green-100 text-base mb-8">
+              Votre première déclaration prend moins de 5 minutes. Chaque signalement compte.
+            </p>
+            <Link
+              href="/declarer"
+              className="inline-block bg-white text-green-700 font-semibold px-8 py-3 rounded-full shadow-md hover:bg-green-50 transition-colors"
+            >
+              Faire une déclaration →
+            </Link>
+            <p className="text-green-200 text-xs mt-4">Sans inscription requise</p>
+          </div>
+        </section>
+
       {/* Footer */}
       <footer className="border-t border-gray-100 px-8 py-6 bg-white">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
