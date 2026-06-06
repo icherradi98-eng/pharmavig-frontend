@@ -66,6 +66,9 @@ type FormData = {
   medicamentsConcomitants: MedicamentConcomitant[];
 
   // Section 5 — Effet indésirable
+  eiMeddraTerm: string;
+  eiMeddraCode: string;
+  eiMeddraSoc: string;
   eiDescription: string;
   eiDateDebut: string;
   eiDateFin: string;
@@ -114,6 +117,7 @@ const INITIAL: FormData = {
   medicamentLaboratoire: "", medicamentAMM: "", medicamentPrescripteur: "",
   aucunConcomitant: false,
   medicamentsConcomitants: [],
+  eiMeddraTerm: "", eiMeddraCode: "", eiMeddraSoc: "",
   eiDescription: "", eiDateDebut: "", eiDateFin: "", eiEnCours: false, eiEvolution: "",
   graviteDeces: false, graviteVieDanger: false, graviteHospitalisation: false,
   graviteIncapacite: false, graviteAnomalieCongenitale: false,
@@ -271,6 +275,145 @@ function Field({ label, required, hint, children }: {
   );
 }
 
+// ─── MedDRA ───────────────────────────────────────────────────────────────────
+
+type MedDRATerm = { pt: string; code: string; soc: string };
+
+const MEDDRA_TERMS: MedDRATerm[] = [
+  // Gastro-intestinal
+  { pt: "Nausées", code: "10028813", soc: "Gastro-intestinal" },
+  { pt: "Vomissements", code: "10047700", soc: "Gastro-intestinal" },
+  { pt: "Diarrhée", code: "10012735", soc: "Gastro-intestinal" },
+  { pt: "Douleur abdominale", code: "10000081", soc: "Gastro-intestinal" },
+  { pt: "Constipation", code: "10010774", soc: "Gastro-intestinal" },
+  { pt: "Hémorragie gastro-intestinale", code: "10017955", soc: "Gastro-intestinal" },
+  { pt: "Colite", code: "10009887", soc: "Gastro-intestinal" },
+  // Peau
+  { pt: "Éruption cutanée", code: "10037844", soc: "Peau et tissu sous-cutané" },
+  { pt: "Urticaire", code: "10046735", soc: "Peau et tissu sous-cutané" },
+  { pt: "Prurit", code: "10037087", soc: "Peau et tissu sous-cutané" },
+  { pt: "Angio-œdème", code: "10002424", soc: "Peau et tissu sous-cutané" },
+  { pt: "Syndrome de Stevens-Johnson", code: "10042033", soc: "Peau et tissu sous-cutané" },
+  { pt: "Nécrolyse épidermique toxique", code: "10028506", soc: "Peau et tissu sous-cutané" },
+  { pt: "Alopécie", code: "10001760", soc: "Peau et tissu sous-cutané" },
+  { pt: "Photosensibilité", code: "10034976", soc: "Peau et tissu sous-cutané" },
+  // Système nerveux
+  { pt: "Céphalées", code: "10019211", soc: "Système nerveux" },
+  { pt: "Vertiges", code: "10047340", soc: "Système nerveux" },
+  { pt: "Somnolence", code: "10041349", soc: "Système nerveux" },
+  { pt: "Convulsions", code: "10010952", soc: "Système nerveux" },
+  { pt: "Neuropathie périphérique", code: "10029331", soc: "Système nerveux" },
+  { pt: "Accident vasculaire cérébral", code: "10008190", soc: "Système nerveux" },
+  { pt: "Tremblements", code: "10044565", soc: "Système nerveux" },
+  { pt: "Insomnie", code: "10022437", soc: "Psychiatrie" },
+  { pt: "Confusion mentale", code: "10010300", soc: "Psychiatrie" },
+  { pt: "Hallucinations", code: "10019063", soc: "Psychiatrie" },
+  // Cardiaque
+  { pt: "Palpitations", code: "10033557", soc: "Cardiac disorders" },
+  { pt: "Allongement QT", code: "10053698", soc: "Cardiac disorders" },
+  { pt: "Bradycardie", code: "10006093", soc: "Cardiac disorders" },
+  { pt: "Tachycardie", code: "10043071", soc: "Cardiac disorders" },
+  { pt: "Fibrillation auriculaire", code: "10016281", soc: "Cardiac disorders" },
+  { pt: "Infarctus du myocarde", code: "10027433", soc: "Cardiac disorders" },
+  // Hépatique
+  { pt: "Hépatotoxicité", code: "10019851", soc: "Hépatobiliaire" },
+  { pt: "Cytolyse hépatique", code: "10061218", soc: "Hépatobiliaire" },
+  { pt: "Ictère", code: "10023126", soc: "Hépatobiliaire" },
+  { pt: "Insuffisance hépatique", code: "10019670", soc: "Hépatobiliaire" },
+  // Rénal
+  { pt: "Insuffisance rénale aiguë", code: "10069339", soc: "Rénal et urinaire" },
+  { pt: "Néphrotoxicité", code: "10029155", soc: "Rénal et urinaire" },
+  { pt: "Protéinurie", code: "10037032", soc: "Rénal et urinaire" },
+  // Allergique / immuno
+  { pt: "Anaphylaxie", code: "10002198", soc: "Système immunitaire" },
+  { pt: "Hypersensibilité", code: "10020751", soc: "Système immunitaire" },
+  { pt: "Réaction anaphylactoïde", code: "10002216", soc: "Système immunitaire" },
+  // Hématologique
+  { pt: "Thrombocytopénie", code: "10043554", soc: "Sang et lymphe" },
+  { pt: "Neutropénie", code: "10029354", soc: "Sang et lymphe" },
+  { pt: "Anémie", code: "10002272", soc: "Sang et lymphe" },
+  { pt: "Agranulocytose", code: "10001561", soc: "Sang et lymphe" },
+  { pt: "Leucopénie", code: "10024384", soc: "Sang et lymphe" },
+  // Respiratoire
+  { pt: "Dyspnée", code: "10013968", soc: "Respiratoire" },
+  { pt: "Bronchospasme", code: "10006482", soc: "Respiratoire" },
+  { pt: "Toux", code: "10011224", soc: "Respiratoire" },
+  { pt: "Pneumopathie interstitielle", code: "10035742", soc: "Respiratoire" },
+  // Métabolique
+  { pt: "Hypoglycémie", code: "10020993", soc: "Métabolisme et nutrition" },
+  { pt: "Hyperkaliémie", code: "10020951", soc: "Métabolisme et nutrition" },
+  { pt: "Hyponatrémie", code: "10021036", soc: "Métabolisme et nutrition" },
+  { pt: "Rhabdomyolyse", code: "10039020", soc: "Musculosquelettique" },
+  { pt: "Myopathie", code: "10028597", soc: "Musculosquelettique" },
+];
+
+function MedDRASearch({ value, code, soc, onChange }: {
+  value: string;
+  code: string;
+  soc: string;
+  onChange: (term: string, code: string, soc: string) => void;
+}) {
+  const [query, setQuery] = useState(value);
+  const [open, setOpen] = useState(false);
+
+  const filtered = query.length >= 2
+    ? MEDDRA_TERMS.filter((t) => t.pt.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
+    : [];
+
+  function select(t: MedDRATerm) {
+    setQuery(t.pt);
+    onChange(t.pt, t.code, t.soc);
+    setOpen(false);
+  }
+
+  function handleBlur() {
+    setTimeout(() => setOpen(false), 150);
+    if (!code) onChange(query, "", "");
+  }
+
+  return (
+    <div className="relative">
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => { setQuery(e.target.value); onChange(e.target.value, "", ""); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={handleBlur}
+        placeholder="Ex : Nausées, Urticaire, Insuffisance rénale aiguë..."
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      />
+      {open && filtered.length > 0 && (
+        <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+          {filtered.map((t) => (
+            <button
+              key={t.code}
+              type="button"
+              onMouseDown={() => select(t)}
+              className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-emerald-50 text-left transition-colors"
+            >
+              <div>
+                <span className="text-sm font-medium text-gray-900">{t.pt}</span>
+                <span className="ml-2 text-xs text-gray-400">{t.soc}</span>
+              </div>
+              <span className="text-xs font-mono text-gray-300">{t.code}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {code && (
+        <div className="mt-1.5 flex items-center gap-2">
+          <span className="text-xs bg-emerald-100 text-emerald-700 font-semibold px-2 py-0.5 rounded-full">PT MedDRA</span>
+          <span className="text-xs text-gray-500">{soc}</span>
+          <span className="text-xs font-mono text-gray-400">#{code}</span>
+        </div>
+      )}
+      {query && !code && query.length > 2 && (
+        <p className="text-xs text-amber-600 mt-1">⚠️ Terme non codé — sera codé par le CAPM à réception.</p>
+      )}
+    </div>
+  );
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function FormulaireMedecin() {
@@ -408,7 +551,8 @@ export default function FormulaireMedecin() {
 
   const champsManquants = [
     !form.medicamentDCI && "Médicament suspect — DCI (Section 3)",
-    !form.eiDescription && "Description de l'effet indésirable (Section 5)",
+    !form.eiMeddraTerm && "Terme MedDRA de l'effet indésirable (Section 5)",
+    !form.eiDescription && "Description clinique de l'effet indésirable (Section 5)",
     !isSerieux && !form.graviteNonSerieux && "Critère de gravité — cochez au moins une case (Section 5)",
   ].filter(Boolean) as string[];
 
@@ -805,6 +949,18 @@ export default function FormulaireMedecin() {
               title="Description de l'effet indésirable"
               subtitle="Description clinique précise. Utilisez la terminologie médicale."
             />
+            <Field label="Terme MedDRA (PT — Preferred Term)" required hint="Codage international de l'effet indésirable — E2B R3 obligatoire">
+              <MedDRASearch
+                value={form.eiMeddraTerm}
+                code={form.eiMeddraCode}
+                soc={form.eiMeddraSoc}
+                onChange={(term, code, soc) => {
+                  set("eiMeddraTerm", term);
+                  set("eiMeddraCode", code);
+                  set("eiMeddraSoc", soc);
+                }}
+              />
+            </Field>
             <Field label="Description clinique de l'EIM" required hint="Symptômes, signes cliniques, résultats paracliniques anormaux">
               <Textarea
                 rows={5}
@@ -920,6 +1076,13 @@ export default function FormulaireMedecin() {
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-gray-500 mb-1">Médicament suspect</p>
                   <p className="font-medium text-gray-800">{form.medicamentDCI || form.medicamentNomCommercial || "—"}</p>
+                </div>
+                <div className={`rounded-lg p-3 ${form.eiMeddraTerm ? "bg-emerald-50" : "bg-red-50"}`}>
+                  <p className="text-gray-500 mb-1">Terme MedDRA (PT)</p>
+                  <p className="font-medium text-gray-800 text-xs">
+                    {form.eiMeddraTerm || <span className="text-red-500">⚠️ Non renseigné</span>}
+                    {form.eiMeddraCode && <span className="ml-1 text-gray-400 font-mono">#{form.eiMeddraCode}</span>}
+                  </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-gray-500 mb-1">Gravité</p>
