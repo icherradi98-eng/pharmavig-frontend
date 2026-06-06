@@ -204,23 +204,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Partenaires */}
-        <section id="about" className="w-full px-8 py-14 bg-gray-50 border-t border-gray-100">
-          <p className="text-center text-xs font-semibold uppercase tracking-widest text-gray-400 mb-8">
-            Développé en collaboration avec
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-10 max-w-3xl mx-auto">
-            {PARTNERS.map((p) => (
-              <div key={p.name} className="flex flex-col items-center gap-1 group" title={p.full}>
-                <div className="w-20 h-12 bg-white border border-gray-200 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                  <span className="text-xs font-bold text-gray-600">{p.name}</span>
-                </div>
-                <span className="text-xs text-gray-400 text-center max-w-[120px] leading-tight">{p.full.split("—")[0].trim()}</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-xs text-gray-400 mt-6 italic">Partenariats en cours de finalisation</p>
-        </section>
       </main>
 
         {/* FAQ */}
