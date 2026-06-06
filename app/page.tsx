@@ -88,7 +88,7 @@ export default function LandingPage() {
             Connexion
           </Link>
           <Link
-            href="/login"
+            href="/declarer"
             className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
           >
             Faire une déclaration
