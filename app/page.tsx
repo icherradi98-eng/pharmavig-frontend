@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { useState } from "react";
 
 const STEPS = [
   {
@@ -221,6 +223,9 @@ export default function LandingPage() {
         </section>
       </main>
 
+        {/* FAQ */}
+        <FAQ />
+
       {/* Footer */}
       <footer className="border-t border-gray-100 px-8 py-6 bg-white">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -239,6 +244,68 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+const FAQ_ITEMS = [
+  {
+    q: "Est-ce que mes données sont confidentielles ?",
+    a: "Oui, toutes vos données sont strictement confidentielles. PharmaVig respecte la loi marocaine 09-08 relative à la protection des données personnelles. Vos informations ne sont jamais partagées avec des tiers à des fins commerciales. Seul le CAPM reçoit les données médicales nécessaires au traitement de votre déclaration.",
+  },
+  {
+    q: "Dois-je être professionnel de santé pour déclarer ?",
+    a: "Non. Tout le monde peut signaler un effet indésirable — médecin, pharmacien, infirmier, mais aussi patient ou proche aidant. PharmaVig propose des interfaces adaptées à chaque profil : un formulaire structuré pour les professionnels de santé, et un formulaire guidé simplifié en français et en darija pour les patients.",
+  },
+  {
+    q: "Que devient ma déclaration après envoi ?",
+    a: "Votre déclaration est transmise automatiquement et de façon sécurisée au CAPM. Elle est analysée par les équipes de pharmacovigilance qui évaluent le lien de causalité entre le médicament et l'effet signalé. Si nécessaire, des mesures de sécurité peuvent être déclenchées — alerte, modification de notice, ou retrait du médicament. Vous recevez un accusé de réception par email dans les 24 heures.",
+  },
+  {
+    q: "La plateforme est-elle reconnue par le CAPM ?",
+    a: "PharmaVig est développée en collaboration avec le CAPM et le Ministère de la Santé marocain. Les formulaires sont conformes aux standards internationaux ICH E2B R3 et à la méthode d'imputabilité de Bégaud utilisée par le système national de pharmacovigilance. Chaque déclaration soumise via PharmaVig est directement intégrée dans la base de données nationale.",
+  },
+  {
+    q: "Puis-je déclarer anonymement ?",
+    a: "Oui. Vous pouvez soumettre une déclaration sans créer de compte en utilisant l'option \"Continuer sans compte\". Dans ce cas, votre identité n'est pas enregistrée. Cependant, nous recommandons de laisser vos coordonnées pour permettre au CAPM de vous contacter si des informations complémentaires sont nécessaires.",
+  },
+  {
+    q: "La déclaration est-elle obligatoire pour les professionnels de santé ?",
+    a: "En vertu de la loi marocaine sur la pharmacovigilance, les professionnels de santé ont l'obligation de déclarer tout effet indésirable grave ou inattendu au CAPM. PharmaVig simplifie cette obligation légale en réduisant le temps de déclaration à moins de 5 minutes, depuis n'importe quel appareil.",
+  },
+];
+
+function FAQ() {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <section className="w-full px-8 py-16 bg-gray-50 border-t border-gray-100">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Questions fréquentes</h2>
+          <p className="text-gray-500 text-sm">Tout ce que vous devez savoir sur PharmaVig</p>
+        </div>
+        <div className="flex flex-col divide-y divide-gray-200 border border-gray-200 rounded-2xl overflow-hidden bg-white">
+          {FAQ_ITEMS.map((item, i) => (
+            <div key={i}>
+              <button
+                onClick={() => setOpen(open === i ? null : i)}
+                className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-gray-50 transition-colors"
+              >
+                <span className="font-medium text-gray-900 text-sm pr-4">{item.q}</span>
+                <svg
+                  className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-200 ${open === i ? "rotate-180" : ""}`}
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className={`overflow-hidden transition-all duration-300 ${open === i ? "max-h-96" : "max-h-0"}`}>
+                <p className="px-6 pb-5 text-sm text-gray-600 leading-relaxed">{item.a}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
