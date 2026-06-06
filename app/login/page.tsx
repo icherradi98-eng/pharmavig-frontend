@@ -1,34 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
 import { useState, Suspense } from "react";
 import { useAuth } from "@/context/AuthContext";
 
-const ROLES = [
-  { id: "medecin", label: "Médecin", icon: "🩺", color: "emerald" },
-  { id: "patient", label: "Patient", icon: "👤", color: "blue" },
-  { id: "pharmacien", label: "Pharmacien", icon: "💊", color: "violet" },
-] as const;
-
-type Role = (typeof ROLES)[number]["id"];
-
-const roleColors: Record<Role, string> = {
-  medecin: "border-emerald-500 bg-emerald-50 text-emerald-700",
-  patient: "border-blue-500 bg-blue-50 text-blue-700",
-  pharmacien: "border-violet-500 bg-violet-50 text-violet-700",
-};
-
-const btnColors: Record<Role, string> = {
-  medecin: "bg-emerald-600 hover:bg-emerald-700",
-  patient: "bg-blue-600 hover:bg-blue-700",
-  pharmacien: "bg-violet-600 hover:bg-violet-700",
-};
-
 function LoginForm() {
-  const searchParams = useSearchParams();
-  const initialRole = (searchParams.get("role") as Role) || "medecin";
-  const [selectedRole, setSelectedRole] = useState<Role>(initialRole);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -50,36 +26,19 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-sm">
         <div className="flex items-center justify-center gap-2 mb-8">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">PV</span>
+            <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm">PV</span>
             </div>
-            <span className="font-semibold text-gray-900 text-xl">PharmaVig</span>
+            <span className="font-bold text-gray-900 text-xl">PharmaVig</span>
           </Link>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
           <h1 className="text-xl font-bold text-gray-900 mb-1">Connexion</h1>
-          <p className="text-gray-500 text-sm mb-6">Choisissez votre profil et connectez-vous</p>
-
-          <div className="grid grid-cols-3 gap-2 mb-6">
-            {ROLES.map((role) => (
-              <button
-                key={role.id}
-                onClick={() => setSelectedRole(role.id)}
-                className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
-                  selectedRole === role.id
-                    ? roleColors[role.id]
-                    : "border-gray-200 text-gray-500 hover:border-gray-300"
-                }`}
-              >
-                <span className="text-2xl">{role.icon}</span>
-                <span>{role.label}</span>
-              </button>
-            ))}
-          </div>
+          <p className="text-gray-500 text-sm mb-6">Accédez à votre espace déclaration</p>
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-700 mb-4">
@@ -96,7 +55,7 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="votre@email.com"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
             <div>
@@ -107,23 +66,23 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className={`w-full text-white py-2.5 rounded-lg text-sm font-semibold transition-colors mt-2 disabled:opacity-60 ${btnColors[selectedRole]}`}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg text-sm font-semibold transition-colors mt-1 disabled:opacity-60"
             >
-              {loading ? "Connexion en cours..." : `Se connecter en tant que ${ROLES.find((r) => r.id === selectedRole)?.label}`}
+              {loading ? "Connexion en cours..." : "Se connecter"}
             </button>
           </form>
 
           <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col gap-3 items-center">
             <p className="text-sm text-gray-500">
               Pas encore de compte ?{" "}
-              <Link href={`/register?role=${selectedRole}`} className="text-emerald-600 font-medium hover:underline">
+              <Link href="/register" className="text-emerald-600 font-medium hover:underline">
                 S&apos;inscrire
               </Link>
             </p>
