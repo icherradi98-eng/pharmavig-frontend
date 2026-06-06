@@ -406,6 +406,12 @@ export default function FormulaireMedecin() {
   const isFatal = form.graviteDeces || form.graviteVieDanger;
   const delaiLegal = isFatal ? 7 : isSerieux ? 15 : null;
 
+  const champsManquants = [
+    !form.medicamentDCI && "Médicament suspect — DCI (Section 3)",
+    !form.eiDescription && "Description de l'effet indésirable (Section 5)",
+    !isSerieux && !form.graviteNonSerieux && "Critère de gravité — cochez au moins une case (Section 5)",
+  ].filter(Boolean) as string[];
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
@@ -963,6 +969,19 @@ export default function FormulaireMedecin() {
               </div>
             </label>
 
+            {champsManquants.length > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <p className="text-sm font-semibold text-amber-800 mb-2">⚠️ Informations manquantes avant envoi :</p>
+                <ul className="flex flex-col gap-1">
+                  {champsManquants.map((c) => (
+                    <li key={c} className="text-xs text-amber-700 flex items-start gap-2">
+                      <span className="mt-0.5">•</span> {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {submitError && (
               <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-700">
                 ⚠️ {submitError}
@@ -973,8 +992,8 @@ export default function FormulaireMedecin() {
             </div>
             <button
               onClick={handleSubmit}
-              disabled={!form.consentement}
-              className={`w-full py-4 rounded-xl font-bold text-white text-base transition-all ${form.consentement ? "bg-emerald-600 hover:bg-emerald-700 shadow-md" : "bg-gray-300 cursor-not-allowed"}`}
+              disabled={!form.consentement || champsManquants.length > 0}
+              className={`w-full py-4 rounded-xl font-bold text-white text-base transition-all ${form.consentement && champsManquants.length === 0 ? "bg-emerald-600 hover:bg-emerald-700 shadow-md" : "bg-gray-300 cursor-not-allowed"}`}
             >
               {isFatal ? "🚨 Envoyer — Urgence 7 jours →" : isSerieux ? "⚡ Envoyer la déclaration sérieuse au CAPM →" : "Envoyer la déclaration au CAPM →"}
             </button>
