@@ -12,10 +12,13 @@ type MedicamentConcomitant = {
   nom: string;
   posologie: string;
   indication: string;
+  arretAvantEI: boolean;
+  suspectSecondaire: boolean;
 };
 
 type FormData = {
   // Section 1 — Déclarant
+  typeDeclaration: string;
   declarantNom: string;
   declarantPrenom: string;
   declarantSpecialite: string;
@@ -34,8 +37,8 @@ type FormData = {
   patientGrossesse: string;
   patientGrossesseSemaines: string;
   patientAllaitement: string;
-  patientInsuffisanceRenale: boolean;
-  patientInsuffisanceHepatique: boolean;
+  patientInsuffisanceRenaleStade: string;
+  patientInsuffisanceHepatiqueStade: string;
   patientAntecedents: string;
   patientAllergies: string;
 
@@ -57,6 +60,7 @@ type FormData = {
   medicamentPrescripteur: string;
 
   // Section 4 — Concomitants
+  aucunConcomitant: boolean;
   medicamentsConcomitants: MedicamentConcomitant[];
 
   // Section 5 — Effet indésirable
@@ -92,16 +96,21 @@ type FormData = {
   consentement: boolean;
 };
 
+const STADES_RENALE = ["Légère (DFG 60–89)", "Modérée (DFG 30–59)", "Sévère (DFG 15–29)", "Terminale / Dialyse (DFG < 15)"];
+const STADES_HEPATIQUE = ["Légère (Child-Pugh A)", "Modérée (Child-Pugh B)", "Sévère (Child-Pugh C)"];
+
 const INITIAL: FormData = {
+  typeDeclaration: "",
   declarantNom: "", declarantPrenom: "", declarantSpecialite: "", declarantSpecialiteAutre: "",
   declarantNumOrdre: "", declarantEtablissement: "", declarantVille: "", declarantEmail: "", declarantTel: "",
   patientAge: "", patientSexe: "", patientPoids: "", patientTaille: "", patientGrossesse: "",
-  patientGrossesseSemaines: "", patientAllaitement: "", patientInsuffisanceRenale: false,
-  patientInsuffisanceHepatique: false, patientAntecedents: "", patientAllergies: "",
+  patientGrossesseSemaines: "", patientAllaitement: "", patientInsuffisanceRenaleStade: "",
+  patientInsuffisanceHepatiqueStade: "", patientAntecedents: "", patientAllergies: "",
   medicamentDCI: "", medicamentNomCommercial: "", medicamentForme: "", medicamentVoie: "",
   medicamentPosologie: "", medicamentFrequence: "", medicamentIndication: "", medicamentDateDebut: "",
   medicamentDateFin: "", medicamentEnCours: false, medicamentLot: "", medicamentPeremption: "",
   medicamentLaboratoire: "", medicamentAMM: "", medicamentPrescripteur: "",
+  aucunConcomitant: false,
   medicamentsConcomitants: [],
   eiDescription: "", eiDateDebut: "", eiDateFin: "", eiEnCours: false, eiEvolution: "",
   graviteDeces: false, graviteVieDanger: false, graviteHospitalisation: false,
@@ -269,6 +278,7 @@ export default function FormulaireMedecin() {
   const [submitError, setSubmitError] = useState("");
   const [nextConcoId, setNextConcoId] = useState(1);
   const [imputScore, setImputScore] = useState<ImputScore | null>(null);
+  const [pvNumber, setPvNumber] = useState("");
 
   const set = <K extends keyof FormData>(field: K, value: FormData[K]) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -278,13 +288,13 @@ export default function FormulaireMedecin() {
       ...prev,
       medicamentsConcomitants: [
         ...prev.medicamentsConcomitants,
-        { id: nextConcoId, nom: "", posologie: "", indication: "" },
+        { id: nextConcoId, nom: "", posologie: "", indication: "", arretAvantEI: false, suspectSecondaire: false },
       ],
     }));
     setNextConcoId((n) => n + 1);
   }
 
-  function updateConcomitant(id: number, field: keyof MedicamentConcomitant, value: string) {
+  function updateConcomitant(id: number, field: keyof MedicamentConcomitant, value: string | boolean) {
     setForm((prev) => ({
       ...prev,
       medicamentsConcomitants: prev.medicamentsConcomitants.map((m) =>
@@ -300,9 +310,17 @@ export default function FormulaireMedecin() {
     }));
   }
 
+  function generatePvNumber() {
+    const year = new Date().getFullYear();
+    const seq = Math.floor(Math.random() * 90000) + 10000;
+    return `PV-MA-${year}-${seq}`;
+  }
+
   async function handleSubmit() {
     if (!form.consentement) return;
     setSubmitError("");
+    const pv = generatePvNumber();
+    setPvNumber(pv);
     try {
       await api.createReport({
         source: "medecin",
@@ -350,12 +368,20 @@ export default function FormulaireMedecin() {
     form.graviteDeces || form.graviteVieDanger || form.graviteHospitalisation ||
     form.graviteIncapacite || form.graviteAnomalieCongenitale || form.graviteMedicalementSignificatif;
 
+  const isFatal = form.graviteDeces || form.graviteVieDanger;
+  const delaiLegal = isFatal ? 7 : isSerieux ? 15 : null;
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 max-w-md w-full text-center">
           <div className="text-5xl mb-4">✅</div>
           <h1 className="text-xl font-bold text-gray-900 mb-2">Déclaration envoyée au CAPM</h1>
+          {pvNumber && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2 text-sm font-mono font-bold text-emerald-700 mb-3">
+              {pvNumber}
+            </div>
+          )}
           <p className="text-gray-500 text-sm mb-1">Vous recevrez un accusé de réception par email.</p>
           {isSerieux && (
             <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-xs text-red-700 font-medium">
@@ -425,6 +451,17 @@ export default function FormulaireMedecin() {
               title="Informations sur le déclarant"
               subtitle="Ces informations permettent au CAPM de vous recontacter si nécessaire. Elles restent confidentielles."
             />
+            <Field label="Type de déclaration" required hint="E2B C.1.3 — Nature de la source">
+              <RadioGroup
+                value={form.typeDeclaration}
+                onChange={(v) => set("typeDeclaration", v)}
+                options={[
+                  { val: "spontanee", label: "Déclaration spontanée", desc: "Observation directe d'un effet indésirable en pratique courante" },
+                  { val: "observationnelle", label: "Étude observationnelle", desc: "Données issues d'une étude ou d'un registre" },
+                  { val: "litterature", label: "Rapport de littérature", desc: "Cas publié dans une revue médicale" },
+                ]}
+              />
+            </Field>
             <Grid>
               <Field label="Nom" required>
                 <Input value={form.declarantNom} onChange={(v) => set("declarantNom", v)} placeholder="Nom de famille" />
@@ -519,20 +556,24 @@ export default function FormulaireMedecin() {
               </Grid>
             )}
 
-            <Field label="Insuffisances organes">
-              <div className="flex flex-col gap-2">
-                <CheckRow
-                  label="Insuffisance rénale"
-                  checked={form.patientInsuffisanceRenale}
-                  onChange={() => set("patientInsuffisanceRenale", !form.patientInsuffisanceRenale)}
+            <Grid>
+              <Field label="Insuffisance rénale" hint="Stade selon DFG (KDIGO)">
+                <Select
+                  value={form.patientInsuffisanceRenaleStade}
+                  onChange={(v) => set("patientInsuffisanceRenaleStade", v)}
+                  options={STADES_RENALE}
+                  placeholder="Aucune / Non évaluée"
                 />
-                <CheckRow
-                  label="Insuffisance hépatique"
-                  checked={form.patientInsuffisanceHepatique}
-                  onChange={() => set("patientInsuffisanceHepatique", !form.patientInsuffisanceHepatique)}
+              </Field>
+              <Field label="Insuffisance hépatique" hint="Stade selon Child-Pugh">
+                <Select
+                  value={form.patientInsuffisanceHepatiqueStade}
+                  onChange={(v) => set("patientInsuffisanceHepatiqueStade", v)}
+                  options={STADES_HEPATIQUE}
+                  placeholder="Aucune / Non évaluée"
                 />
-              </div>
-            </Field>
+              </Field>
+            </Grid>
             <Field label="Antécédents médicaux pertinents" hint="Maladies chroniques, chirurgies, allergie connues">
               <Textarea value={form.patientAntecedents} onChange={(v) => set("patientAntecedents", v)} placeholder="Ex : HTA, diabète type 2, allergie à la pénicilline..." rows={3} />
             </Field>
@@ -640,7 +681,17 @@ export default function FormulaireMedecin() {
               title="Médicaments concomitants"
               subtitle="Tous les médicaments pris simultanément, incluant vitamines, compléments et automédication."
             />
-            {form.medicamentsConcomitants.length === 0 && (
+            <CheckRow
+              label="✅ Le patient ne prenait aucun autre médicament concomitant"
+              checked={form.aucunConcomitant}
+              onChange={() => {
+                const next = !form.aucunConcomitant;
+                setForm((prev) => ({ ...prev, aucunConcomitant: next, medicamentsConcomitants: next ? [] : prev.medicamentsConcomitants }));
+              }}
+              desc="Confirmez explicitement l'absence de co-médications (inclus automédication et phytothérapie)"
+            />
+
+            {!form.aucunConcomitant && form.medicamentsConcomitants.length === 0 && (
               <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">
                 <p className="text-sm">Aucun médicament concomitant pour l&apos;instant</p>
                 <p className="text-xs mt-1">Cliquez sur &quot;Ajouter&quot; si le patient prenait d&apos;autres traitements</p>
@@ -667,6 +718,16 @@ export default function FormulaireMedecin() {
                     <Input value={m.indication} onChange={(v) => updateConcomitant(m.id, "indication", v)} placeholder="Ex : HTA" />
                   </div>
                 </Grid>
+                <div className="flex gap-3 pt-1">
+                  <label className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs cursor-pointer transition-all ${m.arretAvantEI ? "border-amber-400 bg-amber-50 text-amber-700" : "border-gray-200 text-gray-500"}`}>
+                    <input type="checkbox" className="accent-amber-500" checked={m.arretAvantEI} onChange={() => updateConcomitant(m.id, "arretAvantEI", !m.arretAvantEI)} />
+                    Arrêté avant l&apos;EI
+                  </label>
+                  <label className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs cursor-pointer transition-all ${m.suspectSecondaire ? "border-orange-400 bg-orange-50 text-orange-700" : "border-gray-200 text-gray-500"}`}>
+                    <input type="checkbox" className="accent-orange-500" checked={m.suspectSecondaire} onChange={() => updateConcomitant(m.id, "suspectSecondaire", !m.suspectSecondaire)} />
+                    Suspect secondaire
+                  </label>
+                </div>
               </div>
             ))}
 
@@ -785,6 +846,16 @@ export default function FormulaireMedecin() {
               <h3 className="font-semibold text-gray-800 mb-3">Récapitulatif</h3>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-gray-500 mb-1">Type de déclaration</p>
+                  <p className="font-medium text-gray-800 capitalize">{form.typeDeclaration || "—"}</p>
+                </div>
+                {delaiLegal && (
+                  <div className={`rounded-lg p-3 ${isFatal ? "bg-red-100" : "bg-amber-50"}`}>
+                    <p className="text-gray-500 mb-1">Délai légal CAPM</p>
+                    <p className={`font-bold ${isFatal ? "text-red-700" : "text-amber-700"}`}>{delaiLegal} jours calendaires</p>
+                  </div>
+                )}
+                <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-gray-500 mb-1">Déclarant</p>
                   <p className="font-medium text-gray-800">{form.declarantPrenom} {form.declarantNom} — {form.declarantSpecialite || "—"}</p>
                 </div>
@@ -809,9 +880,9 @@ export default function FormulaireMedecin() {
                   <p className="font-medium text-gray-800">{form.medicamentsConcomitants.length} déclaré(s)</p>
                 </div>
               </div>
-              {isSerieux && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-700 mt-2">
-                  ⚡ <strong>EIM sérieux détecté</strong> — Votre déclaration sera transmise au CAPM en traitement prioritaire (délai réglementaire : 15 jours calendaires).
+              {delaiLegal && (
+                <div className={`border rounded-lg p-3 text-xs mt-2 ${isFatal ? "bg-red-100 border-red-300 text-red-800" : "bg-red-50 border-red-200 text-red-700"}`}>
+                  ⚡ <strong>EIM {isFatal ? "fatal / pronostic vital engagé" : "sérieux"}</strong> — Délai réglementaire de transmission au CAPM : <strong>{delaiLegal} jours calendaires</strong>.
                 </div>
               )}
             </div>
@@ -849,12 +920,15 @@ export default function FormulaireMedecin() {
                 ⚠️ {submitError}
               </div>
             )}
+            <div className="text-xs text-gray-400 text-center">
+              Un numéro de déclaration <span className="font-mono font-semibold text-gray-600">PV-MA-{new Date().getFullYear()}-XXXXX</span> sera généré automatiquement.
+            </div>
             <button
               onClick={handleSubmit}
               disabled={!form.consentement}
               className={`w-full py-4 rounded-xl font-bold text-white text-base transition-all ${form.consentement ? "bg-emerald-600 hover:bg-emerald-700 shadow-md" : "bg-gray-300 cursor-not-allowed"}`}
             >
-              {isSerieux ? "⚡ Envoyer la déclaration sérieuse au CAPM →" : "Envoyer la déclaration au CAPM →"}
+              {isFatal ? "🚨 Envoyer — Urgence 7 jours →" : isSerieux ? "⚡ Envoyer la déclaration sérieuse au CAPM →" : "Envoyer la déclaration au CAPM →"}
             </button>
           </div>
         )}
