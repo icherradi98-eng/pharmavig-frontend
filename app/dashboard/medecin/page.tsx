@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 const stats = [
   { label: "Déclarations envoyées", value: "0", sub: "ce mois-ci" },
@@ -13,6 +15,7 @@ const menuItems = [
 ];
 
 export default function MedecinDashboard() {
+  const { user, logout } = useAuth();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -26,12 +29,12 @@ export default function MedecinDashboard() {
             <span className="ml-2 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Médecin</span>
           </div>
         </div>
-        <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700">Déconnexion</Link>
+        <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-700">Déconnexion</button>
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-10">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Bonjour, Docteur 👋</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Bonjour, Dr {user?.nom || "Docteur"} 👋</h1>
           <p className="text-gray-500 mt-1">Tableau de bord — Interface Médecin</p>
         </div>
 

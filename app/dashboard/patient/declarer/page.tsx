@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -157,9 +159,11 @@ function InfoBox({ text, textDar }: { text: string; textDar?: string }) {
 
 export default function FormulairePatient() {
   const router = useRouter();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(INITIAL);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const set = (field: keyof FormData, value: FormData[keyof FormData]) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -171,9 +175,40 @@ export default function FormulairePatient() {
     });
   };
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!form.consentement) return;
-    setSubmitted(true);
+    setSubmitError("");
+    try {
+      const payload = {
+        source: user ? "patient" : "invite",
+        patient_age: form.age,
+        patient_sexe: form.sexe,
+        drug_dci: form.medicamentNom,
+        drug_lot: form.medicamentLot,
+        drug_indication: form.indication !== "autre" ? form.indication : form.indicationAutre,
+        drug_date_debut: form.medicamentPeremption || undefined,
+        ei_description: form.description,
+        ei_zones_corps: form.zonesCorps,
+        ei_symptomes: form.symptomes,
+        ei_delai_apparition: form.delaiApparition,
+        ei_evolution: form.problemePersiste,
+        gravite_hospitalisation: form.urgences === "hospitalise" || form.urgences === "urgences",
+        autres_medicaments: form.autresMedicamentsDetail || undefined,
+        maladies_chroniques: form.maladiesChroniques,
+        contact_email: form.contactEmail || undefined,
+        contact_tel: form.contactTel || undefined,
+        commentaires: undefined,
+        raw_data: form,
+      };
+      if (user) {
+        await api.createReport(payload);
+      } else {
+        await api.createAnonymousReport(payload);
+      }
+      setSubmitted(true);
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : "Erreur lors de l'envoi");
+    }
   }
 
   if (submitted) {
@@ -676,6 +711,11 @@ export default function FormulairePatient() {
               </div>
             </label>
 
+            {submitError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-700">
+                ⚠️ {submitError}
+              </div>
+            )}
             <button
               onClick={handleSubmit}
               disabled={!form.consentement}
