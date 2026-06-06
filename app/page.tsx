@@ -246,19 +246,75 @@ export default function LandingPage() {
         </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 px-8 py-6 bg-white">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-md flex items-center justify-center">
-              <span className="text-white font-black text-xs">PV</span>
+      <footer className="bg-gray-900 text-gray-300">
+        <div className="max-w-6xl mx-auto px-8 py-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {/* Col 1 */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-black text-xs">PV</span>
+                </div>
+                <span className="text-white font-bold text-base">PharmaVig</span>
+              </div>
+              <p className="text-gray-400 text-sm mb-5 leading-relaxed">La pharmacovigilance digitale au Maroc.</p>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#about" className="text-gray-400 hover:text-white transition-colors">À propos</Link></li>
+                <li><Link href="#about" className="text-gray-400 hover:text-white transition-colors">Notre mission</Link></li>
+                <li><a href="mailto:contact@pharmavig.ma" className="text-gray-400 hover:text-white transition-colors">contact@pharmavig.ma</a></li>
+              </ul>
             </div>
-            <span className="text-xs text-gray-500">© 2025 PharmaVig. Tous droits réservés.</span>
+
+            {/* Col 2 */}
+            <div>
+              <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">Déclarer</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/declarer?role=medecin" className="text-gray-400 hover:text-white transition-colors">Je suis médecin</Link></li>
+                <li><Link href="/declarer?role=patient" className="text-gray-400 hover:text-white transition-colors">Je suis patient</Link></li>
+                <li><Link href="/declarer?role=pharmacien" className="text-gray-400 hover:text-white transition-colors">Je suis pharmacien</Link></li>
+                <li><Link href="/dashboard/invite" className="text-gray-400 hover:text-white transition-colors">Continuer sans compte</Link></li>
+              </ul>
+            </div>
+
+            {/* Col 3 */}
+            <div>
+              <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">Ressources</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Comment ça marche</Link></li>
+                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
+                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Guide de déclaration (PDF)</Link></li>
+                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Formulaire CAPM officiel</Link></li>
+              </ul>
+            </div>
+
+            {/* Col 4 */}
+            <div>
+              <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">Légal</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/confidentialite" className="text-gray-400 hover:text-white transition-colors">Politique de confidentialité</Link></li>
+                <li><Link href="/conditions" className="text-gray-400 hover:text-white transition-colors">Conditions d&apos;utilisation</Link></li>
+                <li><Link href="/mentions-legales" className="text-gray-400 hover:text-white transition-colors">Mentions légales</Link></li>
+                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Loi 09-08 (protection données)</Link></li>
+              </ul>
+            </div>
           </div>
-          <div className="flex items-center gap-5 text-xs text-gray-400">
-            <Link href="/contact" className="hover:text-gray-700 transition-colors">Contact</Link>
-            <Link href="/confidentialite" className="hover:text-gray-700 transition-colors">Politique de confidentialité</Link>
-            <Link href="/mentions-legales" className="hover:text-gray-700 transition-colors">Mentions légales</Link>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 transition-colors">LinkedIn</a>
+        </div>
+
+        {/* Barre finale */}
+        <div className="border-t border-gray-800 px-8 py-5">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-gray-500">© 2025 PharmaVig. Tous droits réservés. · Maroc · Afrique francophone</p>
+            <div className="flex items-center gap-4">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" aria-label="LinkedIn">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" aria-label="Twitter/X">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <a href="mailto:contact@pharmavig.ma" className="text-gray-500 hover:text-white transition-colors" aria-label="Email">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </a>
+            </div>
           </div>
         </div>
       </footer>
