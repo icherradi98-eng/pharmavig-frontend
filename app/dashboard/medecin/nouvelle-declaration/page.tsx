@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import ImputabiliteBegaud, { ImputScore } from "./ImputabiliteBegaud";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -267,6 +268,7 @@ export default function FormulaireMedecin() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [nextConcoId, setNextConcoId] = useState(1);
+  const [imputScore, setImputScore] = useState<ImputScore | null>(null);
 
   const set = <K extends keyof FormData>(field: K, value: FormData[K]) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -762,114 +764,14 @@ export default function FormulaireMedecin() {
               title="Imputabilité médicamenteuse"
               subtitle="Méthode française (BÉGAUD) — évaluation du lien de causalité entre le médicament et l'EIM."
             />
-            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-xs text-emerald-800">
-              💡 L&apos;imputabilité est facultative mais fortement recommandée. Elle aide le CAPM à analyser le signal pharmacovigilance.
-            </div>
-
-            {/* Chronologie */}
             <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="font-semibold text-gray-800 text-sm mb-3">1. Chronologie (C)</h3>
-              <Field label="Délai d'apparition de l'EIM après prise du médicament" required>
-                <RadioGroup
-                  value={form.imputDelaiApparition}
-                  onChange={(v) => set("imputDelaiApparition", v)}
-                  options={[
-                    { val: "compatible", label: "Compatible (C3)", desc: "Délai compatible avec le mécanisme pharmacologique connu" },
-                    { val: "suggestif", label: "Suggestif (C2)", desc: "Délai très évocateur (ex : < 1h pour une allergie IgE-médiée)" },
-                    { val: "incompatible", label: "Incompatible (C0)", desc: "Délai incompatible avec le mécanisme" },
-                    { val: "inclassable", label: "Inclassable", desc: "Délai inconnu ou données insuffisantes" },
-                  ]}
-                />
-              </Field>
+              <ImputabiliteBegaud onScoreChange={(score) => setImputScore(score)} />
             </div>
-
-            {/* Évolution à l'arrêt */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="font-semibold text-gray-800 text-sm mb-3">2. Évolution à l&apos;arrêt du médicament</h3>
-              <Field label="Que s'est-il passé après arrêt du médicament suspect ?">
-                <RadioGroup
-                  value={form.imputEvolutionArret}
-                  onChange={(v) => set("imputEvolutionArret", v)}
-                  options={[
-                    { val: "regression", label: "Régression à l'arrêt (favorable)" },
-                    { val: "regression-partielle", label: "Régression partielle" },
-                    { val: "pas-arret", label: "Médicament non arrêté" },
-                    { val: "pas-amelioration", label: "Pas d'amélioration à l'arrêt" },
-                    { val: "non-evaluable", label: "Non évaluable / inconnu" },
-                  ]}
-                />
-              </Field>
-            </div>
-
-            {/* Réadministration */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="font-semibold text-gray-800 text-sm mb-3">3. Réadministration (rechallenge)</h3>
-              <Field label="Le médicament a-t-il été réadministré ?">
-                <RadioGroup
-                  value={form.imputReadministration}
-                  onChange={(v) => set("imputReadministration", v)}
-                  options={[
-                    { val: "oui", label: "Oui" },
-                    { val: "non", label: "Non" },
-                    { val: "non-applicable", label: "Non applicable / contre-indiqué" },
-                  ]}
-                />
-              </Field>
-              {form.imputReadministration === "oui" && (
-                <div className="mt-3">
-                  <Field label="Résultat de la réadministration">
-                    <RadioGroup
-                      value={form.imputReadministrationResultat}
-                      onChange={(v) => set("imputReadministrationResultat", v)}
-                      options={[
-                        { val: "recidive", label: "Récidive de l'EIM (rechallenge positif)" },
-                        { val: "pas-recidive", label: "Pas de récidive (rechallenge négatif)" },
-                        { val: "non-evaluable", label: "Non évaluable" },
-                      ]}
-                    />
-                  </Field>
-                </div>
-              )}
-            </div>
-
-            {/* Sémiologie */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="font-semibold text-gray-800 text-sm mb-3">4. Sémiologie</h3>
-              <Field label="L'EIM est-il connu pour ce médicament ?">
-                <RadioGroup
-                  value={form.imputSemiologie}
-                  onChange={(v) => set("imputSemiologie", v)}
-                  options={[
-                    { val: "connu", label: "Oui — EIM figurant dans le RCP / littérature" },
-                    { val: "inconnu", label: "Non — EIM non décrit à ma connaissance" },
-                    { val: "incertain", label: "Incertain" },
-                  ]}
-                />
-              </Field>
-            </div>
-
-            <Field label="Bilan étiologique différentiel" hint="Avez-vous éliminé une autre cause (maladie, autre médicament, infection...) ?">
-              <Textarea
-                value={form.imputBilanEtiologique}
-                onChange={(v) => set("imputBilanEtiologique", v)}
-                placeholder="Ex : bilan infectieux négatif, auto-immunité négative, autres médicaments arrêtés sans amélioration..."
-                rows={3}
-              />
-            </Field>
-
-            <Field label="Conclusion d'imputabilité">
-              <RadioGroup
-                value={form.imputConclusion}
-                onChange={(v) => set("imputConclusion", v)}
-                options={[
-                  { val: "certaine", label: "Certaine (I4)", desc: "Rechallenge positif ou mécanisme pharmacologique indiscutable" },
-                  { val: "probable", label: "Probable (I3)", desc: "Chronologie compatible, régression à l'arrêt, bilan éliminatoire positif" },
-                  { val: "possible", label: "Possible (I2)", desc: "Chronologie compatible, données insuffisantes" },
-                  { val: "douteuse", label: "Douteuse (I1)", desc: "Chronologie incompatible ou autre cause plus probable" },
-                  { val: "non-classable", label: "Non classable (I0)", desc: "Données insuffisantes pour conclure" },
-                ]}
-              />
-            </Field>
+            {imputScore && (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-800">
+                ✅ Score enregistré — Imputabilité {["I0", "I1", "I2", "I3", "I4"][imputScore.Iscore]} · {imputScore.isGrave ? "⚡ Effet grave" : "Non grave"}
+              </div>
+            )}
           </div>
         )}
 
