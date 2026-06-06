@@ -73,7 +73,7 @@ export default function MesDeclarations() {
               const st = STATUS_LABELS[r.status] || { label: r.status, color: "bg-gray-100 text-gray-600" };
               const date = new Date(r.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
               return (
-                <div key={r.id} className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 hover:border-gray-300 transition-all">
+                <Link key={r.id} href={`/dashboard/medecin/mes-declarations/${r.id}`} className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 hover:border-emerald-300 hover:shadow-sm transition-all">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-gray-900">
@@ -90,7 +90,8 @@ export default function MesDeclarations() {
                     </div>
                   </div>
                   <span className={`text-xs font-semibold px-3 py-1 rounded-full ${st.color}`}>{st.label}</span>
-                </div>
+                  <span className="text-gray-300 text-sm">→</span>
+                </Link>
               );
             })}
           </div>

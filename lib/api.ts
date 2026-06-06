@@ -40,7 +40,7 @@ export const api = {
 
   listReports: () => request<ReportOut[]>("/reports/"),
 
-  getReport: (id: string) => request<ReportOut>(`/reports/${id}`),
+  getReport: (id: string) => request<ReportDetail>(`/reports/${id}`),
 };
 
 // ── Types partagés ────────────────────────────────────────────────────────────
@@ -73,4 +73,37 @@ export type ReportOut = {
   gravite_serieux: boolean;
   imput_conclusion?: string;
   capm_reference?: string;
+};
+
+export type ReportDetail = ReportOut & {
+  patient_age?: string;
+  patient_sexe?: string;
+  patient_poids?: number;
+  patient_taille?: number;
+  patient_grossesse?: string;
+  patient_antecedents?: string;
+  patient_allergies?: string;
+  drug_forme?: string;
+  drug_voie?: string;
+  drug_posologie?: string;
+  drug_indication?: string;
+  drug_date_debut?: string;
+  drug_date_fin?: string;
+  drug_lot?: string;
+  drug_laboratoire?: string;
+  concomitants?: { nom: string; posologie: string; indication: string }[];
+  ei_description?: string;
+  ei_date_debut?: string;
+  ei_date_fin?: string;
+  ei_evolution?: string;
+  gravite_deces: boolean;
+  gravite_vie_danger: boolean;
+  gravite_hospitalisation: boolean;
+  gravite_incapacite: boolean;
+  gravite_anomalie_congenitale: boolean;
+  imput_chronologie?: string;
+  imput_evolution_arret?: string;
+  imput_readministration?: string;
+  commentaires?: string;
+  raw_data?: Record<string, unknown>;
 };
