@@ -74,6 +74,7 @@ export default function DeclarationDetail() {
   const st = STATUS_LABELS[report.status] || { label: report.status, color: "bg-gray-100 text-gray-600" };
   const date = new Date(report.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
   const raw = report.raw_data as Record<string, unknown> | undefined;
+  const begaudScore = raw?.begaud_score as Record<string, number> | undefined;
   const gravitesCochees = GRAVITE_LABELS.filter((g) => report[g.key as keyof ReportDetail]);
 
   return (
@@ -216,12 +217,12 @@ export default function DeclarationDetail() {
         {/* Imputabilité */}
         <Section title="🔬 Imputabilité (Méthode Bégaud)">
           <Row label="Score final" value={report.imput_conclusion} />
-          {raw?.begaud_score && (
+          {begaudScore && (
             <div className="flex gap-3 mt-1">
-              {["Cscore", "Sscore", "Iscore"].map((k) => (
+              {(["Cscore", "Sscore", "Iscore"] as const).map((k) => (
                 <div key={k} className="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 text-center">
                   <div className="text-lg font-bold text-emerald-700">
-                    {k === "Iscore" ? `I${(raw.begaud_score as Record<string, number>)[k]}` : (raw.begaud_score as Record<string, number>)[k]}
+                    {k === "Iscore" ? `I${begaudScore[k]}` : begaudScore[k]}
                   </div>
                   <div className="text-xs text-gray-500">{k.replace("score", "")}</div>
                 </div>
