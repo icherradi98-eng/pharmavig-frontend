@@ -60,12 +60,12 @@ const INITIAL: FormData = {
 };
 
 const SECTIONS = [
-  { id: 1, label: "Identité", labelDarija: "Huwiytak" },
-  { id: 2, label: "Médicament", labelDarija: "Dwa" },
-  { id: 3, label: "Ce qui s'est passé", labelDarija: "Ashmen mushkil" },
-  { id: 4, label: "Gravité", labelDarija: "Khdura" },
-  { id: 5, label: "Contexte médical", labelDarija: "Hal tibii" },
-  { id: 6, label: "Finalisation", labelDarija: "Akhir khatwa" },
+  { id: 1, label: "Identité", labelDarija: "هويتك" },
+  { id: 2, label: "Médicament", labelDarija: "الدوا" },
+  { id: 3, label: "Ce qui s'est passé", labelDarija: "أشمن مشكل" },
+  { id: 4, label: "Gravité", labelDarija: "الخطورة" },
+  { id: 5, label: "Contexte médical", labelDarija: "الحال الطبي" },
+  { id: 6, label: "Finalisation", labelDarija: "آخر خطوة" },
 ];
 
 const REGIONS = [
@@ -76,36 +76,36 @@ const REGIONS = [
 
 const SYMPTOMES_CATEGORIES = [
   {
-    cat: "🩺 Peau / Jeld",
-    items: ["Boutons / Hbob", "Rougeurs / Homra", "Démangeaisons / Chkiwa", "Gonflement / Tewrem", "Plaies / Jroh", "Peau qui pèle / Tsellakh"],
+    cat: "🩺 Peau / جلد",
+    items: ["Boutons / حبوب", "Rougeurs / حمرة", "Démangeaisons / شكيوة", "Gonflement / توورم", "Plaies / جروح", "Peau qui pèle / تسلاخ"],
   },
   {
-    cat: "🤢 Digestion / Kerch",
-    items: ["Nausées / Tqiyyan", "Vomissements / Tuqiya", "Diarrhée / Khrouj", "Douleurs ventre / Wja3 f kerch", "Constipation / Hbess", "Perte appétit / Ma3andouch cha3ra"],
+    cat: "🤢 Digestion / كرش",
+    items: ["Nausées / تقيان", "Vomissements / توقية", "Diarrhée / خروج", "Douleurs ventre / وجع فكرش", "Constipation / حبس", "Perte appétit / ما عندوش شهية"],
   },
   {
-    cat: "🧠 Tête / Ras",
-    items: ["Mal de tête / Wja3 ras", "Vertiges / Dwakha", "Vision trouble / Dhla3 f 3inayn", "Confusion / Kheltita", "Somnolence / N3ass bzaf", "Tremblements / Hriza"],
+    cat: "🧠 Tête / راس",
+    items: ["Mal de tête / وجع راس", "Vertiges / دواخة", "Vision trouble / ضلعة فعينين", "Confusion / خلطيطة", "Somnolence / نعاس بزاف", "Tremblements / هريزة"],
   },
   {
-    cat: "🫀 Cœur / Qelb",
-    items: ["Palpitations / Tkhbita", "Essoufflement / Ma kaynefss", "Douleur poitrine / Wja3 sder", "Jambes gonflées / Rejalin tewrmet", "Fatigue intense / 3ya bzaf"],
+    cat: "🫀 Cœur / قلب",
+    items: ["Palpitations / تخبيطة", "Essoufflement / ما كينفسش", "Douleur poitrine / وجع صدر", "Jambes gonflées / رجلين توورمت", "Fatigue intense / عيا بزاف"],
   },
   {
-    cat: "💊 Général / 3am",
-    items: ["Fièvre / Skhanit", "Frissons / Berrda", "Sueurs / 3raq", "Perte de poids / Nqes f wazn", "Douleurs musculaires / Wja3 f 3dham", "Réaction allergique / Hasasiya"],
+    cat: "💊 Général / عام",
+    items: ["Fièvre / سخانة", "Frissons / برودة", "Sueurs / عرق", "Perte de poids / نقص فالوزن", "Douleurs musculaires / وجع فالعظام", "Réaction allergique / حساسية"],
   },
 ];
 
 const ZONES_CORPS = [
-  { id: "tete", label: "🧠 Tête / Ras", sub: "mal de tête, vertiges..." },
-  { id: "yeux", label: "👁️ Yeux / 3inayn", sub: "vision trouble..." },
-  { id: "oreilles", label: "👂 Oreilles / Widnayn", sub: "bourdonnements..." },
-  { id: "nez", label: "👃 Nez / Gorge — Nif", sub: "saignement..." },
-  { id: "bras", label: "💪 Bras / Mains — Yeddin", sub: "fourmillements..." },
-  { id: "peau", label: "🩺 Peau / Jeld", sub: "boutons, rougeurs..." },
-  { id: "ventre", label: "🫃 Ventre / Kerch", sub: "douleurs, nausées..." },
-  { id: "jambes", label: "🦵 Jambes / Rejalin", sub: "gonflement, douleurs..." },
+  { id: "tete", label: "🧠 Tête / راس", sub: "mal de tête, vertiges..." },
+  { id: "yeux", label: "👁️ Yeux / عينين", sub: "vision trouble..." },
+  { id: "oreilles", label: "👂 Oreilles / ودنين", sub: "bourdonnements..." },
+  { id: "nez", label: "👃 Nez / Gorge — نيف", sub: "saignement..." },
+  { id: "bras", label: "💪 Bras / Mains — يدين", sub: "fourmillements..." },
+  { id: "peau", label: "🩺 Peau / جلد", sub: "boutons, rougeurs..." },
+  { id: "ventre", label: "🫃 Ventre / كرش", sub: "douleurs, nausées..." },
+  { id: "jambes", label: "🦵 Jambes / رجلين", sub: "gonflement, douleurs..." },
 ];
 
 // ─── Helper components ────────────────────────────────────────────────────────
@@ -218,7 +218,7 @@ export default function FormulairePatient() {
           <div className="text-5xl mb-4">✅</div>
           <h1 className="text-xl font-bold text-gray-900 mb-2">Déclaration envoyée !</h1>
           <p className="text-gray-500 text-sm mb-2">Vous recevrez un accusé de réception immédiat.</p>
-          <p className="text-emerald-700 text-sm font-medium mb-6" dir="rtl">Ghatwassel lik confirmation f l-hin 🇲🇦</p>
+          <p className="text-emerald-700 text-sm font-medium mb-6" dir="rtl">غيتواصل ليك كونفيرماسيون فالحين 🇲🇦</p>
           <Link href="/dashboard/patient" className="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
             Retour au tableau de bord
           </Link>
@@ -269,74 +269,74 @@ export default function FormulairePatient() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl border border-gray-200 p-5 text-sm text-gray-600">
               <p className="mb-1">🔒 <strong>Identité anonyme</strong> — aucun nom ni prénom demandé.</p>
-              <p className="text-xs text-gray-500" dir="rtl">🇲🇦 Huwiytak — ma katkhss ism wala lqab. Ghir ila baghi ytsselu bik, 3ti email wella téléphone.</p>
+              <p className="text-xs text-gray-500" dir="rtl">🇲🇦 هويتك — ما كتخص اسم ولا لقب. غير إلا باغي يتصلو بيك، عطي إيميل ولا تيليفون.</p>
             </div>
 
             <div>
-              <Label fr="Q1 — Quel est votre âge ?" dar="Shhal 3andek f 3omrek ?" required />
+              <Label fr="Q1 — Quel est votre âge ?" dar="شحال عندك فعمرك؟" required />
               <RadioGroup
                 value={form.age}
                 onChange={(v) => set("age", v)}
                 options={[
-                  { val: "<18", fr: "Moins de 18 ans", dar: "Dun 18 3am" },
-                  { val: "18-30", fr: "18 – 30 ans", dar: "18 – 30 3am" },
-                  { val: "31-45", fr: "31 – 45 ans", dar: "31 – 45 3am" },
-                  { val: "46-60", fr: "46 – 60 ans", dar: "46 – 60 3am" },
-                  { val: "61-75", fr: "61 – 75 ans", dar: "61 – 75 3am" },
-                  { val: ">75", fr: "Plus de 75 ans", dar: "Fuq 75 3am" },
-                  { val: "nr", fr: "Je préfère ne pas répondre", dar: "Ma bghitch njaweb" },
+                  { val: "<18", fr: "Moins de 18 ans", dar: "دون 18 عام" },
+                  { val: "18-30", fr: "18 – 30 ans", dar: "18 – 30 عام" },
+                  { val: "31-45", fr: "31 – 45 ans", dar: "31 – 45 عام" },
+                  { val: "46-60", fr: "46 – 60 ans", dar: "46 – 60 عام" },
+                  { val: "61-75", fr: "61 – 75 ans", dar: "61 – 75 عام" },
+                  { val: ">75", fr: "Plus de 75 ans", dar: "فوق 75 عام" },
+                  { val: "nr", fr: "Je préfère ne pas répondre", dar: "ما بغيتش نجاوب" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q2 — Quel est votre sexe ?" dar="Shkun nta / nti ?" required />
+              <Label fr="Q2 — Quel est votre sexe ?" dar="شكون نتا / نتي؟" required />
               <RadioGroup
                 value={form.sexe}
                 onChange={(v) => set("sexe", v)}
                 options={[
-                  { val: "homme", fr: "Homme", dar: "Rajel" },
-                  { val: "femme", fr: "Femme", dar: "Mra" },
-                  { val: "nr", fr: "Je préfère ne pas répondre", dar: "Ma bghitch njaweb" },
+                  { val: "homme", fr: "Homme", dar: "راجل" },
+                  { val: "femme", fr: "Femme", dar: "مرا" },
+                  { val: "nr", fr: "Je préfère ne pas répondre", dar: "ما بغيتش نجاوب" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q3 — Dans quelle région habitez-vous ?" dar="Fin kateskun ?" />
+              <Label fr="Q3 — Dans quelle région habitez-vous ?" dar="فين كتسكن؟" />
               <select
                 value={form.region}
                 onChange={(e) => set("region", e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
-                <option value="">Choisir une région / Khtar mantika</option>
+                <option value="">Choisir une région / اختار منطقة</option>
                 {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
-                <option value="nr">Je préfère ne pas répondre / Ma bghitch njaweb</option>
+                <option value="nr">Je préfère ne pas répondre / ما بغيتش نجاوب</option>
               </select>
             </div>
 
             <div>
-              <Label fr="Q4 — Êtes-vous suivi(e) par un médecin pour ce problème ?" dar="Wash 3andek tbib kayta3amlek f had l-mushkil ?" />
+              <Label fr="Q4 — Êtes-vous suivi(e) par un médecin pour ce problème ?" dar="واش عندك طبيب كيتعامل معك فهاد المشكل؟" />
               <RadioGroup
                 value={form.suivi}
                 onChange={(v) => set("suivi", v)}
                 options={[
-                  { val: "oui", fr: "Oui", dar: "Iyeh" },
-                  { val: "non", fr: "Non", dar: "La" },
-                  { val: "pasencore", fr: "Pas encore", dar: "Mazal" },
+                  { val: "oui", fr: "Oui", dar: "إيه" },
+                  { val: "non", fr: "Non", dar: "لا" },
+                  { val: "pasencore", fr: "Pas encore", dar: "مازال" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q5 — Souhaitez-vous être recontacté(e) ?" dar="Baghi/Baghya ytsselu bik ?" />
+              <Label fr="Q5 — Souhaitez-vous être recontacté(e) ?" dar="باغي/باغية يتصلو بيك؟" />
               <RadioGroup
                 value={form.contact}
                 onChange={(v) => set("contact", v)}
                 options={[
-                  { val: "email", fr: "Oui, par email", dar: "Iyeh, b email" },
-                  { val: "tel", fr: "Oui, par téléphone", dar: "Iyeh, b tilifun" },
-                  { val: "non", fr: "Non, je reste anonyme", dar: "La, bghit nbqa majhul" },
+                  { val: "email", fr: "Oui, par email", dar: "إيه، بالإيميل" },
+                  { val: "tel", fr: "Oui, par téléphone", dar: "إيه، بالتيليفون" },
+                  { val: "non", fr: "Non, je reste anonyme", dar: "لا، بغيت نبقى مجهول" },
                 ]}
               />
               {form.contact === "email" && (
@@ -356,11 +356,11 @@ export default function FormulairePatient() {
           <div className="space-y-6">
             <InfoBox
               text="Le plus simple : prenez en photo la boîte du médicament — les informations seront détectées automatiquement."
-              textDar="Ahsan haja : sur photo dla3bit dyal dwa — smiytu, numero lot w tarikh intihaa ysortiu wehdhoum."
+              textDar="أحسن حاجة: صور فوتو ديال العلبة ديال الدوا — سميتو، نومرو لو و تاريخ الانتهاء يخرجو وحدهم."
             />
 
             <div>
-              <Label fr="Q6 — Identification du médicament" dar="Huwiyat dwa" required />
+              <Label fr="Q6 — Identification du médicament" dar="هوية الدوا" required />
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <button className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 hover:border-emerald-400 rounded-xl p-4 text-sm text-gray-500 hover:text-emerald-600 transition-all">
                   📷 Photo de la boîte
@@ -370,31 +370,31 @@ export default function FormulairePatient() {
                 </button>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Saisie manuelle / Kteb b yadek</p>
-                <input type="text" placeholder="Nom du médicament / Smiyat dwa" value={form.medicamentNom} onChange={(e) => set("medicamentNom", e.target.value)}
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Saisie manuelle / كتب بيدك</p>
+                <input type="text" placeholder="Nom du médicament / سمية الدوا" value={form.medicamentNom} onChange={(e) => set("medicamentNom", e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                <input type="text" placeholder="Numéro de lot / Numero lot" value={form.medicamentLot} onChange={(e) => set("medicamentLot", e.target.value)}
+                <input type="text" placeholder="Numéro de lot / نومرو لو" value={form.medicamentLot} onChange={(e) => set("medicamentLot", e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                <input type="text" placeholder="Date de péremption (JJ/MM/AAAA) / Tarikh intihaa" value={form.medicamentPeremption} onChange={(e) => set("medicamentPeremption", e.target.value)}
+                <input type="text" placeholder="Date de péremption (JJ/MM/AAAA) / تاريخ الانتهاء" value={form.medicamentPeremption} onChange={(e) => set("medicamentPeremption", e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                <input type="text" placeholder="Laboratoire / Laboratoire" value={form.medicamentLabo} onChange={(e) => set("medicamentLabo", e.target.value)}
+                <input type="text" placeholder="Laboratoire / لابوراطوار" value={form.medicamentLabo} onChange={(e) => set("medicamentLabo", e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
             </div>
 
             <div>
-              <Label fr="Q7 — Pourquoi prenez-vous ce médicament ?" dar="3lash katakhod had dwa ?" required />
+              <Label fr="Q7 — Pourquoi prenez-vous ce médicament ?" dar="علاش كتاخود هاد الدوا؟" required />
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { val: "tension", fr: "Tension / Dhghout d-demm" },
-                  { val: "diabete", fr: "Diabète / Sokkar" },
+                  { val: "tension", fr: "Tension / ضغط الدم" },
+                  { val: "diabete", fr: "Diabète / السكر" },
                   { val: "infection", fr: "Infection" },
-                  { val: "douleurs", fr: "Douleurs / Wja3" },
-                  { val: "cancer", fr: "Cancer / Saratan" },
-                  { val: "cardiaque", fr: "Problème cardiaque / Qelb" },
-                  { val: "respiratoire", fr: "Problème respiratoire / Reaah" },
-                  { val: "digestif", fr: "Problème digestif / Kerch" },
-                  { val: "autre", fr: "Autre / Khour" },
+                  { val: "douleurs", fr: "Douleurs / الوجع" },
+                  { val: "cancer", fr: "Cancer / السرطان" },
+                  { val: "cardiaque", fr: "Problème cardiaque / القلب" },
+                  { val: "respiratoire", fr: "Problème respiratoire / الريّاح" },
+                  { val: "digestif", fr: "Problème digestif / الكرش" },
+                  { val: "autre", fr: "Autre / خور" },
                 ].map((o) => (
                   <label key={o.val} className={`flex items-center gap-2 p-3 rounded-lg border text-sm cursor-pointer transition-all ${form.indication === o.val ? "border-emerald-500 bg-emerald-50 text-emerald-800" : "border-gray-200 text-gray-700 hover:border-gray-300"}`}>
                     <input type="radio" className="accent-emerald-600" checked={form.indication === o.val} onChange={() => set("indication", o.val)} />
@@ -403,37 +403,37 @@ export default function FormulairePatient() {
                 ))}
               </div>
               {form.indication === "autre" && (
-                <input type="text" placeholder="Précisez / Wessf" value={form.indicationAutre} onChange={(e) => set("indicationAutre", e.target.value)}
+                <input type="text" placeholder="Précisez / وصّف" value={form.indicationAutre} onChange={(e) => set("indicationAutre", e.target.value)}
                   className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               )}
             </div>
 
             <div>
-              <Label fr="Q8 — Depuis combien de temps prenez-vous ce médicament ?" dar="Shhal men wqt w nta katakhdo ?" required />
+              <Label fr="Q8 — Depuis combien de temps prenez-vous ce médicament ?" dar="شحال من وقت وأنت كتاخدو؟" required />
               <RadioGroup
                 value={form.duree}
                 onChange={(v) => set("duree", v)}
                 options={[
-                  { val: "<1sem", fr: "Moins d'une semaine", dar: "Dun simana" },
-                  { val: "1-4sem", fr: "1 à 4 semaines", dar: "Simana l arb3a simanat" },
-                  { val: "1-6mois", fr: "1 à 6 mois", dar: "Shher l sitta shhor" },
-                  { val: ">6mois", fr: "Plus de 6 mois", dar: "Fuq sitta shhor" },
-                  { val: "nsp", fr: "Je ne sais pas", dar: "Ma3raftsh" },
+                  { val: "<1sem", fr: "Moins d'une semaine", dar: "دون سيمانة" },
+                  { val: "1-4sem", fr: "1 à 4 semaines", dar: "سيمانة لأربعة سيمانات" },
+                  { val: "1-6mois", fr: "1 à 6 mois", dar: "شهر لستة شهور" },
+                  { val: ">6mois", fr: "Plus de 6 mois", dar: "فوق ستة شهور" },
+                  { val: "nsp", fr: "Je ne sais pas", dar: "ما عرفتش" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q9 — Qui vous a prescrit ce médicament ?" dar="Shkun 3tak had dwa ?" required />
+              <Label fr="Q9 — Qui vous a prescrit ce médicament ?" dar="شكون عطاك هاد الدوا؟" required />
               <RadioGroup
                 value={form.prescripteur}
                 onChange={(v) => set("prescripteur", v)}
                 options={[
-                  { val: "medecin", fr: "Un médecin", dar: "Tbib" },
-                  { val: "pharmacien", fr: "Un pharmacien", dar: "Sqali" },
-                  { val: "soi-meme", fr: "Je l'ai acheté moi-même", dar: "Shrihu b rassi" },
-                  { val: "proche", fr: "Un proche", dar: "Wahd mn l-3ayla aw sshab" },
-                  { val: "autre", fr: "Autre", dar: "Khour" },
+                  { val: "medecin", fr: "Un médecin", dar: "طبيب" },
+                  { val: "pharmacien", fr: "Un pharmacien", dar: "صيدلي" },
+                  { val: "soi-meme", fr: "Je l'ai acheté moi-même", dar: "شريتو براسي" },
+                  { val: "proche", fr: "Un proche", dar: "واحد من العيلة أو الصحاب" },
+                  { val: "autre", fr: "Autre", dar: "خور" },
                 ]}
               />
             </div>
@@ -444,8 +444,8 @@ export default function FormulairePatient() {
         {step === 3 && (
           <div className="space-y-6">
             <div>
-              <Label fr="Q10 — Sur quelle partie du corps avez-vous remarqué le problème ?" dar="Fin f jesdek lqiti l-mushkil ?" required />
-              <p className="text-xs text-gray-500 mb-3">Vous pouvez sélectionner plusieurs zones / Momkin tkhtar bzaf d-zonat</p>
+              <Label fr="Q10 — Sur quelle partie du corps avez-vous remarqué le problème ?" dar="فين فجسدك لقيتي المشكل؟" required />
+              <p className="text-xs text-gray-500 mb-3">Vous pouvez sélectionner plusieurs zones / ممكن تختار بزاف ديال الزونات</p>
               <div className="grid grid-cols-2 gap-2">
                 {ZONES_CORPS.map((z) => (
                   <label key={z.id} className={`flex items-start gap-2 p-3 rounded-xl border cursor-pointer transition-all ${form.zonesCorps.includes(z.id) ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
@@ -460,7 +460,7 @@ export default function FormulairePatient() {
             </div>
 
             <div>
-              <Label fr="Q11 — Quels symptômes avez-vous ressentis ?" dar="Ashmen a3rad hessiti bihom ?" required />
+              <Label fr="Q11 — Quels symptômes avez-vous ressentis ?" dar="أشمن أعراض حسيتي بهم؟" required />
               <div className="space-y-4">
                 {SYMPTOMES_CATEGORIES.map((cat) => (
                   <div key={cat.cat} className="bg-gray-50 rounded-xl p-4">
@@ -481,42 +481,42 @@ export default function FormulairePatient() {
             </div>
 
             <div>
-              <Label fr="Q12 — Décrivez le problème avec vos propres mots" dar="Werref l-mushkil b kelmatk nta" required />
-              <InfoBox text="Pas besoin d'utiliser des mots médicaux — écrivez comme vous le raconteriez à un ami." textDar="Ma khasseksh tkun tbib — hder bhal ma kathed3i l-wahd sshabi" />
+              <Label fr="Q12 — Décrivez le problème avec vos propres mots" dar="وعرّف المشكل بكلماتك أنت" required />
+              <InfoBox text="Pas besoin d'utiliser des mots médicaux — écrivez comme vous le raconteriez à un ami." textDar="ما خاصكش تكون طبيب — هدر بحال ما كتحدّث لواحد صاحبك" />
               <textarea
                 rows={4}
                 value={form.description}
                 onChange={(e) => set("description", e.target.value)}
-                placeholder="Décrivez ce que vous avez ressenti... / Wessf ashmen haja hessiti bih..."
+                placeholder="Décrivez ce que vous avez ressenti... / وصّف أشمن حاجة حسيتي بها..."
                 className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
               />
             </div>
 
             <div>
-              <Label fr="Q13 — Quand ce problème a-t-il commencé par rapport à la prise du médicament ?" dar="Imta bdat had l-mushkil m3a had dwa ?" required />
+              <Label fr="Q13 — Quand ce problème a-t-il commencé par rapport à la prise du médicament ?" dar="إمتى بدات هاد المشكل مع هاد الدوا؟" required />
               <RadioGroup
                 value={form.delaiApparition}
                 onChange={(v) => set("delaiApparition", v)}
                 options={[
-                  { val: "meme-jour", fr: "Le jour même de la prise", dar: "Nfs nhar khdit dwa" },
-                  { val: "24h", fr: "Dans les 24 heures", dar: "F 24 sa3a" },
-                  { val: "2-7j", fr: "Entre 2 et 7 jours", dar: "Bin juji w sbi3 iyam" },
-                  { val: ">1sem", fr: "Plus d'une semaine après", dar: "Fuq simana men b3d" },
-                  { val: "nsp", fr: "Je ne sais pas", dar: "Ma3raftsh" },
+                  { val: "meme-jour", fr: "Le jour même de la prise", dar: "نفس النهار خديت الدوا" },
+                  { val: "24h", fr: "Dans les 24 heures", dar: "ف 24 ساعة" },
+                  { val: "2-7j", fr: "Entre 2 et 7 jours", dar: "بين جوج و سبع أيام" },
+                  { val: ">1sem", fr: "Plus d'une semaine après", dar: "فوق سيمانة من بعد" },
+                  { val: "nsp", fr: "Je ne sais pas", dar: "ما عرفتش" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q14 — Est-ce que ce problème est toujours présent ?" dar="Wash had l-mushkil mazal kayn ?" required />
+              <Label fr="Q14 — Est-ce que ce problème est toujours présent ?" dar="واش هاد المشكل مازال كاين؟" required />
               <RadioGroup
                 value={form.problemePersiste}
                 onChange={(v) => set("problemePersiste", v)}
                 options={[
-                  { val: "oui", fr: "Oui, toujours", dar: "Iyeh, mazal" },
-                  { val: "non", fr: "Non, c'est passé", dar: "La, dat" },
-                  { val: "partiel", fr: "Partiellement amélioré", dar: "Hsen shwiya" },
-                  { val: "nsp", fr: "Je ne sais pas", dar: "Ma3raftsh" },
+                  { val: "oui", fr: "Oui, toujours", dar: "إيه، مازال" },
+                  { val: "non", fr: "Non, c'est passé", dar: "لا، دات" },
+                  { val: "partiel", fr: "Partiellement amélioré", dar: "حسن شوية" },
+                  { val: "nsp", fr: "Je ne sais pas", dar: "ما عرفتش" },
                 ]}
               />
             </div>
@@ -528,59 +528,59 @@ export default function FormulairePatient() {
           <div className="space-y-6">
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
               ⚠️ Si vous avez été hospitalisé(e) ou si votre vie était en danger, votre déclaration sera traitée en priorité.
-              <div className="text-xs text-amber-700 mt-1" dir="rtl">Ila dkhhelti l-sbitar aw kan wdaek f khtar, had l-balgha ghatitsaraj b-awlawiya.</div>
+              <div className="text-xs text-amber-700 mt-1" dir="rtl">إلا دخلتي لسبيطار أو كان وداعك فخطر، هاد البلاغة غاتتساراج بالأولوية.</div>
             </div>
 
             <div>
-              <Label fr="Q15 — Ce problème vous a-t-il empêché(e) de faire vos activités normales ?" dar="Wash had l-mushkil khallak ma qdersh dir hayatek l-3adiya ?" required />
+              <Label fr="Q15 — Ce problème vous a-t-il empêché(e) de faire vos activités normales ?" dar="واش هاد المشكل خلاك ما قدرتش دير حياتك العادية؟" required />
               <RadioGroup
                 value={form.activitesImpactees}
                 onChange={(v) => set("activitesImpactees", v)}
                 options={[
-                  { val: "oui-total", fr: "Oui, complètement", dar: "Iyeh, bezzaf" },
-                  { val: "oui-partiel", fr: "Oui, partiellement", dar: "Iyeh, shwiya" },
-                  { val: "non", fr: "Non", dar: "La" },
+                  { val: "oui-total", fr: "Oui, complètement", dar: "إيه، بزاف" },
+                  { val: "oui-partiel", fr: "Oui, partiellement", dar: "إيه، شوية" },
+                  { val: "non", fr: "Non", dar: "لا" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q16 — Avez-vous dû aller aux urgences ou êtes-vous resté(e) hospitalisé(e) ?" dar="Wash mshiti l-urgences aw dkhhelti l-sbitar ?" required />
+              <Label fr="Q16 — Avez-vous dû aller aux urgences ou êtes-vous resté(e) hospitalisé(e) ?" dar="واش مشيتي للورجونس أو دخلتي لسبيطار؟" required />
               <RadioGroup
                 value={form.urgences}
                 onChange={(v) => set("urgences", v)}
                 options={[
-                  { val: "urgences", fr: "Oui, urgences", dar: "Iyeh, urgences" },
-                  { val: "hospitalise", fr: "Oui, hospitalisé(e)", dar: "Iyeh, dkhhelt l-sbitar" },
-                  { val: "non", fr: "Non", dar: "La" },
+                  { val: "urgences", fr: "Oui, urgences", dar: "إيه، أورجونس" },
+                  { val: "hospitalise", fr: "Oui, hospitalisé(e)", dar: "إيه، دخلت لسبيطار" },
+                  { val: "non", fr: "Non", dar: "لا" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q17 — Avez-vous arrêté le médicament ?" dar="Wash wqqefti dwa ?" required />
+              <Label fr="Q17 — Avez-vous arrêté le médicament ?" dar="واش وقفتي الدوا؟" required />
               <RadioGroup
                 value={form.arretMedicament}
                 onChange={(v) => set("arretMedicament", v)}
                 options={[
-                  { val: "oui-seul", fr: "Oui, de moi-même", dar: "Iyeh, b rassi" },
-                  { val: "oui-medecin", fr: "Oui, sur conseil du médecin", dar: "Iyeh, l-tbib qal" },
-                  { val: "non-continue", fr: "Non, je continue", dar: "La, mazal katakhdo" },
-                  { val: "non-fini", fr: "Non, j'ai terminé le traitement normalement", dar: "La, kemmeltu normal" },
+                  { val: "oui-seul", fr: "Oui, de moi-même", dar: "إيه، براسي" },
+                  { val: "oui-medecin", fr: "Oui, sur conseil du médecin", dar: "إيه، الطبيب قال" },
+                  { val: "non-continue", fr: "Non, je continue", dar: "لا، مازال كتاخدو" },
+                  { val: "non-fini", fr: "Non, j'ai terminé le traitement normalement", dar: "لا، كملتو نورمال" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q18 — Après avoir arrêté, le problème s'est-il amélioré ?" dar="Men b3d ma wqqefti, wash l-mushkil hsen ?" />
+              <Label fr="Q18 — Après avoir arrêté, le problème s'est-il amélioré ?" dar="من بعد ما وقفتي، واش المشكل حسن؟" />
               <RadioGroup
                 value={form.ameliorationApresArret}
                 onChange={(v) => set("ameliorationApresArret", v)}
                 options={[
-                  { val: "ameliore", fr: "Oui, amélioré", dar: "Iyeh, hsen" },
-                  { val: "disparu", fr: "Oui, complètement disparu", dar: "Iyeh, dat bezzaf" },
-                  { val: "non", fr: "Non, pas de changement", dar: "La, bqa bhal bhal" },
-                  { val: "pas-arrete", fr: "Je n'ai pas arrêté le médicament", dar: "Ma wqqeftsh dwa" },
+                  { val: "ameliore", fr: "Oui, amélioré", dar: "إيه، حسن" },
+                  { val: "disparu", fr: "Oui, complètement disparu", dar: "إيه، دات بزاف" },
+                  { val: "non", fr: "Non, pas de changement", dar: "لا، بقى بحال بحال" },
+                  { val: "pas-arrete", fr: "Je n'ai pas arrêté le médicament", dar: "ما وقفتش الدوا" },
                 ]}
               />
             </div>
@@ -595,21 +595,21 @@ export default function FormulairePatient() {
             </p>
 
             <div>
-              <Label fr="Q19 — Prenez-vous d'autres médicaments en même temps ?" dar="Wash katakhod diyur dwiyat f nfs l-wqt ?" />
-              <InfoBox text="Incluez vitamines, compléments alimentaires, plantes médicinales." textDar="Dakhhel vitamines, plantes, herbes" />
+              <Label fr="Q19 — Prenez-vous d'autres médicaments en même temps ?" dar="واش كتاخود دويور دويات فنفس الوقت؟" />
+              <InfoBox text="Incluez vitamines, compléments alimentaires, plantes médicinales." textDar="دخّل فيتامينات، نباتات، أعشاب" />
               <RadioGroup
                 value={form.autresMedicaments}
                 onChange={(v) => set("autresMedicaments", v)}
                 options={[
-                  { val: "oui", fr: "Oui", dar: "Iyeh" },
-                  { val: "non", fr: "Non", dar: "La" },
-                  { val: "nsp", fr: "Je ne sais pas", dar: "Ma3raftsh" },
+                  { val: "oui", fr: "Oui", dar: "إيه" },
+                  { val: "non", fr: "Non", dar: "لا" },
+                  { val: "nsp", fr: "Je ne sais pas", dar: "ما عرفتش" },
                 ]}
               />
               {form.autresMedicaments === "oui" && (
                 <textarea
                   rows={2}
-                  placeholder="Lesquels ? / Ashmenin ?"
+                  placeholder="Lesquels ? / أشمنين؟"
                   value={form.autresMedicamentsDetail}
                   onChange={(e) => set("autresMedicamentsDetail", e.target.value)}
                   className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
@@ -618,12 +618,12 @@ export default function FormulairePatient() {
             </div>
 
             <div>
-              <Label fr="Q20 — Avez-vous des maladies chroniques ?" dar="Wash 3andek mrad mzmen ?" />
+              <Label fr="Q20 — Avez-vous des maladies chroniques ?" dar="واش عندك مرض مزمن؟" />
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  "Diabète / Sokkar", "Hypertension / Dhghout", "Cancer / Saratan",
-                  "Maladie rénale / Kilwa", "Maladie cardiaque / Qelb", "Asthme / Rbou",
-                  "Non / La",
+                  "Diabète / السكر", "Hypertension / الضغط", "Cancer / السرطان",
+                  "Maladie rénale / الكلوة", "Maladie cardiaque / القلب", "Asthme / الربو",
+                  "Non / لا",
                 ].map((item) => (
                   <CheckboxItem
                     key={item}
@@ -636,18 +636,18 @@ export default function FormulairePatient() {
             </div>
 
             <div>
-              <Label fr="Q21 — Avez-vous déjà eu une réaction similaire à un médicament par le passé ?" dar="Wash men qbel 3andek reaction bhal hadi m3a dwa ?" />
+              <Label fr="Q21 — Avez-vous déjà eu une réaction similaire à un médicament par le passé ?" dar="واش من قبل عندك ريأكسيون بحال هادي مع الدوا؟" />
               <RadioGroup
                 value={form.reactionPassee}
                 onChange={(v) => set("reactionPassee", v)}
                 options={[
-                  { val: "oui", fr: "Oui", dar: "Iyeh" },
-                  { val: "non", fr: "Non", dar: "La" },
-                  { val: "nsp", fr: "Je ne sais pas", dar: "Ma3raftsh" },
+                  { val: "oui", fr: "Oui", dar: "إيه" },
+                  { val: "non", fr: "Non", dar: "لا" },
+                  { val: "nsp", fr: "Je ne sais pas", dar: "ما عرفتش" },
                 ]}
               />
               {form.reactionPassee === "oui" && (
-                <input type="text" placeholder="Lequel / Ashmen dwa ?" value={form.reactionPasseeDetail} onChange={(e) => set("reactionPasseeDetail", e.target.value)}
+                <input type="text" placeholder="Lequel / أشمن دوا؟" value={form.reactionPasseeDetail} onChange={(e) => set("reactionPasseeDetail", e.target.value)}
                   className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               )}
             </div>
@@ -658,32 +658,32 @@ export default function FormulairePatient() {
         {step === 6 && (
           <div className="space-y-6">
             <div>
-              <Label fr="Q22 — Avez-vous déjà signalé ce problème à votre médecin ou pharmacien ?" dar="Wash gher 3aref l-tbib aw l-sqali b had l-mushkil ?" />
+              <Label fr="Q22 — Avez-vous déjà signalé ce problème à votre médecin ou pharmacien ?" dar="واش غير عارف الطبيب أو الصيدلي بهاد المشكل؟" />
               <RadioGroup
                 value={form.signaleAuMedecin}
                 onChange={(v) => set("signaleAuMedecin", v)}
                 options={[
-                  { val: "medecin", fr: "Oui, au médecin", dar: "Iyeh, l-tbib 3aref" },
-                  { val: "pharmacien", fr: "Oui, au pharmacien", dar: "Iyeh, l-sqali 3aref" },
-                  { val: "les-deux", fr: "Oui, aux deux", dar: "Iyeh, juj 3arfin" },
-                  { val: "non", fr: "Non, pas encore", dar: "La, mazal" },
-                  { val: "pas-de-medecin", fr: "Non, je n'en ai pas", dar: "La, ma3andish tbib" },
+                  { val: "medecin", fr: "Oui, au médecin", dar: "إيه، الطبيب عارف" },
+                  { val: "pharmacien", fr: "Oui, au pharmacien", dar: "إيه، الصيدلي عارف" },
+                  { val: "les-deux", fr: "Oui, aux deux", dar: "إيه، جوج عارفين" },
+                  { val: "non", fr: "Non, pas encore", dar: "لا، مازال" },
+                  { val: "pas-de-medecin", fr: "Non, je n'en ai pas", dar: "لا، ما عنديش طبيب" },
                 ]}
               />
             </div>
 
             <div>
-              <Label fr="Q23 — Avez-vous des documents ou photos à joindre ?" dar="Wash 3andek wthiqa aw sura tzidha ?" />
-              <p className="text-xs text-gray-500 mb-2">Ordonnance, résultats d&apos;analyses, photo de la boîte / Ordonance, résultats, sura dla3ba</p>
+              <Label fr="Q23 — Avez-vous des documents ou photos à joindre ?" dar="واش عندك وثيقة أو صورة تزيدها؟" />
+              <p className="text-xs text-gray-500 mb-2">Ordonnance, résultats d&apos;analyses, photo de la boîte / أوردونانص، نتائج، صورة ديال العلبة</p>
               <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 hover:border-emerald-400 rounded-xl p-6 text-sm text-gray-500 hover:text-emerald-600 transition-all cursor-pointer">
-                📎 Joindre un fichier / Zid wthiqa
+                📎 Joindre un fichier / زيد وثيقة
                 <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={() => set("documents", true)} />
               </label>
             </div>
 
             {/* Récap */}
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-xs text-gray-600 space-y-1">
-              <p className="font-semibold text-gray-800 mb-2">Récapitulatif / Mlakhas</p>
+              <p className="font-semibold text-gray-800 mb-2">Récapitulatif / ملخص</p>
               <p>✅ Médicament : {form.medicamentNom || "—"}</p>
               <p>✅ Symptômes sélectionnés : {form.symptomes.length}</p>
               <p>✅ Zones concernées : {form.zonesCorps.length}</p>
@@ -703,10 +703,10 @@ export default function FormulairePatient() {
                   ✅ J&apos;accepte que ces informations soient utilisées de manière anonyme pour améliorer la sécurité des médicaments au Maroc. <span className="text-red-500">★ OBLIGATOIRE</span>
                 </p>
                 <p className="text-xs text-gray-500 mt-1" dir="rtl">
-                  🇲🇦 Qbelt bash tstakhdem had l-ma3lumat b-anonymat bach tahsen slamit dwa f l-Maghrib.
+                  🇲🇦 قبلت باش تستخدم هاد المعلومات بأنونيمات باش تحسن سلامة الدوا فالمغرب.
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
-                  Aucune information permettant de vous identifier ne sera partagée. / Walu mn ma3lumatek l-shkhsiya ghatshared.
+                  Aucune information permettant de vous identifier ne sera partagée. / والو من معلوماتك الشخصية غتتشارد.
                 </p>
               </div>
             </label>
@@ -721,7 +721,7 @@ export default function FormulairePatient() {
               disabled={!form.consentement}
               className={`w-full py-4 rounded-xl font-bold text-white text-base transition-all ${form.consentement ? "bg-emerald-600 hover:bg-emerald-700 shadow-md" : "bg-gray-300 cursor-not-allowed"}`}
             >
-              Envoyer ma déclaration / Sifet l-balgha →
+              Envoyer ma déclaration / سيفيت البلاغة →
             </button>
           </div>
         )}

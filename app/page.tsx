@@ -16,6 +16,11 @@ const STEPS = [
     title: "Envoi automatique au CAPM",
     desc: "Votre déclaration est transmise instantanément au centre de pharmacovigilance.",
   },
+  {
+    num: "04",
+    title: "Confirmation CAPM",
+    desc: "Un accusé de réception du CAPM vous est envoyé automatiquement. Votre contribution est enregistrée dans le système national de pharmacovigilance.",
+  },
 ];
 
 const STATS = [
@@ -173,10 +178,18 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Callout médical */}
+        <section className="w-full px-8 py-10 bg-white">
+          <div className="max-w-3xl mx-auto border-l-4 border-emerald-500 bg-emerald-50 rounded-r-2xl px-7 py-6">
+            <p className="text-lg font-semibold text-gray-900 mb-2">🛡️ Déclarer un effet indésirable, c'est un acte médical.</p>
+            <p className="text-gray-600 text-sm leading-relaxed">Chaque signalement protège les prochains patients. PharmaVig vous permet de contribuer à la sécurité médicamenteuse nationale en moins de 5 minutes.</p>
+          </div>
+        </section>
+
         {/* Comment ça marche */}
         <section className="w-full px-8 py-16 bg-white">
           <h2 className="text-xl font-bold text-gray-900 text-center mb-12">Comment ça marche ?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             {STEPS.map((step) => (
               <div key={step.num} className="flex flex-col items-start">
                 <div className="w-11 h-11 rounded-full bg-emerald-600 flex items-center justify-center mb-4">
@@ -247,16 +260,16 @@ function ProfileCard({
   return (
     <Link
       href={href}
-      className={`border rounded-2xl p-6 text-left transition-all flex flex-col gap-4 ${cardBg}`}
+      className={`border rounded-2xl p-6 text-center transition-all flex flex-col items-center gap-4 ${cardBg}`}
     >
       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${iconBg}`}>
         {icon}
       </div>
-      <div>
+      <div className="text-center">
         <h3 className="font-bold text-gray-900 mb-1 text-base">{title}</h3>
         <p className="text-gray-500 text-sm leading-relaxed">{description}</p>
       </div>
-      <div className="flex items-center gap-1 text-sm font-semibold text-gray-700 mt-auto">
+      <div className="flex items-center justify-center gap-1 text-sm font-semibold text-gray-700 mt-auto">
         Accéder <ArrowRight />
       </div>
     </Link>
