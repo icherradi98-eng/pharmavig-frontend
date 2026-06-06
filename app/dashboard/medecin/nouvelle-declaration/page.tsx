@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import ImputabiliteBegaud, { ImputScore } from "./ImputabiliteBegaud";
+
+const DRAFT_KEY = "pharmavig_medecin_draft";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -279,6 +281,33 @@ export default function FormulaireMedecin() {
   const [nextConcoId, setNextConcoId] = useState(1);
   const [imputScore, setImputScore] = useState<ImputScore | null>(null);
   const [pvNumber, setPvNumber] = useState("");
+  const [draftRestored, setDraftRestored] = useState(false);
+  const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Restaurer le brouillon au montage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const { form: savedForm, step: savedStep } = JSON.parse(saved);
+        setForm(savedForm);
+        setStep(savedStep || 1);
+        setDraftRestored(true);
+      }
+    } catch {}
+  }, []);
+
+  // Auto-save avec debounce 800ms après chaque changement
+  useEffect(() => {
+    if (submitted) return;
+    if (saveTimeout.current) clearTimeout(saveTimeout.current);
+    saveTimeout.current = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, step }));
+      } catch {}
+    }, 800);
+    return () => { if (saveTimeout.current) clearTimeout(saveTimeout.current); };
+  }, [form, step, submitted]);
 
   const set = <K extends keyof FormData>(field: K, value: FormData[K]) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -354,10 +383,16 @@ export default function FormulaireMedecin() {
         imput_chronologie: form.imputChronologie || undefined,
         imput_evolution_arret: form.imputEvolutionArret || undefined,
         imput_readministration: form.imputReadministration || undefined,
-        imput_conclusion: form.imputConclusion || undefined,
+        imput_conclusion: imputScore
+          ? `I${imputScore.Iscore} (C${imputScore.Cscore}/S${imputScore.Sscore})`
+          : form.imputConclusion || undefined,
         commentaires: form.commentaires || undefined,
-        raw_data: form,
+        raw_data: {
+          ...form,
+          begaud_score: imputScore ?? undefined,
+        },
       });
+      localStorage.removeItem(DRAFT_KEY);
       setSubmitted(true);
     } catch (err: unknown) {
       setSubmitError(err instanceof Error ? err.message : "Erreur lors de l'envoi");
@@ -392,7 +427,7 @@ export default function FormulaireMedecin() {
             <Link href="/dashboard/medecin" className="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
               Retour au tableau de bord
             </Link>
-            <button onClick={() => { setForm(INITIAL); setStep(1); setSubmitted(false); }}
+            <button onClick={() => { setForm(INITIAL); setStep(1); setSubmitted(false); setDraftRestored(false); localStorage.removeItem(DRAFT_KEY); }}
               className="text-sm text-gray-500 hover:text-gray-700 underline">
               Faire une nouvelle déclaration
             </button>
@@ -404,6 +439,19 @@ export default function FormulaireMedecin() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Bannière brouillon restauré */}
+      {draftRestored && (
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-2.5 flex items-center justify-between text-sm text-amber-800">
+          <span>📝 Brouillon restauré — vous avez repris là où vous vous étiez arrêté.</span>
+          <button
+            onClick={() => { setForm(INITIAL); setStep(1); setDraftRestored(false); localStorage.removeItem(DRAFT_KEY); }}
+            className="text-xs text-amber-600 hover:text-amber-800 underline ml-4"
+          >
+            Recommencer à zéro
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
