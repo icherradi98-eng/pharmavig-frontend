@@ -83,7 +83,7 @@ export default function LandingPage() {
           <span className="font-bold text-gray-900 text-lg tracking-tight">PharmaVig</span>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="#about" className="text-gray-500 hover:text-gray-900 text-sm font-medium transition-colors">
+          <Link href="/about" className="text-gray-500 hover:text-gray-900 text-sm font-medium transition-colors">
             À propos
           </Link>
           <Link href="/login" className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
