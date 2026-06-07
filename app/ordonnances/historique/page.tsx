@@ -50,8 +50,16 @@ export default function HistoriqueOrdonnances() {
     setHistory(readHistory());
   }
 
+  // Renouveler : on reprend tout (même patient, mêmes médicaments) — juste la date est rafraîchie côté formulaire.
   function handleRenew(o: SavedOrdonnance) {
-    sessionStorage.setItem(RENEW_KEY, JSON.stringify(o));
+    sessionStorage.setItem(RENEW_KEY, JSON.stringify({ mode: "renew", ordonnance: o }));
+    router.push("/ordonnances/nouvelle");
+  }
+
+  // Dupliquer : on reprend uniquement les médicaments / le type d'ordonnance (ex. même protocole pour un autre patient) — le champ patient reste à saisir.
+  function handleDuplicate(o: SavedOrdonnance) {
+    const sansPatient: SavedOrdonnance = { ...o, patient: { nom: "" } };
+    sessionStorage.setItem(RENEW_KEY, JSON.stringify({ mode: "duplicate", ordonnance: sansPatient }));
     router.push("/ordonnances/nouvelle");
   }
 
@@ -160,8 +168,8 @@ export default function HistoriqueOrdonnances() {
                           <button onClick={() => handleRenew(o)} className="text-emerald-600 hover:text-emerald-700 font-medium underline">
                             ↻ Renouveler
                           </button>
-                          <button onClick={() => handleRenew(o)} className="text-gray-500 hover:text-gray-700 underline">
-                            ⧉ Dupliquer
+                          <button onClick={() => handleDuplicate(o)} className="text-gray-500 hover:text-gray-700 underline">
+                            ⧉ Dupliquer (autre patient)
                           </button>
                           <button onClick={() => handleSignalerEIM(o)} className="text-amber-600 hover:text-amber-700 font-medium underline">
                             ⚠️ Signaler un EIM

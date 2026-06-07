@@ -7,10 +7,10 @@ import { useAuth } from "@/context/AuthContext";
 import {
   type DoctorProfile, type RecentPatient, type MedicamentRx, type OrdonnanceType,
   type MedicamentSuggestion, type InteractionResult, type SavedOrdonnance,
-  EMPTY_PROFILE, readProfile, saveProfile, readRecentPatients, pushRecentPatient,
+  EMPTY_PROFILE, readProfile, saveProfile, readRecentPatients, pushRecentPatient, removeRecentPatient,
   nextOrdonnanceNumber, emptyMedRx, posologieLabel, dureeLabel, ageFromDateNaissance,
-  searchMedicaments, checkInteraction, buildWhatsAppLink, buildSummaryText,
-  saveToHistory,
+  searchMedicaments, checkInteraction, buildWhatsAppLink, buildSummaryText, normalizeForme,
+  saveToHistory, deleteFromHistory,
 } from "@/lib/ordonnancier";
 
 const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500";
@@ -43,16 +43,22 @@ export default function NouvelleOrdonnance() {
   const [profile, setProfile] = useState<DoctorProfile>(() => readProfile());
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
-  // Pré-remplissage depuis un renouvellement (lu une seule fois, via sessionStorage)
-  const [renewalSeed] = useState<SavedOrdonnance | null>(() => {
-    if (typeof window === "undefined") return null;
+  // Pré-remplissage depuis un renouvellement OU une duplication (lu une seule fois, via sessionStorage)
+  // — "renouvellement" reprend tout (même patient) ; "duplication" ne reprend que les médicaments
+  // (le champ patient est vidé côté historique avant l'envoi, voir handleDuplicate).
+  const [{ seed: renewalSeed }] = useState<{ seed: SavedOrdonnance | null; mode: "renew" | "duplicate" | null }>(() => {
+    if (typeof window === "undefined") return { seed: null, mode: null };
     try {
       const raw = sessionStorage.getItem("pharmavig_ordo_renouvellement");
-      if (!raw) return null;
+      if (!raw) return { seed: null, mode: null };
       sessionStorage.removeItem("pharmavig_ordo_renouvellement");
-      return JSON.parse(raw) as SavedOrdonnance;
+      const parsed = JSON.parse(raw) as { mode?: "renew" | "duplicate"; ordonnance?: SavedOrdonnance } | SavedOrdonnance;
+      if (parsed && typeof parsed === "object" && "ordonnance" in parsed && parsed.ordonnance) {
+        return { seed: parsed.ordonnance, mode: parsed.mode || "renew" };
+      }
+      return { seed: parsed as SavedOrdonnance, mode: "renew" };
     } catch {
-      return null;
+      return { seed: null, mode: null };
     }
   });
 
@@ -171,8 +177,32 @@ export default function NouvelleOrdonnance() {
         doctorName={doctorName}
         specialite={specialite}
         profile={profile}
-        onBack={() => setGenerated(null)}
-        onGoToSuivi={() => router.push("/prescriptions/nouvelle")}
+        onBack={() => {
+          // On retire le brouillon de l'historique pour éviter les doublons si le médecin régénère après modification.
+          deleteFromHistory(generated.id);
+          setGenerated(null);
+        }}
+        onGoToSuivi={() => {
+          // On transmet les infos déjà saisies à la prescription suivie pour éviter une double saisie.
+          const initiales = generated.patient.nom
+            .split(/\s+/)
+            .map((p) => p[0]?.toUpperCase())
+            .filter(Boolean)
+            .join(".");
+          const firstMed = generated.meds[0];
+          const prefill = {
+            initiales,
+            age: generated.patient.age || "",
+            sexe: generated.patient.sexe === "M" || generated.patient.sexe === "F" ? generated.patient.sexe : "",
+            dci: firstMed?.dci || firstMed?.nom || "",
+            dose: firstMed?.dosage || "",
+            frequence: firstMed ? posologieLabel(firstMed) : "",
+            indication: generated.patient.motif || "",
+            dateDebut: generated.date,
+          };
+          sessionStorage.setItem("pharmavig_ordo_to_suivi", JSON.stringify(prefill));
+          router.push("/prescriptions/nouvelle");
+        }}
       />
     );
   }
@@ -243,10 +273,18 @@ export default function NouvelleOrdonnance() {
                 {patientShowSuggestions && filteredRecent.length > 0 && (
                   <ul className="absolute z-10 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                     {filteredRecent.map((p, i) => (
-                      <li key={i}>
-                        <button type="button" onMouseDown={() => pickRecentPatient(p)} className="w-full text-left px-3 py-2 text-sm hover:bg-emerald-50 flex items-center justify-between">
+                      <li key={i} className="flex items-center group">
+                        <button type="button" onMouseDown={() => pickRecentPatient(p)} className="flex-1 text-left px-3 py-2 text-sm hover:bg-emerald-50 flex items-center justify-between">
                           <span>{p.nom}</span>
                           <span className="text-xs text-gray-400">Patient récent{p.age ? ` · ${p.age}` : ""}</span>
+                        </button>
+                        <button
+                          type="button"
+                          title="Retirer des patients récents"
+                          onMouseDown={(e) => { e.preventDefault(); removeRecentPatient(p.nom); setRecentPatients(readRecentPatients()); }}
+                          className="px-2 text-gray-300 hover:text-red-500 text-xs opacity-0 group-hover:opacity-100"
+                        >
+                          ✕
                         </button>
                       </li>
                     ))}
@@ -432,24 +470,32 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
 }) {
   const [suggestions, setSuggestions] = useState<MedicamentSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searching, setSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
 
   function handleNomChange(value: string) {
     onChange({ nom: value });
     setShowSuggestions(true);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (value.trim().length < 2) { setSuggestions([]); return; }
+    if (value.trim().length < 2) { setSuggestions([]); setSearching(false); return; }
+    const requestId = ++requestIdRef.current;
+    setSearching(true);
     debounceRef.current = setTimeout(async () => {
       const res = await searchMedicaments(value);
-      setSuggestions(res);
+      if (requestIdRef.current === requestId) {
+        setSuggestions(res);
+        setSearching(false);
+      }
     }, 300);
   }
 
   function pickSuggestion(s: MedicamentSuggestion) {
+    const normalized = normalizeForme(s.forme);
     onChange({
       nom: s.nom,
       dci: s.dci || med.dci,
-      forme: (s.forme as MedicamentRx["forme"]) || med.forme,
+      forme: normalized || med.forme,
       dosage: s.dosages && s.dosages.length === 1 ? s.dosages[0] : med.dosage,
       dosagesDisponibles: s.dosages || [],
     });
@@ -478,9 +524,15 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
               placeholder="Ex. Doliprane / Paracétamol"
               autoComplete="off"
             />
-            {showSuggestions && suggestions.length > 0 && (
+            {showSuggestions && med.nom.trim().length >= 2 && (
               <ul className="absolute z-10 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                {suggestions.map((s, i) => (
+                {searching && (
+                  <li className="px-3 py-2 text-xs text-gray-400">🔄 Recherche en cours...</li>
+                )}
+                {!searching && suggestions.length === 0 && (
+                  <li className="px-3 py-2 text-xs text-gray-400">Aucun résultat dans la base ANSM — vous pouvez saisir le médicament manuellement.</li>
+                )}
+                {!searching && suggestions.map((s, i) => (
                   <li key={i}>
                     <button type="button" onMouseDown={() => pickSuggestion(s)} className="w-full text-left px-3 py-2 text-sm hover:bg-emerald-50">
                       <span className="font-medium">{s.nom}</span>
@@ -861,13 +913,16 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, onBack
           </Link>
         </div>
 
-        {/* Bandeau pharmacovigilance */}
-        <div className="mt-5 bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
+        {/* Bandeau pharmacovigilance — affiché en priorité si le médecin a coché "Activer le suivi" dans les options,
+            sinon proposé en suggestion discrète. */}
+        <div className={`mt-5 border rounded-xl p-4 flex items-start gap-3 ${ordonnance.suiviActif ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-200"}`}>
           <span className="text-xl">🛰️</span>
           <div className="flex-1">
-            <p className="text-sm font-medium text-emerald-900">Nouveau médicament prescrit — activez le suivi pharmacovigilance</p>
-            <p className="text-xs text-emerald-700 mt-0.5">Détectez automatiquement les effets indésirables grâce au suivi actif du patient (check-ins programmés, alertes en temps réel).</p>
-            <button onClick={onGoToSuivi} className="text-xs font-semibold text-emerald-700 underline mt-1.5">Activer le suivi →</button>
+            <p className={`text-sm font-medium ${ordonnance.suiviActif ? "text-emerald-900" : "text-gray-700"}`}>
+              {ordonnance.suiviActif ? "Vous avez demandé le suivi pharmacovigilance — finalisez son activation" : "Nouveau médicament prescrit — activez le suivi pharmacovigilance"}
+            </p>
+            <p className={`text-xs mt-0.5 ${ordonnance.suiviActif ? "text-emerald-700" : "text-gray-500"}`}>Détectez automatiquement les effets indésirables grâce au suivi actif du patient (check-ins programmés, alertes en temps réel).</p>
+            <button onClick={onGoToSuivi} className={`text-xs font-semibold underline mt-1.5 ${ordonnance.suiviActif ? "text-emerald-700" : "text-gray-600"}`}>Activer le suivi →</button>
           </div>
         </div>
 

@@ -39,25 +39,48 @@ function Field({ label, children, hint }: { label: string; children: React.React
 
 const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
+// Pré-remplissage depuis l'ordonnancier ("Activer le suivi" sur une ordonnance générée) — lu une seule fois.
+const RX_PREFILL_KEY = "pharmavig_ordo_to_suivi";
+
+type RxPrefill = {
+  initiales?: string; age?: string; sexe?: string;
+  dci?: string; dose?: string; frequence?: string; indication?: string; dateDebut?: string;
+};
+
+function readRxPrefill(): RxPrefill | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(RX_PREFILL_KEY);
+    if (!raw) return null;
+    sessionStorage.removeItem(RX_PREFILL_KEY);
+    return JSON.parse(raw) as RxPrefill;
+  } catch {
+    return null;
+  }
+}
+
 export default function NouvellePrescription() {
   const { user } = useAuth();
 
+  // Pré-remplissage éventuel (lu une seule fois au montage, via lazy init — jamais dans un effect)
+  const [rxPrefill] = useState<RxPrefill | null>(() => readRxPrefill());
+
   // Patient
-  const [initiales, setInitiales] = useState("");
-  const [age, setAge] = useState("");
-  const [sexe, setSexe] = useState("");
+  const [initiales, setInitiales] = useState(() => rxPrefill?.initiales || "");
+  const [age, setAge] = useState(() => rxPrefill?.age || "");
+  const [sexe, setSexe] = useState(() => rxPrefill?.sexe || "");
 
   // Médicament — autocomplete DCI
-  const [dci, setDci] = useState("");
+  const [dci, setDci] = useState(() => rxPrefill?.dci || "");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [dose, setDose] = useState("");
-  const [frequence, setFrequence] = useState("");
+  const [dose, setDose] = useState(() => rxPrefill?.dose || "");
+  const [frequence, setFrequence] = useState(() => rxPrefill?.frequence || "");
   const [duree, setDuree] = useState("");
-  const [indication, setIndication] = useState("");
-  const [dateDebut, setDateDebut] = useState(todayISO());
+  const [indication, setIndication] = useState(() => rxPrefill?.indication || "");
+  const [dateDebut, setDateDebut] = useState(() => rxPrefill?.dateDebut || todayISO());
 
   // Suivi
   const [monitoringOn, setMonitoringOn] = useState(true);
@@ -166,6 +189,12 @@ export default function NouvellePrescription() {
             et vous serez alerté immédiatement en cas de signal.
           </p>
         </div>
+
+        {rxPrefill && (
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm rounded-lg px-4 py-3 mb-5">
+            📄 Champs pré-remplis depuis votre ordonnance. Vérifiez les informations puis activez le suivi.
+          </div>
+        )}
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">⚠️ {error}</div>
