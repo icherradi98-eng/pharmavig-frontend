@@ -1,192 +1,240 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { api, ReportOut } from "@/lib/api";
 
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  brouillon:     { label: "Brouillon",        color: "bg-gray-100 text-gray-600" },
-  soumis:        { label: "Soumis",           color: "bg-blue-100 text-blue-700" },
-  transmis_capm: { label: "Transmis au CAPM", color: "bg-emerald-100 text-emerald-700" },
-  traite:        { label: "Traité",           color: "bg-violet-100 text-violet-700" },
+import Link from "next/link";
+import { useMemo } from "react";
+import {
+  ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  PieChart, Pie, Cell,
+} from "recharts";
+import { useAuth } from "@/context/AuthContext";
+import MedecinLayout, { PageHeader, SectionCard, DemoBanner, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
+import { MOCK_DECLARATIONS, MOCK_ALERTS, MOCK_PROFILE, NATIONAL_BENCHMARK } from "@/lib/mockMedecinData";
+
+const BEGAUD_LABELS: Record<number, string> = {
+  0: "Exclu", 1: "Douteux", 2: "Plausible", 3: "Vraisemblable", 4: "Très vraisemblable",
 };
 
-export default function MedecinDashboard() {
-  const { user, logout } = useAuth();
-  const [reports, setReports] = useState<ReportOut[]>([]);
-  const [loading, setLoading] = useState(true);
+const MONTH_NAMES = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
 
-  useEffect(() => {
-    api.listReports()
-      .then(setReports)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+export default function MedecinVueEnsemble() {
+  const { user } = useAuth();
+  const unread = useUnreadAlertsCount(MOCK_ALERTS.length);
 
-  const total = reports.length;
-  const serieux = reports.filter((r) => r.gravite_serieux).length;
-  const transmis = reports.filter((r) => r.status === "transmis_capm" || r.status === "traite").length;
-  const recent = reports.slice(0, 5);
+  const declarations = MOCK_DECLARATIONS;
+
+  const stats = useMemo(() => {
+    const total = declarations.length;
+    const now = new Date("2026-06-07");
+    const thisMonth = declarations.filter((d) => {
+      const dt = new Date(d.date);
+      return dt.getFullYear() === now.getFullYear() && dt.getMonth() === now.getMonth();
+    }).length;
+    const graves = declarations.filter((d) => d.grave).length;
+    const gravesPct = total ? Math.round((graves / total) * 100) : 0;
+    const begaudAvg = total ? declarations.reduce((s, d) => s + d.begaud, 0) / total : 0;
+    return { total, thisMonth, graves, gravesPct, begaudAvg };
+  }, [declarations]);
+
+  const monthlyData = useMemo(() => {
+    const now = new Date("2026-06-07");
+    const buckets: { month: string; count: number }[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = `${MONTH_NAMES[d.getMonth()]}`;
+      const count = declarations.filter((dec) => {
+        const dt = new Date(dec.date);
+        return dt.getFullYear() === d.getFullYear() && dt.getMonth() === d.getMonth();
+      }).length;
+      buckets.push({ month: label, count });
+    }
+    return buckets;
+  }, [declarations]);
+
+  const monthsWithData = monthlyData.filter((m) => m.count > 0).length;
+
+  const socData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    declarations.forEach((d) => { counts[d.meddraSoc] = (counts[d.meddraSoc] || 0) + 1; });
+    return Object.entries(counts)
+      .map(([soc, count]) => ({ soc, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+  }, [declarations]);
+
+  const graviteData = useMemo(() => {
+    const grave = declarations.filter((d) => d.grave).length;
+    const enCours = declarations.filter((d) => !d.grave && d.statut === "soumis").length;
+    const nonGrave = declarations.length - grave - enCours;
+    return [
+      { name: "Grave", value: grave, color: "#dc2626" },
+      { name: "Non grave", value: nonGrave, color: "#16a34a" },
+      { name: "En cours d'évaluation", value: enCours, color: "#9ca3af" },
+    ].filter((d) => d.value > 0);
+  }, [declarations]);
+
+  const begaudBadge = useMemo(() => {
+    const v = stats.begaudAvg;
+    let color = "bg-gray-100 text-gray-700";
+    if (v >= 3.5) color = "bg-emerald-100 text-emerald-700";
+    else if (v >= 2.5) color = "bg-blue-100 text-blue-700";
+    else if (v >= 1.5) color = "bg-gray-100 text-gray-700";
+    else color = "bg-amber-100 text-amber-700";
+    const closest = Math.round(v) as 0 | 1 | 2 | 3 | 4;
+    return { color, label: BEGAUD_LABELS[closest] ?? "" };
+  }, [stats.begaudAvg]);
+
+  const today = new Date("2026-06-07").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+  const SOC_COLORS = ["#047857", "#0d9488", "#0891b2", "#2563eb", "#7c3aed"];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">PV</span>
-          </div>
-          <div>
-            <span className="font-semibold text-gray-900">PharmaVig</span>
-            <span className="ml-2 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Médecin</span>
-          </div>
+    <MedecinLayout unreadAlerts={unread}>
+      <PageHeader title={`Bonjour Dr. ${user?.nom || "Cherradi"}`} subtitle={today} />
+      <div className="px-5 md:px-8 -mt-2 mb-2">
+        <p className="text-sm text-gray-500">{user?.specialite || MOCK_PROFILE.specialite} · {MOCK_PROFILE.etablissement}</p>
+      </div>
+
+      <DemoBanner />
+
+      {unread > 0 && (
+        <div className="mx-5 md:mx-8 mt-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-3">
+          <span className="text-amber-500 text-lg">⚠️</span>
+          <p className="text-sm text-amber-800 flex-1">
+            {unread} nouvelle{unread > 1 ? "s" : ""} alerte{unread > 1 ? "s" : ""} de sécurité concernant vos molécules
+          </p>
+          <Link href="/dashboard/medecin/alertes" className="text-sm font-semibold text-amber-700 hover:underline shrink-0">
+            Voir les alertes →
+          </Link>
         </div>
-        <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-700">Déconnexion</button>
-      </header>
+      )}
 
-      <main className="max-w-7xl mx-auto px-8 py-10">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Bonjour, Dr {user?.nom || "Docteur"} 👋</h1>
-          <p className="text-gray-500 mt-1">Tableau de bord — Interface Médecin</p>
+      <div className="px-5 md:px-8 py-6 space-y-6">
+        {/* KPI cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <SectionCard>
+            <p className="text-xs text-gray-500 mb-1">Total déclarations</p>
+            <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+            <p className="text-xs text-gray-400 mt-1">depuis votre inscription</p>
+          </SectionCard>
+          <SectionCard>
+            <p className="text-xs text-gray-500 mb-1">Ce mois-ci</p>
+            <p className="text-3xl font-bold text-emerald-600">{stats.thisMonth}</p>
+            <p className="text-xs text-gray-400 mt-1">juin 2026</p>
+          </SectionCard>
+          <SectionCard>
+            <p className="text-xs text-gray-500 mb-1">Effets graves</p>
+            <p className="text-3xl font-bold text-red-600">{stats.graves} <span className="text-base font-medium text-gray-400">({stats.gravesPct}%)</span></p>
+            <p className="text-xs text-gray-400 mt-1">critères ICH E2A</p>
+          </SectionCard>
+          <SectionCard>
+            <p className="text-xs text-gray-500 mb-1">Score Bégaud moyen</p>
+            <span className={`inline-block text-sm font-bold px-2.5 py-1 rounded-full ${begaudBadge.color}`}>
+              I{stats.begaudAvg.toFixed(1)} — {begaudBadge.label}
+            </span>
+          </SectionCard>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="text-4xl font-bold text-gray-900">{loading ? "—" : total}</div>
-            <div className="text-sm font-medium text-gray-700 mt-1">Déclarations envoyées</div>
-            <div className="text-xs text-gray-400">total</div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="text-4xl font-bold text-red-600">{loading ? "—" : serieux}</div>
-            <div className="text-sm font-medium text-gray-700 mt-1">Effets sérieux</div>
-            <div className="text-xs text-gray-400">traitement prioritaire</div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="text-4xl font-bold text-emerald-600">{loading ? "—" : transmis}</div>
-            <div className="text-sm font-medium text-gray-700 mt-1">Transmis au CAPM</div>
-            <div className="text-xs text-gray-400">confirmés</div>
-          </div>
-        </div>
-
-        {/* Layout 2 colonnes */}
-        <div className="grid grid-cols-3 gap-6">
-
-          {/* Colonne principale — 2/3 */}
-          <div className="col-span-2 flex flex-col gap-4">
-
-            {/* Action principale */}
-            <Link
-              href="/dashboard/medecin/nouvelle-declaration"
-              className="flex items-center gap-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl p-6 transition-colors"
-            >
-              <span className="text-4xl">📋</span>
-              <div>
-                <div className="font-semibold text-lg">Nouvelle déclaration d&apos;EIM</div>
-                <div className="text-emerald-100 text-sm mt-0.5">Remplir et soumettre un rapport d&apos;effet indésirable au CAPM</div>
-              </div>
-              <span className="ml-auto text-2xl">→</span>
-            </Link>
-
-            {/* Déclarations récentes */}
-            <div className="bg-white border border-gray-200 rounded-xl flex-1">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <h2 className="font-semibold text-gray-900">Déclarations récentes</h2>
-                <Link href="/dashboard/medecin/mes-declarations" className="text-xs text-emerald-600 hover:underline">
-                  Voir tout →
-                </Link>
-              </div>
-
-              {loading && (
-                <div className="px-6 py-12 text-center text-sm text-gray-400">Chargement...</div>
-              )}
-
-              {!loading && recent.length === 0 && (
-                <div className="px-6 py-12 text-center">
-                  <div className="text-4xl mb-3">📋</div>
-                  <p className="text-gray-500 font-medium">Aucune déclaration pour l&apos;instant</p>
-                  <p className="text-gray-400 text-sm mt-1">Vos déclarations soumises apparaîtront ici</p>
-                  <Link href="/dashboard/medecin/nouvelle-declaration"
-                    className="inline-block mt-4 bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700">
-                    Faire ma première déclaration
-                  </Link>
-                </div>
-              )}
-
-              {!loading && recent.map((r) => {
-                const st = STATUS_LABELS[r.status] || { label: r.status, color: "bg-gray-100 text-gray-600" };
-                const date = new Date(r.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
-                return (
-                  <div key={r.id} className="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-900 text-sm truncate">
-                          {r.drug_dci || r.drug_nom_commercial || "Médicament non précisé"}
-                        </span>
-                        {r.gravite_serieux && (
-                          <span className="text-xs bg-red-100 text-red-600 font-bold px-1.5 py-0.5 rounded-full shrink-0">⚡</span>
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-400 mt-0.5">📅 {date}{r.capm_reference ? ` · ${r.capm_reference}` : ""}</div>
-                    </div>
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${st.color}`}>{st.label}</span>
-                  </div>
-                );
-              })}
+        {/* Charts row */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          <SectionCard title="Déclarations dans le temps">
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                {monthsWithData < 3 ? (
+                  <BarChart data={monthlyData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#9ca3af" />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 12 }} stroke="#9ca3af" />
+                    <Tooltip formatter={(v) => [String(v), "Déclarations"]} />
+                    <Bar dataKey="count" fill="#059669" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                ) : (
+                  <LineChart data={monthlyData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#9ca3af" />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 12 }} stroke="#9ca3af" />
+                    <Tooltip formatter={(v) => [String(v), "Déclarations"]} />
+                    <Line type="monotone" dataKey="count" stroke="#059669" strokeWidth={2} dot={{ r: 3 }} />
+                  </LineChart>
+                )}
+              </ResponsiveContainer>
             </div>
-          </div>
+          </SectionCard>
 
-          {/* Colonne latérale — 1/3 */}
-          <div className="flex flex-col gap-4">
-
-            {/* Profil */}
-            <Link href="/dashboard/medecin/profil"
-              className="bg-white border border-gray-200 hover:border-emerald-300 rounded-xl p-5 transition-all">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold text-sm">
-                  {user?.prenom?.[0]}{user?.nom?.[0]}
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm">Dr {user?.prenom} {user?.nom}</div>
-                  <div className="text-xs text-gray-400">{user?.specialite || "Médecin"}</div>
+          <SectionCard title="Répartition par gravité">
+            <div className="h-64 relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={graviteData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={90} paddingAngle={2}>
+                    {graviteData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                  <p className="text-xs text-gray-500">déclarations</p>
                 </div>
               </div>
-              <div className="text-xs text-emerald-600 hover:underline">Modifier mon profil →</div>
-            </Link>
-
-            {/* Rappel réglementaire */}
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
-              <h3 className="font-semibold text-blue-900 text-sm mb-3">📋 Délais réglementaires</h3>
-              <div className="flex flex-col gap-2 text-xs text-blue-800">
-                <div className="flex justify-between">
-                  <span>EIM fatal / pronostic vital</span>
-                  <span className="font-bold text-red-600">7 jours</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>EIM sérieux</span>
-                  <span className="font-bold text-amber-600">15 jours</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>EIM non sérieux</span>
-                  <span className="font-semibold">90 jours</span>
-                </div>
-              </div>
-              <p className="text-xs text-blue-600 mt-3">Loi 17-04, art. 18 — CAPM Maroc</p>
             </div>
-
-            {/* Lien mes déclarations */}
-            <Link href="/dashboard/medecin/mes-declarations"
-              className="bg-white border border-gray-200 hover:border-emerald-300 rounded-xl p-5 transition-all flex items-center gap-3">
-              <span className="text-2xl">📁</span>
-              <div>
-                <div className="font-medium text-gray-900 text-sm">Mes déclarations</div>
-                <div className="text-xs text-gray-400">Historique complet</div>
-              </div>
-              <span className="ml-auto text-gray-300 text-sm">→</span>
-            </Link>
-          </div>
+            <div className="flex flex-wrap gap-3 mt-2 justify-center">
+              {graviteData.map((g) => (
+                <span key={g.name} className="flex items-center gap-1.5 text-xs text-gray-600">
+                  <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: g.color }} />
+                  {g.name} ({g.value})
+                </span>
+              ))}
+            </div>
+          </SectionCard>
         </div>
-      </main>
+
+        <SectionCard title="Vos effets indésirables les plus déclarés par système">
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={socData} layout="vertical" margin={{ left: 24 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} stroke="#9ca3af" />
+                <YAxis type="category" dataKey="soc" tick={{ fontSize: 12 }} stroke="#9ca3af" width={140} />
+                <Tooltip formatter={(v) => [String(v), "Cas déclarés"]} />
+                <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                  {socData.map((_, i) => <Cell key={i} fill={SOC_COLORS[i % SOC_COLORS.length]} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </SectionCard>
+
+        {/* Benchmark */}
+        <SectionCard title="Vous vs la communauté PharmaVig">
+          {stats.total < 5 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-400 text-sm">📊 Disponible après 5 déclarations</p>
+              <p className="text-gray-400 text-xs mt-1">Encore {5 - stats.total} déclaration{5 - stats.total > 1 ? "s" : ""} avant de débloquer cette comparaison</p>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-3">
+                <BenchmarkRow label="Taux de déclarations graves" you={`${stats.gravesPct}%`} national={`${NATIONAL_BENCHMARK.tauxGravesPct}%`} />
+                <BenchmarkRow label="Score Bégaud moyen" you={`I${stats.begaudAvg.toFixed(1)}`} national={`I${NATIONAL_BENCHMARK.begaudMoyen.toFixed(1)}`} />
+                <BenchmarkRow label="Délai moyen de déclaration après EIM" you="7 jours" national={`${NATIONAL_BENCHMARK.delaiMoyenJours} jours`} />
+              </div>
+              <p className="text-xs text-gray-400 mt-4">Comparaisons basées sur données anonymisées agrégées</p>
+            </>
+          )}
+        </SectionCard>
+      </div>
+    </MedecinLayout>
+  );
+}
+
+function BenchmarkRow({ label, you, national }: { label: string; you: string; national: string }) {
+  return (
+    <div className="flex items-center justify-between text-sm border-b border-gray-100 last:border-0 pb-3 last:pb-0">
+      <span className="text-gray-600">{label}</span>
+      <div className="flex items-center gap-4">
+        <span className="font-semibold text-emerald-700">Vous : {you}</span>
+        <span className="text-gray-400">National : {national}</span>
+      </div>
     </div>
   );
 }
