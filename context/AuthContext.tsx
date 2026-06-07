@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { api, UserOut, AuthResponse } from "@/lib/api";
 
@@ -15,15 +15,13 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserOut | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
+  const [user, setUser] = useState<UserOut | null>(() => {
+    if (typeof window === "undefined") return null;
     const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
-    setLoading(false);
-  }, []);
+    return stored ? JSON.parse(stored) : null;
+  });
+  const loading = false;
+  const router = useRouter();
 
   function saveSession(res: AuthResponse) {
     localStorage.setItem("access_token", res.access_token);

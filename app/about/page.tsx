@@ -55,7 +55,7 @@ export default function AboutPage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-5">Un problème de santé publique documenté</h2>
             <p className="text-gray-600 leading-relaxed mb-12 max-w-3xl">
-              La sous-déclaration des effets indésirables médicamenteux (EIM) est un phénomène mondial, particulièrement critique dans les pays à ressources limitées. Au Maroc, comme dans la majorité des pays d'Afrique francophone, les systèmes de pharmacovigilance existent mais restent sous-utilisés — freinés par des procédures administratives complexes, un manque d'accessibilité des outils de déclaration, et une méconnaissance des obligations légales.
+              La sous-déclaration des effets indésirables médicamenteux (EIM) est un phénomène mondial, particulièrement critique dans les pays à ressources limitées. Au Maroc, comme dans la majorité des pays d&apos;Afrique francophone, les systèmes de pharmacovigilance existent mais restent sous-utilisés — freinés par des procédures administratives complexes, un manque d&apos;accessibilité des outils de déclaration, et une méconnaissance des obligations légales.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
@@ -112,7 +112,7 @@ export default function AboutPage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Une solution construite avec et pour le terrain</h2>
             <p className="text-gray-600 mb-10 max-w-2xl">
-              PharmaVig n'est pas un outil générique adapté au contexte marocain. C'est une solution conçue depuis le terrain, par des professionnels de santé exerçant dans des centres hospitaliers universitaires marocains, en collaboration directe avec les autorités de pharmacovigilance nationales.
+              PharmaVig n&apos;est pas un outil générique adapté au contexte marocain. C&apos;est une solution conçue depuis le terrain, par des professionnels de santé exerçant dans des centres hospitaliers universitaires marocains, en collaboration directe avec les autorités de pharmacovigilance nationales.
             </p>
             <div className="flex flex-col gap-5">
               {[
@@ -146,12 +146,12 @@ export default function AboutPage() {
         {/* Section 4 — Vision */}
         <section className="w-full px-8 py-16 bg-gray-50">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Du Maroc à l'Afrique francophone</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">Du Maroc à l&apos;Afrique francophone</h2>
             <p className="text-gray-600 mb-4 max-w-3xl leading-relaxed">
-              La sous-déclaration des EIM n'est pas un problème marocain — c'est un problème africain. Avec 54 pays, plus d'1,4 milliard d'habitants et des systèmes de santé en pleine structuration, l'Afrique francophone représente le territoire où l'impact d'une pharmacovigilance digitale accessible serait le plus significatif.
+              La sous-déclaration des EIM n&apos;est pas un problème marocain — c&apos;est un problème africain. Avec 54 pays, plus d&apos;1,4 milliard d&apos;habitants et des systèmes de santé en pleine structuration, l&apos;Afrique francophone représente le territoire où l&apos;impact d&apos;une pharmacovigilance digitale accessible serait le plus significatif.
             </p>
             <p className="text-gray-600 mb-12 max-w-3xl leading-relaxed">
-              PharmaVig est déployée au Maroc en phase pilote. Notre feuille de route prévoit une extension progressive aux pays d'Afrique francophone — Tunisie, Sénégal, Côte d'Ivoire, Cameroun — en adaptant les formulaires aux autorités nationales de chaque pays.
+              PharmaVig est déployée au Maroc en phase pilote. Notre feuille de route prévoit une extension progressive aux pays d&apos;Afrique francophone — Tunisie, Sénégal, Côte d&apos;Ivoire, Cameroun — en adaptant les formulaires aux autorités nationales de chaque pays.
             </p>
 
             {/* Timeline */}

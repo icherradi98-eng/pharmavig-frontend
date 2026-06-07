@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AdminNav } from "../dashboard/page";
 
@@ -41,7 +41,7 @@ export default function AdminDeclarations() {
   const [filterSerieux, setFilterSerieux] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
-  function fetchReports() {
+  const fetchReports = useCallback(() => {
     if (!token) return;
     const params = new URLSearchParams();
     if (filterSource) params.set("source", filterSource);
@@ -56,9 +56,9 @@ export default function AdminDeclarations() {
       .then((r) => r.json())
       .then(setReports)
       .finally(() => setLoading(false));
-  }
+  }, [token, filterSource, filterSerieux, filterStatus, search]);
 
-  useEffect(() => { fetchReports(); }, [filterSource, filterSerieux, filterStatus]);
+  useEffect(() => { fetchReports(); }, [fetchReports]);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
@@ -158,7 +157,6 @@ function InfoBox({ text, textDar }: { text: string; textDar?: string }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function FormulairePatient() {
-  const router = useRouter();
   const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(INITIAL);

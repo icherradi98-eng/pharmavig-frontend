@@ -32,12 +32,6 @@ const STATS = [
   { value: "24h", label: "délai de traitement CAPM" },
 ];
 
-const PARTNERS = [
-  { name: "CAPM", full: "Centre Anti-Poison et de Pharmacovigilance du Maroc" },
-  { name: "Min. Santé", full: "Ministère de la Santé — Royaume du Maroc" },
-  { name: "UM6SS", full: "Université Mohammed VI des Sciences de la Santé" },
-];
-
 // SVG icons
 function DoctorIcon() {
   return (
@@ -183,7 +177,7 @@ export default function LandingPage() {
         {/* Callout médical */}
         <section className="w-full px-8 py-10 bg-white">
           <div className="max-w-3xl mx-auto border-l-4 border-emerald-500 bg-emerald-50 rounded-r-2xl px-7 py-6">
-            <p className="text-lg font-semibold text-gray-900 mb-2">🛡️ Déclarer un effet indésirable, c'est un acte médical.</p>
+            <p className="text-lg font-semibold text-gray-900 mb-2">🛡️ Déclarer un effet indésirable, c&apos;est un acte médical.</p>
             <p className="text-gray-600 text-sm leading-relaxed">Chaque signalement protège les prochains patients. PharmaVig vous permet de contribuer à la sécurité médicamenteuse nationale en moins de 5 minutes.</p>
           </div>
         </section>

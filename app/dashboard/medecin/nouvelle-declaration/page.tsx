@@ -416,29 +416,29 @@ function MedDRASearch({ value, code, soc, onChange }: {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+function readDraft(): { form: FormData; step: number } | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (!saved) return null;
+    const { form: savedForm, step: savedStep } = JSON.parse(saved);
+    return { form: savedForm, step: savedStep || 1 };
+  } catch {
+    return null;
+  }
+}
+
 export default function FormulaireMedecin() {
-  const [step, setStep] = useState(1);
-  const [form, setForm] = useState<FormData>(INITIAL);
+  const [draft] = useState<{ form: FormData; step: number } | null>(() => readDraft());
+  const [step, setStep] = useState(draft?.step ?? 1);
+  const [form, setForm] = useState<FormData>(draft?.form ?? INITIAL);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [nextConcoId, setNextConcoId] = useState(1);
   const [imputScore, setImputScore] = useState<ImputScore | null>(null);
   const [pvNumber, setPvNumber] = useState("");
-  const [draftRestored, setDraftRestored] = useState(false);
+  const [draftRestored, setDraftRestored] = useState(() => draft !== null);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Restaurer le brouillon au montage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(DRAFT_KEY);
-      if (saved) {
-        const { form: savedForm, step: savedStep } = JSON.parse(saved);
-        setForm(savedForm);
-        setStep(savedStep || 1);
-        setDraftRestored(true);
-      }
-    } catch {}
-  }, []);
 
   // Auto-save avec debounce 800ms après chaque changement
   useEffect(() => {

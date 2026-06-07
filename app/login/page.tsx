@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 function LoginForm() {
+  const searchParams = useSearchParams();
+  const role = searchParams.get("role");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -82,7 +85,7 @@ function LoginForm() {
           <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col gap-3 items-center">
             <p className="text-sm text-gray-500">
               Pas encore de compte ?{" "}
-              <Link href="/register" className="text-emerald-600 font-medium hover:underline">
+              <Link href={role ? `/register?role=${role}` : "/register"} className="text-emerald-600 font-medium hover:underline">
                 S&apos;inscrire
               </Link>
             </p>

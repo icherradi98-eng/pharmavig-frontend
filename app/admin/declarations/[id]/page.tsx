@@ -200,7 +200,7 @@ export default function AdminDeclarationDetail() {
                       {m.posologie && <span className="text-gray-500 ml-2 text-xs">{m.posologie}</span>}
                       {m.indication && <span className="text-gray-500 ml-2 text-xs">({m.indication})</span>}
                       {m.suspectSecondaire && <span className="ml-2 text-xs text-orange-400">Suspect secondaire</span>}
-                      {m.arretAvantEI && <span className="ml-2 text-xs text-amber-400">Arrêté avant l'EI</span>}
+                      {m.arretAvantEI && <span className="ml-2 text-xs text-amber-400">Arrêté avant l&apos;EI</span>}
                     </div>
                   </div>
                 ))}
