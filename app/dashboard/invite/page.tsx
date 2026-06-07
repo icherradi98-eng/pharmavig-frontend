@@ -36,17 +36,35 @@ export default function InviteDashboard() {
           </div>
         </div>
 
+        <p className="text-sm font-medium text-gray-700 mb-3">Vous êtes…</p>
+
         <Link
           href="/dashboard/invite/declarer"
           className="flex items-center gap-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl p-5 mb-4 transition-colors"
         >
-          <span className="text-3xl">📋</span>
+          <span className="text-3xl">🧑‍🤝‍🧑</span>
           <div>
-            <div className="font-semibold text-lg">Déclarer un effet indésirable</div>
-            <div className="text-emerald-100 text-sm">Formulaire anonyme — sans création de compte</div>
+            <div className="font-semibold text-lg">Patient ou proche</div>
+            <div className="text-emerald-100 text-sm">Formulaire patient anonyme — sans création de compte</div>
           </div>
           <span className="ml-auto text-2xl">→</span>
         </Link>
+
+        <Link
+          href="/dashboard/invite/declarer-medecin"
+          className="flex items-center gap-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-5 mb-4 transition-colors"
+        >
+          <span className="text-3xl">🩺</span>
+          <div>
+            <div className="font-semibold text-lg">Professionnel de santé</div>
+            <div className="text-blue-100 text-sm">Formulaire médecin/pharmacien complet (Bégaud, imputabilité…) — sans création de compte</div>
+          </div>
+          <span className="ml-auto text-2xl">→</span>
+        </Link>
+
+        <p className="text-xs text-gray-400 mt-2">
+          Dans les deux cas, votre déclaration est transmise de façon anonyme — aucune création de compte n&apos;est nécessaire.
+        </p>
       </main>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 import ImputabiliteBegaud, { ImputScore } from "./ImputabiliteBegaud";
 
 const DRAFT_KEY = "pharmavig_medecin_draft";
@@ -429,6 +430,7 @@ function readDraft(): { form: FormData; step: number } | null {
 }
 
 export default function FormulaireMedecin() {
+  const { user } = useAuth();
   const [draft] = useState<{ form: FormData; step: number } | null>(() => readDraft());
   const [step, setStep] = useState(draft?.step ?? 1);
   const [form, setForm] = useState<FormData>(draft?.form ?? INITIAL);
@@ -494,7 +496,8 @@ export default function FormulaireMedecin() {
     const pv = generatePvNumber();
     setPvNumber(pv);
     try {
-      await api.createReport({
+      const submitFn = user ? api.createReport : api.createAnonymousReport;
+      await submitFn({
         source: "medecin",
         patient_age: form.patientAge,
         patient_sexe: form.patientSexe,
