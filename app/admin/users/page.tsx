@@ -2,22 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AdminNav } from "../dashboard/page";
-
-const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-
-type AdminUser = {
-  id: string;
-  email: string;
-  role: string;
-  nom?: string;
-  prenom?: string;
-  specialite?: string;
-  etablissement?: string;
-  ville?: string;
-  is_active: boolean;
-  created_at: string;
-  declaration_count: number;
-};
+import { api, type AdminUser } from "@/lib/api";
 
 const ROLE_COLORS: Record<string, string> = {
   medecin: "bg-emerald-900/40 text-emerald-300",
@@ -33,8 +18,7 @@ export default function AdminUsers() {
 
   useEffect(() => {
     if (!token) return;
-    fetch(`${BASE}/admin/users`, { headers: { Authorization: `Bearer ${token}` } })
-      .then((r) => r.json())
+    api.adminListUsers()
       .then(setUsers)
       .finally(() => setLoading(false));
   }, [token]);

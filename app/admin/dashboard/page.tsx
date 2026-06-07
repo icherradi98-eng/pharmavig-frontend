@@ -3,31 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { api, type AdminStats } from "@/lib/api";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-
-type AdminReport = {
-  id: string;
-  created_at: string;
-  status: string;
-  source: string;
-  drug_dci?: string;
-  drug_nom_commercial?: string;
-  gravite_serieux: boolean;
-  imput_conclusion?: string;
-  capm_reference?: string;
-  declarant_nom?: string;
-  declarant_prenom?: string;
-};
-
-type Stats = {
-  total: number;
-  this_month: number;
-  serieux: number;
-  serieux_pct: number;
-  by_source: Record<string, number>;
-  recent: AdminReport[];
-};
+type Stats = AdminStats;
 
 const STATUS_COLORS: Record<string, string> = {
   soumis: "bg-blue-900/40 text-blue-300",
@@ -99,8 +77,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!token) return;
-    fetch(`${BASE}/admin/stats`, { headers: { Authorization: `Bearer ${token}` } })
-      .then((r) => r.json())
+    api.adminStats()
       .then(setStats)
       .finally(() => setLoading(false));
   }, [token]);

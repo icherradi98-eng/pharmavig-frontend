@@ -4,24 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { AdminNav } from "../../dashboard/page";
+import { api, type AdminReportDetail } from "@/lib/api";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-
-type AdminReport = {
-  id: string;
-  created_at: string;
-  status: string;
-  source: string;
-  drug_dci?: string;
-  drug_nom_commercial?: string;
-  gravite_serieux: boolean;
-  imput_conclusion?: string;
-  capm_reference?: string;
-  declarant_nom?: string;
-  declarant_prenom?: string;
-  declarant_email?: string;
-  raw_data?: Record<string, unknown>;
-};
+type AdminReport = AdminReportDetail;
 
 const STATUTS = [
   { val: "soumis", label: "Soumis" },
@@ -72,10 +57,7 @@ export default function AdminDeclarationDetail() {
 
   useEffect(() => {
     if (!token) return;
-    fetch(`${BASE}/admin/declarations/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
+    api.adminGetDeclaration(id)
       .then((data) => {
         setReport(data);
         setStatus(data.status || "soumis");
@@ -90,15 +72,7 @@ export default function AdminDeclarationDetail() {
     setSaving(true);
     setSaved(false);
     try {
-      const res = await fetch(`${BASE}/admin/declarations/${id}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status, capm_reference: capmRef || null }),
-      });
-      const data = await res.json();
+      const data = await api.adminUpdateDeclaration(id, { status, capm_reference: capmRef || null });
       setReport(data);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);

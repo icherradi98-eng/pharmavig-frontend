@@ -3,23 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AdminNav } from "../dashboard/page";
+import { api, type AdminReportOut } from "@/lib/api";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-
-type AdminReport = {
-  id: string;
-  created_at: string;
-  status: string;
-  source: string;
-  drug_dci?: string;
-  drug_nom_commercial?: string;
-  gravite_serieux: boolean;
-  imput_conclusion?: string;
-  capm_reference?: string;
-  declarant_nom?: string;
-  declarant_prenom?: string;
-  raw_data?: Record<string, unknown>;
-};
+type AdminReport = AdminReportOut;
 
 const STATUS_COLORS: Record<string, string> = {
   soumis: "bg-blue-900/40 text-blue-300 border-blue-800",
@@ -50,10 +36,7 @@ export default function AdminDeclarations() {
     if (filterStatus) params.set("status", filterStatus);
     if (search) params.set("search", search);
 
-    fetch(`${BASE}/admin/declarations?${params}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
+    api.adminListDeclarations(params)
       .then(setReports)
       .finally(() => setLoading(false));
   }, [token, filterSource, filterSerieux, filterStatus, search]);
