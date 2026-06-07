@@ -10,7 +10,7 @@ import {
   fetchFdaLabel, fetchAdverseEvents, fetchAnsm, fetchRxnormRelated, translateToFrench,
   unslugify, extractEffectNames, isSevere, truncate, isMajorInteraction, splitIntoItems,
   pregnancyRisk, PREGNANCY_STYLES,
-  type FdaLabel, type AdverseEvent, type AnsmDrug,
+  type FdaLabel, type AdverseEvent, type BdpmDrug,
 } from "@/lib/drugApi";
 import { MOCK_DECLARATIONS } from "@/lib/mockMedecinData";
 
@@ -34,7 +34,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
 
   const [label, setLabel] = useState<FdaLabel | null | undefined>(undefined);
   const [events, setEvents] = useState<AdverseEvent[] | undefined>(undefined);
-  const [ansm, setAnsm] = useState<AnsmDrug | null | undefined>(undefined);
+  const [bdpm, setBdpm] = useState<BdpmDrug | null | undefined>(undefined);
   const [related, setRelated] = useState<string[] | undefined>(undefined);
   const [tab, setTab] = useState<TabId>("effets");
   const [partial, setPartial] = useState(false);
@@ -47,7 +47,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
     Promise.all([
       fetchFdaLabel(name).then((r) => !cancelled && setLabel(r)),
       fetchAdverseEvents(name).then((r) => !cancelled && setEvents(r)),
-      fetchAnsm(name).then((r) => !cancelled && setAnsm(r)),
+      fetchAnsm(name).then((r) => !cancelled && setBdpm(r)),
       fetchRxnormRelated(name).then((r) => !cancelled && setRelated(r)),
     ]).finally(() => clearTimeout(timeoutFlag));
 
@@ -63,7 +63,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
   // anglais, avec sels/formes : "SITAGLIPTIN AND METFORMIN HYDROCHLORIDE").
   const dci = titleCaseFr(name);
   const fdaChemicalName = label?.generic_name && titleCaseFr(label.generic_name) !== dci ? label.generic_name : undefined;
-  const brandNames = label?.brand_name || (ansm?.denomination ? [ansm.denomination] : []);
+  const brandNames = label?.brand_name || (bdpm?.denomination ? [bdpm.denomination] : []);
 
   const localDeclarations = useMemo(
     () => MOCK_DECLARATIONS.filter((d) => d.drugDci.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(d.drugDci.toLowerCase())),
@@ -71,7 +71,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
   );
 
   const loading = label === undefined || events === undefined;
-  const noFdaData = label === null && ansm === null;
+  const noFdaData = label === null && bdpm === null;
 
   function declareWithDrug() {
     try {
@@ -102,11 +102,35 @@ function DrugProfileContent({ slug }: { slug: string }) {
                 <p className="text-gray-400 text-sm mt-1">Noms commerciaux : {brandNames.slice(0, 6).join(", ")}</p>
               )}
               <div className="flex flex-wrap gap-2 mt-4">
-                {label?.manufacturer_name?.[0] && <Badge color="bg-gray-100 text-gray-600">🏭 {label.manufacturer_name[0]}</Badge>}
+                {bdpm?.forme && <Badge color="bg-emerald-100 text-emerald-700">{bdpm.forme}</Badge>}
+                {bdpm?.voies?.[0] && <Badge color="bg-blue-100 text-blue-700">Voie : {bdpm.voies[0]}</Badge>}
+                {!bdpm?.voies?.[0] && label?.route?.[0] && <Badge color="bg-blue-100 text-blue-700">Voie : {label.route[0]}</Badge>}
                 {label?.pharm_class_epc?.[0] && <Badge color="bg-violet-100 text-violet-700">{label.pharm_class_epc[0]}</Badge>}
-                {label?.route?.[0] && <Badge color="bg-blue-100 text-blue-700">Voie : {label.route[0]}</Badge>}
-                {ansm?.forme && <Badge color="bg-emerald-100 text-emerald-700">{ansm.forme}</Badge>}
+                {label?.manufacturer_name?.[0] && <Badge color="bg-gray-100 text-gray-600">🏭 {label.manufacturer_name[0]}</Badge>}
               </div>
+
+              {bdpm && (
+                <div className="mt-4 bg-emerald-50/60 border border-emerald-100 rounded-xl px-4 py-3 text-sm text-gray-700 space-y-1.5">
+                  <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-1">Source : BDPM (ANSM, France)</p>
+                  {bdpm.denomination && <p><span className="text-gray-400">Dénomination officielle : </span>{bdpm.denomination}</p>}
+                  {bdpm.substances && bdpm.substances.length > 0 && (
+                    <p><span className="text-gray-400">Composition : </span>{bdpm.substances.join(", ")}</p>
+                  )}
+                  {bdpm.presentation?.prix !== undefined && (
+                    <p>
+                      <span className="text-gray-400">Prix de référence : </span>
+                      {bdpm.presentation.prix} € {bdpm.presentation.tauxRemboursement && `· Remboursement : ${bdpm.presentation.tauxRemboursement}`}
+                    </p>
+                  )}
+                  {bdpm.generiques && bdpm.generiques.length > 0 && (
+                    <p><span className="text-gray-400">Génériques disponibles (référence France/Maroc) : </span>{bdpm.generiques.slice(0, 3).join(" · ")}</p>
+                  )}
+                  {bdpm.conditions && bdpm.conditions.length > 0 && (
+                    <p><span className="text-gray-400">Conditions de prescription : </span>{bdpm.conditions.join(", ")}</p>
+                  )}
+                </div>
+              )}
+
               <button
                 onClick={declareWithDrug}
                 className="mt-5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
@@ -281,17 +305,21 @@ function Disclaimer() {
 
 function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined; events: AdverseEvent[]; dci: string }) {
   const effectNames = useMemo(() => extractEffectNames(label?.adverse_reactions), [label]);
-  const raw = truncate(label?.adverse_reactions, 1500);
-  const [showRaw, setShowRaw] = useState(false);
-  const [showFullRaw, setShowFullRaw] = useState(false);
 
   const chartData = events.map((e, i) => ({ ...e, isTop3: i < 3 }));
 
   return (
     <div className="space-y-6">
-      <Section title="Effets indésirables connus (données RCP)" subtitle="Noms d'effets extraits du RCP FDA et traduits via le dictionnaire MedDRA français">
-        {effectNames.length === 0 ? (
-          <p className="text-sm text-gray-400">Aucune donnée d&apos;effets indésirables structurée disponible.</p>
+      <Section title="Effets indésirables connus (données RCP)" subtitle="Noms d'effets extraits et traduits via le dictionnaire MedDRA français — jamais de texte brut anglais affiché">
+        {effectNames.length < 3 ? (
+          <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+            <p className="text-sm text-gray-600">
+              Données d&apos;effets indésirables limitées pour cette molécule dans les sources disponibles. Consultez le RCP officiel sur{" "}
+              <a href="https://dmp.sante.gov.ma" target="_blank" rel="noreferrer" className="text-emerald-700 font-medium underline">
+                dmp.sante.gov.ma
+              </a>.
+            </p>
+          </div>
         ) : (
           <ul className="space-y-1.5">
             {effectNames.map((e, i) => {
@@ -311,21 +339,6 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
               );
             })}
           </ul>
-        )}
-        {label?.adverse_reactions && (
-          <button onClick={() => setShowRaw(!showRaw)} className="mt-4 text-xs font-medium text-gray-500 hover:text-emerald-700 underline">
-            {showRaw ? "Masquer" : "Afficher"} le texte source RCP (anglais, FDA)
-          </button>
-        )}
-        {showRaw && (
-          <div className="mt-2 bg-gray-50 border border-gray-200 rounded-lg p-4 text-xs text-gray-500 leading-relaxed whitespace-pre-line">
-            {showFullRaw ? raw.full : raw.short}
-            {raw.isLong && (
-              <button onClick={() => setShowFullRaw(!showFullRaw)} className="block mt-2 text-emerald-700 font-medium underline">
-                {showFullRaw ? "Voir moins" : "Voir plus"}
-              </button>
-            )}
-          </div>
         )}
       </Section>
 

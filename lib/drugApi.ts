@@ -351,38 +351,95 @@ export async function translateToFrench(text: string): Promise<string | null> {
   }
 }
 
-// ---- ANSM / open.medicaments.fr (RCP français) ----
-export type AnsmDrug = {
+// ---- BDPM française (via medicaments-api.giygas.dev) ----
+// Source française réelle et documentée (vérifiée — open.medicaments.fr et
+// open-medicaments.fr n'existent pas / ne résolvent pas en DNS). Cette API
+// référence la base BDPM officielle (ANSM) : nom français, forme, composition,
+// génériques, prix/remboursement. Elle ne contient PAS les effets indésirables
+// ni les interactions — ces données restent issues d'OpenFDA + traduction.
+export type BdpmPresentation = { libelle?: string; prix?: number; tauxRemboursement?: string; cip13?: number };
+
+export type BdpmDrug = {
+  cis?: number;
   denomination?: string;
   forme?: string;
-  titulaires?: string[];
+  voies?: string[];
+  statut?: string;
   substances?: string[];
+  generiques?: string[];
+  presentation?: BdpmPresentation;
+  conditions?: string[];
 };
 
-export async function fetchAnsm(name: string): Promise<AnsmDrug | null> {
-  const cached = readCache<AnsmDrug | null>(name, "ansm");
+// L'API BDPM exige une recherche sans accents (ex. "ibuprofene", "metformine").
+function deaccentSearch(s: string): string {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
+type RawBdpmComposant = { denominationSubstance?: string; dosage?: string; natureComposant?: string };
+type RawBdpmGenerique = { libelle?: string };
+type RawBdpmPresentation = { libelle?: string; prix?: number; tauxRemboursement?: string; cip13?: number };
+type RawBdpmResult = {
+  cis?: number;
+  elementPharmaceutique?: string;
+  formePharmaceutique?: string;
+  voiesAdministration?: string[];
+  statusAutorisation?: string;
+  etatComercialisation?: string;
+  composition?: RawBdpmComposant[];
+  generiques?: RawBdpmGenerique[];
+  presentation?: RawBdpmPresentation[];
+  conditions?: string[] | null;
+};
+
+export async function fetchAnsm(name: string): Promise<BdpmDrug | null> {
+  const cached = readCache<BdpmDrug | null>(name, "bdpm");
   if (cached !== null) return cached;
   try {
-    const res = await fetchWithTimeout(`https://open.medicaments.fr/api/v1/medicaments?query=${encodeURIComponent(name)}&limit=5`);
+    const query = deaccentSearch(name.trim()).slice(0, 50);
+    if (query.length < 3) {
+      writeCache(name, "bdpm", null);
+      return null;
+    }
+    const res = await fetchWithTimeout(`https://medicaments-api.giygas.dev/v1/medicaments?search=${encodeURIComponent(query)}`);
     if (!res) {
-      writeCache(name, "ansm", null);
+      writeCache(name, "bdpm", null);
       return null;
     }
-    const json = await res.json();
-    const r = Array.isArray(json) ? json[0] : json?.results?.[0];
+    const json: RawBdpmResult[] = await res.json();
+    const list = Array.isArray(json) ? json : [];
+    // On privilégie une présentation active et commercialisée, sinon la première trouvée.
+    const r =
+      list.find(
+        (d) =>
+          (d.statusAutorisation || "").toLowerCase().includes("active") &&
+          (d.etatComercialisation || "").toLowerCase().includes("commercialis")
+      ) || list[0];
     if (!r) {
-      writeCache(name, "ansm", null);
+      writeCache(name, "bdpm", null);
       return null;
     }
-    const drug: AnsmDrug = {
-      denomination: r.denomination,
-      forme: r.forme_pharmaceutique,
-      titulaires: r.titulaires,
-      substances: r.substances_actives?.map((s: { denomination?: string }) => s.denomination).filter(Boolean),
+    const presentation = r.presentation?.[0];
+    const drug: BdpmDrug = {
+      cis: r.cis,
+      denomination: r.elementPharmaceutique,
+      forme: r.formePharmaceutique,
+      voies: r.voiesAdministration,
+      statut: r.statusAutorisation,
+      substances: (r.composition || [])
+        .filter((c) => c.natureComposant === "SA")
+        .map((c) => (c.dosage ? `${c.denominationSubstance} (${c.dosage})` : c.denominationSubstance))
+        .filter((s): s is string => Boolean(s)),
+      generiques: (r.generiques || []).map((g) => g.libelle).filter((s): s is string => Boolean(s)).slice(0, 5),
+      presentation: presentation
+        ? { libelle: presentation.libelle, prix: presentation.prix, tauxRemboursement: presentation.tauxRemboursement, cip13: presentation.cip13 }
+        : undefined,
+      conditions: r.conditions || undefined,
     };
-    writeCache(name, "ansm", drug);
+    writeCache(name, "bdpm", drug);
     return drug;
   } catch {
+    writeCache(name, "bdpm", null);
     return null;
   }
 }
@@ -520,6 +577,10 @@ export const MEDDRA_FR_DICT: Record<string, string> = {
   "increased creatinine": "Augmentation de la créatinine",
   "hyponatremia": "Hyponatrémie", "hyperkalemia": "Hyperkaliémie", "hypokalemia": "Hypokaliémie",
   "death": "Décès", "fatal": "Issue fatale",
+  "bullous pemphigoid": "Pemphigoïde bulleuse", "weight decreased": "Perte de poids",
+  "abdominal pain upper": "Douleurs abdominales hautes", "nasal congestion": "Congestion nasale",
+  "muscle weakness": "Faiblesse musculaire", "joint pain": "Douleurs articulaires",
+  "increased appetite": "Augmentation de l'appétit", "abnormal dreams": "Rêves anormaux",
 };
 
 export function lookupMeddraFr(term: string): string | null {
@@ -533,32 +594,46 @@ export function lookupMeddraFr(term: string): string | null {
 
 export type EffectName = { original: string; fr: string | null };
 
-// Extrait des noms d'effets individuels (et non des paragraphes entiers) à partir
-// du texte libre `adverse_reactions`. Heuristique : on découpe d'abord en phrases/
-// segments, puis on explose les énumérations (3+ termes séparés par des virgules)
-// en termes individuels — c'est la forme la plus fréquente dans les RCP FDA.
+// Termes/segments à exclure systématiquement : ce sont des bouts de phrases de
+// contexte clinique (méthodologie d'étude, coordonnées, pourcentages...) et non
+// des noms d'effets indésirables — on ne veut conserver QUE des noms courts.
+const EFFECT_SKIP_PATTERNS = [
+  /patient/i, /trial/i, /study/i, /placebo/i,
+  /N=\d+/i, /week \d+/i, /\d+\.\d+%/,
+  /contact/i, /1-800/i, /www\./i,
+  /FDA/i, /reported in/i, /treated with/i,
+  /compared/i, /incidence/i,
+];
+
+// Extrait des noms d'effets individuels courts (jamais de paragraphes/texte brut)
+// à partir du texte libre `adverse_reactions` d'OpenFDA. On découpe sur la
+// ponctuation forte, on filtre tout ce qui ressemble à du contexte clinique,
+// puis on explose les énumérations ("nausea, vomiting and diarrhea") en termes
+// individuels et on traduit chacun via le mini-dictionnaire MedDRA français.
 export function extractEffectNames(text?: string): EffectName[] {
   if (!text) return [];
-  const segments = splitIntoItems(text);
-  const names: string[] = [];
-  for (const seg of segments) {
-    const commaParts = seg.split(/,|\bet\b|\band\b/i).map((s) => s.trim()).filter(Boolean);
-    if (commaParts.length >= 3 && commaParts.every((p) => p.length < 60)) {
-      names.push(...commaParts);
-    } else if (seg.length < 80) {
-      names.push(seg);
-    }
-  }
+
+  const candidates = text
+    .split(/[.;\n]/)
+    .map((p) => p.trim())
+    .filter((p) => p.length > 2 && p.length < 60)
+    .filter((p) => !EFFECT_SKIP_PATTERNS.some((r) => r.test(p)))
+    .filter((p) => !/^\d/.test(p));
+
   const seen = new Set<string>();
   const out: EffectName[] = [];
-  for (const raw of names) {
-    const cleaned = raw.replace(/^[-•\d.\s]+/, "").replace(/[.;:]+$/g, "").trim();
-    if (cleaned.length < 3 || cleaned.length > 70) continue;
-    const key = cleaned.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push({ original: cleaned, fr: lookupMeddraFr(cleaned) });
-    if (out.length >= 30) break;
+  outer: for (const raw of candidates) {
+    const commaParts = raw.split(/,|\bet\b|\band\b/i).map((s) => s.trim()).filter(Boolean);
+    const items = commaParts.length >= 3 && commaParts.every((p) => p.length < 60) ? commaParts : [raw];
+    for (const item of items) {
+      const cleaned = item.replace(/^[-•\d.\s]+/, "").replace(/[.;:]+$/g, "").trim();
+      if (cleaned.length < 3 || cleaned.length > 60) continue;
+      const key = cleaned.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ original: cleaned, fr: lookupMeddraFr(cleaned) });
+      if (out.length >= 20) break outer;
+    }
   }
   return out;
 }
