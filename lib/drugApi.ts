@@ -188,9 +188,16 @@ async function fetchFdaJson(url: string): Promise<{ results?: RawFdaResult[] } |
   }
 }
 
-export async function fetchFdaLabel(name: string): Promise<FdaLabel | null> {
-  const cached = readCache<FdaLabel | null>(name, "fda_label");
-  if (cached !== null) return cached;
+// Découpe un nom de médicament composé en ses molécules individuelles
+// ("Sitagliptine et Metformine" -> ["Sitagliptine", "Metformine"])
+export function splitDrugComponents(name: string): string[] {
+  return name
+    .split(/\s*(?:\bet\b|\band\b|\/|\+|,)\s*/i)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 2);
+}
+
+async function fetchSingleFdaLabel(name: string): Promise<FdaLabel | null> {
   try {
     let r: RawFdaResult | undefined;
     for (const candidate of candidateNames(name)) {
@@ -200,11 +207,8 @@ export async function fetchFdaLabel(name: string): Promise<FdaLabel | null> {
       r = json?.results?.[0];
       if (r) break;
     }
-    if (!r) {
-      writeCache(name, "fda_label", null);
-      return null;
-    }
-    const label: FdaLabel = {
+    if (!r) return null;
+    return {
       generic_name: r.openfda?.generic_name?.[0],
       brand_name: r.openfda?.brand_name,
       manufacturer_name: r.openfda?.manufacturer_name,
@@ -218,11 +222,48 @@ export async function fetchFdaLabel(name: string): Promise<FdaLabel | null> {
       contraindications: arrJoin(r.contraindications),
       pregnancy: arrJoin(r.pregnancy),
     };
-    writeCache(name, "fda_label", label);
-    return label;
   } catch {
     return null;
   }
+}
+
+function mergeText(a?: string, b?: string): string | undefined {
+  if (a && b) return a === b ? a : `${a}\n\n${b}`;
+  return a || b;
+}
+
+export async function fetchFdaLabel(name: string): Promise<FdaLabel | null> {
+  const cached = readCache<FdaLabel | null>(name, "fda_label");
+  if (cached !== null) return cached;
+
+  const label = await fetchSingleFdaLabel(name);
+
+  // Les associations fixes (ex. "Sitagliptine et Metformine") n'ont pas toujours
+  // de notice FDA dédiée avec un champ "drug_interactions" rempli — on complète
+  // alors avec les données de chaque molécule individuelle.
+  const components = splitDrugComponents(name);
+  let merged = label;
+  if (components.length > 1 && (!label?.drug_interactions || !label?.contraindications)) {
+    for (const comp of components) {
+      if (comp.toLowerCase() === name.trim().toLowerCase()) continue;
+      const compLabel = await fetchSingleFdaLabel(comp);
+      if (!compLabel) continue;
+      merged = merged
+        ? {
+            ...merged,
+            drug_interactions: merged.drug_interactions || mergeText(merged.drug_interactions, compLabel.drug_interactions),
+            contraindications: merged.contraindications || mergeText(merged.contraindications, compLabel.contraindications),
+            adverse_reactions: merged.adverse_reactions || compLabel.adverse_reactions,
+            indications_and_usage: merged.indications_and_usage || compLabel.indications_and_usage,
+            dosage_and_administration: merged.dosage_and_administration || compLabel.dosage_and_administration,
+            pregnancy: merged.pregnancy || compLabel.pregnancy,
+          }
+        : compLabel;
+    }
+  }
+
+  writeCache(name, "fda_label", merged ?? null);
+  return merged ?? null;
 }
 
 function arrJoin(v: unknown): string | undefined {
@@ -421,6 +462,105 @@ export function detectFrequency(text: string): ParsedEffect["frequency"] {
 export function parseEffects(text?: string): ParsedEffect[] {
   if (!text) return [];
   return splitIntoItems(text).map((t) => ({ text: t, severe: isSevere(t), frequency: detectFrequency(t) }));
+}
+
+// ---- Mini-dictionnaire MedDRA FR (termes d'effets indésirables courants) ----
+// Couvre les termes les plus fréquemment rencontrés dans les RCP FDA pour les
+// classes de molécules les plus déclarées sur PharmaVig (oncologie, diabète,
+// antibiotiques, AINS, cardiovasculaire...). Liste non exhaustive — les termes
+// absents sont affichés avec leur libellé original.
+export const MEDDRA_FR_DICT: Record<string, string> = {
+  "nausea": "Nausées", "nauseas": "Nausées", "vomiting": "Vomissements",
+  "diarrhea": "Diarrhée", "diarrhoea": "Diarrhée", "constipation": "Constipation",
+  "abdominal pain": "Douleurs abdominales", "stomach pain": "Douleurs d'estomac",
+  "headache": "Céphalées", "headaches": "Céphalées", "dizziness": "Sensations vertigineuses",
+  "fatigue": "Fatigue", "asthenia": "Asthénie", "somnolence": "Somnolence",
+  "insomnia": "Insomnie", "anxiety": "Anxiété", "depression": "Dépression",
+  "rash": "Éruption cutanée", "pruritus": "Prurit", "itching": "Démangeaisons",
+  "urticaria": "Urticaire", "hives": "Urticaire",
+  "fever": "Fièvre", "pyrexia": "Pyrexie", "chills": "Frissons",
+  "cough": "Toux", "dyspnea": "Dyspnée", "shortness of breath": "Essoufflement",
+  "decreased appetite": "Diminution de l'appétit", "anorexia": "Anorexie",
+  "weight loss": "Perte de poids", "weight gain": "Prise de poids",
+  "hypoglycemia": "Hypoglycémie", "hyperglycemia": "Hyperglycémie",
+  "lactic acidosis": "Acidose lactique", "vitamin b12 deficiency": "Carence en vitamine B12",
+  "flatulence": "Flatulences", "dyspepsia": "Dyspepsie",
+  "myalgia": "Myalgies", "arthralgia": "Arthralgies", "back pain": "Douleurs dorsales",
+  "muscle spasms": "Spasmes musculaires", "muscle pain": "Douleurs musculaires",
+  "peripheral edema": "Œdèmes périphériques", "edema": "Œdèmes",
+  "hypertension": "Hypertension artérielle", "hypotension": "Hypotension",
+  "tachycardia": "Tachycardie", "bradycardia": "Bradycardie",
+  "palpitations": "Palpitations", "chest pain": "Douleurs thoraciques",
+  "anemia": "Anémie", "anaemia": "Anémie", "neutropenia": "Neutropénie",
+  "thrombocytopenia": "Thrombopénie", "leukopenia": "Leucopénie",
+  "agranulocytosis": "Agranulocytose",
+  "elevated liver enzymes": "Élévation des enzymes hépatiques",
+  "hepatotoxicity": "Hépatotoxicité", "jaundice": "Ictère",
+  "renal impairment": "Insuffisance rénale", "kidney injury": "Atteinte rénale",
+  "dry mouth": "Sécheresse buccale", "mouth ulcers": "Aphtes buccaux",
+  "stomatitis": "Stomatite", "mucositis": "Mucite",
+  "alopecia": "Alopécie", "hair loss": "Perte de cheveux",
+  "dry skin": "Peau sèche", "photosensitivity": "Photosensibilité",
+  "blurred vision": "Vision trouble", "dry eyes": "Sécheresse oculaire",
+  "tinnitus": "Acouphènes", "hearing loss": "Perte d'audition",
+  "numbness": "Engourdissement", "tingling": "Picotements", "paresthesia": "Paresthésies",
+  "tremor": "Tremblements", "confusion": "Confusion",
+  "anaphylaxis": "Anaphylaxie", "anaphylactic reaction": "Réaction anaphylactique",
+  "angioedema": "Angio-œdème", "stevens-johnson syndrome": "Syndrome de Stevens-Johnson",
+  "toxic epidermal necrolysis": "Nécrolyse épidermique toxique",
+  "myocarditis": "Myocardite", "pneumonitis": "Pneumopathie inflammatoire",
+  "colitis": "Colite", "hepatitis": "Hépatite", "pancreatitis": "Pancréatite",
+  "hypothyroidism": "Hypothyroïdie", "hyperthyroidism": "Hyperthyroïdie",
+  "adrenal insufficiency": "Insuffisance surrénalienne",
+  "infusion reaction": "Réaction liée à la perfusion", "infusion-related reaction": "Réaction liée à la perfusion",
+  "injection site reaction": "Réaction au site d'injection",
+  "upper respiratory tract infection": "Infection des voies respiratoires supérieures",
+  "urinary tract infection": "Infection urinaire", "nasopharyngitis": "Rhinopharyngite",
+  "decreased hemoglobin": "Diminution de l'hémoglobine",
+  "increased creatinine": "Augmentation de la créatinine",
+  "hyponatremia": "Hyponatrémie", "hyperkalemia": "Hyperkaliémie", "hypokalemia": "Hypokaliémie",
+  "death": "Décès", "fatal": "Issue fatale",
+};
+
+export function lookupMeddraFr(term: string): string | null {
+  const key = term.trim().toLowerCase().replace(/[.,;:]+$/g, "");
+  if (MEDDRA_FR_DICT[key]) return MEDDRA_FR_DICT[key];
+  for (const [en, fr] of Object.entries(MEDDRA_FR_DICT)) {
+    if (key === en || key.includes(en)) return fr;
+  }
+  return null;
+}
+
+export type EffectName = { original: string; fr: string | null };
+
+// Extrait des noms d'effets individuels (et non des paragraphes entiers) à partir
+// du texte libre `adverse_reactions`. Heuristique : on découpe d'abord en phrases/
+// segments, puis on explose les énumérations (3+ termes séparés par des virgules)
+// en termes individuels — c'est la forme la plus fréquente dans les RCP FDA.
+export function extractEffectNames(text?: string): EffectName[] {
+  if (!text) return [];
+  const segments = splitIntoItems(text);
+  const names: string[] = [];
+  for (const seg of segments) {
+    const commaParts = seg.split(/,|\bet\b|\band\b/i).map((s) => s.trim()).filter(Boolean);
+    if (commaParts.length >= 3 && commaParts.every((p) => p.length < 60)) {
+      names.push(...commaParts);
+    } else if (seg.length < 80) {
+      names.push(seg);
+    }
+  }
+  const seen = new Set<string>();
+  const out: EffectName[] = [];
+  for (const raw of names) {
+    const cleaned = raw.replace(/^[-•\d.\s]+/, "").replace(/[.;:]+$/g, "").trim();
+    if (cleaned.length < 3 || cleaned.length > 70) continue;
+    const key = cleaned.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ original: cleaned, fr: lookupMeddraFr(cleaned) });
+    if (out.length >= 30) break;
+  }
+  return out;
 }
 
 export function truncate(text: string | undefined, max = 1000): { short: string; isLong: boolean; full: string } {

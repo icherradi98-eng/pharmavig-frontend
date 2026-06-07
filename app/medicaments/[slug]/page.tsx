@@ -8,7 +8,7 @@ import {
 } from "recharts";
 import {
   fetchFdaLabel, fetchAdverseEvents, fetchAnsm, fetchRxnormRelated, translateToFrench,
-  unslugify, parseEffects, truncate, isMajorInteraction, splitIntoItems,
+  unslugify, extractEffectNames, isSevere, truncate, isMajorInteraction, splitIntoItems,
   pregnancyRisk, PREGNANCY_STYLES,
   type FdaLabel, type AdverseEvent, type AnsmDrug,
 } from "@/lib/drugApi";
@@ -22,14 +22,6 @@ const TABS = [
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
-
-const FREQ_LABELS: Record<string, string> = {
-  tres_frequent: "Très fréquents (>10%)",
-  frequent: "Fréquents (1-10%)",
-  peu_frequent: "Peu fréquents (<1%)",
-  rare: "Rares",
-};
-const FREQ_ORDER = ["tres_frequent", "frequent", "peu_frequent", "rare", "non_classes"];
 
 export default function MedicamentProfil() {
   const params = useParams<{ slug: string }>();
@@ -66,7 +58,11 @@ function DrugProfileContent({ slug }: { slug: string }) {
     document.title = `${capitalize(name)} — Effets indésirables & Données de sécurité | PharmaVig Maroc`;
   }, [name]);
 
-  const dci = label?.generic_name || ansm?.substances?.[0] || capitalize(name);
+  // On affiche la DCI telle que recherchée par l'utilisateur (en français), pas la
+  // dénomination chimique brute renvoyée par la FDA (souvent en majuscules, en
+  // anglais, avec sels/formes : "SITAGLIPTIN AND METFORMIN HYDROCHLORIDE").
+  const dci = titleCaseFr(name);
+  const fdaChemicalName = label?.generic_name && titleCaseFr(label.generic_name) !== dci ? label.generic_name : undefined;
   const brandNames = label?.brand_name || (ansm?.denomination ? [ansm.denomination] : []);
 
   const localDeclarations = useMemo(
@@ -98,7 +94,10 @@ function DrugProfileContent({ slug }: { slug: string }) {
           <>
             {/* Header */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-              <h1 className="text-3xl font-bold text-blue-700">{capitalize(dci)}</h1>
+              <h1 className="text-3xl font-bold text-blue-700">{dci}</h1>
+              {fdaChemicalName && (
+                <p className="text-gray-400 text-xs mt-1">Dénomination FDA : {fdaChemicalName}</p>
+              )}
               {brandNames.length > 0 && (
                 <p className="text-gray-400 text-sm mt-1">Noms commerciaux : {brandNames.slice(0, 6).join(", ")}</p>
               )}
@@ -164,45 +163,66 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-// Les textes RCP d'OpenFDA sont en anglais. Ce bouton propose une traduction
-// automatique à la demande (évite de saturer l'API gratuite de traduction au chargement).
-function TranslatableBlock({ text }: { text?: string }) {
-  const [mode, setMode] = useState<"idle" | "loading" | "done" | "error">("idle");
-  const [translated, setTranslated] = useState<string | null>(null);
+// Met en forme une DCI française à partir du slug recherché :
+// "sitagliptine-et-metformine" -> "Sitagliptine et metformine"
+const FR_LOWERCASE_WORDS = new Set(["et", "de", "du", "des", "le", "la", "les", "à", "en"]);
+function titleCaseFr(s: string): string {
+  const words = s.trim().split(/\s+/);
+  return words
+    .map((w, i) => (i > 0 && FR_LOWERCASE_WORDS.has(w.toLowerCase()) ? w.toLowerCase() : capitalize(w.toLowerCase())))
+    .join(" ");
+}
 
-  if (!text?.trim()) return null;
+// Affiche un champ clinique FDA (en anglais) automatiquement traduit en français.
+// On ne montre jamais le texte anglais brut sans avoir tenté de le traduire au préalable —
+// en cas d'échec de la traduction, le texte source est affiché avec une mention explicite.
+function FrenchClinicalText({ text }: { text?: string }) {
+  const snippet = useMemo(() => truncate(text, 900), [text]);
+  const [state, setState] = useState<{ status: "loading" | "done" | "error"; value?: string }>(() =>
+    snippet.short ? { status: "loading" } : { status: "error" }
+  );
 
-  function handleTranslate() {
-    setMode("loading");
-    translateToFrench(text!).then((t) => {
-      if (t) {
-        setTranslated(t);
-        setMode("done");
-      } else {
-        setMode("error");
-      }
+  useEffect(() => {
+    let cancelled = false;
+    if (!snippet.short) return;
+    translateToFrench(snippet.short).then((t) => {
+      if (cancelled) return;
+      if (t) setState({ status: "done", value: t });
+      else setState({ status: "error" });
     });
+    return () => { cancelled = true; };
+  }, [snippet.short]);
+
+  if (!snippet.short) return <p className="text-sm text-gray-400">Donnée non disponible.</p>;
+
+  if (state.status === "loading") {
+    return (
+      <div className="space-y-2 animate-pulse">
+        <div className="h-3.5 w-full bg-gray-100 rounded" />
+        <div className="h-3.5 w-5/6 bg-gray-100 rounded" />
+        <div className="h-3.5 w-2/3 bg-gray-100 rounded" />
+        <p className="text-xs text-gray-400 pt-1">🌐 Traduction du RCP en cours…</p>
+      </div>
+    );
+  }
+
+  if (state.status === "done" && state.value) {
+    return (
+      <div>
+        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{state.value}</p>
+        <p className="text-[11px] text-blue-500 mt-2">
+          🌐 Traduction automatique (FDA, anglais → français) — à vérifier auprès du RCP marocain officiel et du CAPM.
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="mt-3">
-      {mode === "idle" && (
-        <button onClick={handleTranslate} className="text-xs font-medium text-blue-600 hover:underline">
-          🌐 Traduire en français (automatique)
-        </button>
-      )}
-      {mode === "loading" && <p className="text-xs text-gray-400">Traduction en cours…</p>}
-      {mode === "done" && translated && (
-        <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2.5">
-          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{translated}</p>
-          <p className="text-[11px] text-blue-500 mt-2">
-            🌐 Traduction automatique (FDA, anglais → français) — à vérifier auprès du RCP marocain officiel et du CAPM.
-          </p>
-        </div>
-      )}
-      {mode === "error" && (
-        <p className="text-xs text-gray-400">Traduction indisponible pour le moment — texte source affiché en anglais.</p>
-      )}
+    <div>
+      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-2">
+        ⚠️ Traduction automatique indisponible pour le moment — texte source affiché en anglais (FDA), à interpréter avec précaution.
+      </p>
+      <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-line">{snippet.short}</p>
     </div>
   );
 }
@@ -260,17 +280,7 @@ function Disclaimer() {
 /* ---------------- TAB 1 — Effets indésirables ---------------- */
 
 function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined; events: AdverseEvent[]; dci: string }) {
-  const effects = useMemo(() => parseEffects(label?.adverse_reactions), [label]);
-  const grouped = useMemo(() => {
-    const g: Record<string, typeof effects> = {};
-    for (const e of effects) {
-      const key = e.frequency || "non_classes";
-      g[key] = g[key] || [];
-      g[key].push(e);
-    }
-    return g;
-  }, [effects]);
-
+  const effectNames = useMemo(() => extractEffectNames(label?.adverse_reactions), [label]);
   const raw = truncate(label?.adverse_reactions, 1500);
   const [showRaw, setShowRaw] = useState(false);
   const [showFullRaw, setShowFullRaw] = useState(false);
@@ -279,30 +289,32 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
 
   return (
     <div className="space-y-6">
-      <Section title="Effets indésirables connus (données RCP)">
-        {effects.length === 0 ? (
+      <Section title="Effets indésirables connus (données RCP)" subtitle="Noms d'effets extraits du RCP FDA et traduits via le dictionnaire MedDRA français">
+        {effectNames.length === 0 ? (
           <p className="text-sm text-gray-400">Aucune donnée d&apos;effets indésirables structurée disponible.</p>
         ) : (
-          <div className="space-y-4">
-            {FREQ_ORDER.filter((k) => grouped[k]?.length).map((k) => (
-              <div key={k}>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{FREQ_LABELS[k] || "Non classés"}</p>
-                <ul className="space-y-1.5">
-                  {grouped[k].slice(0, 12).map((e, i) => (
-                    <li key={i} className={`text-sm rounded-lg px-3 py-2 ${e.severe ? "bg-red-50 text-red-700 border border-red-100" : "bg-gray-50 text-gray-600"}`}>
-                      {e.severe && <span className="font-semibold mr-1">⚠️</span>}
-                      {e.text}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <ul className="space-y-1.5">
+            {effectNames.map((e, i) => {
+              const severe = isSevere(e.original);
+              return (
+                <li key={i} className={`text-sm rounded-lg px-3 py-2 ${severe ? "bg-red-50 text-red-700 border border-red-100" : "bg-gray-50 text-gray-600"}`}>
+                  {severe && <span className="font-semibold mr-1">⚠️</span>}
+                  {e.fr ? (
+                    <span>{e.fr}</span>
+                  ) : (
+                    <span>
+                      <span className="italic">{capitalize(e.original)}</span>
+                      <span className="block text-xs text-gray-400 mt-0.5">(terme original : {e.original})</span>
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         )}
-        <TranslatableBlock text={label?.adverse_reactions} />
         {label?.adverse_reactions && (
           <button onClick={() => setShowRaw(!showRaw)} className="mt-4 text-xs font-medium text-gray-500 hover:text-emerald-700 underline">
-            {showRaw ? "Masquer" : "Afficher"} les données brutes FDA (anglais)
+            {showRaw ? "Masquer" : "Afficher"} le texte source RCP (anglais, FDA)
           </button>
         )}
         {showRaw && (
@@ -354,58 +366,33 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
 /* ---------------- TAB 2 — Indications & Posologie ---------------- */
 
 function TabIndications({ label }: { label: FdaLabel | null | undefined }) {
-  const indications = truncate(label?.indications_and_usage);
-  const dosage = truncate(label?.dosage_and_administration);
   const risk = pregnancyRisk(label?.pregnancy);
   const style = PREGNANCY_STYLES[risk];
-  const [expandInd, setExpandInd] = useState(false);
-  const [expandDos, setExpandDos] = useState(false);
 
   return (
     <div className="space-y-6">
-      <Section title="Indications">
-        <ExpandableText t={indications} expanded={expandInd} onToggle={() => setExpandInd(!expandInd)} />
-        <TranslatableBlock text={indications.short} />
+      <Section title="Indications" subtitle="Texte source FDA traduit automatiquement en français">
+        <FrenchClinicalText text={label?.indications_and_usage} />
       </Section>
 
-      <Section title="Posologie et mode d'administration">
-        <ExpandableText t={dosage} expanded={expandDos} onToggle={() => setExpandDos(!expandDos)} />
-        <TranslatableBlock text={dosage.short} />
+      <Section title="Posologie et mode d'administration" subtitle="Texte source FDA traduit automatiquement en français">
+        <FrenchClinicalText text={label?.dosage_and_administration} />
       </Section>
 
       <Section title="Grossesse et allaitement">
-        <div className={`flex items-center gap-3 border rounded-xl px-4 py-3 ${style.color}`}>
+        <div className={`flex items-center gap-3 border rounded-xl px-4 py-3 mb-3 ${style.color}`}>
           <span className={`w-3 h-3 rounded-full ${style.dot}`} />
           <span className="text-sm font-semibold">{style.label}</span>
         </div>
-        {label?.pregnancy && (
-          <>
-            <p className="text-sm text-gray-500 mt-3 leading-relaxed whitespace-pre-line">{truncate(label.pregnancy, 600).short}</p>
-            <TranslatableBlock text={truncate(label.pregnancy, 480).short} />
-          </>
-        )}
+        {label?.pregnancy && <FrenchClinicalText text={label.pregnancy} />}
       </Section>
 
       <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
         <p className="text-xs text-blue-800 leading-relaxed">
-          Ces informations sont issues des données FDA/RCP. Consultez toujours le RCP marocain officiel et le CAPM pour les
-          spécificités locales.
+          Ces informations sont issues des données FDA/RCP, traduites automatiquement. Consultez toujours le RCP marocain
+          officiel et le CAPM pour les spécificités locales.
         </p>
       </div>
-    </div>
-  );
-}
-
-function ExpandableText({ t, expanded, onToggle }: { t: { short: string; full: string; isLong: boolean }; expanded: boolean; onToggle: () => void }) {
-  if (!t.short) return <p className="text-sm text-gray-400">Donnée non disponible.</p>;
-  return (
-    <div>
-      <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{expanded ? t.full : t.short}</p>
-      {t.isLong && (
-        <button onClick={onToggle} className="mt-2 text-xs font-medium text-emerald-700 underline">
-          {expanded ? "Voir moins" : "Voir plus"}
-        </button>
-      )}
     </div>
   );
 }
@@ -415,29 +402,35 @@ function ExpandableText({ t, expanded, onToggle }: { t: { short: string; full: s
 function TabInteractions({ label }: { label: FdaLabel | null | undefined }) {
   const interactions = useMemo(() => splitIntoItems(label?.drug_interactions || ""), [label]);
   const contraindications = useMemo(() => splitIntoItems(label?.contraindications || ""), [label]);
-  const [showAllInteractions, setShowAllInteractions] = useState(false);
-  const [showAllContra, setShowAllContra] = useState(false);
+  const [showSourceInteractions, setShowSourceInteractions] = useState(false);
+  const [showSourceContra, setShowSourceContra] = useState(false);
 
   return (
     <div className="space-y-6">
-      <Section title="Interactions médicamenteuses">
-        {interactions.length === 0 ? (
-          <p className="text-sm text-gray-400">Aucune interaction documentée dans cette source.</p>
+      <Section title="Interactions médicamenteuses" subtitle="Texte source FDA traduit automatiquement en français">
+        {!label?.drug_interactions ? (
+          <p className="text-sm text-gray-400">Aucune interaction documentée dans cette source — vérifiez auprès du CAPM ou du RCP marocain officiel.</p>
         ) : (
           <>
-            <ExpandableList items={interactions} expanded={showAllInteractions} onToggle={() => setShowAllInteractions(!showAllInteractions)} />
-            <TranslatableBlock text={truncate(label?.drug_interactions, 480).short} />
+            <FrenchClinicalText text={label.drug_interactions} />
+            <button onClick={() => setShowSourceInteractions(!showSourceInteractions)} className="mt-3 text-xs font-medium text-gray-500 hover:text-emerald-700 underline">
+              {showSourceInteractions ? "Masquer" : "Voir la liste détaillée (texte source anglais, FDA)"}
+            </button>
+            {showSourceInteractions && <ExpandableList items={interactions} />}
           </>
         )}
       </Section>
 
-      <Section title="Contre-indications">
-        {contraindications.length === 0 ? (
-          <p className="text-sm text-gray-400">Aucune contre-indication documentée dans cette source.</p>
+      <Section title="Contre-indications" subtitle="Texte source FDA traduit automatiquement en français">
+        {!label?.contraindications ? (
+          <p className="text-sm text-gray-400">Aucune contre-indication documentée dans cette source — vérifiez auprès du CAPM ou du RCP marocain officiel.</p>
         ) : (
           <>
-            <ExpandableList items={contraindications} expanded={showAllContra} onToggle={() => setShowAllContra(!showAllContra)} />
-            <TranslatableBlock text={truncate(label?.contraindications, 480).short} />
+            <FrenchClinicalText text={label.contraindications} />
+            <button onClick={() => setShowSourceContra(!showSourceContra)} className="mt-3 text-xs font-medium text-gray-500 hover:text-emerald-700 underline">
+              {showSourceContra ? "Masquer" : "Voir la liste détaillée (texte source anglais, FDA)"}
+            </button>
+            {showSourceContra && <ExpandableList items={contraindications} />}
           </>
         )}
       </Section>
@@ -445,10 +438,11 @@ function TabInteractions({ label }: { label: FdaLabel | null | undefined }) {
   );
 }
 
-function ExpandableList({ items, expanded, onToggle }: { items: string[]; expanded: boolean; onToggle: () => void }) {
+function ExpandableList({ items }: { items: string[] }) {
+  const [expanded, setExpanded] = useState(false);
   const visible = expanded ? items : items.slice(0, 5);
   return (
-    <div>
+    <div className="mt-2">
       <ul className="space-y-1.5">
         {visible.map((t, i) => {
           const major = isMajorInteraction(t);
@@ -461,7 +455,7 @@ function ExpandableList({ items, expanded, onToggle }: { items: string[]; expand
         })}
       </ul>
       {items.length > 5 && (
-        <button onClick={onToggle} className="mt-3 text-xs font-medium text-emerald-700 underline">
+        <button onClick={() => setExpanded(!expanded)} className="mt-3 text-xs font-medium text-emerald-700 underline">
           {expanded ? "Réduire" : `Voir toutes les ${items.length} entrées`}
         </button>
       )}
