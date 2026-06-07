@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function PatientDashboard() {
+  const { logout } = useAuth();
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
@@ -13,7 +17,7 @@ export default function PatientDashboard() {
             <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Patient</span>
           </div>
         </div>
-        <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700">Déconnexion</Link>
+        <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-700">Déconnexion</button>
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-10">

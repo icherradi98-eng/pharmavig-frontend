@@ -54,6 +54,15 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
+  // Connexion admin : passe par le même endpoint /auth/login (et donc la même
+  // base d'URL centralisée) ; la vérification du rôle "admin" et le stockage
+  // dans `admin_token`/`admin_user` restent gérés côté page de connexion admin.
+  adminLogin: (email: string, password: string) =>
+    request<AuthResponse>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    }),
+
   // Reports
   createReport: (data: Record<string, unknown>) =>
     request<ReportOut>("/reports/", { method: "POST", body: JSON.stringify(data) }),
