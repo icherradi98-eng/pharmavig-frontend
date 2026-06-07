@@ -32,13 +32,13 @@ export default function PharmacienDashboard() {
         </div>
 
         <Link
-          href="/dashboard/pharmacien/nouvelle-declaration"
+          href="/declarer"
           className="flex items-center gap-4 bg-violet-600 hover:bg-violet-700 text-white rounded-xl p-5 mb-4 transition-colors"
         >
           <span className="text-3xl">📋</span>
           <div>
             <div className="font-semibold text-lg">Nouvelle déclaration d&apos;EIM</div>
-            <div className="text-violet-100 text-sm">Signaler un effet indésirable observé en officine</div>
+            <div className="text-violet-100 text-sm">Signaler un effet indésirable observé en officine — en attendant l&apos;interface dédiée pharmacien, utilisez le formulaire de déclaration</div>
           </div>
           <span className="ml-auto text-2xl">→</span>
         </Link>

@@ -45,7 +45,7 @@ export const api = {
 
 // ── Types partagés ────────────────────────────────────────────────────────────
 
-export type UserRole = "medecin" | "patient" | "pharmacien";
+export type UserRole = "medecin" | "patient" | "pharmacien" | "admin";
 
 export type UserOut = {
   id: string;

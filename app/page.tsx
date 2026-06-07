@@ -239,8 +239,8 @@ export default function LandingPage() {
               </div>
               <p className="text-gray-400 text-sm mb-5 leading-relaxed">La pharmacovigilance digitale au Maroc.</p>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#about" className="text-gray-400 hover:text-white transition-colors">À propos</Link></li>
-                <li><Link href="#about" className="text-gray-400 hover:text-white transition-colors">Notre mission</Link></li>
+                <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">À propos</Link></li>
+                <li><Link href="/about#mission" className="text-gray-400 hover:text-white transition-colors">Notre mission</Link></li>
                 <li><a href="mailto:contact@pharmavig.ma" className="text-gray-400 hover:text-white transition-colors">contact@pharmavig.ma</a></li>
               </ul>
             </div>
@@ -261,10 +261,10 @@ export default function LandingPage() {
               <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">Ressources</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/medicaments" className="text-gray-400 hover:text-white transition-colors">Référentiel médicaments</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Comment ça marche</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Guide de déclaration (PDF)</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Formulaire CAPM officiel</Link></li>
+                <li><span className="text-gray-600 cursor-default">Comment ça marche <span className="text-xs text-gray-700">(bientôt)</span></span></li>
+                <li><span className="text-gray-600 cursor-default">FAQ <span className="text-xs text-gray-700">(bientôt)</span></span></li>
+                <li><span className="text-gray-600 cursor-default">Guide de déclaration (PDF) <span className="text-xs text-gray-700">(bientôt)</span></span></li>
+                <li><a href="https://capm.ma" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">Formulaire CAPM officiel ↗</a></li>
               </ul>
             </div>
 
@@ -275,7 +275,7 @@ export default function LandingPage() {
                 <li><Link href="/confidentialite" className="text-gray-400 hover:text-white transition-colors">Politique de confidentialité</Link></li>
                 <li><Link href="/conditions" className="text-gray-400 hover:text-white transition-colors">Conditions d&apos;utilisation</Link></li>
                 <li><Link href="/mentions-legales" className="text-gray-400 hover:text-white transition-colors">Mentions légales</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Loi 09-08 (protection données)</Link></li>
+                <li><span className="text-gray-600 cursor-default">Loi 09-08 (protection données) <span className="text-xs text-gray-700">(bientôt)</span></span></li>
               </ul>
             </div>
           </div>

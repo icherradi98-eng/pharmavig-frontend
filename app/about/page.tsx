@@ -73,7 +73,7 @@ export default function AboutPage() {
         </section>
 
         {/* Section 2 — Mission */}
-        <section className="w-full px-8 py-16 bg-gray-50">
+        <section id="mission" className="w-full px-8 py-16 bg-gray-50 scroll-mt-20">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Rendre la pharmacovigilance accessible à tous</h2>
             <p className="text-gray-600 mb-10 max-w-2xl">
@@ -260,7 +260,7 @@ export default function AboutPage() {
               <p className="text-gray-400 text-sm mb-5 leading-relaxed">La pharmacovigilance digitale au Maroc.</p>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">À propos</Link></li>
-                <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">Notre mission</Link></li>
+                <li><Link href="/about#mission" className="text-gray-400 hover:text-white transition-colors">Notre mission</Link></li>
                 <li><a href="mailto:contact@pharmavig.ma" className="text-gray-400 hover:text-white transition-colors">contact@pharmavig.ma</a></li>
               </ul>
             </div>
@@ -275,10 +275,10 @@ export default function AboutPage() {
             <div>
               <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">Ressources</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Comment ça marche</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Guide de déclaration (PDF)</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Formulaire CAPM officiel</Link></li>
+                <li><span className="text-gray-600 cursor-default">Comment ça marche <span className="text-xs text-gray-700">(bientôt)</span></span></li>
+                <li><span className="text-gray-600 cursor-default">FAQ <span className="text-xs text-gray-700">(bientôt)</span></span></li>
+                <li><span className="text-gray-600 cursor-default">Guide de déclaration (PDF) <span className="text-xs text-gray-700">(bientôt)</span></span></li>
+                <li><a href="https://capm.ma" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">Formulaire CAPM officiel ↗</a></li>
               </ul>
             </div>
             <div>
@@ -287,7 +287,7 @@ export default function AboutPage() {
                 <li><Link href="/confidentialite" className="text-gray-400 hover:text-white transition-colors">Politique de confidentialité</Link></li>
                 <li><Link href="/conditions" className="text-gray-400 hover:text-white transition-colors">Conditions d&apos;utilisation</Link></li>
                 <li><Link href="/mentions-legales" className="text-gray-400 hover:text-white transition-colors">Mentions légales</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Loi 09-08</Link></li>
+                <li><span className="text-gray-600 cursor-default">Loi 09-08 <span className="text-xs text-gray-700">(bientôt)</span></span></li>
               </ul>
             </div>
           </div>
