@@ -80,6 +80,9 @@ export default function LandingPage() {
           <Link href="/about" className="text-gray-500 hover:text-gray-900 text-sm font-medium transition-colors">
             À propos
           </Link>
+          <Link href="/medicaments" className="text-gray-500 hover:text-gray-900 text-sm font-medium transition-colors">
+            Médicaments
+          </Link>
           <Link href="/login" className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
             Connexion
           </Link>
@@ -257,6 +260,7 @@ export default function LandingPage() {
             <div>
               <h3 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">Ressources</h3>
               <ul className="space-y-2 text-sm">
+                <li><Link href="/medicaments" className="text-gray-400 hover:text-white transition-colors">Référentiel médicaments</Link></li>
                 <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Comment ça marche</Link></li>
                 <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
                 <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Guide de déclaration (PDF)</Link></li>
