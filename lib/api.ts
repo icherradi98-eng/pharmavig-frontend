@@ -98,6 +98,11 @@ export const api = {
 
 export type UserRole = "medecin" | "patient" | "pharmacien" | "admin";
 
+// Reflètent les enums Python ReportStatus / ReportSource (backend/app/models/report.py)
+// — garder en phase si le backend ajoute/renomme une valeur.
+export type ReportStatus = "brouillon" | "soumis" | "transmis_capm" | "traite";
+export type ReportSourceType = "medecin" | "patient" | "pharmacien" | "invite";
+
 export type UserOut = {
   id: string;
   email: string;
@@ -117,8 +122,8 @@ export type AuthResponse = {
 export type ReportOut = {
   id: string;
   created_at: string;
-  status: string;
-  source: string;
+  status: ReportStatus;
+  source: ReportSourceType;
   drug_dci?: string;
   drug_nom_commercial?: string;
   gravite_serieux: boolean;
@@ -131,8 +136,8 @@ export type ReportOut = {
 export type AdminReportOut = {
   id: string;
   created_at: string;
-  status: string;
-  source: string;
+  status: ReportStatus;
+  source: ReportSourceType;
   drug_dci?: string;
   drug_nom_commercial?: string;
   gravite_serieux: boolean;
