@@ -141,19 +141,65 @@ export type FdaLabel = {
   pregnancy?: string;
 };
 
+// L'API OpenFDA référence les médicaments sous leur nom anglais/USAN
+// (ex. "ibuprofen", "amoxicillin", "metformin") alors que la DCI française
+// utilise souvent une orthographe différente ("ibuprofène", "amoxicilline",
+// "metformine"). On génère donc plusieurs variantes du nom à essayer.
+function deaccent(s: string): string {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+export function candidateNames(name: string): string[] {
+  const base = deaccent(name.trim().toLowerCase());
+  const variants = new Set<string>([name.trim(), base]);
+  // "-ine" -> "-in" (amoxicilline -> amoxicillin, metformine -> metformin, atorvastatine -> atorvastatin)
+  if (base.endsWith("ine")) variants.add(base.slice(0, -1));
+  // "-ene"/"-ène" -> "-en" (ibuprofène -> ibuprofen)
+  if (base.endsWith("ene")) variants.add(base.slice(0, -1));
+  // generic trailing "e" drop (only if not already covered, e.g. some adjectives)
+  if (base.endsWith("e") && !base.endsWith("ate") && !base.endsWith("ide")) variants.add(base.slice(0, -1));
+  return [...variants].filter(Boolean);
+}
+
+type RawFdaResult = {
+  openfda?: {
+    generic_name?: string[];
+    brand_name?: string[];
+    manufacturer_name?: string[];
+    route?: string[];
+    pharm_class_epc?: string[];
+  };
+  warnings_and_cautions?: unknown;
+  adverse_reactions?: unknown;
+  drug_interactions?: unknown;
+  indications_and_usage?: unknown;
+  dosage_and_administration?: unknown;
+  contraindications?: unknown;
+  pregnancy?: unknown;
+};
+
+async function fetchFdaJson(url: string): Promise<{ results?: RawFdaResult[] } | null> {
+  const res = await fetchWithTimeout(url);
+  if (!res) return null;
+  try {
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchFdaLabel(name: string): Promise<FdaLabel | null> {
   const cached = readCache<FdaLabel | null>(name, "fda_label");
   if (cached !== null) return cached;
   try {
-    const res = await fetchWithTimeout(
-      `https://api.fda.gov/drug/label.json?search=openfda.generic_name:"${encodeURIComponent(name)}"&limit=1`
-    );
-    if (!res) {
-      writeCache(name, "fda_label", null);
-      return null;
+    let r: RawFdaResult | undefined;
+    for (const candidate of candidateNames(name)) {
+      const json = await fetchFdaJson(
+        `https://api.fda.gov/drug/label.json?search=openfda.generic_name:"${encodeURIComponent(candidate)}"&limit=1`
+      );
+      r = json?.results?.[0];
+      if (r) break;
     }
-    const json = await res.json();
-    const r = json?.results?.[0];
     if (!r) {
       writeCache(name, "fda_label", null);
       return null;
@@ -213,6 +259,55 @@ export async function fetchAdverseEvents(name: string): Promise<AdverseEvent[]> 
 
 function titleCase(s: string): string {
   return s.replace(/\w\S*/g, (t) => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
+}
+
+// ---- Traduction automatique EN → FR (MyMemory, gratuite, sans clé) ----
+// Les textes RCP d'OpenFDA sont en anglais. On les traduit côté client avec
+// un fallback propre si l'API de traduction est indisponible ou limite atteinte.
+
+const TRANSLATE_MAX = 480; // limite raisonnable par requête côté API gratuite
+const TRANSLATE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+function simpleHash(s: string): string {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (h << 5) - h + s.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h).toString(36);
+}
+
+export async function translateToFrench(text: string): Promise<string | null> {
+  if (!text?.trim()) return null;
+  const snippet = text.slice(0, TRANSLATE_MAX);
+  const key = `pharmavig_translate_${simpleHash(snippet)}`;
+  if (typeof window !== "undefined") {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const { data, ts } = JSON.parse(raw);
+        if (Date.now() - ts < TRANSLATE_TTL_MS) return data as string;
+      }
+    } catch {}
+  }
+  try {
+    const res = await fetchWithTimeout(
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(snippet)}&langpair=en|fr`,
+      6000
+    );
+    if (!res) return null;
+    const json = await res.json();
+    const translated = json?.responseData?.translatedText;
+    if (translated && json?.responseStatus === 200 && !/MYMEMORY WARNING/i.test(translated)) {
+      if (typeof window !== "undefined") {
+        try { localStorage.setItem(key, JSON.stringify({ data: translated, ts: Date.now() })); } catch {}
+      }
+      return translated as string;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 // ---- ANSM / open.medicaments.fr (RCP français) ----

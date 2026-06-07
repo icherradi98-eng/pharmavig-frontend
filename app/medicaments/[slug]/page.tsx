@@ -7,7 +7,7 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell,
 } from "recharts";
 import {
-  fetchFdaLabel, fetchAdverseEvents, fetchAnsm, fetchRxnormRelated,
+  fetchFdaLabel, fetchAdverseEvents, fetchAnsm, fetchRxnormRelated, translateToFrench,
   unslugify, parseEffects, truncate, isMajorInteraction, splitIntoItems,
   pregnancyRisk, PREGNANCY_STYLES,
   type FdaLabel, type AdverseEvent, type AnsmDrug,
@@ -164,6 +164,49 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+// Les textes RCP d'OpenFDA sont en anglais. Ce bouton propose une traduction
+// automatique à la demande (évite de saturer l'API gratuite de traduction au chargement).
+function TranslatableBlock({ text }: { text?: string }) {
+  const [mode, setMode] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [translated, setTranslated] = useState<string | null>(null);
+
+  if (!text?.trim()) return null;
+
+  function handleTranslate() {
+    setMode("loading");
+    translateToFrench(text!).then((t) => {
+      if (t) {
+        setTranslated(t);
+        setMode("done");
+      } else {
+        setMode("error");
+      }
+    });
+  }
+
+  return (
+    <div className="mt-3">
+      {mode === "idle" && (
+        <button onClick={handleTranslate} className="text-xs font-medium text-blue-600 hover:underline">
+          🌐 Traduire en français (automatique)
+        </button>
+      )}
+      {mode === "loading" && <p className="text-xs text-gray-400">Traduction en cours…</p>}
+      {mode === "done" && translated && (
+        <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2.5">
+          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{translated}</p>
+          <p className="text-[11px] text-blue-500 mt-2">
+            🌐 Traduction automatique (FDA, anglais → français) — à vérifier auprès du RCP marocain officiel et du CAPM.
+          </p>
+        </div>
+      )}
+      {mode === "error" && (
+        <p className="text-xs text-gray-400">Traduction indisponible pour le moment — texte source affiché en anglais.</p>
+      )}
+    </div>
+  );
+}
+
 function Badge({ children, color }: { children: React.ReactNode; color: string }) {
   return <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${color}`}>{children}</span>;
 }
@@ -256,9 +299,10 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
             ))}
           </div>
         )}
+        <TranslatableBlock text={label?.adverse_reactions} />
         {label?.adverse_reactions && (
           <button onClick={() => setShowRaw(!showRaw)} className="mt-4 text-xs font-medium text-gray-500 hover:text-emerald-700 underline">
-            {showRaw ? "Masquer" : "Afficher"} les données brutes FDA
+            {showRaw ? "Masquer" : "Afficher"} les données brutes FDA (anglais)
           </button>
         )}
         {showRaw && (
@@ -321,10 +365,12 @@ function TabIndications({ label }: { label: FdaLabel | null | undefined }) {
     <div className="space-y-6">
       <Section title="Indications">
         <ExpandableText t={indications} expanded={expandInd} onToggle={() => setExpandInd(!expandInd)} />
+        <TranslatableBlock text={indications.short} />
       </Section>
 
       <Section title="Posologie et mode d'administration">
         <ExpandableText t={dosage} expanded={expandDos} onToggle={() => setExpandDos(!expandDos)} />
+        <TranslatableBlock text={dosage.short} />
       </Section>
 
       <Section title="Grossesse et allaitement">
@@ -333,7 +379,10 @@ function TabIndications({ label }: { label: FdaLabel | null | undefined }) {
           <span className="text-sm font-semibold">{style.label}</span>
         </div>
         {label?.pregnancy && (
-          <p className="text-sm text-gray-500 mt-3 leading-relaxed whitespace-pre-line">{truncate(label.pregnancy, 600).short}</p>
+          <>
+            <p className="text-sm text-gray-500 mt-3 leading-relaxed whitespace-pre-line">{truncate(label.pregnancy, 600).short}</p>
+            <TranslatableBlock text={truncate(label.pregnancy, 480).short} />
+          </>
         )}
       </Section>
 
@@ -375,7 +424,10 @@ function TabInteractions({ label }: { label: FdaLabel | null | undefined }) {
         {interactions.length === 0 ? (
           <p className="text-sm text-gray-400">Aucune interaction documentée dans cette source.</p>
         ) : (
-          <ExpandableList items={interactions} expanded={showAllInteractions} onToggle={() => setShowAllInteractions(!showAllInteractions)} />
+          <>
+            <ExpandableList items={interactions} expanded={showAllInteractions} onToggle={() => setShowAllInteractions(!showAllInteractions)} />
+            <TranslatableBlock text={truncate(label?.drug_interactions, 480).short} />
+          </>
         )}
       </Section>
 
@@ -383,7 +435,10 @@ function TabInteractions({ label }: { label: FdaLabel | null | undefined }) {
         {contraindications.length === 0 ? (
           <p className="text-sm text-gray-400">Aucune contre-indication documentée dans cette source.</p>
         ) : (
-          <ExpandableList items={contraindications} expanded={showAllContra} onToggle={() => setShowAllContra(!showAllContra)} />
+          <>
+            <ExpandableList items={contraindications} expanded={showAllContra} onToggle={() => setShowAllContra(!showAllContra)} />
+            <TranslatableBlock text={truncate(label?.contraindications, 480).short} />
+          </>
         )}
       </Section>
     </div>
