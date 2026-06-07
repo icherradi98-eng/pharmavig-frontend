@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import ImputabiliteBegaud, { ImputScore } from "./ImputabiliteBegaud";
 
 const DRAFT_KEY = "pharmavig_medecin_draft";
+const PREFILL_KEY = "pharmavig_prefill_declaration";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -429,17 +430,31 @@ function readDraft(): { form: FormData; step: number } | null {
   }
 }
 
+function readPrefill(): Partial<FormData> | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = sessionStorage.getItem(PREFILL_KEY);
+    if (!saved) return null;
+    sessionStorage.removeItem(PREFILL_KEY);
+    return JSON.parse(saved) as Partial<FormData>;
+  } catch {
+    return null;
+  }
+}
+
 export default function FormulaireMedecin() {
   const { user } = useAuth();
   const [draft] = useState<{ form: FormData; step: number } | null>(() => readDraft());
+  const [prefill] = useState<Partial<FormData> | null>(() => (draft ? null : readPrefill()));
   const [step, setStep] = useState(draft?.step ?? 1);
-  const [form, setForm] = useState<FormData>(draft?.form ?? INITIAL);
+  const [form, setForm] = useState<FormData>(draft?.form ?? (prefill ? { ...INITIAL, ...prefill } : INITIAL));
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [nextConcoId, setNextConcoId] = useState(1);
   const [imputScore, setImputScore] = useState<ImputScore | null>(null);
   const [pvNumber, setPvNumber] = useState("");
   const [draftRestored, setDraftRestored] = useState(() => draft !== null);
+  const [prefilled, setPrefilled] = useState(() => prefill !== null);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-save avec debounce 800ms après chaque changement
@@ -601,6 +616,19 @@ export default function FormulaireMedecin() {
             className="text-xs text-amber-600 hover:text-amber-800 underline ml-4"
           >
             Recommencer à zéro
+          </button>
+        </div>
+      )}
+
+      {/* Bannière pré-remplissage depuis le suivi actif */}
+      {prefilled && (
+        <div className="bg-emerald-50 border-b border-emerald-200 px-6 py-2.5 flex items-center justify-between text-sm text-emerald-800">
+          <span>🛰️ Formulaire pré-rempli depuis le suivi patient actif. Vérifiez et complétez les informations cliniques avant soumission.</span>
+          <button
+            onClick={() => setPrefilled(false)}
+            className="text-xs text-emerald-600 hover:text-emerald-800 underline ml-4"
+          >
+            Compris
           </button>
         </div>
       )}

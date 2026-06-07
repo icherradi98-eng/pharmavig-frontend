@@ -74,6 +74,25 @@ export const api = {
 
   getReport: (id: string) => request<ReportDetail>(`/reports/${id}`),
 
+  // Surveillance active des patients (prescriptions + suivi)
+  createPrescription: (data: Record<string, unknown>) =>
+    request<PrescriptionOut>("/prescriptions", { method: "POST", body: JSON.stringify(data) }),
+
+  listPrescriptions: () => request<PrescriptionOut[]>("/prescriptions"),
+
+  getPrescription: (id: string) => request<PrescriptionDetail>(`/prescriptions/${id}`),
+
+  listActiveSignals: () => request<CheckInOut[]>("/prescriptions/alerts"),
+
+  markCheckinSeen: (checkinId: string) =>
+    request<CheckInOut>(`/prescriptions/checkins/${checkinId}/seen`, { method: "POST" }),
+
+  // Suivi patient public (sans authentification, via lien /suivi/{token})
+  getCheckinPublic: (token: string) => request<CheckinPublicOut>(`/suivi/${token}`),
+
+  submitCheckin: (token: string, data: Record<string, unknown>) =>
+    request<CheckinPublicOut>(`/suivi/${token}`, { method: "POST", body: JSON.stringify(data) }),
+
   // Admin (token dédié `admin_token`, espace /admin/*)
   adminStats: () => adminRequest<AdminStats>("/admin/stats"),
 
@@ -117,6 +136,65 @@ export type AuthResponse = {
   refresh_token: string;
   token_type: string;
   user: UserOut;
+};
+
+// ── Types — surveillance active des patients ─────────────────────────────────
+
+export type ProtocolType = "standard" | "intensif" | "custom";
+export type CheckinStatus = "pending" | "rappel_envoye" | "repondu" | "expire";
+export type CheckinSeverity = "rien_a_signaler" | "standard" | "urgent";
+
+export type PrescriptionOut = {
+  id: string;
+  created_at: string;
+  patient_initiales: string;
+  patient_age?: string;
+  patient_sexe?: string;
+  drug_dci: string;
+  drug_dose?: string;
+  drug_frequence?: string;
+  drug_duree?: string;
+  indication?: string;
+  date_debut: string;
+  monitoring_active: boolean;
+  protocol_type?: ProtocolType;
+  protocol_days?: number[];
+  contact_method?: string;
+  access_token: string;
+  monitoring_ended: boolean;
+  monitoring_end_reason?: string;
+};
+
+export type CheckInOut = {
+  id: string;
+  day_offset: number;
+  scheduled_date: string;
+  status: CheckinStatus;
+  responded_at?: string;
+  has_symptoms?: boolean;
+  stopped_treatment?: boolean;
+  stop_reason?: string;
+  symptoms?: string[];
+  symptoms_other?: string;
+  photo_url?: string;
+  severity?: CheckinSeverity;
+  physician_seen_at?: string;
+  resulting_report_id?: string;
+};
+
+export type PrescriptionDetail = PrescriptionOut & {
+  contact_email?: string;
+  contact_tel?: string;
+  checkins: CheckInOut[];
+};
+
+export type CheckinPublicOut = {
+  drug_dci: string;
+  day_offset: number;
+  days_since_start: number;
+  status: CheckinStatus;
+  next_checkin_in_days?: number;
+  monitoring_ended: boolean;
 };
 
 export type ReportOut = {
