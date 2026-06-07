@@ -30,16 +30,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(res.user);
   }
 
+  function dashboardPathForRole(role: string): string {
+    // Le compte admin a son propre espace sous /admin/dashboard (et non /dashboard/admin)
+    if (role === "admin") return "/admin/dashboard";
+    return `/dashboard/${role}`;
+  }
+
   async function login(email: string, password: string) {
     const res = await api.login(email, password);
     saveSession(res);
-    router.push(`/dashboard/${res.user.role}`);
+    router.push(dashboardPathForRole(res.user.role));
   }
 
   async function register(data: Record<string, unknown>) {
     const res = await api.register(data);
     saveSession(res);
-    router.push(`/dashboard/${res.user.role}`);
+    router.push(dashboardPathForRole(res.user.role));
   }
 
   function logout() {
