@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 const NAV_ITEMS = [
   { href: "/dashboard/medecin", label: "Vue d'ensemble", icon: "🏠", match: (p: string) => p === "/dashboard/medecin" },
   { href: "/dashboard/medecin/mes-declarations", label: "Mes déclarations", icon: "📋", match: (p: string) => p.startsWith("/dashboard/medecin/mes-declarations") },
+  { href: "/ordonnances/nouvelle", label: "Ordonnances", icon: "📄", match: (p: string) => p.startsWith("/ordonnances") },
   { href: "/dashboard/medecin/surveillance", label: "Surveillance active", icon: "🛰️", match: (p: string) => p.startsWith("/dashboard/medecin/surveillance") || p.startsWith("/prescriptions") },
   { href: "/dashboard/medecin/alertes", label: "Alertes sécurité", icon: "🔔", match: (p: string) => p.startsWith("/dashboard/medecin/alertes") },
   { href: "/dashboard/medecin/molecules", label: "Mes molécules", icon: "🧬", match: (p: string) => p.startsWith("/dashboard/medecin/molecules") },
