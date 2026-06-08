@@ -8,8 +8,8 @@ import {
 } from "recharts";
 import {
   fetchFdaLabel, fetchAdverseEvents, fetchAnsm, fetchRxnormRelated, translateToFrench,
-  unslugify, extractEffectNames, isSevere, truncate, isMajorInteraction, splitIntoItems,
-  pregnancyRisk, PREGNANCY_STYLES,
+  unslugify, extractEffectNames, lookupMeddraFr, isSevere, truncate, isMajorInteraction,
+  splitIntoItems, pregnancyRisk, PREGNANCY_STYLES,
   type FdaLabel, type AdverseEvent, type BdpmDrug,
 } from "@/lib/drugApi";
 import { MOCK_DECLARATIONS } from "@/lib/mockMedecinData";
@@ -303,36 +303,84 @@ function Disclaimer() {
 
 /* ---------------- TAB 1 — Effets indésirables ---------------- */
 
-function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined; events: AdverseEvent[]; dci: string }) {
-  const effectNames = useMemo(() => extractEffectNames(label?.adverse_reactions), [label]);
+// Fréquence FAERS : catégoriser par nombre de signalements (approximatif)
+function faersFrequencyLabel(count: number, total: number): { label: string; color: string } {
+  const pct = total > 0 ? count / total : 0;
+  if (pct > 0.15) return { label: "Très fréquent", color: "bg-red-100 text-red-700" };
+  if (pct > 0.05) return { label: "Fréquent", color: "bg-orange-100 text-orange-700" };
+  if (pct > 0.01) return { label: "Peu fréquent", color: "bg-amber-100 text-amber-700" };
+  return { label: "Rare", color: "bg-gray-100 text-gray-500" };
+}
 
+function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined; events: AdverseEvent[]; dci: string }) {
+  // Source 1 : FAERS — termes MedDRA PT propres avec décompte (source fiable)
+  // Les termes FAERS sont déjà des MedDRA Preferred Terms valides, on les traduit directement.
+  const faersEffects = useMemo(() => {
+    return events.map((e) => ({
+      original: e.reaction,
+      fr: lookupMeddraFr(e.reaction),
+      count: e.count,
+    }));
+  }, [events]);
+
+  // Source 2 : parsing du texte RCP FDA (fallback si FAERS vide)
+  const rcpEffects = useMemo(() => extractEffectNames(label?.adverse_reactions), [label]);
+
+  // On affiche FAERS en priorité (termes MedDRA propres) ;
+  // si FAERS vide, on utilise le parsing RCP nettoyé.
+  const usesFaers = faersEffects.length >= 3;
+  const displayEffects = usesFaers ? faersEffects : rcpEffects.map((e) => ({ ...e, count: undefined }));
+
+  const totalFaers = useMemo(() => events.reduce((s, e) => s + e.count, 0), [events]);
   const chartData = events.map((e, i) => ({ ...e, isTop3: i < 3 }));
 
   return (
     <div className="space-y-6">
-      <Section title="Effets indésirables connus (données RCP)" subtitle="Noms d'effets extraits et traduits via le dictionnaire MedDRA français — jamais de texte brut anglais affiché">
-        {effectNames.length < 3 ? (
+      {/* ── Section 1 : liste des effets ── */}
+      <Section
+        title="Effets indésirables connus"
+        subtitle={
+          usesFaers
+            ? "Source : FDA Adverse Event Reporting System (FAERS) — termes MedDRA officiels, traduits en français"
+            : "Source : texte RCP FDA — termes extraits et traduits via dictionnaire MedDRA français"
+        }
+      >
+        {displayEffects.length < 3 ? (
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
             <p className="text-sm text-gray-600">
-              Données d&apos;effets indésirables limitées pour cette molécule dans les sources disponibles. Consultez le RCP officiel sur{" "}
+              Données d&apos;effets indésirables limitées pour cette molécule dans les sources disponibles.{" "}
               <a href="https://dmp.sante.gov.ma" target="_blank" rel="noreferrer" className="text-emerald-700 font-medium underline">
-                dmp.sante.gov.ma
-              </a>.
+                Consulter le RCP officiel →
+              </a>
             </p>
           </div>
         ) : (
           <ul className="space-y-1.5">
-            {effectNames.map((e, i) => {
+            {displayEffects.map((e, i) => {
               const severe = isSevere(e.original);
+              const freq = usesFaers && e.count !== undefined
+                ? faersFrequencyLabel(e.count, totalFaers)
+                : null;
+              // Nom à afficher : traduction française si dispo, sinon terme original
+              // (qui est un MedDRA PT valide donc toujours affichable)
+              const displayName = e.fr ?? capitalize(e.original);
+
               return (
-                <li key={i} className={`text-sm rounded-lg px-3 py-2 ${severe ? "bg-red-50 text-red-700 border border-red-100" : "bg-gray-50 text-gray-600"}`}>
-                  {severe && <span className="font-semibold mr-1">⚠️</span>}
-                  {e.fr ? (
-                    <span>{e.fr}</span>
-                  ) : (
-                    <span>
-                      <span className="italic">{capitalize(e.original)}</span>
-                      <span className="block text-xs text-gray-400 mt-0.5">(terme original : {e.original})</span>
+                <li
+                  key={i}
+                  className={`flex items-center justify-between gap-3 text-sm rounded-lg px-3 py-2 ${
+                    severe
+                      ? "bg-red-50 text-red-700 border border-red-100"
+                      : "bg-gray-50 text-gray-700"
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    {severe && <span className="shrink-0">⚠️</span>}
+                    <span>{displayName}</span>
+                  </span>
+                  {freq && (
+                    <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${freq.color}`}>
+                      {freq.label}
                     </span>
                   )}
                 </li>
@@ -342,33 +390,60 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
         )}
       </Section>
 
-      <Section title="Top effets rapportés mondialement (VigiBase/FAERS)" subtitle="Source : FDA Adverse Event Reporting System (FAERS) — données agrégées mondiales">
-        {chartData.length === 0 ? (
-          <p className="text-sm text-gray-400">Aucune donnée de signalement disponible pour cette molécule.</p>
-        ) : (
+      {/* ── Section 2 : graphique FAERS ── */}
+      {chartData.length > 0 && (
+        <Section
+          title="Fréquence des signalements (FAERS mondial)"
+          subtitle="Nombre de cas rapportés dans la base FDA Adverse Event Reporting System — données non normalisées"
+        >
           <div className="h-80 overflow-x-auto">
             <div className="h-full min-w-[420px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} layout="vertical" margin={{ left: 24 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
                   <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} stroke="#9ca3af" />
-                  <YAxis type="category" dataKey="reaction" tick={{ fontSize: 11 }} stroke="#9ca3af" width={160} />
-                  <Tooltip formatter={(v) => [String(v), "Signalements"]} />
+                  <YAxis
+                    type="category"
+                    dataKey="reaction"
+                    tick={{ fontSize: 11 }}
+                    stroke="#9ca3af"
+                    width={170}
+                    tickFormatter={(v: string) => {
+                      // Traduire le libellé de l'axe Y en français si possible
+                      const fr = lookupMeddraFr(v);
+                      const label = fr ?? v;
+                      return label.length > 22 ? label.slice(0, 21) + "…" : label;
+                    }}
+                  />
+                  <Tooltip
+                    formatter={(v) => [String(v), "Signalements"]}
+                    labelFormatter={(v: string) => {
+                      const fr = lookupMeddraFr(v);
+                      return fr ? `${fr} (${v})` : v;
+                    }}
+                  />
                   <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                    {chartData.map((d, i) => <Cell key={i} fill={d.isTop3 ? "#dc2626" : "#2563eb"} />)}
+                    {chartData.map((d, i) => (
+                      <Cell key={i} fill={d.isTop3 ? "#dc2626" : "#2563eb"} />
+                    ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
-        )}
-      </Section>
+          <p className="text-[11px] text-gray-400 mt-2">
+            Rouge = 3 effets les plus fréquemment signalés · Bleu = autres effets documentés
+          </p>
+        </Section>
+      )}
 
+      {/* ── Section 3 : alertes ── */}
       <Section title="Alertes de sécurité actives">
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-center gap-3">
           <span className="text-emerald-600 text-lg">✅</span>
           <p className="text-sm text-emerald-800">
-            Aucune alerte de sécurité active recensée pour {dci} — Dernière vérification : {new Date("2026-06-07").toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}
+            Aucune alerte de sécurité active recensée pour {dci} — Dernière vérification :{" "}
+            {new Date("2026-06-07").toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}
           </p>
         </div>
       </Section>

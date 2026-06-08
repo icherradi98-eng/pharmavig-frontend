@@ -594,48 +594,103 @@ export function lookupMeddraFr(term: string): string | null {
 
 export type EffectName = { original: string; fr: string | null };
 
-// Termes/segments à exclure systématiquement : ce sont des bouts de phrases de
-// contexte clinique (méthodologie d'étude, coordonnées, pourcentages...) et non
-// des noms d'effets indésirables — on ne veut conserver QUE des noms courts.
-const EFFECT_SKIP_PATTERNS = [
-  /patient/i, /trial/i, /study/i, /placebo/i,
-  /N=\d+/i, /week \d+/i, /\d+\.\d+%/,
-  /contact/i, /1-800/i, /www\./i,
-  /FDA/i, /reported in/i, /treated with/i,
-  /compared/i, /incidence/i,
-];
+// ── Validation d'un candidat effet indésirable ─────────────────────────────
+// Rejette systématiquement tout fragment qui n'est pas un nom d'effet clinique :
+// artefacts de tables FDA ("See Table 2", "( 6)"), URLs, en-têtes SOC
+// ("Hepatobiliary disorders:"), phrases de contexte d'étude, etc.
+function isValidEffectCandidate(s: string): boolean {
+  const lower = s.toLowerCase();
 
-// Extrait des noms d'effets individuels courts (jamais de paragraphes/texte brut)
-// à partir du texte libre `adverse_reactions` d'OpenFDA. On découpe sur la
-// ponctuation forte, on filtre tout ce qui ressemble à du contexte clinique,
-// puis on explose les énumérations ("nausea, vomiting and diarrhea") en termes
-// individuels et on traduit chacun via le mini-dictionnaire MedDRA français.
+  // ❌ Références de sections/tables (FDA SPL)
+  if (/^see\b/i.test(s)) return false;
+  if (/^table\s*\d/i.test(s)) return false;
+  if (/^note\s*:/i.test(s)) return false;
+  if (/^for\s/i.test(s)) return false;
+  if (/^in\s(?:patients|clinical|studies|a\s)/i.test(s)) return false;
+  if (/^figure\s/i.test(s)) return false;
+
+  // ❌ URLs et références gouvernementales
+  if (/gov\/|www\.|\.gov|medwatch|fda\.|\.com|\.net/i.test(s)) return false;
+  if (/https?:\/\//i.test(s)) return false;
+
+  // ❌ En-têtes SOC MedDRA (contiennent "disorders:", "reactions:", etc.)
+  // ex: "Hepatobiliary disorders: hepatic enzyme elevations"
+  if (/(?:disorders?|conditions?|reactions?|events?|problems?|symptoms?|infections?|neoplasms?)\s*:/i.test(s)) return false;
+
+  // ❌ Fragments numériques purs ou entre parenthèses : "( 6)", "12", "(3)"
+  if (/^\s*\(?\s*\d+\s*\)?\s*$/.test(s)) return false;
+  if (/^[<>≥≤]\s*\d/.test(s)) return false;
+
+  // ❌ Ratio de lettres trop bas (trop de chiffres/ponctuation)
+  const letters = (s.match(/[a-zA-ZÀ-ÿ]/g) || []).length;
+  if (letters / s.length < 0.55) return false;
+
+  // ❌ Mots clés de contexte clinique (phrases descriptives, pas des noms d'effets)
+  const CONTEXT_WORDS = [
+    "patient", "subject", "participant", "trial", "study", "placebo",
+    "treatment", "administer", "receiv", "compar", "report", "occurr",
+    "observ", "follow", "incidence", "percent", "include", "occur",
+    "frequent", "common", "clinical", "data", "contact", "call",
+    "number", "median", "mean", "average", "statistic",
+  ];
+  if (CONTEXT_WORDS.some((w) => lower.includes(w))) return false;
+
+  // ❌ Contient un pourcentage ou un ratio numérique
+  if (/\d+\s*%/.test(s) || /\d+\s*\/\s*\d+/.test(s)) return false;
+
+  // ❌ Trop de mots → c'est une phrase, pas un terme MedDRA
+  const wordCount = s.split(/\s+/).filter(Boolean).length;
+  if (wordCount > 5) return false;
+
+  // ❌ Tout en majuscules (header, acronyme) sauf si ≤ 3 chars (sigle valide)
+  if (s.length > 4 && s === s.toUpperCase() && /[A-Z]{3,}/.test(s)) return false;
+
+  // ❌ Commence par une parenthèse ou un symbole
+  if (/^[(\[{*•\-–—]/.test(s.trim())) return false;
+
+  return true;
+}
+
+// Extrait des noms d'effets MedDRA individuels et courts depuis le texte libre
+// `adverse_reactions` d'OpenFDA. Seuls les termes courts et propres sont conservés —
+// tout artefact FDA (tables, URLs, en-têtes, fragments numériques) est éliminé.
+// Les termes reconnus sont traduits via le dictionnaire MedDRA français.
 export function extractEffectNames(text?: string): EffectName[] {
   if (!text) return [];
 
-  const candidates = text
+  // Étape 1 : découper sur les délimiteurs forts
+  const segments = text
     .split(/[.;\n]/)
-    .map((p) => p.trim())
-    .filter((p) => p.length > 2 && p.length < 60)
-    .filter((p) => !EFFECT_SKIP_PATTERNS.some((r) => r.test(p)))
-    .filter((p) => !/^\d/.test(p));
+    .flatMap((s) =>
+      // Sous-découpage sur virgules et "and"/"or" pour extraire les termes d'une liste
+      s.split(/,\s+|\s+(?:and|or)\s+/i)
+    )
+    .map((s) =>
+      s
+        .replace(/^[-•*·\d.\s()[\]]+/, "") // préfixes parasites
+        .replace(/[.;:,()[\]]+$/, "")      // suffixes parasites
+        .trim()
+    )
+    .filter((s) => s.length >= 3 && s.length <= 55);
 
   const seen = new Set<string>();
   const out: EffectName[] = [];
-  outer: for (const raw of candidates) {
-    const commaParts = raw.split(/,|\bet\b|\band\b/i).map((s) => s.trim()).filter(Boolean);
-    const items = commaParts.length >= 3 && commaParts.every((p) => p.length < 60) ? commaParts : [raw];
-    for (const item of items) {
-      const cleaned = item.replace(/^[-•\d.\s]+/, "").replace(/[.;:]+$/g, "").trim();
-      if (cleaned.length < 3 || cleaned.length > 60) continue;
-      const key = cleaned.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      out.push({ original: cleaned, fr: lookupMeddraFr(cleaned) });
-      if (out.length >= 20) break outer;
-    }
+
+  for (const seg of segments) {
+    if (!isValidEffectCandidate(seg)) continue;
+    const key = seg.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ original: seg, fr: lookupMeddraFr(seg) });
+    if (out.length >= 30) break;
   }
-  return out;
+
+  // Trier : termes traduits en premier (MedDRA reconnu), puis par longueur croissante
+  return out.sort((a, b) => {
+    if (a.fr && !b.fr) return -1;
+    if (!a.fr && b.fr) return 1;
+    return a.original.length - b.original.length;
+  });
 }
 
 export function truncate(text: string | undefined, max = 1000): { short: string; isLong: boolean; full: string } {
