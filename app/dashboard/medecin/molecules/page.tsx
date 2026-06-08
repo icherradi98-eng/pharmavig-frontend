@@ -1,15 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MedecinLayout, { PageHeader, SectionCard, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
-import { COMMON_MOLECULES, MOCK_DECLARATIONS, MOCK_ALERTS } from "@/lib/mockMedecinData";
+import { COMMON_MOLECULES, MOCK_ALERTS } from "@/lib/mockMedecinData";
+import { api } from "@/lib/api";
 
 const WATCHLIST_KEY = "pharmavig_medecin_watchlist";
-const DEFAULT_WATCHLIST = ["Pembrolizumab", "Nivolumab", "Méthotrexate"];
+const DEFAULT_WATCHLIST: string[] = [];
 
 export default function MesMolecules() {
   const unread = useUnreadAlertsCount(MOCK_ALERTS.length);
+  const [declaredMolecules, setDeclaredMolecules] = useState<string[]>([]);
+
+  useEffect(() => {
+    api.getMyStats()
+      .then((s) => setDeclaredMolecules(s.molecules))
+      .catch(() => {});
+  }, []);
+
   const [watchlist, setWatchlist] = useState<string[]>(() => {
     if (typeof window === "undefined") return DEFAULT_WATCHLIST;
     try {
@@ -44,20 +53,18 @@ export default function MesMolecules() {
     ).slice(0, 6);
   }, [query, watchlist]);
 
-  // Molécules détectées automatiquement depuis les déclarations
-  const detected = useMemo(() => {
-    const set = new Set<string>();
-    MOCK_DECLARATIONS.forEach((d) => set.add(d.drugDci));
-    return [...set].filter((m) => !watchlist.includes(m));
-  }, [watchlist]);
+  // Molécules détectées automatiquement depuis les déclarations réelles
+  const detected = useMemo(
+    () => declaredMolecules.filter((m) => !watchlist.includes(m)),
+    [declaredMolecules, watchlist]
+  );
 
   function moleculeStats(name: string) {
-    const count = MOCK_DECLARATIONS.filter((d) => d.drugDci.toLowerCase() === name.toLowerCase()).length;
     const alerts = MOCK_ALERTS.filter((a) => a.molecules.some((m) => m.toLowerCase() === name.toLowerCase()));
     const lastAlert = alerts.length
       ? alerts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
       : null;
-    return { count, lastAlert };
+    return { lastAlert };
   }
 
   return (
@@ -91,7 +98,7 @@ export default function MesMolecules() {
           <div className="flex flex-wrap gap-2 mt-4">
             {watchlist.length === 0 && <p className="text-sm text-gray-400">Aucune molécule surveillée pour le moment.</p>}
             {watchlist.map((m) => {
-              const { count, lastAlert } = moleculeStats(m);
+              const { lastAlert } = moleculeStats(m);
               const open = openPopover === m;
               return (
                 <div key={m} className="relative">
@@ -110,8 +117,6 @@ export default function MesMolecules() {
                   </button>
                   {open && (
                     <div className="absolute z-10 mt-2 w-64 bg-white border border-gray-200 rounded-xl shadow-lg p-4 text-sm">
-                      <p className="text-gray-500 text-xs mb-1">Déclarée par vous</p>
-                      <p className="font-semibold text-gray-900 mb-2">{count} fois</p>
                       <p className="text-gray-500 text-xs mb-1">Dernière alerte</p>
                       <p className="font-semibold text-gray-900 mb-3">
                         {lastAlert ? new Date(lastAlert.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "Aucune"}

@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import MedecinLayout, { PageHeader, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
 import {
-  MOCK_ALERTS, MOCK_DECLARATIONS, ALERT_SOURCE_STYLES, ALERT_SEVERITY_STYLES,
+  MOCK_ALERTS, ALERT_SOURCE_STYLES, ALERT_SEVERITY_STYLES,
   type MockAlertSource, type MockAlertSeverity,
 } from "@/lib/mockMedecinData";
+import { api } from "@/lib/api";
 
 const READ_ALERTS_KEY = "pharmavig_medecin_alerts_read";
 const SOURCES: MockAlertSource[] = ["CAPM", "EMA", "ANSM", "FDA"];
@@ -38,11 +39,12 @@ export default function AlertesSecurite() {
     });
   }
 
-  // Molécules déclarées par le médecin (pour la personnalisation)
-  const myMolecules = useMemo(() => {
-    const set = new Set<string>();
-    MOCK_DECLARATIONS.forEach((d) => set.add(d.drugDci.toLowerCase()));
-    return set;
+  // Molécules déclarées par le médecin — chargées depuis l'API (pour la personnalisation des alertes)
+  const [myMolecules, setMyMolecules] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    api.getMyStats()
+      .then((s) => setMyMolecules(new Set(s.molecules.map((m) => m.toLowerCase()))))
+      .catch(() => {});
   }, []);
 
   function concernsMe(molecules: string[]) {

@@ -74,6 +74,8 @@ export const api = {
 
   getReport: (id: string) => request<ReportDetail>(`/reports/${id}`),
 
+  getMyStats: () => request<ReportStats>("/reports/stats"),
+
   // Surveillance active des patients (prescriptions + suivi)
   createPrescription: (data: Record<string, unknown>) =>
     request<PrescriptionOut>("/prescriptions", { method: "POST", body: JSON.stringify(data) }),
@@ -195,6 +197,18 @@ export type CheckinPublicOut = {
   status: CheckinStatus;
   next_checkin_in_days?: number;
   monitoring_ended: boolean;
+};
+
+export type ReportStats = {
+  total: number;
+  this_month: number;
+  graves: number;
+  graves_pct: number;
+  begaud_avg: number | null;
+  by_month: { month: string; count: number }[]; // "YYYY-MM"
+  by_soc: { soc: string; count: number }[];
+  by_gravite: { grave: number; non_grave: number };
+  molecules: string[];
 };
 
 export type ReportOut = {
