@@ -367,9 +367,10 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
                   />
                   <Tooltip
                     formatter={(v) => [String(v), "Signalements"]}
-                    labelFormatter={(v: string) => {
-                      const fr = lookupMeddraFr(v);
-                      return fr ? `${fr} (${v})` : v;
+                    labelFormatter={(v) => {
+                      const s = String(v);
+                      const fr = lookupMeddraFr(s);
+                      return fr ? `${fr} (${s})` : s;
                     }}
                   />
                   <Bar dataKey="count" radius={[0, 4, 4, 0]}>
