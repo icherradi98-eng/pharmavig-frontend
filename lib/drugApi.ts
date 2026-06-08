@@ -1,6 +1,103 @@
-// Utilitaires pour la page /medicaments — fetch, cache localStorage 24h, et parsing de texte RCP/FDA
+// Utilitaires pour la page /medicaments — fetch, cache localStorage 24h, extraction structurée via LLM
 
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+
+// ── Types — données structurées extraites ─────────────────────────────────────
+
+export type ExtractedIndication = string;
+
+export type ExtractedDosage = {
+  population: string;
+  regimen: string;
+  voie: string | null;
+  notes: string | null;
+};
+
+export type ExtractedContraindication = {
+  ci: string;
+  type: "absolue" | "relative";
+};
+
+export type ExtractedInteraction = {
+  medicament: string;
+  classe: string | null;
+  severite: "contre-indiquée" | "majeure" | "modérée" | "mineure";
+  mecanisme: string | null;
+  consequence: string;
+  conduite: string;
+};
+
+export type ExtractedAdverseEffect = {
+  nom: string;
+  soc: string;
+  frequence: "très fréquent" | "fréquent" | "peu fréquent" | "rare" | "très rare" | "inconnu";
+  grave: boolean;
+  pct: number | null;
+};
+
+export type SectionName = "indications" | "posologie" | "contraindications" | "interactions" | "effets_indesirables";
+
+export type ExtractResponse<T> = {
+  section: SectionName;
+  items: T[];
+  source: "llm" | "fallback" | "empty" | "cache";
+};
+
+// ── Extraction structurée via backend ────────────────────────────────────────
+
+/**
+ * Envoie le texte brut FDA d'une section au backend PharmaVig.
+ * Le backend appelle Claude et retourne des données structurées en JSON.
+ * Résultat mis en cache localStorage 24h pour éviter les appels redondants.
+ */
+export async function extractDrugSection<T>(
+  drugName: string,
+  section: SectionName,
+  rawText: string | undefined,
+): Promise<ExtractResponse<T>> {
+  const empty: ExtractResponse<T> = { section, items: [], source: "empty" };
+  if (!rawText?.trim()) return empty;
+
+  // Cache
+  const cKey = `pharmavig_extract_${slugify(drugName)}_${section}`;
+  if (typeof window !== "undefined") {
+    try {
+      const cached = localStorage.getItem(cKey);
+      if (cached) {
+        const { data, ts } = JSON.parse(cached);
+        if (Date.now() - ts < CACHE_TTL_MS) {
+          return { ...(data as ExtractResponse<T>), source: "cache" };
+        }
+      }
+    } catch {}
+  }
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20_000); // timeout 20s (LLM)
+    const res = await fetch(`${API_BASE}/drugs/extract`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: rawText, section, drug_name: drugName }),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return empty;
+
+    const data: ExtractResponse<T> = await res.json();
+
+    // Mise en cache
+    if (typeof window !== "undefined" && data.items.length > 0) {
+      try {
+        localStorage.setItem(cKey, JSON.stringify({ data, ts: Date.now() }));
+      } catch {}
+    }
+    return data;
+  } catch {
+    return empty;
+  }
+}
 
 export function slugify(name: string): string {
   return name

@@ -7,10 +7,12 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell,
 } from "recharts";
 import {
-  fetchFdaLabel, fetchAdverseEvents, fetchAnsm, fetchRxnormRelated, translateToFrench,
-  unslugify, extractEffectNames, lookupMeddraFr, isSevere, truncate, isMajorInteraction,
-  splitIntoItems, pregnancyRisk, PREGNANCY_STYLES,
+  fetchFdaLabel, fetchAdverseEvents, fetchAnsm, fetchRxnormRelated,
+  unslugify, extractEffectNames, lookupMeddraFr, extractDrugSection, isSevere,
+  pregnancyRisk, PREGNANCY_STYLES,
   type FdaLabel, type AdverseEvent, type BdpmDrug,
+  type ExtractedIndication, type ExtractedDosage, type ExtractedContraindication,
+  type ExtractedInteraction, type ExtractedAdverseEffect,
 } from "@/lib/drugApi";
 import { MOCK_DECLARATIONS } from "@/lib/mockMedecinData";
 
@@ -165,8 +167,8 @@ function DrugProfileContent({ slug }: { slug: string }) {
                 </div>
 
                 {tab === "effets" && <TabEffets label={label} events={events || []} dci={dci} />}
-                {tab === "indications" && <TabIndications label={label} />}
-                {tab === "interactions" && <TabInteractions label={label} />}
+                {tab === "indications" && <TabIndications label={label} dci={dci} />}
+                {tab === "interactions" && <TabInteractions label={label} dci={dci} />}
                 {tab === "terrain" && <TabTerrain declarations={localDeclarations} dci={dci} onDeclare={declareWithDrug} />}
 
                 <p className="text-xs text-gray-400 mt-6">
@@ -197,59 +199,7 @@ function titleCaseFr(s: string): string {
     .join(" ");
 }
 
-// Affiche un champ clinique FDA (en anglais) automatiquement traduit en français.
-// On ne montre jamais le texte anglais brut sans avoir tenté de le traduire au préalable —
-// en cas d'échec de la traduction, le texte source est affiché avec une mention explicite.
-function FrenchClinicalText({ text }: { text?: string }) {
-  const snippet = useMemo(() => truncate(text, 900), [text]);
-  const [state, setState] = useState<{ status: "loading" | "done" | "error"; value?: string }>(() =>
-    snippet.short ? { status: "loading" } : { status: "error" }
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-    if (!snippet.short) return;
-    translateToFrench(snippet.short).then((t) => {
-      if (cancelled) return;
-      if (t) setState({ status: "done", value: t });
-      else setState({ status: "error" });
-    });
-    return () => { cancelled = true; };
-  }, [snippet.short]);
-
-  if (!snippet.short) return <p className="text-sm text-gray-400">Donnée non disponible.</p>;
-
-  if (state.status === "loading") {
-    return (
-      <div className="space-y-2 animate-pulse">
-        <div className="h-3.5 w-full bg-gray-100 rounded" />
-        <div className="h-3.5 w-5/6 bg-gray-100 rounded" />
-        <div className="h-3.5 w-2/3 bg-gray-100 rounded" />
-        <p className="text-xs text-gray-400 pt-1">🌐 Traduction du RCP en cours…</p>
-      </div>
-    );
-  }
-
-  if (state.status === "done" && state.value) {
-    return (
-      <div>
-        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{state.value}</p>
-        <p className="text-[11px] text-blue-500 mt-2">
-          🌐 Traduction automatique (FDA, anglais → français) — à vérifier auprès du RCP marocain officiel et du CAPM.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-2">
-        ⚠️ Traduction automatique indisponible pour le moment — texte source affiché en anglais (FDA), à interpréter avec précaution.
-      </p>
-      <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-line">{snippet.short}</p>
-    </div>
-  );
-}
+// FrenchClinicalText supprimé — remplacé par l'extraction structurée via LLM (extractDrugSection).
 
 function Badge({ children, color }: { children: React.ReactNode; color: string }) {
   return <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${color}`}>{children}</span>;
@@ -451,102 +401,269 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
   );
 }
 
-/* ---------------- TAB 2 — Indications & Posologie ---------------- */
+/* ---------------- Composants UI réutilisables -------------------------------- */
 
-function TabIndications({ label }: { label: FdaLabel | null | undefined }) {
+function ExtractionBadge({ source }: { source: string }) {
+  if (source === "llm") return (
+    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full font-semibold">
+      ✦ Extrait par IA · données structurées
+    </span>
+  );
+  if (source === "cache") return (
+    <span className="inline-flex items-center gap-1 text-[10px] text-gray-400 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-full">
+      Cache · données structurées
+    </span>
+  );
+  if (source === "fallback") return (
+    <span className="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full">
+      ⚙ Extraction partielle — configurez ANTHROPIC_API_KEY pour activer l&apos;IA
+    </span>
+  );
+  return null;
+}
+
+function LoadingSkeleton({ lines = 4 }: { lines?: number }) {
+  return (
+    <div className="space-y-2 animate-pulse">
+      {Array.from({ length: lines }).map((_, i) => (
+        <div key={i} className={`h-8 bg-gray-100 rounded-lg ${i % 3 === 2 ? "w-3/4" : "w-full"}`} />
+      ))}
+      <p className="text-xs text-gray-400 pt-1">⏳ Extraction en cours…</p>
+    </div>
+  );
+}
+
+/* ---------------- TAB 2 — Indications & Posologie (données structurées) ------ */
+
+function TabIndications({ label, dci }: { label: FdaLabel | null | undefined; dci: string }) {
   const risk = pregnancyRisk(label?.pregnancy);
   const style = PREGNANCY_STYLES[risk];
 
+  // ── Indications ──
+  const [indications, setIndications] = useState<ExtractedIndication[] | null>(null);
+  const [indicSource, setIndicSource] = useState<string>("");
+  const [indicLoading, setIndicLoading] = useState(false);
+
+  // ── Posologie ──
+  const [dosages, setDosages] = useState<ExtractedDosage[] | null>(null);
+  const [doseSource, setDoseSource] = useState<string>("");
+  const [doseLoading, setDoseLoading] = useState(false);
+
+  useEffect(() => {
+    if (!label?.indications_and_usage) return;
+    setIndicLoading(true);
+    extractDrugSection<ExtractedIndication>(dci, "indications", label.indications_and_usage)
+      .then((r) => { setIndications(r.items); setIndicSource(r.source); })
+      .finally(() => setIndicLoading(false));
+  }, [dci, label?.indications_and_usage]);
+
+  useEffect(() => {
+    if (!label?.dosage_and_administration) return;
+    setDoseLoading(true);
+    extractDrugSection<ExtractedDosage>(dci, "posologie", label.dosage_and_administration)
+      .then((r) => { setDosages(r.items); setDoseSource(r.source); })
+      .finally(() => setDoseLoading(false));
+  }, [dci, label?.dosage_and_administration]);
+
   return (
     <div className="space-y-6">
-      <Section title="Indications" subtitle="Texte source FDA traduit automatiquement en français">
-        <FrenchClinicalText text={label?.indications_and_usage} />
+
+      {/* Indications */}
+      <Section title="Indications thérapeutiques">
+        {indicLoading ? <LoadingSkeleton lines={3} /> :
+          !label?.indications_and_usage ? (
+            <p className="text-sm text-gray-400">Donnée non disponible — consultez le RCP marocain officiel.</p>
+          ) : indications && indications.length > 0 ? (
+            <>
+              <ul className="space-y-2 mb-3">
+                {indications.map((ind, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700 bg-blue-50/60 border border-blue-100 rounded-lg px-3 py-2">
+                    <span className="text-blue-400 font-bold mt-0.5 shrink-0">›</span>
+                    <span>{ind}</span>
+                  </li>
+                ))}
+              </ul>
+              <ExtractionBadge source={indicSource} />
+            </>
+          ) : (
+            <p className="text-sm text-gray-400">Extraction non disponible — consultez le RCP marocain officiel.</p>
+          )
+        }
       </Section>
 
-      <Section title="Posologie et mode d'administration" subtitle="Texte source FDA traduit automatiquement en français">
-        <FrenchClinicalText text={label?.dosage_and_administration} />
+      {/* Posologie */}
+      <Section title="Posologie">
+        {doseLoading ? <LoadingSkeleton lines={3} /> :
+          !label?.dosage_and_administration ? (
+            <p className="text-sm text-gray-400">Donnée non disponible — consultez le RCP marocain officiel.</p>
+          ) : dosages && dosages.length > 0 ? (
+            <>
+              <div className="space-y-2 mb-3">
+                {dosages.map((d, i) => (
+                  <div key={i} className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+                        {d.population}
+                      </span>
+                      {d.voie && (
+                        <span className="text-[11px] text-gray-500 bg-white border border-gray-200 px-2 py-0.5 rounded-full">
+                          Voie {d.voie}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm font-semibold text-gray-900">{d.regimen}</p>
+                    {d.notes && <p className="text-xs text-gray-500 mt-0.5">{d.notes}</p>}
+                  </div>
+                ))}
+              </div>
+              <ExtractionBadge source={doseSource} />
+            </>
+          ) : (
+            <p className="text-sm text-gray-400">Extraction non disponible — consultez le RCP marocain officiel.</p>
+          )
+        }
       </Section>
 
+      {/* Grossesse */}
       <Section title="Grossesse et allaitement">
-        <div className={`flex items-center gap-3 border rounded-xl px-4 py-3 mb-3 ${style.color}`}>
-          <span className={`w-3 h-3 rounded-full ${style.dot}`} />
+        <div className={`inline-flex items-center gap-3 border rounded-xl px-4 py-2.5 ${style.color}`}>
+          <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${style.dot}`} />
           <span className="text-sm font-semibold">{style.label}</span>
         </div>
-        {label?.pregnancy && <FrenchClinicalText text={label.pregnancy} />}
+        {!label?.pregnancy && (
+          <p className="text-xs text-gray-400 mt-2">Données grossesse non disponibles dans cette source FDA.</p>
+        )}
       </Section>
 
       <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
         <p className="text-xs text-blue-800 leading-relaxed">
-          Ces informations sont issues des données FDA/RCP, traduites automatiquement. Consultez toujours le RCP marocain
-          officiel et le CAPM pour les spécificités locales.
+          Données issues des sources FDA/EMA, normalisées par extraction IA. Consultez toujours le RCP marocain officiel et le CAPM pour les spécificités locales.
         </p>
       </div>
     </div>
   );
 }
 
-/* ---------------- TAB 3 — Interactions & Contre-indications ---------------- */
+/* ---------------- TAB 3 — Interactions & Contre-indications (structurées) ---- */
 
-function TabInteractions({ label }: { label: FdaLabel | null | undefined }) {
-  const interactions = useMemo(() => splitIntoItems(label?.drug_interactions || ""), [label]);
-  const contraindications = useMemo(() => splitIntoItems(label?.contraindications || ""), [label]);
-  const [showSourceInteractions, setShowSourceInteractions] = useState(false);
-  const [showSourceContra, setShowSourceContra] = useState(false);
+const SEVERITY_STYLES: Record<string, { badge: string; row: string; icon: string }> = {
+  "contre-indiquée": { badge: "bg-red-600 text-white", row: "bg-red-50 border-red-200", icon: "🚫" },
+  "majeure":         { badge: "bg-red-100 text-red-700", row: "bg-red-50/50 border-red-100", icon: "⚠️" },
+  "modérée":         { badge: "bg-amber-100 text-amber-700", row: "bg-amber-50/40 border-amber-100", icon: "⚡" },
+  "mineure":         { badge: "bg-gray-100 text-gray-600", row: "bg-gray-50 border-gray-100", icon: "ℹ️" },
+};
+
+function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; dci: string }) {
+  // ── Interactions ──
+  const [interactions, setInteractions] = useState<ExtractedInteraction[] | null>(null);
+  const [interSource, setInterSource] = useState<string>("");
+  const [interLoading, setInterLoading] = useState(false);
+
+  // ── Contre-indications ──
+  const [contraindications, setContraindications] = useState<ExtractedContraindication[] | null>(null);
+  const [ciSource, setCiSource] = useState<string>("");
+  const [ciLoading, setCiLoading] = useState(false);
+
+  useEffect(() => {
+    if (!label?.drug_interactions) return;
+    setInterLoading(true);
+    extractDrugSection<ExtractedInteraction>(dci, "interactions", label.drug_interactions)
+      .then((r) => { setInteractions(r.items); setInterSource(r.source); })
+      .finally(() => setInterLoading(false));
+  }, [dci, label?.drug_interactions]);
+
+  useEffect(() => {
+    if (!label?.contraindications) return;
+    setCiLoading(true);
+    extractDrugSection<ExtractedContraindication>(dci, "contraindications", label.contraindications)
+      .then((r) => { setContraindications(r.items); setCiSource(r.source); })
+      .finally(() => setCiLoading(false));
+  }, [dci, label?.contraindications]);
 
   return (
     <div className="space-y-6">
-      <Section title="Interactions médicamenteuses" subtitle="Texte source FDA traduit automatiquement en français">
-        {!label?.drug_interactions ? (
-          <p className="text-sm text-gray-400">Aucune interaction documentée dans cette source — vérifiez auprès du CAPM ou du RCP marocain officiel.</p>
-        ) : (
-          <>
-            <FrenchClinicalText text={label.drug_interactions} />
-            <button onClick={() => setShowSourceInteractions(!showSourceInteractions)} className="mt-3 text-xs font-medium text-gray-500 hover:text-emerald-700 underline">
-              {showSourceInteractions ? "Masquer" : "Voir la liste détaillée (texte source anglais, FDA)"}
-            </button>
-            {showSourceInteractions && <ExpandableList items={interactions} />}
-          </>
-        )}
+
+      {/* Contre-indications */}
+      <Section title="Contre-indications">
+        {ciLoading ? <LoadingSkeleton lines={3} /> :
+          !label?.contraindications ? (
+            <p className="text-sm text-gray-400">Donnée non disponible — consultez le RCP marocain officiel ou le CAPM.</p>
+          ) : contraindications && contraindications.length > 0 ? (
+            <>
+              <ul className="space-y-2 mb-3">
+                {contraindications.map((ci, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-red-800 bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
+                    <span className="text-red-500 mt-0.5 shrink-0 font-bold">✕</span>
+                    <span>{ci.ci}</span>
+                  </li>
+                ))}
+              </ul>
+              <ExtractionBadge source={ciSource} />
+            </>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2.5">
+              <span>✅</span>
+              <span>Aucune contre-indication absolue identifiée dans cette source.</span>
+            </div>
+          )
+        }
       </Section>
 
-      <Section title="Contre-indications" subtitle="Texte source FDA traduit automatiquement en français">
-        {!label?.contraindications ? (
-          <p className="text-sm text-gray-400">Aucune contre-indication documentée dans cette source — vérifiez auprès du CAPM ou du RCP marocain officiel.</p>
-        ) : (
-          <>
-            <FrenchClinicalText text={label.contraindications} />
-            <button onClick={() => setShowSourceContra(!showSourceContra)} className="mt-3 text-xs font-medium text-gray-500 hover:text-emerald-700 underline">
-              {showSourceContra ? "Masquer" : "Voir la liste détaillée (texte source anglais, FDA)"}
-            </button>
-            {showSourceContra && <ExpandableList items={contraindications} />}
-          </>
-        )}
+      {/* Interactions */}
+      <Section title="Interactions médicamenteuses">
+        {interLoading ? <LoadingSkeleton lines={4} /> :
+          !label?.drug_interactions ? (
+            <p className="text-sm text-gray-400">Donnée non disponible — consultez le RCP marocain officiel ou le CAPM.</p>
+          ) : interactions && interactions.length > 0 ? (
+            <>
+              {/* Tri par sévérité */}
+              {(["contre-indiquée", "majeure", "modérée", "mineure"] as const).map((sev) => {
+                const group = interactions.filter((x) => x.severite === sev);
+                if (group.length === 0) return null;
+                const s = SEVERITY_STYLES[sev] ?? SEVERITY_STYLES["mineure"];
+                return (
+                  <div key={sev} className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span>{s.icon}</span>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${s.badge}`}>
+                        {sev.charAt(0).toUpperCase() + sev.slice(1)}
+                      </span>
+                      <span className="text-[11px] text-gray-400">{group.length} interaction{group.length > 1 ? "s" : ""}</span>
+                    </div>
+                    <div className="space-y-2">
+                      {group.map((inter, i) => (
+                        <div key={i} className={`border rounded-xl px-4 py-3 ${s.row}`}>
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <p className="text-sm font-semibold text-gray-900">
+                              {inter.medicament}
+                              {inter.classe && <span className="ml-1.5 text-[11px] font-normal text-gray-500">({inter.classe})</span>}
+                            </p>
+                          </div>
+                          {inter.mecanisme && (
+                            <p className="text-xs text-gray-500 mb-1">Mécanisme : {inter.mecanisme}</p>
+                          )}
+                          <p className="text-sm text-gray-700">{inter.consequence}</p>
+                          {inter.conduite && (
+                            <p className="text-xs font-semibold text-gray-600 mt-1.5 flex items-center gap-1">
+                              <span className="text-emerald-600">→</span> {inter.conduite}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+              <ExtractionBadge source={interSource} />
+            </>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2.5">
+              <span>✅</span>
+              <span>Aucune interaction cliniquement significative identifiée dans cette source.</span>
+            </div>
+          )
+        }
       </Section>
-    </div>
-  );
-}
-
-function ExpandableList({ items }: { items: string[] }) {
-  const [expanded, setExpanded] = useState(false);
-  const visible = expanded ? items : items.slice(0, 5);
-  return (
-    <div className="mt-2">
-      <ul className="space-y-1.5">
-        {visible.map((t, i) => {
-          const major = isMajorInteraction(t);
-          return (
-            <li key={i} className={`text-sm rounded-lg px-3 py-2 ${major ? "bg-red-50 text-red-700 border border-red-100" : "bg-gray-50 text-gray-600"}`}>
-              {major && <span className="font-semibold mr-1">⚠️</span>}
-              {t}
-            </li>
-          );
-        })}
-      </ul>
-      {items.length > 5 && (
-        <button onClick={() => setExpanded(!expanded)} className="mt-3 text-xs font-medium text-emerald-700 underline">
-          {expanded ? "Réduire" : `Voir toutes les ${items.length} entrées`}
-        </button>
-      )}
     </div>
   );
 }
