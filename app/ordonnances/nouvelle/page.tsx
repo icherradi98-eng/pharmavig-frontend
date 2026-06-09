@@ -387,11 +387,103 @@ export default function NouvelleOrdonnance() {
             )}
           </div>
 
-          {/* ── Options ──────────────────────────────────────── */}
+          {/* ── 🛡️ Suivi PharmaVig — carte principale, hors Options ── */}
+          <div className={`border-2 rounded-2xl p-5 transition-colors ${suiviActif ? "border-emerald-400 bg-emerald-50" : "border-gray-200 bg-white"}`}>
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${suiviActif ? "bg-emerald-600" : "bg-gray-200"}`}>
+                  <span className="text-xl">🛡️</span>
+                </div>
+                <div>
+                  <p className="text-base font-bold text-gray-900">Suivi de tolérance PharmaVig</p>
+                  <p className={`text-xs font-medium ${suiviActif ? "text-emerald-700" : "text-gray-400"}`}>
+                    {suiviActif ? "Activé — le patient sera surveillé automatiquement" : "Désactivé"}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSuiviActif(!suiviActif)}
+                className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${suiviActif ? "bg-emerald-500" : "bg-gray-300"}`}
+              >
+                <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${suiviActif ? "translate-x-6" : "translate-x-1"}`} />
+              </button>
+            </div>
+
+            {/* Stat choc */}
+            <div className={`rounded-xl px-4 py-3 mb-4 ${suiviActif ? "bg-white border border-emerald-200" : "bg-gray-50 border border-gray-200"}`}>
+              <p className={`text-sm leading-relaxed ${suiviActif ? "text-emerald-900" : "text-gray-500"}`}>
+                <span className="font-bold">95 % des effets indésirables ne sont jamais signalés.</span>{" "}
+                Activez le suivi pour détecter précocement les problèmes de tolérance.
+              </p>
+            </div>
+
+            {suiviActif ? (
+              <div className="space-y-4">
+                {/* Timeline J+7 / J+30 / J+90 */}
+                <div>
+                  <p className="text-xs font-semibold text-emerald-800 mb-2 uppercase tracking-wide">Questionnaires automatiques</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { label: "J+7", desc: "Tolérance initiale" },
+                      { label: "J+30", desc: "Bilan intermédiaire" },
+                      { label: "J+90", desc: "Suivi long terme" },
+                    ].map((item) => (
+                      <div key={item.label} className="bg-white border border-emerald-200 rounded-xl p-3 text-center">
+                        <p className="text-sm font-bold text-emerald-700">{item.label}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Ce qui se passe en cas d'effet */}
+                <div>
+                  <p className="text-xs font-semibold text-emerald-800 mb-2 uppercase tracking-wide">En cas d&apos;effet signalé</p>
+                  <div className="space-y-1.5">
+                    {[
+                      "🔔 Notification immédiate au médecin",
+                      "📋 Déclaration CAPM pré-remplie automatiquement",
+                      "📊 Contribution à la pharmacovigilance nationale",
+                    ].map((item) => (
+                      <div key={item} className="flex items-center gap-2 text-xs text-emerald-800 bg-white border border-emerald-100 rounded-lg px-3 py-2">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Téléphone patient */}
+                <div>
+                  <label className="text-xs font-semibold text-emerald-800 block mb-1.5">
+                    📱 Téléphone patient <span className="font-normal text-emerald-600">(pour recevoir le lien de suivi)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={patientTelephone}
+                    onChange={(e) => setPatientTelephone(e.target.value)}
+                    placeholder="+212 6 XX XX XX XX"
+                    className="w-full border border-emerald-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                  />
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setSuiviActif(true)}
+                className="w-full border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm text-gray-500 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors"
+              >
+                Activer le suivi pharmacovigilance →
+              </button>
+            )}
+          </div>
+
+          {/* ── Options avancées (repliées par défaut) ────────── */}
           <div className="bg-white border border-gray-200 rounded-2xl p-5">
-            <button onClick={() => setOptionsOpen((v) => !v)} className="w-full flex items-center justify-between text-sm font-semibold text-gray-900">
-              <span>⚙️ Options de l&apos;ordonnance</span>
-              <span className="text-gray-400">{optionsOpen ? "▲" : "▼"}</span>
+            <button onClick={() => setOptionsOpen((v) => !v)} className="w-full flex items-center justify-between text-sm font-medium text-gray-500 hover:text-gray-700">
+              <span>⚙️ Options avancées</span>
+              <span className="text-gray-400 text-xs">{optionsOpen ? "▲ Réduire" : "▼ Type, validité, renouvellement..."}</span>
             </button>
             {optionsOpen && (
               <div className="mt-4 space-y-4">
@@ -424,45 +516,6 @@ export default function NouvelleOrdonnance() {
                     <label className={labelCls}>N° d&apos;ordonnance</label>
                     <div className={`${inputCls} bg-gray-50 text-gray-400`}>Généré à la création</div>
                   </div>
-                </div>
-                {/* SuiviToggle — carte proéminente, ON par défaut */}
-                <div className={`rounded-xl border-2 p-4 transition-colors ${suiviActif ? "border-emerald-400 bg-emerald-50" : "border-gray-200 bg-gray-50"}`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">🛡️</span>
-                      <span className="text-sm font-semibold text-gray-900">Suivi de tolérance PharmaVig</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setSuiviActif(!suiviActif)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${suiviActif ? "bg-emerald-500" : "bg-gray-300"}`}
-                    >
-                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${suiviActif ? "translate-x-6" : "translate-x-1"}`} />
-                    </button>
-                  </div>
-                  {suiviActif ? (
-                    <div className="space-y-2">
-                      <p className="text-xs text-emerald-700 font-medium">Le patient recevra un questionnaire sécurisé :</p>
-                      <div className="flex gap-3 text-xs text-emerald-700">
-                        <span className="bg-white border border-emerald-200 rounded-full px-2.5 py-1">📅 J+7</span>
-                        <span className="bg-white border border-emerald-200 rounded-full px-2.5 py-1">📅 J+30</span>
-                        <span className="bg-white border border-emerald-200 rounded-full px-2.5 py-1">📅 J+90</span>
-                      </div>
-                      <p className="text-xs text-emerald-600">En cas d&apos;effet signalé → notification + déclaration CAPM pré-remplie</p>
-                      <div>
-                        <label className="text-xs text-emerald-800 font-medium block mb-1">📱 Téléphone patient</label>
-                        <input
-                          type="tel"
-                          value={patientTelephone}
-                          onChange={(e) => setPatientTelephone(e.target.value)}
-                          placeholder="+212 6 XX XX XX XX"
-                          className="w-full border border-emerald-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-gray-400">Activez pour détecter automatiquement les effets indésirables après la prescription.</p>
-                  )}
                 </div>
               </div>
             )}
