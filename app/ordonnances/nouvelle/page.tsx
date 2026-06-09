@@ -84,7 +84,8 @@ export default function NouvelleOrdonnance() {
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [ordonnanceType, setOrdonnanceType] = useState<OrdonnanceType>(() => renewalSeed?.type || "simple");
   const [validite, setValidite] = useState(() => renewalSeed?.validite || "1");
-  const [suiviActif, setSuiviActif] = useState(false);
+  const [suiviActif, setSuiviActif] = useState(true); // ON par défaut — opt-out plutôt qu'opt-in
+  const [patientTelephone, setPatientTelephone] = useState("");
 
   const [generated, setGenerated] = useState<SavedOrdonnance | null>(null);
 
@@ -293,34 +294,43 @@ export default function NouvelleOrdonnance() {
               </div>
 
               <div>
-                <label className={labelCls}>Âge / date de naissance</label>
-                <div className="flex gap-2">
-                  <select className={`${inputCls} w-32 shrink-0`} value={ageMode} onChange={(e) => setAgeMode(e.target.value as "age" | "naissance")}>
-                    <option value="age">Âge</option>
-                    <option value="naissance">Naissance</option>
-                  </select>
-                  {ageMode === "age" ? (
-                    <input className={inputCls} value={patientAge} onChange={(e) => setPatientAge(e.target.value)} placeholder="Ex. 45 ans" />
-                  ) : (
-                    <input type="date" className={inputCls} value={patientDateNaissance} onChange={(e) => setPatientDateNaissance(e.target.value)} />
+                <label className={labelCls}>Date de naissance</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="date"
+                    className={inputCls}
+                    value={patientDateNaissance}
+                    onChange={(e) => {
+                      setPatientDateNaissance(e.target.value);
+                      setAgeMode("naissance");
+                      if (e.target.value) setPatientAge(ageFromDateNaissance(e.target.value));
+                    }}
+                  />
+                  {patientDateNaissance && (
+                    <span className="shrink-0 text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg whitespace-nowrap">
+                      {ageFromDateNaissance(patientDateNaissance) || "—"}
+                    </span>
                   )}
                 </div>
-                {ageMode === "naissance" && patientDateNaissance && (
-                  <p className="text-xs text-gray-400 mt-1">Âge calculé : {ageFromDateNaissance(patientDateNaissance) || "—"}</p>
+                {!patientDateNaissance && (
+                  <div className="flex gap-2 mt-1.5">
+                    <span className="text-xs text-gray-400">ou saisir directement :</span>
+                    <input className="border-b border-gray-300 text-xs w-20 focus:outline-none focus:border-emerald-500" value={ageMode === "age" ? patientAge : ""} onChange={(e) => { setAgeMode("age"); setPatientAge(e.target.value); }} placeholder="45 ans" />
+                  </div>
                 )}
               </div>
 
               <div>
                 <label className={labelCls}>Sexe</label>
                 <div className="flex gap-2">
-                  {(["M", "F"] as const).map((s) => (
+                  {([["M", "♂ Homme"], ["F", "♀ Femme"]] as const).map(([s, label]) => (
                     <button
                       key={s}
                       type="button"
                       onClick={() => setPatientSexe(patientSexe === s ? "" : s)}
-                      className={`flex-1 border rounded-lg py-2 text-sm font-medium transition-colors ${patientSexe === s ? "bg-emerald-600 border-emerald-600 text-white" : "border-gray-300 text-gray-600 hover:bg-gray-50"}`}
+                      className={`flex-1 border rounded-lg py-2.5 text-sm font-medium transition-colors ${patientSexe === s ? "bg-emerald-600 border-emerald-600 text-white shadow-sm" : "border-gray-300 text-gray-600 hover:bg-gray-50"}`}
                     >
-                      {s === "M" ? "Homme" : "Femme"}
+                      {label}
                     </button>
                   ))}
                 </div>
@@ -415,13 +425,45 @@ export default function NouvelleOrdonnance() {
                     <div className={`${inputCls} bg-gray-50 text-gray-400`}>Généré à la création</div>
                   </div>
                 </div>
-                <label className="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" className="mt-0.5" checked={suiviActif} onChange={(e) => setSuiviActif(e.target.checked)} />
-                  <span>
-                    🛰️ Activer le suivi pharmacovigilance (PharmaVig) pour cette prescription
-                    <span className="block text-xs text-gray-400">Après génération, nous vous proposerons d&apos;activer le suivi actif du patient pour ce médicament.</span>
-                  </span>
-                </label>
+                {/* SuiviToggle — carte proéminente, ON par défaut */}
+                <div className={`rounded-xl border-2 p-4 transition-colors ${suiviActif ? "border-emerald-400 bg-emerald-50" : "border-gray-200 bg-gray-50"}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">🛡️</span>
+                      <span className="text-sm font-semibold text-gray-900">Suivi de tolérance PharmaVig</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSuiviActif(!suiviActif)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${suiviActif ? "bg-emerald-500" : "bg-gray-300"}`}
+                    >
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${suiviActif ? "translate-x-6" : "translate-x-1"}`} />
+                    </button>
+                  </div>
+                  {suiviActif ? (
+                    <div className="space-y-2">
+                      <p className="text-xs text-emerald-700 font-medium">Le patient recevra un questionnaire sécurisé :</p>
+                      <div className="flex gap-3 text-xs text-emerald-700">
+                        <span className="bg-white border border-emerald-200 rounded-full px-2.5 py-1">📅 J+7</span>
+                        <span className="bg-white border border-emerald-200 rounded-full px-2.5 py-1">📅 J+30</span>
+                        <span className="bg-white border border-emerald-200 rounded-full px-2.5 py-1">📅 J+90</span>
+                      </div>
+                      <p className="text-xs text-emerald-600">En cas d&apos;effet signalé → notification + déclaration CAPM pré-remplie</p>
+                      <div>
+                        <label className="text-xs text-emerald-800 font-medium block mb-1">📱 Téléphone patient</label>
+                        <input
+                          type="tel"
+                          value={patientTelephone}
+                          onChange={(e) => setPatientTelephone(e.target.value)}
+                          placeholder="+212 6 XX XX XX XX"
+                          className="w-full border border-emerald-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-400">Activez pour détecter automatiquement les effets indésirables après la prescription.</p>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -440,7 +482,7 @@ export default function NouvelleOrdonnance() {
             disabled={!canGenerate()}
             className="w-full bg-emerald-600 disabled:bg-gray-300 text-white py-3 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors"
           >
-            📄 Générer l&apos;ordonnance — Aperçu
+            {suiviActif ? "🛡️ Générer + activer le suivi patient" : "📄 Générer l'ordonnance"}
           </button>
           {!canGenerate() && (
             <p className="text-xs text-gray-400 text-center mt-1.5">Renseignez au moins le nom du patient et un médicament.</p>
@@ -913,17 +955,42 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, onBack
           </Link>
         </div>
 
-        {/* Bandeau pharmacovigilance — affiché en priorité si le médecin a coché "Activer le suivi" dans les options,
-            sinon proposé en suggestion discrète. */}
-        <div className={`mt-5 border rounded-xl p-4 flex items-start gap-3 ${ordonnance.suiviActif ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-200"}`}>
-          <span className="text-xl">🛰️</span>
-          <div className="flex-1">
-            <p className={`text-sm font-medium ${ordonnance.suiviActif ? "text-emerald-900" : "text-gray-700"}`}>
-              {ordonnance.suiviActif ? "Vous avez demandé le suivi pharmacovigilance — finalisez son activation" : "Nouveau médicament prescrit — activez le suivi pharmacovigilance"}
-            </p>
-            <p className={`text-xs mt-0.5 ${ordonnance.suiviActif ? "text-emerald-700" : "text-gray-500"}`}>Détectez automatiquement les effets indésirables grâce au suivi actif du patient (check-ins programmés, alertes en temps réel).</p>
-            <button onClick={onGoToSuivi} className={`text-xs font-semibold underline mt-1.5 ${ordonnance.suiviActif ? "text-emerald-700" : "text-gray-600"}`}>Activer le suivi →</button>
+        {/* Carte suivi — proéminente, toujours visible après génération */}
+        <div className={`mt-5 rounded-xl border-2 p-5 ${ordonnance.suiviActif ? "border-emerald-400 bg-emerald-50" : "border-gray-200 bg-gray-50"}`}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl">🛡️</span>
+            <p className="text-base font-bold text-gray-900">Suivi de tolérance PharmaVig</p>
+            {ordonnance.suiviActif && (
+              <span className="ml-auto text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full">ACTIVÉ</span>
+            )}
           </div>
+          {ordonnance.suiviActif ? (
+            <div className="space-y-2">
+              <p className="text-sm text-emerald-800 font-medium">Questionnaires programmés pour ce patient :</p>
+              <div className="flex gap-2 flex-wrap">
+                <span className="text-xs bg-white border border-emerald-200 text-emerald-700 rounded-full px-3 py-1.5 font-medium">📅 J+7</span>
+                <span className="text-xs bg-white border border-emerald-200 text-emerald-700 rounded-full px-3 py-1.5 font-medium">📅 J+30</span>
+                <span className="text-xs bg-white border border-emerald-200 text-emerald-700 rounded-full px-3 py-1.5 font-medium">📅 J+90</span>
+              </div>
+              <p className="text-xs text-emerald-700 mt-1">En cas d&apos;effet signalé → vous êtes notifié + déclaration CAPM pré-remplie automatiquement.</p>
+              <button
+                onClick={onGoToSuivi}
+                className="mt-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors"
+              >
+                Envoyer le lien au patient →
+              </button>
+            </div>
+          ) : (
+            <div>
+              <p className="text-sm text-gray-600 mb-3">Détectez automatiquement les effets indésirables grâce au suivi actif (check-ins J+7, J+30, J+90).</p>
+              <button
+                onClick={onGoToSuivi}
+                className="w-full border-2 border-emerald-400 text-emerald-700 font-semibold py-2.5 rounded-lg text-sm hover:bg-emerald-50 transition-colors"
+              >
+                🛡️ Activer le suivi pour ce patient →
+              </button>
+            </div>
+          )}
         </div>
 
         <p className="text-xs text-gray-400 text-center mt-5">
