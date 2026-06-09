@@ -9,17 +9,6 @@ import {
 } from "@/lib/drugApi";
 const STAT_BADGES = ["15 247 médicaments indexés", "Mise à jour quotidienne", "Sources : ANSM · BDPM · PharmaVig"];
 
-type TopDrug = { dci: string; classe: string };
-
-const TOP_DRUGS: TopDrug[] = [
-  { dci: "Pembrolizumab", classe: "Immunothérapie anti-PD-1" },
-  { dci: "Metformine", classe: "Antidiabétique biguanide" },
-  { dci: "Amoxicilline", classe: "Antibiotique pénicilline" },
-  { dci: "Méthotrexate", classe: "Immunosuppresseur / Chimiothérapie" },
-  { dci: "Amlodipine", classe: "Inhibiteur calcique" },
-  { dci: "Ibuprofène", classe: "Anti-inflammatoire AINS" },
-];
-
 export default function MedicamentsSearch() {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -149,19 +138,28 @@ export default function MedicamentsSearch() {
           </div>
         </div>
 
-        {/* ---- Médicaments les plus consultés ---- */}
+        {/* ---- Accès rapide : historique personnel ou molécules courantes ---- */}
         <div className="border-t border-gray-100 bg-gray-50">
           <div className="max-w-5xl mx-auto px-6 py-12 md:py-14">
-            <h2 className="text-xl font-bold text-gray-900 mb-5">Médicaments les plus consultés</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-1">
+              {recents.length > 0 ? "Vos recherches récentes" : "Molécules courantes"}
+            </h2>
+            <p className="text-sm text-gray-400 mb-5">
+              {recents.length > 0
+                ? "Retrouvez rapidement les médicaments que vous avez consultés"
+                : "Médicaments fréquemment recherchés par les médecins"}
+            </p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {TOP_DRUGS.map((d) => (
+              {(recents.length > 0 ? recents : QUICK_ACCESS_MOLECULES).map((dci) => (
                 <Link
-                  key={d.dci}
-                  href={`/medicaments/${slugify(d.dci)}`}
-                  className="bg-white border border-gray-200 rounded-xl p-4 hover:border-emerald-300 hover:shadow-sm transition-all flex flex-col"
+                  key={dci}
+                  href={`/medicaments/${slugify(dci)}`}
+                  className="bg-white border border-gray-200 rounded-xl p-4 hover:border-emerald-300 hover:shadow-sm transition-all flex items-center gap-3"
                 >
-                  <p className="font-bold text-gray-900 mb-0.5">{d.dci}</p>
-                  <p className="text-xs text-gray-400 flex-1">{d.classe}</p>
+                  {recents.length > 0 && (
+                    <span className="text-gray-300 text-sm shrink-0">🕓</span>
+                  )}
+                  <p className="font-semibold text-gray-900 truncate">{dci}</p>
                 </Link>
               ))}
             </div>
