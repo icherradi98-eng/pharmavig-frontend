@@ -2,33 +2,57 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import MedecinLayout, { PageHeader, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
+import MedecinLayout, { PageHeader } from "@/components/medecin/MedecinLayout";
 import {
-  MOCK_ALERTS, ALERT_SOURCE_STYLES, ALERT_SEVERITY_STYLES,
+  ALERT_SOURCE_STYLES, ALERT_SEVERITY_STYLES,
   type MockAlertSource, type MockAlertSeverity,
 } from "@/lib/mockMedecinData";
 import { api } from "@/lib/api";
 
-const READ_ALERTS_KEY = "pharmavig_medecin_alerts_read";
-const SOURCES: MockAlertSource[] = ["CAPM", "EMA", "ANSM", "FDA"];
-const SEVERITIES: MockAlertSeverity[] = ["urgent", "important", "info"];
+// ── Types ──────────────────────────────────────────────────────────────────────
+type AlertSource = MockAlertSource;
+type AlertSeverity = MockAlertSeverity;
 
+export type SecurityAlert = {
+  id: string;
+  source: AlertSource;
+  severity: AlertSeverity;
+  date: string;       // ISO
+  molecules: string[];
+  meddraSoc: string;
+  summary: string;
+  officialUrl: string;
+};
+
+const SOURCES: AlertSource[] = ["CAPM", "EMA", "ANSM", "FDA"];
+const SEVERITIES: AlertSeverity[] = ["urgent", "important", "info"];
+const READ_ALERTS_KEY = "pharmavig_medecin_alerts_read";
+
+// ── Données ────────────────────────────────────────────────────────────────────
+// Pour l'instant vide — sera alimenté par l'API alertes_securite (Railway/Supabase)
+const ALERTS: SecurityAlert[] = [];
+
+// ── Composant principal ────────────────────────────────────────────────────────
 export default function AlertesSecurite() {
   const router = useRouter();
-  const unread = useUnreadAlertsCount(MOCK_ALERTS.length);
 
-  const [onlyMine, setOnlyMine] = useState(true);
-  const [sourceFilter, setSourceFilter] = useState<MockAlertSource | "">("");
-  const [severityFilter, setSeverityFilter] = useState<MockAlertSeverity | "">("");
+  const [sourceFilter, setSourceFilter] = useState<AlertSource | "">("");
+  const [severityFilter, setSeverityFilter] = useState<AlertSeverity | "">("");
   const [search, setSearch] = useState("");
+  const [onlyMine, setOnlyMine] = useState(true);
   const [readIds, setReadIds] = useState<string[]>(() => {
     if (typeof window === "undefined") return [];
-    try {
-      return JSON.parse(localStorage.getItem(READ_ALERTS_KEY) || "[]");
-    } catch {
-      return [];
-    }
+    try { return JSON.parse(localStorage.getItem(READ_ALERTS_KEY) || "[]"); }
+    catch { return []; }
   });
+
+  // Molécules des déclarations du médecin (pour personnalisation)
+  const [myMolecules, setMyMolecules] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    api.getMyStats()
+      .then((s) => setMyMolecules(new Set(s.molecules.map((m) => m.toLowerCase()))))
+      .catch(() => {});
+  }, []);
 
   function markAsRead(id: string) {
     setReadIds((prev) => {
@@ -39,20 +63,19 @@ export default function AlertesSecurite() {
     });
   }
 
-  // Molécules déclarées par le médecin — chargées depuis l'API (pour la personnalisation des alertes)
-  const [myMolecules, setMyMolecules] = useState<Set<string>>(new Set());
-  useEffect(() => {
-    api.getMyStats()
-      .then((s) => setMyMolecules(new Set(s.molecules.map((m) => m.toLowerCase()))))
-      .catch(() => {});
-  }, []);
-
   function concernsMe(molecules: string[]) {
     return molecules.some((m) => myMolecules.has(m.toLowerCase()));
   }
 
+  function declareSimilar(molecule: string, soc: string) {
+    try {
+      localStorage.setItem("pharmavig_medecin_prefill", JSON.stringify({ drugDci: molecule, meddraSoc: soc }));
+    } catch {}
+    router.push("/dashboard/medecin/nouvelle-declaration");
+  }
+
   const filtered = useMemo(() => {
-    return MOCK_ALERTS.filter((a) => {
+    return ALERTS.filter((a) => {
       if (onlyMine && !concernsMe(a.molecules)) return false;
       if (sourceFilter && a.source !== sourceFilter) return false;
       if (severityFilter && a.severity !== severityFilter) return false;
@@ -62,21 +85,17 @@ export default function AlertesSecurite() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onlyMine, sourceFilter, severityFilter, search]);
 
-  const now = new Date("2026-06-07T09:30:00");
-  const nowLabel = now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-
-  function declareSimilar(molecule: string, soc: string) {
-    try {
-      localStorage.setItem("pharmavig_medecin_prefill", JSON.stringify({ drugDci: molecule, meddraSoc: soc }));
-    } catch {}
-    router.push("/dashboard/medecin/nouvelle-declaration");
-  }
+  const unread = filtered.filter((a) => !readIds.includes(a.id)).length;
 
   return (
     <MedecinLayout unreadAlerts={unread}>
-      <PageHeader title="Alertes sécurité" subtitle="Veille réglementaire personnalisée — CAPM, EMA, ANSM, FDA" />
+      <PageHeader
+        title="Alertes sécurité"
+        subtitle="Veille réglementaire personnalisée — CAPM, EMA, ANSM, FDA"
+      />
 
       <div className="px-5 md:px-8 py-6 space-y-5">
+
         {/* Filtres */}
         <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
           <div className="flex flex-wrap items-center gap-3">
@@ -85,7 +104,7 @@ export default function AlertesSecurite() {
                 onClick={() => setOnlyMine(true)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${onlyMine ? "bg-emerald-600 text-white" : "text-gray-600"}`}
               >
-                Mes molécules seulement
+                Mes molécules
               </button>
               <button
                 onClick={() => setOnlyMine(false)}
@@ -119,20 +138,18 @@ export default function AlertesSecurite() {
           </div>
         </div>
 
-        {/* Liste / empty state */}
+        {/* Contenu principal */}
         {filtered.length === 0 ? (
-          <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
-            <span className="text-3xl">✅</span>
-            <p className="text-gray-700 font-medium mt-3">Aucune alerte en cours pour vos molécules habituelles.</p>
-            <p className="text-gray-400 text-sm mt-1">Dernière vérification : aujourd&apos;hui à {nowLabel}</p>
-          </div>
+          <EmptyState hasFilters={!!(sourceFilter || severityFilter || search)} />
         ) : (
           <div className="space-y-4">
             {filtered.map((a) => {
               const isRead = readIds.includes(a.id);
               const sevStyle = ALERT_SEVERITY_STYLES[a.severity];
               const concerned = concernsMe(a.molecules);
-              const date = new Date(a.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+              const date = new Date(a.date).toLocaleDateString("fr-FR", {
+                day: "2-digit", month: "long", year: "numeric",
+              });
               return (
                 <div
                   key={a.id}
@@ -153,7 +170,8 @@ export default function AlertesSecurite() {
                   <p className="font-semibold text-gray-900 text-base mb-1.5">{a.molecules.join(" / ")}</p>
                   <p className="text-sm text-gray-600 leading-relaxed mb-3">{a.summary}</p>
                   <div className="flex flex-wrap items-center gap-4">
-                    <a href={a.officialUrl} target="_blank" rel="noreferrer" className="text-sm font-medium text-emerald-700 hover:underline">
+                    <a href={a.officialUrl} target="_blank" rel="noreferrer"
+                      className="text-sm font-medium text-emerald-700 hover:underline">
                       Voir le document officiel →
                     </a>
                     <button
@@ -168,7 +186,54 @@ export default function AlertesSecurite() {
             })}
           </div>
         )}
+
+        {/* Encart informatif */}
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 flex gap-4">
+          <span className="text-2xl shrink-0">📡</span>
+          <div>
+            <p className="text-sm font-semibold text-blue-900 mb-1">
+              Veille automatique en cours de déploiement
+            </p>
+            <p className="text-sm text-blue-700 leading-relaxed">
+              Le système d&apos;alertes PharmaVig intégrera prochainement les flux officiels CAPM, ANSM et EMA.
+              Vous serez notifié automatiquement pour les molécules que vous prescrivez.
+              En attendant, consultez directement{" "}
+              <a href="https://capm.sante.gov.ma" target="_blank" rel="noreferrer"
+                className="underline font-medium">capm.sante.gov.ma</a>{" "}
+              et{" "}
+              <a href="https://ansm.sante.fr" target="_blank" rel="noreferrer"
+                className="underline font-medium">ansm.sante.fr</a>.
+            </p>
+          </div>
+        </div>
+
       </div>
     </MedecinLayout>
+  );
+}
+
+// ── Empty state ────────────────────────────────────────────────────────────────
+function EmptyState({ hasFilters }: { hasFilters: boolean }) {
+  const now = new Date();
+  const timeLabel = now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
+  if (hasFilters) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
+        <span className="text-3xl">🔍</span>
+        <p className="text-gray-700 font-medium mt-3">Aucune alerte ne correspond à vos filtres.</p>
+        <p className="text-gray-400 text-sm mt-1">Essayez d&apos;élargir votre recherche.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
+      <span className="text-3xl">✅</span>
+      <p className="text-gray-700 font-medium mt-3">Aucune alerte active pour le moment.</p>
+      <p className="text-gray-400 text-sm mt-1">
+        Dernière vérification : aujourd&apos;hui à {timeLabel}
+      </p>
+    </div>
   );
 }
