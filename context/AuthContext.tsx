@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { api, UserOut, AuthResponse } from "@/lib/api";
 
@@ -20,8 +20,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
   });
+  const [sessionExpired, setSessionExpired] = useState(false);
   const loading = false;
   const router = useRouter();
+
+  // Écoute l'événement déclenché par lib/api.ts quand le refresh token est invalide
+  useEffect(() => {
+    function handleExpired() {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
+      setUser(null);
+      setSessionExpired(true);
+      router.push("/login?session=expired");
+    }
+    window.addEventListener("pharmavig:session-expired", handleExpired);
+    return () => window.removeEventListener("pharmavig:session-expired", handleExpired);
+  }, [router]);
 
   function saveSession(res: AuthResponse) {
     localStorage.setItem("access_token", res.access_token);

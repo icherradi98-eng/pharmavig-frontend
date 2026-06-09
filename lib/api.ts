@@ -1,6 +1,46 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+// ── Refresh token ──────────────────────────────────────────────────────────────
+// On garde une promesse en cours pour éviter les rafales simultanées de refresh
+let _refreshPromise: Promise<string | null> | null = null;
+
+async function tryRefreshToken(): Promise<string | null> {
+  if (_refreshPromise) return _refreshPromise;
+
+  _refreshPromise = (async () => {
+    try {
+      const refreshToken = localStorage.getItem("refresh_token");
+      if (!refreshToken) return null;
+
+      const res = await fetch(`${BASE}/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+
+      if (!res.ok) {
+        // Refresh token expiré ou invalide → nettoyer la session
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("user");
+        return null;
+      }
+
+      const data = await res.json();
+      localStorage.setItem("access_token", data.access_token);
+      return data.access_token as string;
+    } catch {
+      return null;
+    } finally {
+      _refreshPromise = null;
+    }
+  })();
+
+  return _refreshPromise;
+}
+
+// ── Requête avec retry automatique après refresh ────────────────────────────────
+async function request<T>(path: string, options: RequestInit = {}, _retry = true): Promise<T> {
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
   const res = await fetch(`${BASE}${path}`, {
@@ -11,6 +51,17 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...options.headers,
     },
   });
+
+  // Token expiré → on tente un refresh puis on rejoue la requête une fois
+  if (res.status === 401 && _retry) {
+    const newToken = await tryRefreshToken();
+    if (newToken) {
+      return request<T>(path, options, false); // _retry=false pour éviter boucle infinie
+    }
+    // Refresh échoué → on dispatch un event pour que AuthContext déconnecte proprement
+    window.dispatchEvent(new Event("pharmavig:session-expired"));
+    throw new Error("Session expirée. Veuillez vous reconnecter.");
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "Erreur serveur" }));
