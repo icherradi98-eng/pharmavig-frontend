@@ -59,12 +59,6 @@ export default function MesMolecules() {
     [declaredMolecules, watchlist]
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function moleculeStats(_name: string) {
-    // Sera alimenté par l'API alertes_securite (Railway/Supabase) — pas de mock
-    return { lastAlert: null };
-  }
-
   return (
     <MedecinLayout unreadAlerts={unread}>
       <PageHeader title="Mes molécules" subtitle="Configurez votre liste de surveillance — elle alimente vos alertes personnalisées et vos comparatifs" />
@@ -96,7 +90,6 @@ export default function MesMolecules() {
           <div className="flex flex-wrap gap-2 mt-4">
             {watchlist.length === 0 && <p className="text-sm text-gray-400">Aucune molécule surveillée pour le moment.</p>}
             {watchlist.map((m) => {
-              const { lastAlert } = moleculeStats(m);
               const open = openPopover === m;
               return (
                 <div key={m} className="relative">
@@ -115,12 +108,12 @@ export default function MesMolecules() {
                   </button>
                   {open && (
                     <div className="absolute z-10 mt-2 w-64 bg-white border border-gray-200 rounded-xl shadow-lg p-4 text-sm">
-                      <p className="text-gray-500 text-xs mb-1">Dernière alerte</p>
-                      <p className="font-semibold text-gray-900 mb-3">
-                        {"Aucune"}
+                      <p className="text-xs font-semibold text-gray-500 mb-1">Alertes CAPM / ANSM / EMA</p>
+                      <p className="text-gray-400 text-xs mb-3">
+                        Aucune alerte active pour cette molécule.
                       </p>
                       <Link href="/dashboard/medecin/alertes" className="text-emerald-700 font-medium hover:underline text-xs">
-                        Voir les alertes →
+                        Voir toutes les alertes →
                       </Link>
                     </div>
                   )}
@@ -129,6 +122,21 @@ export default function MesMolecules() {
             })}
           </div>
         </SectionCard>
+
+        {/* Encart veille réglementaire */}
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
+          <span className="text-xl shrink-0">📡</span>
+          <div>
+            <p className="text-sm font-semibold text-blue-900 mb-0.5">Veille automatique en cours de déploiement</p>
+            <p className="text-xs text-blue-700 leading-relaxed">
+              Dès qu&apos;une alerte CAPM, ANSM ou EMA concernera une molécule de votre liste,
+              vous serez notifié ici. En attendant, consultez directement{" "}
+              <a href="https://capm.sante.gov.ma" target="_blank" rel="noreferrer" className="underline font-medium">capm.sante.gov.ma</a>{" "}
+              et{" "}
+              <a href="https://ansm.sante.fr" target="_blank" rel="noreferrer" className="underline font-medium">ansm.sante.fr</a>.
+            </p>
+          </div>
+        </div>
 
         {detected.length > 0 && (
           <SectionCard title="Molécules détectées depuis vos déclarations">
