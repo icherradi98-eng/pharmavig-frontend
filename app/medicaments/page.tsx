@@ -7,42 +7,17 @@ import {
   autocomplete, getRecentSearches, pushRecentSearch, slugify,
   QUICK_ACCESS_MOLECULES, type Suggestion,
 } from "@/lib/drugApi";
-import { ALERT_SOURCE_STYLES, ALERT_SEVERITY_STYLES, type MockAlertSource, type MockAlertSeverity } from "@/lib/mockMedecinData";
-
 const STAT_BADGES = ["15 247 médicaments indexés", "Mise à jour quotidienne", "Sources : ANSM · BDPM · PharmaVig"];
 
-type RecentAlert = {
-  source: MockAlertSource;
-  severity: MockAlertSeverity;
-  date: string;
-  molecule: string;
-  summary: string;
-};
-
-const RECENT_ALERTS: RecentAlert[] = [
-  {
-    source: "EMA", severity: "urgent", date: "15/05/2026", molecule: "Pembrolizumab",
-    summary: "Nouveau signal de myocardite immune sévère en association avec chimiothérapie à base de platine.",
-  },
-  {
-    source: "ANSM", severity: "important", date: "02/05/2026", molecule: "Méthotrexate",
-    summary: "Rappel des règles de prescription hebdomadaire. 12 cas de surdosage accidentel rapportés en France.",
-  },
-  {
-    source: "CAPM", severity: "info", date: "28/04/2026", molecule: "Tramadol",
-    summary: "Mise à jour du RCP marocain. Nouvelles contre-indications chez l'enfant de moins de 12 ans.",
-  },
-];
-
-type TopDrug = { dci: string; classe: string; declarations: number; alerteActive?: boolean };
+type TopDrug = { dci: string; classe: string };
 
 const TOP_DRUGS: TopDrug[] = [
-  { dci: "Pembrolizumab", classe: "Immunothérapie anti-PD-1", declarations: 12, alerteActive: true },
-  { dci: "Metformine", classe: "Antidiabétique biguanide", declarations: 8 },
-  { dci: "Amoxicilline", classe: "Antibiotique pénicilline", declarations: 15 },
-  { dci: "Méthotrexate", classe: "Immunosuppresseur / Chimiothérapie", declarations: 6, alerteActive: true },
-  { dci: "Amlodipine", classe: "Inhibiteur calcique", declarations: 4 },
-  { dci: "Ibuprofène", classe: "Anti-inflammatoire AINS", declarations: 11 },
+  { dci: "Pembrolizumab", classe: "Immunothérapie anti-PD-1" },
+  { dci: "Metformine", classe: "Antidiabétique biguanide" },
+  { dci: "Amoxicilline", classe: "Antibiotique pénicilline" },
+  { dci: "Méthotrexate", classe: "Immunosuppresseur / Chimiothérapie" },
+  { dci: "Amlodipine", classe: "Inhibiteur calcique" },
+  { dci: "Ibuprofène", classe: "Anti-inflammatoire AINS" },
 ];
 
 export default function MedicamentsSearch() {
@@ -174,37 +149,6 @@ export default function MedicamentsSearch() {
           </div>
         </div>
 
-        {/* ---- Alertes de sécurité récentes ---- */}
-        <div className="border-t border-gray-100">
-          <div className="max-w-5xl mx-auto px-6 py-12 md:py-14">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-xl font-bold text-gray-900">Alertes de sécurité récentes</h2>
-              <Link href="/dashboard/medecin/alertes" className="text-sm font-semibold text-emerald-700 hover:underline shrink-0">
-                Voir toutes les alertes →
-              </Link>
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              {RECENT_ALERTS.map((a, i) => {
-                const sev = ALERT_SEVERITY_STYLES[a.severity];
-                return (
-                  <div key={i} className={`bg-white border border-gray-200 border-l-4 ${sev.border} rounded-xl p-4 flex flex-col`}>
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${ALERT_SOURCE_STYLES[a.source]}`}>{a.source}</span>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${sev.chip}`}>{sev.label}</span>
-                      <span className="text-xs text-gray-400 ml-auto">{a.date}</span>
-                    </div>
-                    <p className="font-semibold text-gray-900 mb-1">{a.molecule}</p>
-                    <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-3 flex-1">{a.summary}</p>
-                    <Link href={`/medicaments/${slugify(a.molecule)}`} className="text-sm font-medium text-emerald-700 hover:underline">
-                      Voir la fiche →
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
         {/* ---- Médicaments les plus consultés ---- */}
         <div className="border-t border-gray-100 bg-gray-50">
           <div className="max-w-5xl mx-auto px-6 py-12 md:py-14">
@@ -217,17 +161,7 @@ export default function MedicamentsSearch() {
                   className="bg-white border border-gray-200 rounded-xl p-4 hover:border-emerald-300 hover:shadow-sm transition-all flex flex-col"
                 >
                   <p className="font-bold text-gray-900 mb-0.5">{d.dci}</p>
-                  <p className="text-xs text-gray-400 mb-3 flex-1">{d.classe}</p>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                      {d.declarations} déclarations PharmaVig
-                    </span>
-                    {d.alerteActive && (
-                      <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full">
-                        ⚠️ Alerte active
-                      </span>
-                    )}
-                  </div>
+                  <p className="text-xs text-gray-400 flex-1">{d.classe}</p>
                 </Link>
               ))}
             </div>

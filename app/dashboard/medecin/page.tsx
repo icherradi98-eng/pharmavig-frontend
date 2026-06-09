@@ -7,8 +7,8 @@ import {
   PieChart, Pie, Cell,
 } from "recharts";
 import { useAuth } from "@/context/AuthContext";
-import MedecinLayout, { PageHeader, SectionCard, DemoBanner, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
-import { MOCK_ALERTS, NATIONAL_BENCHMARK } from "@/lib/mockMedecinData";
+import MedecinLayout, { PageHeader, SectionCard, DemoBanner } from "@/components/medecin/MedecinLayout";
+import { NATIONAL_BENCHMARK } from "@/lib/mockMedecinData";
 import { api, type ReportStats } from "@/lib/api";
 
 const BEGAUD_LABELS: Record<number, string> = {
@@ -26,7 +26,7 @@ const SOC_COLORS = ["#047857", "#0d9488", "#0891b2", "#2563eb", "#7c3aed"];
 
 export default function MedecinVueEnsemble() {
   const { user } = useAuth();
-  const unread = useUnreadAlertsCount(MOCK_ALERTS.length);
+  const unread = 0; // sera alimenté par les vraies alertes CAPM/ANSM/EMA
 
   const [stats, setStats] = useState<ReportStats | null>(null);
   const [loading, setLoading] = useState(true);
