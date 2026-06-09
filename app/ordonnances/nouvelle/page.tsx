@@ -9,7 +9,7 @@ import {
   type MedicamentSuggestion, type InteractionResult, type SavedOrdonnance,
   EMPTY_PROFILE, readProfile, saveProfile, readRecentPatients, pushRecentPatient, removeRecentPatient,
   nextOrdonnanceNumber, emptyMedRx, posologieLabel, dureeLabel, ageFromDateNaissance,
-  searchMedicaments, checkInteraction, buildWhatsAppLink, buildSummaryText, normalizeForme,
+  searchMedicaments, checkInteraction, buildWhatsAppLink, buildSummaryText, normalizeForme, voieFromForme,
   saveToHistory, deleteFromHistory,
 } from "@/lib/ordonnancier";
 
@@ -533,17 +533,23 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
   }
 
   function pickSuggestion(s: MedicamentSuggestion) {
-    const normalized = normalizeForme(s.forme);
+    const forme = normalizeForme(s.forme) || med.forme;
+    const voie = voieFromForme(forme) || med.voie;
+    const dosage = s.dosages && s.dosages.length === 1 ? s.dosages[0] : "";
     onChange({
       nom: s.nom,
       dci: s.dci || med.dci,
-      forme: normalized || med.forme,
-      dosage: s.dosages && s.dosages.length === 1 ? s.dosages[0] : med.dosage,
+      forme,
+      voie,
+      dosage,
       dosagesDisponibles: s.dosages || [],
     });
     setSuggestions([]);
     setShowSuggestions(false);
+    setAutoFilled(true);
   }
+
+  const [autoFilled, setAutoFilled] = useState(false);
 
   return (
     <div className="border border-gray-200 rounded-xl p-4 relative">
@@ -553,69 +559,127 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
       </div>
 
       <div className="space-y-3">
-        {/* Ligne 1 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="relative">
-            <label className={labelCls}>DCI / Nom commercial</label>
-            <input
-              className={inputCls}
-              value={med.nom}
-              onChange={(e) => handleNomChange(e.target.value)}
-              onFocus={() => setShowSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-              placeholder="Ex. Doliprane / Paracétamol"
-              autoComplete="off"
-            />
-            {showSuggestions && med.nom.trim().length >= 2 && (
-              <ul className="absolute z-10 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                {searching && (
-                  <li className="px-3 py-2 text-xs text-gray-400">🔄 Recherche en cours...</li>
-                )}
-                {!searching && suggestions.length === 0 && (
-                  <li className="px-3 py-2 text-xs text-gray-400">Aucun résultat dans la base ANSM — vous pouvez saisir le médicament manuellement.</li>
-                )}
-                {!searching && suggestions.map((s, i) => (
-                  <li key={i}>
-                    <button type="button" onMouseDown={() => pickSuggestion(s)} className="w-full text-left px-3 py-2 text-sm hover:bg-emerald-50">
-                      <span className="font-medium">{s.nom}</span>
-                      {s.dci && <span className="text-gray-400"> — {s.dci}</span>}
-                      {s.forme && <span className="text-gray-300 text-xs"> · {s.forme}</span>}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div>
-            <label className={labelCls}>Forme</label>
-            <select className={inputCls} value={med.forme} onChange={(e) => onChange({ forme: e.target.value as MedicamentRx["forme"] })}>
-              <option value="">— Sélectionner —</option>
-              {FORMES.map((f) => <option key={f} value={f}>{f}</option>)}
-            </select>
-          </div>
+        {/* Ligne 1 — Recherche médicament */}
+        <div className="relative">
+          <label className={labelCls}>Médicament *</label>
+          <input
+            className={inputCls}
+            value={med.nom}
+            onChange={(e) => { handleNomChange(e.target.value); setAutoFilled(false); }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+            placeholder="Ex. Metformine, Doliprane, Amoxicilline..."
+            autoComplete="off"
+          />
+          {showSuggestions && med.nom.trim().length >= 2 && (
+            <ul className="absolute z-10 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl max-h-64 overflow-y-auto">
+              {searching && (
+                <li className="px-4 py-3 text-xs text-gray-400 flex items-center gap-2">
+                  <span className="animate-spin">⏳</span> Recherche dans la base ANSM...
+                </li>
+              )}
+              {!searching && suggestions.length === 0 && (
+                <li className="px-4 py-3 text-xs text-gray-400">Aucun résultat — saisie manuelle possible ci-dessous.</li>
+              )}
+              {!searching && suggestions.map((s, i) => (
+                <li key={i} className="border-b border-gray-50 last:border-0">
+                  <button
+                    type="button"
+                    onMouseDown={() => pickSuggestion(s)}
+                    className="w-full text-left px-4 py-2.5 hover:bg-emerald-50 transition-colors"
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-sm font-semibold text-gray-900 truncate">{s.nom}</span>
+                      {s.forme && (
+                        <span className="text-xs text-gray-400 shrink-0">{s.forme}</span>
+                      )}
+                    </div>
+                    {s.dci && (
+                      <p className="text-xs text-gray-500 mt-0.5">{s.dci}</p>
+                    )}
+                    {s.dosages && s.dosages.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {s.dosages.slice(0, 4).map((d) => (
+                          <span key={d} className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
+                            {d}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
-        {/* Ligne 2 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label className={labelCls}>Dosage</label>
-            {med.dosagesDisponibles && med.dosagesDisponibles.length > 1 ? (
-              <select className={inputCls} value={med.dosage} onChange={(e) => onChange({ dosage: e.target.value })}>
-                <option value="">— Sélectionner —</option>
-                {med.dosagesDisponibles.map((d) => <option key={d} value={d}>{d}</option>)}
-              </select>
-            ) : (
-              <input className={inputCls} value={med.dosage} onChange={(e) => onChange({ dosage: e.target.value })} placeholder="Ex. 500 mg" />
-            )}
+        {/* Badge auto-rempli + récapitulatif */}
+        {autoFilled && (med.forme || med.voie) && (
+          <div className="flex flex-wrap items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+            <span className="text-xs font-semibold text-emerald-700">✓ Auto-rempli :</span>
+            {med.forme && <span className="text-xs bg-white border border-emerald-200 text-emerald-700 px-2 py-0.5 rounded-full">{med.forme}</span>}
+            {med.voie && <span className="text-xs bg-white border border-emerald-200 text-emerald-700 px-2 py-0.5 rounded-full">{VOIES.find(v => v.value === med.voie)?.label}</span>}
+            <button type="button" onClick={() => setAutoFilled(false)} className="ml-auto text-xs text-gray-400 hover:text-gray-600">Modifier</button>
           </div>
-          <div>
-            <label className={labelCls}>Voie d&apos;administration</label>
-            <select className={inputCls} value={med.voie} onChange={(e) => onChange({ voie: e.target.value as MedicamentRx["voie"] })}>
-              <option value="">— Sélectionner —</option>
-              {VOIES.map((v) => <option key={v.value} value={v.value}>{v.label}</option>)}
-            </select>
-          </div>
+        )}
+
+        {/* Dosage — chips si multiple, input sinon */}
+        <div>
+          <label className={labelCls}>Dosage *</label>
+          {med.dosagesDisponibles && med.dosagesDisponibles.length > 1 ? (
+            <div className="flex flex-wrap gap-2 mt-1">
+              {med.dosagesDisponibles.map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => onChange({ dosage: d })}
+                  className={`px-3 py-1.5 rounded-full border text-sm font-medium transition-colors ${
+                    med.dosage === d
+                      ? "bg-emerald-600 border-emerald-600 text-white shadow-sm"
+                      : "border-gray-300 text-gray-700 hover:border-emerald-400 hover:bg-emerald-50"
+                  }`}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <input
+              className={inputCls}
+              value={med.dosage}
+              onChange={(e) => onChange({ dosage: e.target.value })}
+              placeholder="Ex. 500 mg"
+            />
+          )}
         </div>
+
+        {/* Forme + Voie — masqués si auto-remplis et non modifiés */}
+        {(!autoFilled || !med.forme || !med.voie) && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className={labelCls}>Forme galénique</label>
+              <select
+                className={inputCls}
+                value={med.forme}
+                onChange={(e) => {
+                  const f = e.target.value as MedicamentRx["forme"];
+                  const v = voieFromForme(f);
+                  onChange({ forme: f, voie: v || med.voie });
+                }}
+              >
+                <option value="">— Sélectionner —</option>
+                {FORMES.map((f) => <option key={f} value={f}>{f}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={labelCls}>Voie d&apos;administration</label>
+              <select className={inputCls} value={med.voie} onChange={(e) => onChange({ voie: e.target.value as MedicamentRx["voie"] })}>
+                <option value="">— Sélectionner —</option>
+                {VOIES.map((v) => <option key={v.value} value={v.value}>{v.label}</option>)}
+              </select>
+            </div>
+          </div>
+        )}
 
         {/* Ligne 3 — posologie / durée structurées */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

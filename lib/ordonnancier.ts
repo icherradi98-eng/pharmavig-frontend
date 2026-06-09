@@ -120,6 +120,26 @@ export function normalizeForme(raw?: string): Forme | "" {
   return found ? found.forme : "";
 }
 
+// Déduit automatiquement la voie d'administration depuis la forme galénique.
+// Couvre ~90% des cas courants — le médecin garde toujours la main pour corriger.
+export function voieFromForme(forme: Forme | ""): Voie | "" {
+  switch (forme) {
+    case "Comprimé":
+    case "Gélule":
+    case "Sirop":
+      return "orale";
+    case "Solution injectable":
+      return "IV";
+    case "Patch":
+    case "Pommade / Crème":
+      return "topique";
+    case "Inhalateur":
+      return "inhalée";
+    default:
+      return "";
+  }
+}
+
 export type MedicamentRx = {
   id: number;
   nom: string;
