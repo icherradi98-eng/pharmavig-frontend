@@ -26,8 +26,19 @@ function RegisterForm() {
 
   const set = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
 
+  const pwdRules = [
+    { ok: form.password.length >= 8, label: "Au moins 8 caractères" },
+    { ok: /\d/.test(form.password),  label: "Au moins un chiffre" },
+    { ok: /[a-zA-Z]/.test(form.password), label: "Au moins une lettre" },
+  ];
+  const pwdValid = pwdRules.every((r) => r.ok);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!pwdValid) {
+      setError("Le mot de passe ne respecte pas les règles de sécurité");
+      return;
+    }
     if (form.password !== form.confirmPassword) {
       setError("Les mots de passe ne correspondent pas");
       return;
@@ -132,7 +143,17 @@ function RegisterForm() {
               <div>
                 <label className="text-sm font-medium text-gray-700">Mot de passe <span className="text-red-500">*</span></label>
                 <input type="password" required value={form.password} onChange={(e) => set("password", e.target.value)}
-                  placeholder="Minimum 8 caractères" className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  placeholder="Minimum 8 caractères" className={`mt-1 w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 ${form.password && !pwdValid ? "border-red-300" : "border-gray-300"}`} />
+                {form.password.length > 0 && (
+                  <ul className="mt-2 space-y-1">
+                    {pwdRules.map((r) => (
+                      <li key={r.label} className={`flex items-center gap-1.5 text-xs ${r.ok ? "text-emerald-600" : "text-gray-400"}`}>
+                        <span>{r.ok ? "✓" : "○"}</span>
+                        {r.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">Confirmer le mot de passe <span className="text-red-500">*</span></label>
