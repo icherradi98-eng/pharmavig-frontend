@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import MedecinLayout, { PageHeader, SectionCard, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
-import { MOCK_ALERTS } from "@/lib/mockMedecinData";
 import { useAuth } from "@/context/AuthContext";
 import { api, type PrescriptionOut, type CheckInOut, type ProtocolType } from "@/lib/api";
 
@@ -68,7 +67,7 @@ function nextCheckin(checkins: CheckInOut[]): CheckInOut | null {
 }
 
 export default function SurveillanceActive() {
-  const unread = useUnreadAlertsCount(MOCK_ALERTS.length);
+  const unread = useUnreadAlertsCount(0);
   const { user } = useAuth();
   const router = useRouter();
 

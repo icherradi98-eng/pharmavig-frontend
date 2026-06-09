@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import MedecinLayout, { PageHeader, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
-import { MOCK_ALERTS } from "@/lib/mockMedecinData";
 import { api, type ReportOut } from "@/lib/api";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -16,7 +15,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 const PAGE_SIZE = 10;
 
 export default function MesDeclarations() {
-  const unread = useUnreadAlertsCount(MOCK_ALERTS.length);
+  const unread = useUnreadAlertsCount(0);
   const [declarations, setDeclarations] = useState<ReportOut[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

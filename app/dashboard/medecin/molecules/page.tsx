@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import MedecinLayout, { PageHeader, SectionCard, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
-import { COMMON_MOLECULES, MOCK_ALERTS } from "@/lib/mockMedecinData";
+import { COMMON_MOLECULES } from "@/lib/mockMedecinData";
 import { api } from "@/lib/api";
 
 const WATCHLIST_KEY = "pharmavig_medecin_watchlist";
 const DEFAULT_WATCHLIST: string[] = [];
 
 export default function MesMolecules() {
-  const unread = useUnreadAlertsCount(MOCK_ALERTS.length);
+  const unread = useUnreadAlertsCount(0);
   const [declaredMolecules, setDeclaredMolecules] = useState<string[]>([]);
 
   useEffect(() => {
@@ -59,12 +59,10 @@ export default function MesMolecules() {
     [declaredMolecules, watchlist]
   );
 
-  function moleculeStats(name: string) {
-    const alerts = MOCK_ALERTS.filter((a) => a.molecules.some((m) => m.toLowerCase() === name.toLowerCase()));
-    const lastAlert = alerts.length
-      ? alerts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
-      : null;
-    return { lastAlert };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function moleculeStats(_name: string) {
+    // Sera alimenté par l'API alertes_securite (Railway/Supabase) — pas de mock
+    return { lastAlert: null };
   }
 
   return (
@@ -119,7 +117,7 @@ export default function MesMolecules() {
                     <div className="absolute z-10 mt-2 w-64 bg-white border border-gray-200 rounded-xl shadow-lg p-4 text-sm">
                       <p className="text-gray-500 text-xs mb-1">Dernière alerte</p>
                       <p className="font-semibold text-gray-900 mb-3">
-                        {lastAlert ? new Date(lastAlert.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "Aucune"}
+                        {"Aucune"}
                       </p>
                       <Link href="/dashboard/medecin/alertes" className="text-emerald-700 font-medium hover:underline text-xs">
                         Voir les alertes →

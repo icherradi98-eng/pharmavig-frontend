@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import MedecinLayout, { PageHeader, SectionCard, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
-import { MOCK_ALERTS, MOCK_PROFILE } from "@/lib/mockMedecinData";
+import { MOCK_PROFILE } from "@/lib/mockMedecinData";
 
 const PREFS_KEY = "pharmavig_medecin_notif_prefs";
 
@@ -29,7 +29,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 
 export default function ProfilMedecin() {
   const { user, logout } = useAuth();
-  const unread = useUnreadAlertsCount(MOCK_ALERTS.length);
+  const unread = useUnreadAlertsCount(0);
   const [prefs, setPrefs] = useState<Prefs>(() => {
     if (typeof window === "undefined") return DEFAULT_PREFS;
     try {
