@@ -14,7 +14,6 @@ import {
   type ExtractedIndication, type ExtractedDosage, type ExtractedContraindication,
   type ExtractedInteraction, type ExtractedAdverseEffect,
 } from "@/lib/drugApi";
-import { MOCK_DECLARATIONS } from "@/lib/mockMedecinData";
 
 const TABS = [
   { id: "effets", label: "Effets indésirables" },
@@ -24,6 +23,13 @@ const TABS = [
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
+
+type TerrainDeclaration = {
+  drugDci: string;
+  grave: boolean;
+  begaud: number;
+  meddraPt: string;
+};
 
 export default function MedicamentProfil() {
   const params = useParams<{ slug: string }>();
@@ -67,10 +73,9 @@ function DrugProfileContent({ slug }: { slug: string }) {
   const fdaChemicalName = label?.generic_name && titleCaseFr(label.generic_name) !== dci ? label.generic_name : undefined;
   const brandNames = label?.brand_name || (bdpm?.denomination ? [bdpm.denomination] : []);
 
-  const localDeclarations = useMemo(
-    () => MOCK_DECLARATIONS.filter((d) => d.drugDci.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(d.drugDci.toLowerCase())),
-    [name]
-  );
+  // Les données terrain seront alimentées par l'API agrégée PharmaVig (Railway/Supabase)
+  // quand l'endpoint public /drugs/{dci}/terrain sera disponible.
+  const localDeclarations: TerrainDeclaration[] = [];
 
   const loading = label === undefined || events === undefined;
   const noFdaData = label === null && bdpm === null;
@@ -671,18 +676,30 @@ function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; d
 
 /* ---------------- TAB 4 — Données terrain PharmaVig ---------------- */
 
-function TabTerrain({ declarations, dci, onDeclare }: { declarations: typeof MOCK_DECLARATIONS; dci: string; onDeclare: () => void }) {
+function TabTerrain({ declarations, dci, onDeclare }: { declarations: TerrainDeclaration[]; dci: string; onDeclare: () => void }) {
   const topEffects = useMemoTopEffects(declarations);
 
   if (declarations.length === 0) {
     return (
       <Section title="Données terrain PharmaVig Maroc">
-        <div className="text-center py-10">
+        <div className="text-center py-8">
           <span className="text-3xl">📋</span>
-          <p className="text-gray-600 font-medium mt-3">Aucune déclaration PharmaVig pour {dci} pour l&apos;instant.</p>
-          <button onClick={onDeclare} className="mt-4 inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
-            Soyez le premier à contribuer → Déclarer un cas
+          <p className="text-gray-700 font-medium mt-3">Aucun signal terrain pour {dci} pour l&apos;instant.</p>
+          <p className="text-gray-400 text-sm mt-1 max-w-sm mx-auto">
+            Les données terrain sont constituées par les déclarations d&apos;effets indésirables
+            soumises par les professionnels de santé marocains via PharmaVig.
+          </p>
+          <button onClick={onDeclare} className="mt-5 inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+            Contribuer — Déclarer un cas →
           </button>
+        </div>
+        <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3 text-left">
+          <span className="text-lg shrink-0">🔬</span>
+          <p className="text-xs text-blue-700 leading-relaxed">
+            <span className="font-semibold">Pourquoi ces données comptent :</span> 95% des effets indésirables
+            ne sont jamais signalés. Chaque déclaration PharmaVig contribue à la
+            pharmacovigilance nationale et permet de détecter des signaux que les essais cliniques n&apos;ont pas captés.
+          </p>
         </div>
       </Section>
     );
@@ -720,7 +737,7 @@ function TabTerrain({ declarations, dci, onDeclare }: { declarations: typeof MOC
   );
 }
 
-function useMemoTopEffects(declarations: typeof MOCK_DECLARATIONS): [string, number][] {
+function useMemoTopEffects(declarations: TerrainDeclaration[]): [string, number][] {
   return useMemo(() => {
     const counts: Record<string, number> = {};
     declarations.forEach((d) => { counts[d.meddraPt] = (counts[d.meddraPt] || 0) + 1; });
