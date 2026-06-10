@@ -47,10 +47,16 @@ export default function MesMolecules() {
   }
 
   const suggestions = useMemo(() => {
-    if (!query.trim()) return [];
-    return COMMON_MOLECULES.filter(
-      (m) => m.toLowerCase().includes(query.toLowerCase()) && !watchlist.includes(m)
-    ).slice(0, 6);
+    const q = query.trim();
+    if (!q) return [];
+    const fromList = COMMON_MOLECULES.filter(
+      (m) => m.toLowerCase().includes(q.toLowerCase()) && !watchlist.includes(m)
+    );
+    // Si la saisie exacte n'est pas dans la liste et pas déjà surveillée → l'ajouter en tête
+    const exactMatch = watchlist.some((m) => m.toLowerCase() === q.toLowerCase())
+      || COMMON_MOLECULES.some((m) => m.toLowerCase() === q.toLowerCase());
+    const freeEntry = !exactMatch ? [q] : [];
+    return [...freeEntry, ...fromList].slice(0, 8);
   }, [query, watchlist]);
 
   // Molécules détectées automatiquement depuis les déclarations réelles
@@ -69,20 +75,29 @@ export default function MesMolecules() {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Rechercher une DCI (ex. pembrolizumab, méthotrexate...)"
+              onKeyDown={(e) => { if (e.key === "Enter" && query.trim()) { addMolecule(query.trim()); } }}
+              placeholder="Rechercher ou saisir une DCI (ex. pembrolizumab, nivolumab...)"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
             {suggestions.length > 0 && (
               <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
-                {suggestions.map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => addMolecule(m)}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
-                  >
-                    {m}
-                  </button>
-                ))}
+                {suggestions.map((m) => {
+                  const isFree = !COMMON_MOLECULES.includes(m);
+                  return (
+                    <button
+                      key={m}
+                      onClick={() => addMolecule(m)}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center justify-between gap-2"
+                    >
+                      <span className={isFree ? "text-gray-900 font-medium" : "text-gray-700"}>{m}</span>
+                      {isFree && (
+                        <span className="text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded shrink-0">
+                          + Ajouter
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

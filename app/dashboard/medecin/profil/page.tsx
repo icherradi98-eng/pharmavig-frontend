@@ -68,7 +68,11 @@ export default function ProfilMedecin() {
   }
 
   function startEdit() {
-    setEditForm({ ...localProfile });
+    // Pré-remplit la spécialité depuis le JWT si le localStorage est vide
+    setEditForm({
+      ...localProfile,
+      specialite: localProfile.specialite || user?.specialite || "",
+    });
     setEditing(true);
   }
 
