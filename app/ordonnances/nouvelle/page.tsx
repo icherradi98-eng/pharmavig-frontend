@@ -911,26 +911,47 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, onBack
       const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
         import("jspdf"), import("html2canvas"),
       ]);
-      const canvas = await html2canvas(pdfRef.current, { scale: 2, backgroundColor: "#ffffff" });
+
+      // Supprimer temporairement border-radius/border pour un rendu PDF propre
+      const el = pdfRef.current;
+      const prevBorderRadius = el.style.borderRadius;
+      const prevBorder = el.style.border;
+      el.style.borderRadius = "0";
+      el.style.border = "none";
+
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false,
+      });
+
+      el.style.borderRadius = prevBorderRadius;
+      el.style.border = prevBorder;
+
       const img = canvas.toDataURL("image/png");
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 20; // 2cm
+      const margin = 15; // 1.5 cm
       const usableWidth = pageWidth - margin * 2;
+      const usableHeight = pageHeight - margin * 2;
       const imgHeight = (canvas.height * usableWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = margin;
-      pdf.addImage(img, "PNG", margin, position, usableWidth, imgHeight);
-      heightLeft -= (pageHeight - margin * 2);
+
+      // Pagination correcte : on déplace l'image vers le haut d'une pageHeight à chaque saut
+      let y = margin;
+      pdf.addImage(img, "PNG", margin, y, usableWidth, imgHeight);
+      let heightLeft = imgHeight - usableHeight;
       while (heightLeft > 0) {
-        position = heightLeft - imgHeight + margin;
+        y -= usableHeight;
         pdf.addPage();
-        pdf.addImage(img, "PNG", margin, position, usableWidth, imgHeight);
-        heightLeft -= (pageHeight - margin * 2);
+        pdf.addImage(img, "PNG", margin, y, usableWidth, imgHeight);
+        heightLeft -= usableHeight;
       }
+
       pdf.save(`${ordonnance.numero}_${ordonnance.patient.nom.replace(/\s+/g, "_")}.pdf`);
     } catch {
+      // Fallback : impression navigateur
       window.print();
     } finally {
       setDownloading(false);

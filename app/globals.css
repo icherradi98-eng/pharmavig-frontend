@@ -24,3 +24,22 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ── Impression ordonnance ───────────────────────────────────────────────── */
+@media print {
+  body * { visibility: hidden; }
+  #ordonnance-pdf,
+  #ordonnance-pdf * { visibility: visible; }
+  #ordonnance-pdf {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18mm 20mm;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+  @page { margin: 0; size: A4 portrait; }
+}
