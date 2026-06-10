@@ -8,6 +8,15 @@ import { api } from "@/lib/api";
 
 const PREFS_KEY = "pharmavig_medecin_notif_prefs";
 
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 type Prefs = {
   emailAlerts: boolean;
   pushNotifs: boolean;
@@ -376,6 +385,99 @@ export default function ProfilMedecin() {
           >
             {pwdLoading ? "Mise à jour…" : "Mettre à jour le mot de passe"}
           </button>
+        </SectionCard>
+
+        {/* Signature & Cachet */}
+        <SectionCard title="Signature & Cachet médecin">
+          <p className="text-xs text-gray-400 mb-4">
+            Apparaîtront automatiquement en bas de vos ordonnances. Stockés uniquement sur cet appareil.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-6">
+            {/* Signature */}
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Signature</p>
+              {localProfile.signatureDataUrl ? (
+                <div className="border border-gray-200 rounded-xl p-3 bg-gray-50 flex flex-col items-center gap-2 mb-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={localProfile.signatureDataUrl} alt="Signature" className="h-16 object-contain" />
+                  <button
+                    onClick={() => {
+                      const next = { ...localProfile, signatureDataUrl: undefined };
+                      saveProfile(next);
+                      setLocalProfile(next);
+                    }}
+                    className="text-xs text-red-500 hover:underline"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center mb-2">
+                  <p className="text-xs text-gray-400">Aucune signature</p>
+                </div>
+              )}
+              <label className="cursor-pointer text-xs font-medium text-emerald-700 hover:underline">
+                {localProfile.signatureDataUrl ? "Remplacer" : "Importer une image"}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/svg+xml"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const dataUrl = await fileToDataUrl(file);
+                    const next = { ...localProfile, signatureDataUrl: dataUrl };
+                    saveProfile(next);
+                    setLocalProfile(next);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+
+            {/* Cachet */}
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Cachet médecin</p>
+              {localProfile.cachetDataUrl ? (
+                <div className="border border-gray-200 rounded-xl p-3 bg-gray-50 flex flex-col items-center gap-2 mb-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={localProfile.cachetDataUrl} alt="Cachet" className="h-16 object-contain" />
+                  <button
+                    onClick={() => {
+                      const next = { ...localProfile, cachetDataUrl: undefined };
+                      saveProfile(next);
+                      setLocalProfile(next);
+                    }}
+                    className="text-xs text-red-500 hover:underline"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center mb-2">
+                  <p className="text-xs text-gray-400">Aucun cachet</p>
+                </div>
+              )}
+              <label className="cursor-pointer text-xs font-medium text-emerald-700 hover:underline">
+                {localProfile.cachetDataUrl ? "Remplacer" : "Importer une image"}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/svg+xml"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const dataUrl = await fileToDataUrl(file);
+                    const next = { ...localProfile, cachetDataUrl: dataUrl };
+                    saveProfile(next);
+                    setLocalProfile(next);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+          <p className="text-xs text-gray-300 mt-4">PNG, JPEG ou SVG · Fond transparent recommandé pour un rendu optimal</p>
         </SectionCard>
 
         {/* CNDP / loi 09-08 */}
