@@ -18,7 +18,7 @@ export default function ChoisirProfil() {
           <p className="text-gray-500 text-sm mb-8">Choisissez votre profil pour commencer</p>
 
           <div className="flex flex-col gap-3">
-            <Link href="/login?role=medecin"
+            <Link href="/login?role=medecin&redirect=/dashboard/medecin/nouvelle-declaration"
               className="flex items-center gap-4 p-4 rounded-xl border-2 border-emerald-100 bg-emerald-50 hover:border-emerald-400 transition-all group">
               <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-700 group-hover:bg-emerald-200 transition-colors">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import ImputabiliteBegaud, { ImputScore } from "./ImputabiliteBegaud";
+import { readProfile } from "@/lib/ordonnancier";
 
 const DRAFT_KEY = "pharmavig_medecin_draft";
 const PREFILL_KEY = "pharmavig_prefill_declaration";
@@ -418,6 +419,24 @@ function MedDRASearch({ value, code, soc, onChange }: {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+// Pré-remplit la section Déclarant depuis le JWT (user) + localStorage (profil ordonnancier)
+function buildDeclarantOverrides(
+  user: { nom?: string; prenom?: string; email?: string; specialite?: string } | null
+): Partial<FormData> {
+  if (!user) return {};
+  const profile = readProfile();
+  return {
+    declarantNom: user.nom || "",
+    declarantPrenom: user.prenom || "",
+    declarantEmail: user.email || "",
+    declarantSpecialite: profile.specialite || user.specialite || "",
+    declarantNumOrdre: profile.numOrdre || "",
+    declarantEtablissement: profile.etablissement || "",
+    declarantVille: profile.ville || "",
+    declarantTel: profile.telephone || "",
+  };
+}
+
 function readDraft(): { form: FormData; step: number } | null {
   if (typeof window === "undefined") return null;
   try {
@@ -448,6 +467,18 @@ export default function FormulaireMedecin() {
   const [prefill] = useState<Partial<FormData> | null>(() => (draft ? null : readPrefill()));
   const [step, setStep] = useState(draft?.step ?? 1);
   const [form, setForm] = useState<FormData>(draft?.form ?? (prefill ? { ...INITIAL, ...prefill } : INITIAL));
+
+  // Pré-remplir les infos déclarant depuis user + localStorage dès que user est disponible
+  // — seulement si on n'a pas restauré un brouillon (qui contient déjà ces infos)
+  const declarantPrefilled = useRef(false);
+  useEffect(() => {
+    if (declarantPrefilled.current) return;
+    if (!user) return;
+    if (draft) return; // brouillon existant → on ne touche pas
+    declarantPrefilled.current = true;
+    const overrides = buildDeclarantOverrides(user);
+    setForm((prev) => ({ ...prev, ...overrides }));
+  }, [user, draft]);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [nextConcoId, setNextConcoId] = useState(1);

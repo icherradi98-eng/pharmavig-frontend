@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 function LoginForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const role = searchParams.get("role");
+  const redirect = searchParams.get("redirect");
   const sessionExpired = searchParams.get("session") === "expired";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +23,8 @@ function LoginForm() {
     setLoading(true);
     try {
       await login(email, password);
+      // Si un redirect est demandé (ex. depuis /declarer), on l'applique après login
+      if (redirect) router.push(redirect);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erreur de connexion");
     } finally {
