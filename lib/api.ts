@@ -114,6 +114,18 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<void>("/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+    }),
+
+  deleteAccount: (password: string) =>
+    request<void>("/auth/me", {
+      method: "DELETE",
+      body: JSON.stringify({ password }),
+    }),
+
   // Reports
   createReport: (data: Record<string, unknown>) =>
     request<ReportOut>("/reports/", { method: "POST", body: JSON.stringify(data) }),

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import MedecinLayout, { PageHeader, SectionCard, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
 import { readProfile, saveProfile, type DoctorProfile } from "@/lib/ordonnancier";
+import { api } from "@/lib/api";
 
 const PREFS_KEY = "pharmavig_medecin_notif_prefs";
 
@@ -56,7 +57,15 @@ export default function ProfilMedecin() {
     }
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   const [pwdForm, setPwdForm] = useState({ current: "", next: "", confirm: "" });
+  const [pwdError, setPwdError] = useState("");
+  const [pwdSuccess, setPwdSuccess] = useState(false);
+  const [pwdLoading, setPwdLoading] = useState(false);
+
   const [prefsSaved, setPrefsSaved] = useState(false);
 
   function updatePrefs(next: Partial<Prefs>) {
@@ -65,6 +74,47 @@ export default function ProfilMedecin() {
     localStorage.setItem(PREFS_KEY, JSON.stringify(merged));
     setPrefsSaved(true);
     setTimeout(() => setPrefsSaved(false), 1500);
+  }
+
+  async function handleChangePassword() {
+    setPwdError("");
+    setPwdSuccess(false);
+    if (!pwdForm.current || !pwdForm.next || !pwdForm.confirm) {
+      setPwdError("Tous les champs sont obligatoires.");
+      return;
+    }
+    if (pwdForm.next !== pwdForm.confirm) {
+      setPwdError("Les nouveaux mots de passe ne correspondent pas.");
+      return;
+    }
+    if (pwdForm.next.length < 8 || !pwdForm.next.match(/[a-zA-Z]/) || !pwdForm.next.match(/[0-9]/)) {
+      setPwdError("Le nouveau mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre.");
+      return;
+    }
+    setPwdLoading(true);
+    try {
+      await api.changePassword(pwdForm.current, pwdForm.next);
+      setPwdForm({ current: "", next: "", confirm: "" });
+      setPwdSuccess(true);
+      setTimeout(() => setPwdSuccess(false), 3000);
+    } catch (e: unknown) {
+      setPwdError(e instanceof Error ? e.message : "Erreur lors du changement de mot de passe.");
+    } finally {
+      setPwdLoading(false);
+    }
+  }
+
+  async function handleDeleteAccount() {
+    setDeleteError("");
+    if (!deletePassword) { setDeleteError("Veuillez saisir votre mot de passe."); return; }
+    setDeleteLoading(true);
+    try {
+      await api.deleteAccount(deletePassword);
+      logout();
+    } catch (e: unknown) {
+      setDeleteError(e instanceof Error ? e.message : "Erreur lors de la suppression.");
+      setDeleteLoading(false);
+    }
   }
 
   function startEdit() {
@@ -317,8 +367,14 @@ export default function ProfilMedecin() {
               onChange={(e) => setPwdForm({ ...pwdForm, confirm: e.target.value })}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
           </div>
-          <button className="mt-3 bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
-            Mettre à jour le mot de passe
+          {pwdError && <p className="mt-2 text-xs text-red-600">⚠️ {pwdError}</p>}
+          {pwdSuccess && <p className="mt-2 text-xs text-emerald-600">✓ Mot de passe mis à jour avec succès.</p>}
+          <button
+            onClick={handleChangePassword}
+            disabled={pwdLoading}
+            className="mt-3 bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-60"
+          >
+            {pwdLoading ? "Mise à jour…" : "Mettre à jour le mot de passe"}
           </button>
         </SectionCard>
 
@@ -347,18 +403,33 @@ export default function ProfilMedecin() {
       </div>
 
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4" onClick={() => setShowDeleteModal(false)}>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4" onClick={() => { setShowDeleteModal(false); setDeletePassword(""); setDeleteError(""); }}>
           <div className="bg-white rounded-2xl max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="font-bold text-gray-900 text-lg mb-2">Supprimer votre compte ?</h3>
-            <p className="text-sm text-gray-500 mb-5">
+            <p className="text-sm text-gray-500 mb-4">
               Cette action est irréversible. Vos déclarations resteront archivées de façon anonymisée conformément aux obligations réglementaires de pharmacovigilance, mais votre compte et vos informations personnelles seront définitivement supprimés.
             </p>
-            <div className="flex gap-3">
-              <button onClick={() => setShowDeleteModal(false)} className="flex-1 border border-gray-300 text-gray-700 text-sm font-medium py-2 rounded-lg hover:bg-gray-50">
+            <input
+              type="password"
+              placeholder="Confirmez avec votre mot de passe"
+              value={deletePassword}
+              onChange={(e) => { setDeletePassword(e.target.value); setDeleteError(""); }}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 mb-2"
+            />
+            {deleteError && <p className="text-xs text-red-600 mb-2">⚠️ {deleteError}</p>}
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={() => { setShowDeleteModal(false); setDeletePassword(""); setDeleteError(""); }}
+                className="flex-1 border border-gray-300 text-gray-700 text-sm font-medium py-2 rounded-lg hover:bg-gray-50"
+              >
                 Annuler
               </button>
-              <button onClick={() => setShowDeleteModal(false)} className="flex-1 bg-red-600 text-white text-sm font-semibold py-2 rounded-lg hover:bg-red-700">
-                Confirmer la suppression
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleteLoading}
+                className="flex-1 bg-red-600 text-white text-sm font-semibold py-2 rounded-lg hover:bg-red-700 disabled:opacity-60"
+              >
+                {deleteLoading ? "Suppression…" : "Confirmer"}
               </button>
             </div>
           </div>
