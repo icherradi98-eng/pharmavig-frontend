@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import ImputabiliteBegaud, { ImputScore } from "./ImputabiliteBegaud";
 import { readProfile } from "@/lib/ordonnancier";
+import { autocomplete, fetchAnsm, fetchFdaLabel, type Suggestion } from "@/lib/drugApi";
 
 const DRAFT_KEY = "pharmavig_medecin_draft";
 const PREFILL_KEY = "pharmavig_prefill_declaration";
@@ -102,13 +103,16 @@ type FormData = {
   documents: boolean;
   commentaires: string;
   consentement: boolean;
+  notifAccuseReception: boolean;   // email immédiat à la soumission
+  notifSuiviStatut: boolean;       // email quand le CAPM change le statut
+  notifEmail: string;              // adresse cible (pré-remplie depuis declarantEmail)
 };
 
 const STADES_RENALE = ["Légère (DFG 60–89)", "Modérée (DFG 30–59)", "Sévère (DFG 15–29)", "Terminale / Dialyse (DFG < 15)"];
 const STADES_HEPATIQUE = ["Légère (Child-Pugh A)", "Modérée (Child-Pugh B)", "Sévère (Child-Pugh C)"];
 
 const INITIAL: FormData = {
-  typeDeclaration: "",
+  typeDeclaration: "spontanee",
   declarantNom: "", declarantPrenom: "", declarantSpecialite: "", declarantSpecialiteAutre: "",
   declarantNumOrdre: "", declarantEtablissement: "", declarantVille: "", declarantEmail: "", declarantTel: "",
   patientAge: "", patientSexe: "", patientPoids: "", patientTaille: "", patientGrossesse: "",
@@ -130,6 +134,7 @@ const INITIAL: FormData = {
   imputReadministration: "", imputReadministrationResultat: "", imputSemiologie: "",
   imputBilanEtiologique: "", imputConclusion: "",
   documents: false, commentaires: "", consentement: false,
+  notifAccuseReception: true, notifSuiviStatut: true, notifEmail: "",
 };
 
 const SECTIONS = [
@@ -255,6 +260,184 @@ function SectionTitle({ title, subtitle }: { title: string; subtitle?: string })
     <div className="mb-6">
       <h2 className="text-lg font-bold text-gray-900">{title}</h2>
       {subtitle && <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>}
+    </div>
+  );
+}
+
+function Collapsible({ label, hint, children, defaultOpen = false }: {
+  label: string; hint?: string; children: React.ReactNode; defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+      >
+        <div>
+          <span className="text-sm font-medium text-gray-700">{label}</span>
+          {hint && <span className="ml-2 text-xs text-gray-400">{hint}</span>}
+        </div>
+        <span className="text-gray-400 text-sm">{open ? "▲" : "▼"}</span>
+      </button>
+      {open && <div className="px-4 py-4 space-y-4 bg-white">{children}</div>}
+    </div>
+  );
+}
+
+// ── Mapping BDPM / FDA → valeurs de nos selects ───────────────────────────────
+
+function mapVoie(raw: string): string {
+  const v = raw.toLowerCase();
+  if (v.includes("orale") || v.includes("oral")) return "Orale (per os)";
+  if (v.includes("intraveineuse") || v.includes("intravenous")) return "Intraveineuse (IV)";
+  if (v.includes("intramusculaire") || v.includes("intramuscular")) return "Intramusculaire (IM)";
+  if (v.includes("sous-cutanée") || v.includes("sous-cutanee") || v.includes("subcutaneous")) return "Sous-cutanée (SC)";
+  if (v.includes("transdermique") || v.includes("transdermal")) return "Transdermique";
+  if (v.includes("inhalée") || v.includes("inhalation") || v.includes("inhaled")) return "Inhalée";
+  if (v.includes("rectale") || v.includes("rectal")) return "Rectale";
+  if (v.includes("ophtalmique") || v.includes("ophthalmic") || v.includes("ocular")) return "Ophtalmique";
+  return "";
+}
+
+function mapForme(raw: string): string {
+  const f = raw.toLowerCase();
+  if (f.includes("comprimé") || f.includes("comprimes") || f.includes("tablet")) return "Comprimé";
+  if (f.includes("gélule") || f.includes("gelule") || f.includes("capsule")) return "Gélule";
+  if (f.includes("injectable") || f.includes("injection") || f.includes("solution for injection")) return "Solution injectable";
+  if (f.includes("sirop") || f.includes("syrup") || f.includes("oral solution")) return "Sirop";
+  if (f.includes("pommade") || f.includes("crème") || f.includes("creme") || f.includes("ointment") || f.includes("cream") || f.includes("gel")) return "Pommade / Crème";
+  if (f.includes("patch") || f.includes("transdermal")) return "Patch";
+  if (f.includes("suppositoire") || f.includes("suppository")) return "Suppositoire";
+  if (f.includes("inhalateur") || f.includes("inhaler") || f.includes("aerosol")) return "Inhalateur";
+  if (f.includes("gouttes") || f.includes("drops")) return "Gouttes";
+  if (f.includes("sachet")) return "Sachet";
+  return "";
+}
+
+// ── Composant MedicamentSearch ────────────────────────────────────────────────
+
+type DrugEnrichment = {
+  dci: string;
+  nomCommercial: string;
+  forme: string;
+  voie: string;
+  laboratoire: string;
+};
+
+function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) => void }) {
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [open, setOpen] = useState(false);
+  const [enriching, setEnriching] = useState(false);
+  const [enriched, setEnriched] = useState<DrugEnrichment | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const search = useCallback((q: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (q.trim().length < 2) { setSuggestions([]); return; }
+    debounceRef.current = setTimeout(async () => {
+      const res = await autocomplete(q);
+      setSuggestions(res);
+      setOpen(res.length > 0);
+    }, 300);
+  }, []);
+
+  async function select(s: Suggestion) {
+    setOpen(false);
+    setQuery(s.brand ? `${s.dci} (${s.brand})` : s.dci);
+    setSuggestions([]);
+    setEnriching(true);
+    setEnriched(null);
+
+    const enrichment: DrugEnrichment = {
+      dci: s.dci,
+      nomCommercial: s.brand ?? "",
+      forme: "",
+      voie: "",
+      laboratoire: "",
+    };
+
+    // 1. BDPM — source française prioritaire
+    try {
+      const bdpm = await fetchAnsm(s.dci);
+      if (bdpm) {
+        if (bdpm.forme) enrichment.forme = mapForme(bdpm.forme);
+        if (bdpm.voies?.[0]) enrichment.voie = mapVoie(bdpm.voies[0]);
+        if (bdpm.denomination && !enrichment.nomCommercial) enrichment.nomCommercial = bdpm.denomination;
+      }
+    } catch {}
+
+    // 2. FDA — complément si BDPM insuffisant
+    if (!enrichment.voie || !enrichment.forme || !enrichment.laboratoire) {
+      try {
+        const fda = await fetchFdaLabel(s.dci);
+        if (fda) {
+          if (!enrichment.voie && fda.route?.[0]) enrichment.voie = mapVoie(fda.route[0]);
+          if (!enrichment.forme && fda.route?.[0]) {
+            // OpenFDA stocke voie mais pas forme — on garde forme vide plutôt qu'incorrecte
+          }
+          if (!enrichment.laboratoire && fda.manufacturer_name?.[0]) {
+            enrichment.laboratoire = fda.manufacturer_name[0];
+          }
+          if (!enrichment.nomCommercial && fda.brand_name?.[0]) {
+            enrichment.nomCommercial = fda.brand_name[0];
+          }
+        }
+      } catch {}
+    }
+
+    setEnriched(enrichment);
+    setEnriching(false);
+    onSelect(enrichment);
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="relative">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => { setQuery(e.target.value); search(e.target.value); setEnriched(null); }}
+          onFocus={() => suggestions.length > 0 && setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          placeholder="Tapez une DCI ou un nom commercial (ex. Opdivo, nivolumab, metformine...)"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+        {enriching && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+        {open && suggestions.length > 0 && (
+          <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+            {suggestions.map((s, i) => (
+              <button
+                key={i}
+                type="button"
+                onMouseDown={() => select(s)}
+                className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-emerald-50 text-left transition-colors"
+              >
+                <span className="text-sm font-medium text-gray-900">{s.dci}</span>
+                {s.brand && <span className="text-xs text-gray-400 ml-2 truncate max-w-[180px]">{s.brand}</span>}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Récap enrichissement */}
+      {enriched && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-emerald-800">
+          <span>💊 <strong>DCI :</strong> {enriched.dci}</span>
+          {enriched.nomCommercial && <span><strong>Marque :</strong> {enriched.nomCommercial}</span>}
+          {enriched.voie && <span><strong>Voie :</strong> {enriched.voie}</span>}
+          {enriched.forme && <span><strong>Forme :</strong> {enriched.forme}</span>}
+          {enriched.laboratoire && <span><strong>Labo :</strong> {enriched.laboratoire}</span>}
+          <span className="text-emerald-600 ml-auto">✓ Champs pré-remplis depuis le référentiel</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -434,6 +617,7 @@ function buildDeclarantOverrides(
     declarantEtablissement: profile.etablissement || "",
     declarantVille: profile.ville || "",
     declarantTel: profile.telephone || "",
+    notifEmail: user.email || "",
   };
 }
 
@@ -461,15 +645,61 @@ function readPrefill(): Partial<FormData> | null {
   }
 }
 
+// Profil déclarant considéré complet si nom + spécialité + email sont présents
+function isDeclarantComplete(f: FormData): boolean {
+  return !!(f.declarantNom && f.declarantPrenom && f.declarantSpecialite && f.declarantEmail);
+}
+
+/** Retourne la liste des champs manquants pour l'étape donnée */
+function sectionErrors(step: number, f: FormData): string[] {
+  const errs: string[] = [];
+  if (step === 1) {
+    if (!f.declarantNom) errs.push("Nom");
+    if (!f.declarantPrenom) errs.push("Prénom");
+    if (!f.declarantSpecialite) errs.push("Spécialité");
+    if (!f.declarantEmail) errs.push("E-mail professionnel");
+  }
+  if (step === 2) {
+    if (!f.patientAge) errs.push("Âge du patient");
+    if (!f.patientSexe) errs.push("Sexe du patient");
+  }
+  if (step === 3) {
+    if (!f.medicamentDCI) errs.push("DCI du médicament");
+    if (!f.medicamentForme) errs.push("Forme pharmaceutique");
+    if (!f.medicamentVoie) errs.push("Voie d'administration");
+    if (!f.medicamentPosologie) errs.push("Posologie");
+    if (!f.medicamentFrequence) errs.push("Fréquence");
+    if (!f.medicamentIndication) errs.push("Indication");
+    if (!f.medicamentDateDebut) errs.push("Date de début du traitement");
+  }
+  if (step === 5) {
+    if (!f.eiMeddraTerm) errs.push("Effet observé");
+    if (!f.eiDescription) errs.push("Description de l'effet indésirable");
+    if (!f.eiDateDebut) errs.push("Date de début de l'effet");
+    const hasGravite =
+      f.graviteHospitalisation ||
+      f.graviteVieDanger ||
+      f.graviteIncapacite ||
+      f.graviteDeces ||
+      f.graviteAnomalieCongenitale ||
+      f.graviteMedicalementSignificatif;
+    if (!hasGravite) errs.push("Gravité de l'effet (au moins une case)");
+  }
+  return errs;
+}
+
 export default function FormulaireMedecin() {
   const { user } = useAuth();
   const [draft] = useState<{ form: FormData; step: number } | null>(() => readDraft());
   const [prefill] = useState<Partial<FormData> | null>(() => (draft ? null : readPrefill()));
   const [step, setStep] = useState(draft?.step ?? 1);
   const [form, setForm] = useState<FormData>(draft?.form ?? (prefill ? { ...INITIAL, ...prefill } : INITIAL));
+  // Mode édition de la card déclarant en Section 1
+  const [declarantEditMode, setDeclarantEditMode] = useState(false);
 
   // Pré-remplir les infos déclarant depuis user + localStorage dès que user est disponible
   // — seulement si on n'a pas restauré un brouillon (qui contient déjà ces infos)
+  // Si le profil est complet après pré-remplissage, avancer automatiquement à la Section 2
   const declarantPrefilled = useRef(false);
   useEffect(() => {
     if (declarantPrefilled.current) return;
@@ -477,8 +707,15 @@ export default function FormulaireMedecin() {
     if (draft) return; // brouillon existant → on ne touche pas
     declarantPrefilled.current = true;
     const overrides = buildDeclarantOverrides(user);
-    setForm((prev) => ({ ...prev, ...overrides }));
-  }, [user, draft]);
+    setForm((prev) => {
+      const next = { ...prev, ...overrides };
+      // Skip automatique Section 1 → 2 si profil complet
+      if (isDeclarantComplete(next) && step === 1) {
+        setStep(2);
+      }
+      return next;
+    });
+  }, [user, draft, step]);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [nextConcoId, setNextConcoId] = useState(1);
@@ -486,6 +723,8 @@ export default function FormulaireMedecin() {
   const [pvNumber, setPvNumber] = useState("");
   const [draftRestored, setDraftRestored] = useState(() => draft !== null);
   const [prefilled, setPrefilled] = useState(() => prefill !== null);
+  const [triedNext, setTriedNext] = useState(false); // affiche les erreurs inline seulement après tentative
+  const [anneeNaissance, setAnneeNaissance] = useState(""); // champ UI uniquement, pas stocké dans form
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-save avec debounce 800ms après chaque changement
@@ -579,6 +818,11 @@ export default function FormulaireMedecin() {
           ? `I${imputScore.Iscore} (C${imputScore.Cscore}/S${imputScore.Sscore})`
           : form.imputConclusion || undefined,
         commentaires: form.commentaires || undefined,
+        notifications: {
+          accuse_reception: form.notifAccuseReception,
+          suivi_statut: form.notifSuiviStatut,
+          email: form.notifEmail || form.declarantEmail || undefined,
+        },
         raw_data: {
           ...form,
           begaud_score: imputScore ?? undefined,
@@ -600,7 +844,7 @@ export default function FormulaireMedecin() {
 
   const champsManquants = [
     !form.medicamentDCI && "Médicament suspect — DCI (Section 3)",
-    !form.eiMeddraTerm && "Terme MedDRA de l'effet indésirable (Section 5)",
+    !form.eiMeddraTerm && "Effet observé (Section 5)",
     !form.eiDescription && "Description clinique de l'effet indésirable (Section 5)",
     !isSerieux && !form.graviteNonSerieux && "Critère de gravité — cochez au moins une case (Section 5)",
   ].filter(Boolean) as string[];
@@ -692,7 +936,7 @@ export default function FormulaireMedecin() {
           {SECTIONS.map((s) => (
             <button
               key={s.id}
-              onClick={() => s.id < step && setStep(s.id)}
+              onClick={() => { if (s.id < step) { setTriedNext(false); setStep(s.id); } }}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${step === s.id ? "bg-emerald-600 text-white" : s.id < step ? "bg-emerald-100 text-emerald-700 cursor-pointer" : "text-gray-400 cursor-default"}`}
             >
               {s.icon} {s.label}
@@ -711,59 +955,96 @@ export default function FormulaireMedecin() {
               title="Informations sur le déclarant"
               subtitle="Ces informations permettent au CAPM de vous recontacter si nécessaire. Elles restent confidentielles."
             />
-            <Field label="Type de déclaration" required hint="E2B C.1.3 — Nature de la source">
+
+            {/* ── Card récapitulative si profil complet et pas en mode édition ── */}
+            {isDeclarantComplete(form) && !declarantEditMode ? (
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shrink-0">
+                    {form.declarantPrenom?.[0]?.toUpperCase() ?? "M"}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Dr {form.declarantPrenom} {form.declarantNom}</p>
+                    <p className="text-sm text-gray-500">{form.declarantSpecialite}{form.declarantEtablissement ? ` · ${form.declarantEtablissement}` : ""}{form.declarantVille ? ` · ${form.declarantVille}` : ""}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{form.declarantEmail}{form.declarantNumOrdre ? ` · ${form.declarantNumOrdre}` : ""}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setDeclarantEditMode(true)}
+                  className="shrink-0 text-sm text-emerald-600 hover:text-emerald-800 border border-emerald-200 hover:border-emerald-400 rounded-lg px-3 py-1.5 transition-colors"
+                >
+                  Modifier ✎
+                </button>
+              </div>
+            ) : (
+              /* ── Formulaire complet (profil incomplet ou mode édition) ── */
+              <div className="space-y-5">
+                <Grid>
+                  <Field label="Nom" required>
+                    <Input value={form.declarantNom} onChange={(v) => set("declarantNom", v)} placeholder="Nom de famille" />
+                  </Field>
+                  <Field label="Prénom" required>
+                    <Input value={form.declarantPrenom} onChange={(v) => set("declarantPrenom", v)} placeholder="Prénom" />
+                  </Field>
+                </Grid>
+                <Grid>
+                  <Field label="Spécialité" required>
+                    <Select
+                      value={form.declarantSpecialite}
+                      onChange={(v) => set("declarantSpecialite", v)}
+                      options={SPECIALITES}
+                      placeholder="Choisir une spécialité"
+                    />
+                  </Field>
+                  {form.declarantSpecialite === "Autre" && (
+                    <Field label="Précisez la spécialité">
+                      <Input value={form.declarantSpecialiteAutre} onChange={(v) => set("declarantSpecialiteAutre", v)} placeholder="Votre spécialité" />
+                    </Field>
+                  )}
+                  <Field label="N° d'inscription à l'Ordre" hint="N° INPE ou Conseil de l'Ordre">
+                    <Input value={form.declarantNumOrdre} onChange={(v) => set("declarantNumOrdre", v)} placeholder="Ex : MA-12345" />
+                  </Field>
+                </Grid>
+                <Grid>
+                  <Field label="Établissement / Structure de soins">
+                    <Input value={form.declarantEtablissement} onChange={(v) => set("declarantEtablissement", v)} placeholder="CHU, clinique, cabinet..." />
+                  </Field>
+                  <Field label="Ville">
+                    <Input value={form.declarantVille} onChange={(v) => set("declarantVille", v)} placeholder="Ville d'exercice" />
+                  </Field>
+                </Grid>
+                <Grid>
+                  <Field label="Email professionnel" required>
+                    <Input type="email" value={form.declarantEmail} onChange={(v) => set("declarantEmail", v)} placeholder="medecin@exemple.ma" />
+                  </Field>
+                  <Field label="Téléphone professionnel">
+                    <Input type="tel" value={form.declarantTel} onChange={(v) => set("declarantTel", v)} placeholder="+212 6XX XXX XXX" />
+                  </Field>
+                </Grid>
+                {declarantEditMode && (
+                  <button
+                    onClick={() => setDeclarantEditMode(false)}
+                    className="text-sm text-gray-500 hover:text-gray-700 underline"
+                  >
+                    ← Annuler les modifications
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Type de déclaration — replié par défaut (95% = spontanée) */}
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Type de déclaration</p>
               <RadioGroup
-                value={form.typeDeclaration}
+                value={form.typeDeclaration || "spontanee"}
                 onChange={(v) => set("typeDeclaration", v)}
                 options={[
-                  { val: "spontanee", label: "Déclaration spontanée", desc: "Observation directe d'un effet indésirable en pratique courante" },
+                  { val: "spontanee", label: "Déclaration spontanée", desc: "Observation directe en pratique courante (95% des cas)" },
                   { val: "observationnelle", label: "Étude observationnelle", desc: "Données issues d'une étude ou d'un registre" },
                   { val: "litterature", label: "Rapport de littérature", desc: "Cas publié dans une revue médicale" },
                 ]}
               />
-            </Field>
-            <Grid>
-              <Field label="Nom" required>
-                <Input value={form.declarantNom} onChange={(v) => set("declarantNom", v)} placeholder="Nom de famille" />
-              </Field>
-              <Field label="Prénom" required>
-                <Input value={form.declarantPrenom} onChange={(v) => set("declarantPrenom", v)} placeholder="Prénom" />
-              </Field>
-            </Grid>
-            <Grid>
-              <Field label="Spécialité" required>
-                <Select
-                  value={form.declarantSpecialite}
-                  onChange={(v) => set("declarantSpecialite", v)}
-                  options={SPECIALITES}
-                  placeholder="Choisir une spécialité"
-                />
-              </Field>
-              {form.declarantSpecialite === "Autre" && (
-                <Field label="Précisez la spécialité">
-                  <Input value={form.declarantSpecialiteAutre} onChange={(v) => set("declarantSpecialiteAutre", v)} placeholder="Votre spécialité" />
-                </Field>
-              )}
-              <Field label="N° d'inscription à l'Ordre" hint="N° INPE ou Conseil de l'Ordre">
-                <Input value={form.declarantNumOrdre} onChange={(v) => set("declarantNumOrdre", v)} placeholder="Ex : MA-12345" />
-              </Field>
-            </Grid>
-            <Grid>
-              <Field label="Établissement / Structure de soins">
-                <Input value={form.declarantEtablissement} onChange={(v) => set("declarantEtablissement", v)} placeholder="CHU, clinique, cabinet..." />
-              </Field>
-              <Field label="Ville">
-                <Input value={form.declarantVille} onChange={(v) => set("declarantVille", v)} placeholder="Ville d'exercice" />
-              </Field>
-            </Grid>
-            <Grid>
-              <Field label="Email professionnel" required>
-                <Input type="email" value={form.declarantEmail} onChange={(v) => set("declarantEmail", v)} placeholder="medecin@exemple.ma" />
-              </Field>
-              <Field label="Téléphone professionnel">
-                <Input type="tel" value={form.declarantTel} onChange={(v) => set("declarantTel", v)} placeholder="+212 6XX XXX XXX" />
-              </Field>
-            </Grid>
+            </div>
           </div>
         )}
 
@@ -778,68 +1059,93 @@ export default function FormulaireMedecin() {
               🔒 Conformément à la loi 09-08 sur la protection des données personnelles, le patient ne doit pas être identifiable dans ce formulaire.
             </div>
             <Grid>
-              <Field label="Âge (années)" required>
-                <Input type="number" value={form.patientAge} onChange={(v) => set("patientAge", v)} placeholder="Ex : 45" />
+              <Field label="Année de naissance" required>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={1900}
+                    max={new Date().getFullYear()}
+                    value={anneeNaissance}
+                    placeholder={`Ex : ${new Date().getFullYear() - 40}`}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setAnneeNaissance(val);
+                      const yr = parseInt(val, 10);
+                      const currentYear = new Date().getFullYear();
+                      if (yr >= 1900 && yr <= currentYear) {
+                        set("patientAge", String(currentYear - yr));
+                      } else {
+                        set("patientAge", "");
+                      }
+                    }}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 pr-20"
+                  />
+                  {form.patientAge && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                      {form.patientAge} ans
+                    </span>
+                  )}
+                </div>
               </Field>
               <Field label="Sexe" required>
                 <Select value={form.patientSexe} onChange={(v) => set("patientSexe", v)} options={["Masculin", "Féminin"]} placeholder="Sélectionner" />
               </Field>
             </Grid>
-            <Grid>
-              <Field label="Poids (kg)" hint="Optionnel mais utile pour l'analyse">
-                <Input type="number" value={form.patientPoids} onChange={(v) => set("patientPoids", v)} placeholder="Ex : 70" />
-              </Field>
-              <Field label="Taille (cm)">
-                <Input type="number" value={form.patientTaille} onChange={(v) => set("patientTaille", v)} placeholder="Ex : 170" />
-              </Field>
-            </Grid>
-
-            {/* Grossesse / allaitement (si sexe féminin) */}
-            {(form.patientSexe === "Féminin" || !form.patientSexe) && (
-              <Grid>
-                <Field label="Grossesse">
-                  <Select
-                    value={form.patientGrossesse}
-                    onChange={(v) => set("patientGrossesse", v)}
-                    options={["Oui", "Non", "Inconnue"]}
-                    placeholder="Sélectionner"
-                  />
-                </Field>
-                {form.patientGrossesse === "Oui" && (
-                  <Field label="Terme (semaines d'aménorrhée)">
-                    <Input type="number" value={form.patientGrossesseSemaines} onChange={(v) => set("patientGrossesseSemaines", v)} placeholder="Ex : 24" />
-                  </Field>
-                )}
-                <Field label="Allaitement">
-                  <Select value={form.patientAllaitement} onChange={(v) => set("patientAllaitement", v)} options={["Oui", "Non", "Inconnu"]} placeholder="Sélectionner" />
-                </Field>
-              </Grid>
-            )}
-
-            <Grid>
-              <Field label="Insuffisance rénale" hint="Stade selon DFG (KDIGO)">
-                <Select
-                  value={form.patientInsuffisanceRenaleStade}
-                  onChange={(v) => set("patientInsuffisanceRenaleStade", v)}
-                  options={STADES_RENALE}
-                  placeholder="Aucune / Non évaluée"
-                />
-              </Field>
-              <Field label="Insuffisance hépatique" hint="Stade selon Child-Pugh">
-                <Select
-                  value={form.patientInsuffisanceHepatiqueStade}
-                  onChange={(v) => set("patientInsuffisanceHepatiqueStade", v)}
-                  options={STADES_HEPATIQUE}
-                  placeholder="Aucune / Non évaluée"
-                />
-              </Field>
-            </Grid>
-            <Field label="Antécédents médicaux pertinents" hint="Maladies chroniques, chirurgies, allergie connues">
+            <Field label="Antécédents médicaux pertinents" hint="Maladies chroniques, chirurgies, allergies connues">
               <Textarea value={form.patientAntecedents} onChange={(v) => set("patientAntecedents", v)} placeholder="Ex : HTA, diabète type 2, allergie à la pénicilline..." rows={3} />
             </Field>
             <Field label="Allergies médicamenteuses connues">
               <Input value={form.patientAllergies} onChange={(v) => set("patientAllergies", v)} placeholder="Ex : pénicilline, AINS..." />
             </Field>
+
+            <Collapsible label="Informations avancées" hint="— poids, taille, grossesse, insuffisance rénale / hépatique">
+              <Grid>
+                <Field label="Poids (kg)">
+                  <Input type="number" value={form.patientPoids} onChange={(v) => set("patientPoids", v)} placeholder="Ex : 70" />
+                </Field>
+                <Field label="Taille (cm)">
+                  <Input type="number" value={form.patientTaille} onChange={(v) => set("patientTaille", v)} placeholder="Ex : 170" />
+                </Field>
+              </Grid>
+              {form.patientSexe === "Féminin" && (
+                <Grid>
+                  <Field label="Grossesse">
+                    <Select
+                      value={form.patientGrossesse}
+                      onChange={(v) => set("patientGrossesse", v)}
+                      options={["Oui", "Non", "Inconnue"]}
+                      placeholder="Sélectionner"
+                    />
+                  </Field>
+                  {form.patientGrossesse === "Oui" && (
+                    <Field label="Terme (semaines d'aménorrhée)">
+                      <Input type="number" value={form.patientGrossesseSemaines} onChange={(v) => set("patientGrossesseSemaines", v)} placeholder="Ex : 24" />
+                    </Field>
+                  )}
+                  <Field label="Allaitement">
+                    <Select value={form.patientAllaitement} onChange={(v) => set("patientAllaitement", v)} options={["Oui", "Non", "Inconnu"]} placeholder="Sélectionner" />
+                  </Field>
+                </Grid>
+              )}
+              <Grid>
+                <Field label="Insuffisance rénale" hint="Stade KDIGO">
+                  <Select
+                    value={form.patientInsuffisanceRenaleStade}
+                    onChange={(v) => set("patientInsuffisanceRenaleStade", v)}
+                    options={STADES_RENALE}
+                    placeholder="Aucune / Non évaluée"
+                  />
+                </Field>
+                <Field label="Insuffisance hépatique" hint="Stade Child-Pugh">
+                  <Select
+                    value={form.patientInsuffisanceHepatiqueStade}
+                    onChange={(v) => set("patientInsuffisanceHepatiqueStade", v)}
+                    options={STADES_HEPATIQUE}
+                    placeholder="Aucune / Non évaluée"
+                  />
+                </Field>
+              </Grid>
+            </Collapsible>
           </div>
         )}
 
@@ -850,20 +1156,26 @@ export default function FormulaireMedecin() {
               title="Médicament(s) suspect(s)"
               subtitle="Médicament suspecté d'être responsable de l'effet indésirable."
             />
-            <div className="grid grid-cols-2 gap-3 mb-2">
-              <button className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 hover:border-emerald-400 rounded-xl p-4 text-sm text-gray-500 hover:text-emerald-600 transition-all">
-                📷 Scanner la boîte
-              </button>
-              <button className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 hover:border-emerald-400 rounded-xl p-4 text-sm text-gray-500 hover:text-emerald-600 transition-all">
-                📄 Scanner l&apos;ordonnance
-              </button>
-            </div>
+
+            {/* ── Recherche intelligente ── */}
+            <Field label="Recherche rapide" hint="DCI ou nom commercial — pré-remplit automatiquement voie, forme et laboratoire">
+              <MedicamentSearch
+                onSelect={(e) => {
+                  set("medicamentDCI", e.dci);
+                  if (e.nomCommercial) set("medicamentNomCommercial", e.nomCommercial);
+                  if (e.voie) set("medicamentVoie", e.voie);
+                  if (e.forme) set("medicamentForme", e.forme);
+                  if (e.laboratoire) set("medicamentLaboratoire", e.laboratoire);
+                }}
+              />
+            </Field>
+
             <Grid>
-              <Field label="DCI (Dénomination Commune Internationale)" required hint="Nom générique du principe actif">
-                <Input value={form.medicamentDCI} onChange={(v) => set("medicamentDCI", v)} placeholder="Ex : métformine, amoxicilline..." />
+              <Field label="DCI (Dénomination Commune Internationale)" required hint="Nom générique — vérifiez après recherche">
+                <Input value={form.medicamentDCI} onChange={(v) => set("medicamentDCI", v)} placeholder="Ex : métformine, nivolumab, amoxicilline..." />
               </Field>
               <Field label="Nom commercial">
-                <Input value={form.medicamentNomCommercial} onChange={(v) => set("medicamentNomCommercial", v)} placeholder="Ex : Glucophage, Amoxil..." />
+                <Input value={form.medicamentNomCommercial} onChange={(v) => set("medicamentNomCommercial", v)} placeholder="Ex : Glucophage, Opdivo, Amoxil..." />
               </Field>
             </Grid>
             <Grid>
@@ -876,7 +1188,7 @@ export default function FormulaireMedecin() {
             </Grid>
             <Grid>
               <Field label="Posologie" required hint="Dose par prise">
-                <Input value={form.medicamentPosologie} onChange={(v) => set("medicamentPosologie", v)} placeholder="Ex : 500 mg, 1 g..." />
+                <Input value={form.medicamentPosologie} onChange={(v) => set("medicamentPosologie", v)} placeholder="Ex : 500 mg, 1 g, 240 mg..." />
               </Field>
               <Field label="Fréquence" required>
                 <Select
@@ -888,7 +1200,7 @@ export default function FormulaireMedecin() {
               </Field>
             </Grid>
             <Field label="Indication thérapeutique" required hint="Pourquoi ce médicament a-t-il été prescrit ?">
-              <Input value={form.medicamentIndication} onChange={(v) => set("medicamentIndication", v)} placeholder="Ex : traitement du diabète type 2, infection urinaire..." />
+              <Input value={form.medicamentIndication} onChange={(v) => set("medicamentIndication", v)} placeholder="Ex : diabète type 2, mélanome métastatique, infection urinaire..." />
             </Field>
             <Grid>
               <Field label="Date de début du traitement" required>
@@ -903,34 +1215,37 @@ export default function FormulaireMedecin() {
               checked={form.medicamentEnCours}
               onChange={() => set("medicamentEnCours", !form.medicamentEnCours)}
             />
-            <Grid>
-              <Field label="Numéro de lot">
-                <Input value={form.medicamentLot} onChange={(v) => set("medicamentLot", v)} placeholder="Sur la boîte" />
+
+            <Collapsible label="Informations avancées" hint="— lot, péremption, laboratoire, AMM, prescripteur">
+              <Grid>
+                <Field label="Numéro de lot">
+                  <Input value={form.medicamentLot} onChange={(v) => set("medicamentLot", v)} placeholder="Sur la boîte" />
+                </Field>
+                <Field label="Date de péremption">
+                  <Input type="month" value={form.medicamentPeremption} onChange={(v) => set("medicamentPeremption", v)} />
+                </Field>
+              </Grid>
+              <Grid>
+                <Field label="Laboratoire fabricant">
+                  <Input value={form.medicamentLaboratoire} onChange={(v) => set("medicamentLaboratoire", v)} placeholder="Ex : Sanofi, Pfizer, Maphar..." />
+                </Field>
+                <Field label="N° d'AMM (si connu)" hint="Autorisation de Mise sur le Marché">
+                  <Input value={form.medicamentAMM} onChange={(v) => set("medicamentAMM", v)} placeholder="Ex : MA-XXXX" />
+                </Field>
+              </Grid>
+              <Field label="Médicament prescrit par">
+                <RadioGroup
+                  value={form.medicamentPrescripteur}
+                  onChange={(v) => set("medicamentPrescripteur", v)}
+                  options={[
+                    { val: "moi", label: "Moi-même" },
+                    { val: "confrere", label: "Un confrère médecin" },
+                    { val: "pharmacien", label: "Un pharmacien" },
+                    { val: "automédication", label: "Automédication du patient" },
+                  ]}
+                />
               </Field>
-              <Field label="Date de péremption">
-                <Input type="month" value={form.medicamentPeremption} onChange={(v) => set("medicamentPeremption", v)} />
-              </Field>
-            </Grid>
-            <Grid>
-              <Field label="Laboratoire fabricant">
-                <Input value={form.medicamentLaboratoire} onChange={(v) => set("medicamentLaboratoire", v)} placeholder="Ex : Sanofi, Pfizer, Maphar..." />
-              </Field>
-              <Field label="N° d'AMM (si connu)" hint="Autorisation de Mise sur le Marché">
-                <Input value={form.medicamentAMM} onChange={(v) => set("medicamentAMM", v)} placeholder="Ex : MA-XXXX" />
-              </Field>
-            </Grid>
-            <Field label="Médicament prescrit par">
-              <RadioGroup
-                value={form.medicamentPrescripteur}
-                onChange={(v) => set("medicamentPrescripteur", v)}
-                options={[
-                  { val: "moi", label: "Moi-même (auto-déclaration)" },
-                  { val: "confrere", label: "Un confrère médecin" },
-                  { val: "pharmacien", label: "Un pharmacien" },
-                  { val: "automédication", label: "Automédication du patient" },
-                ]}
-              />
-            </Field>
+            </Collapsible>
           </div>
         )}
 
@@ -1011,7 +1326,7 @@ export default function FormulaireMedecin() {
               title="Description de l'effet indésirable"
               subtitle="Description clinique précise. Utilisez la terminologie médicale."
             />
-            <Field label="Terme MedDRA (PT — Preferred Term)" required hint="Codage international de l'effet indésirable — E2B R3 obligatoire">
+            <Field label="Effet observé" required hint="Tapez le symptôme — le codage MedDRA est automatique (E2B R3)">
               <MedDRASearch
                 value={form.eiMeddraTerm}
                 code={form.eiMeddraCode}
@@ -1079,14 +1394,16 @@ export default function FormulaireMedecin() {
               </div>
             </div>
 
-            <Field label="Examens complémentaires / Résultats biologiques pertinents" hint="Bilan hépatique, créatinine, NFS, ECG... tout résultat anormal en lien avec l'EIM">
-              <Textarea
-                value={form.examensComplementaires}
-                onChange={(v) => set("examensComplementaires", v)}
-                placeholder="Ex : ALAT 3×N, créatinine 180 μmol/L, hyperkaliémie à 6,2 mmol/L..."
-                rows={3}
-              />
-            </Field>
+            <Collapsible label="Examens complémentaires" hint="— biologie, ECG, imagerie en lien avec l'EIM">
+              <Field label="Résultats biologiques / paracliniques pertinents">
+                <Textarea
+                  value={form.examensComplementaires}
+                  onChange={(v) => set("examensComplementaires", v)}
+                  placeholder="Ex : ALAT 3×N, créatinine 180 μmol/L, hyperkaliémie à 6,2 mmol/L..."
+                  rows={3}
+                />
+              </Field>
+            </Collapsible>
           </div>
         )}
 
@@ -1140,7 +1457,7 @@ export default function FormulaireMedecin() {
                   <p className="font-medium text-gray-800">{form.medicamentDCI || form.medicamentNomCommercial || "—"}</p>
                 </div>
                 <div className={`rounded-lg p-3 ${form.eiMeddraTerm ? "bg-emerald-50" : "bg-red-50"}`}>
-                  <p className="text-gray-500 mb-1">Terme MedDRA (PT)</p>
+                  <p className="text-gray-500 mb-1">Effet déclaré</p>
                   <p className="font-medium text-gray-800 text-xs">
                     {form.eiMeddraTerm || <span className="text-red-500">⚠️ Non renseigné</span>}
                     {form.eiMeddraCode && <span className="ml-1 text-gray-400 font-mono">#{form.eiMeddraCode}</span>}
@@ -1182,6 +1499,62 @@ export default function FormulaireMedecin() {
                 rows={3}
               />
             </Field>
+
+            {/* Notifications */}
+            <div className="border border-gray-200 rounded-xl overflow-hidden">
+              <div className="bg-gray-50 border-b border-gray-100 px-4 py-3 flex items-center gap-2">
+                <span className="text-base">🔔</span>
+                <span className="text-sm font-medium text-gray-700">Notifications</span>
+              </div>
+              <div className="px-4 py-4 space-y-4">
+                {/* Case accusé de réception */}
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    className="accent-emerald-600 mt-0.5 shrink-0"
+                    checked={form.notifAccuseReception}
+                    onChange={(e) => set("notifAccuseReception", e.target.checked)}
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800 group-hover:text-emerald-700 transition-colors">
+                      Accusé de réception par e-mail
+                    </p>
+                    <p className="text-xs text-gray-400 mt-0.5">Confirmation immédiate dès l&apos;envoi de la déclaration</p>
+                  </div>
+                </label>
+                {/* Case suivi de statut */}
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    className="accent-emerald-600 mt-0.5 shrink-0"
+                    checked={form.notifSuiviStatut}
+                    onChange={(e) => set("notifSuiviStatut", e.target.checked)}
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800 group-hover:text-emerald-700 transition-colors">
+                      Suivi de traitement par le CAPM
+                    </p>
+                    <p className="text-xs text-gray-400 mt-0.5">Notification quand votre déclaration est prise en charge ou traitée</p>
+                  </div>
+                </label>
+                {/* Adresse e-mail cible */}
+                {(form.notifAccuseReception || form.notifSuiviStatut) && (
+                  <div className="pt-1">
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Adresse e-mail</label>
+                    <input
+                      type="email"
+                      value={form.notifEmail}
+                      onChange={(e) => set("notifEmail", e.target.value)}
+                      placeholder="votre@email.ma"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    />
+                    {form.notifEmail && (
+                      <p className="text-xs text-emerald-600 mt-1">✓ Notifications envoyées à {form.notifEmail}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Consentement */}
             <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${form.consentement ? "border-emerald-500 bg-emerald-50" : "border-gray-300"}`}>
@@ -1226,23 +1599,62 @@ export default function FormulaireMedecin() {
         )}
 
         {/* Navigation */}
-        <div className="flex justify-between mt-10 pt-6 border-t border-gray-200">
-          <button
-            onClick={() => setStep((s) => Math.max(1, s - 1))}
-            disabled={step === 1}
-            className="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          >
-            ← Précédent
-          </button>
-          {step < SECTIONS.length && (
-            <button
-              onClick={() => setStep((s) => Math.min(SECTIONS.length, s + 1))}
-              className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-all"
-            >
-              Suivant →
-            </button>
-          )}
-        </div>
+        {(() => {
+          const stepErrs = sectionErrors(step, form);
+          const hasErrs = stepErrs.length > 0;
+          return (
+            <div className="mt-10 pt-6 border-t border-gray-200 space-y-3">
+              {/* Erreurs inline — visibles uniquement après tentative de passage */}
+              {triedNext && hasErrs && (
+                <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 flex gap-3">
+                  <span className="text-red-500 text-lg shrink-0">⚠️</span>
+                  <div>
+                    <p className="text-sm font-medium text-red-700 mb-1">
+                      Champs obligatoires manquants :
+                    </p>
+                    <ul className="list-disc list-inside space-y-0.5">
+                      {stepErrs.map((e) => (
+                        <li key={e} className="text-sm text-red-600">
+                          {e}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <button
+                  onClick={() => {
+                    setTriedNext(false);
+                    setStep((s) => Math.max(1, s - 1));
+                  }}
+                  disabled={step === 1}
+                  className="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  ← Précédent
+                </button>
+                {step < SECTIONS.length && (
+                  <button
+                    onClick={() => {
+                      setTriedNext(true);
+                      if (sectionErrors(step, form).length === 0) {
+                        setTriedNext(false);
+                        setStep((s) => Math.min(SECTIONS.length, s + 1));
+                      }
+                    }}
+                    className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                      triedNext && hasErrs
+                        ? "bg-red-100 text-red-700 border border-red-300 cursor-not-allowed"
+                        : "bg-emerald-600 text-white hover:bg-emerald-700"
+                    }`}
+                  >
+                    Suivant →
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })()}
       </main>
     </div>
   );

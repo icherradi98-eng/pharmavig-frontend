@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api, ReportDetail } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   brouillon:     { label: "Brouillon",        color: "bg-gray-100 text-gray-600" },
@@ -43,16 +44,28 @@ function Row({ label, value }: { label: string; value?: string | number | null }
 
 export default function DeclarationDetail() {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
+  const router = useRouter();
   const [report, setReport] = useState<ReportDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Guard : rediriger si non authentifié ou mauvais rôle
   useEffect(() => {
+    if (!user) {
+      router.replace("/login?redirect=/dashboard/medecin/mes-declarations");
+    } else if (user.role !== "medecin") {
+      router.replace(`/dashboard/${user.role}`);
+    }
+  }, [user, router]);
+
+  useEffect(() => {
+    if (!user || user.role !== "medecin") return; // attendre la vérification
     api.getReport(id)
       .then(setReport)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, user]);
 
   if (loading) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-400 text-sm">

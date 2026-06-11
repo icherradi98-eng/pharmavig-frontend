@@ -112,6 +112,7 @@ export default function ImputabiliteBegaud({ onScoreChange }: { onScoreChange?: 
   const [answers, setAnswers] = useState<Answers>({});
   const [gravite, setGravite] = useState<string[]>([]);
   const [altCauses, setAltCauses] = useState<string[]>([]);
+  const [expertMode, setExpertMode] = useState(false);
 
   const setAnswer = (q: string, v: string) => setAnswers((prev) => ({ ...prev, [q]: v }));
   const toggleGravite = (id: string) => setGravite((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
@@ -134,98 +135,127 @@ export default function ImputabiliteBegaud({ onScoreChange }: { onScoreChange?: 
     <div className="w-full font-sans">
       {/* Barre de progression */}
       <div className="mb-4">
-        <div className="flex justify-between text-xs text-gray-400 mb-1">
+        <div className="flex justify-between items-center text-xs text-gray-400 mb-1">
           <span>Imputabilité méthode Bégaud</span>
-          <span>Étape {step + 1} sur 4</span>
+          <div className="flex items-center gap-3">
+            <span>Étape {step + 1} sur 4</span>
+            <button
+              type="button"
+              onClick={() => setExpertMode((m) => !m)}
+              className={`px-2 py-0.5 rounded-md text-xs font-medium border transition-colors ${
+                expertMode
+                  ? "bg-blue-900 text-blue-100 border-blue-700"
+                  : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
+              }`}
+              title="Affiche les codes C/S/B de la méthode Bégaud originale"
+            >
+              {expertMode ? "⚗ Mode expert ON" : "⚗ Mode expert"}
+            </button>
+          </div>
         </div>
         <div className="h-1.5 bg-gray-100 rounded-full">
           <div className="h-1.5 bg-blue-600 rounded-full transition-all duration-300" style={{ width: `${(step / 3) * 100}%` }} />
         </div>
       </div>
 
-      {/* STEP 0 — Chronologie */}
+      {/* STEP 0 — Chronologie (langage naturel, codes C masqués) */}
       {step === 0 && (
         <div>
           <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-            <div className="w-7 h-7 rounded-full bg-blue-900 text-blue-100 flex items-center justify-center text-xs font-medium shrink-0">C</div>
+            <div className="w-7 h-7 rounded-full bg-blue-900 text-blue-100 flex items-center justify-center text-xs font-medium shrink-0">1</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Chronologie</p>
-              <p className="text-xs text-gray-400">Relation temporelle médicament → effet</p>
+              <p className="text-sm font-medium text-gray-900">Relation temporelle</p>
+              <p className="text-xs text-gray-400">Chronologie entre la prise du médicament et l&apos;apparition de l&apos;effet</p>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <p className="text-xs text-gray-500 mb-2"><span className="font-medium text-gray-700">C1 —</span> Délai d&apos;apparition de l&apos;effet après la prise</p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-800">L&apos;effet est-il apparu dans un délai compatible avec la prise du médicament ?</p>
+                {expertMode && <span className="text-xs font-mono bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">C1 — Délai d&apos;apparition</span>}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { v: "tres_compatible", label: "Très compatible", sub: "ex. anaphylaxie <1h, rash <7j" },
-                  { v: "compatible", label: "Compatible", sub: "délai plausible selon pharmacologie" },
-                  { v: "incompatible", label: "Incompatible", sub: "délai trop court ou trop long" },
-                  { v: "nr", label: "Non renseigné" },
+                  { v: "tres_compatible", label: "Oui, clairement compatible", sub: "ex. réaction < 1h, éruption < 7j" },
+                  { v: "compatible", label: "Probablement compatible", sub: "délai plausible selon la pharmacologie" },
+                  { v: "incompatible", label: "Non — délai incompatible", sub: "trop court ou trop long" },
+                  { v: "nr", label: "Je ne sais pas" },
                 ].map((o) => <OptionButton key={o.v} label={o.label} sublabel={o.sub} selected={answers.c1 === o.v} onClick={() => setAnswer("c1", o.v)} />)}
               </div>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-2"><span className="font-medium text-gray-700">C2 —</span> Évolution à l&apos;arrêt du médicament (dé-challenge)</p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-800">L&apos;effet a-t-il régressé à l&apos;arrêt du médicament ?</p>
+                {expertMode && <span className="text-xs font-mono bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">C2 — Évolution à l&apos;arrêt</span>}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { v: "favorable", label: "Régression à l'arrêt" },
-                  { v: "defavorable", label: "Pas de régression / évolution défavorable" },
+                  { v: "favorable", label: "Oui, régression à l'arrêt" },
+                  { v: "defavorable", label: "Non — pas de régression" },
                   { v: "non_arrete", label: "Médicament non arrêté" },
                   { v: "nr", label: "Non évaluable" },
                 ].map((o) => <OptionButton key={o.v} label={o.label} selected={answers.c2 === o.v} onClick={() => setAnswer("c2", o.v)} />)}
               </div>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-2"><span className="font-medium text-gray-700">C3 —</span> Rechallenge (réintroduction du médicament)</p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-800">Le médicament a-t-il été réintroduit après l&apos;arrêt ?</p>
+                {expertMode && <span className="text-xs font-mono bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">C3 — Ré-administration</span>}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { v: "positif", label: "Rechallenge positif", sub: "réapparition à la réintroduction" },
-                  { v: "negatif", label: "Rechallenge négatif" },
-                  { v: "non_fait", label: "Non réalisé / non applicable" },
+                  { v: "positif", label: "Oui — effet réapparu à la réintroduction", sub: "confirme fortement le lien" },
+                  { v: "negatif", label: "Oui — effet non réapparu" },
+                  { v: "non_fait", label: "Non réintroduit / non applicable" },
                 ].map((o) => <OptionButton key={o.v} label={o.label} sublabel={o.sub} selected={answers.c3 === o.v} onClick={() => setAnswer("c3", o.v)} />)}
               </div>
             </div>
           </div>
           <div className="mt-5">
-            <button onClick={() => goTo(1)} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">Sémiologie →</button>
+            <button onClick={() => goTo(1)} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">Suivant →</button>
           </div>
         </div>
       )}
 
-      {/* STEP 1 — Sémiologie */}
+      {/* STEP 1 — Sémiologie (langage naturel, codes S masqués) */}
       {step === 1 && (
         <div>
           <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-            <div className="w-7 h-7 rounded-full bg-blue-900 text-blue-100 flex items-center justify-center text-xs font-medium shrink-0">S</div>
+            <div className="w-7 h-7 rounded-full bg-blue-900 text-blue-100 flex items-center justify-center text-xs font-medium shrink-0">2</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Sémiologie</p>
-              <p className="text-xs text-gray-400">Caractérisation clinique de l&apos;effet indésirable</p>
+              <p className="text-sm font-medium text-gray-900">Contexte clinique</p>
+              <p className="text-xs text-gray-400">Autres causes possibles et spécificité de l&apos;effet</p>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <p className="text-xs text-gray-500 mb-2"><span className="font-medium text-gray-700">S1 —</span> L&apos;effet est-il connu pour ce médicament ? (RCP / bases de données)</p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-800">Cet effet est-il connu avec ce médicament ?</p>
+                {expertMode && <span className="text-xs font-mono bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">S1 — Effet connu (RCP)</span>}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { v: "connu", label: "Oui, décrit dans le RCP" },
-                  { v: "connu_rare", label: "Connu mais rare / hors RCP marocain" },
-                  { v: "inconnu", label: "Non décrit / inattendu" },
+                  { v: "connu", label: "Oui, mentionné dans le RCP" },
+                  { v: "connu_rare", label: "Connu mais rare ou hors RCP marocain" },
+                  { v: "inconnu", label: "Non décrit — effet inattendu" },
                 ].map((o) => <OptionButton key={o.v} label={o.label} selected={answers.s1 === o.v} onClick={() => setAnswer("s1", o.v)} />)}
               </div>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-2"><span className="font-medium text-gray-700">S2 —</span> Existe-t-il une explication alternative (autre cause possible) ?</p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-800">Existe-t-il une autre cause probable pour expliquer cet effet ?</p>
+                {expertMode && <span className="text-xs font-mono bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">S2 — Cause alternative</span>}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { v: "non", label: "Non — aucune autre cause plausible" },
-                  { v: "possible", label: "Cause alternative possible" },
-                  { v: "probable", label: "Cause alternative probable" },
+                  { v: "non", label: "Non — aucune autre cause évidente" },
+                  { v: "possible", label: "Une autre cause est possible" },
+                  { v: "probable", label: "Une autre cause est plus probable" },
                 ].map((o) => <OptionButton key={o.v} label={o.label} selected={answers.s2 === o.v} onClick={() => setAnswer("s2", o.v)} />)}
               </div>
               {(answers.s2 === "possible" || answers.s2 === "probable") && (
                 <div className="mt-2 p-3 bg-gray-50 rounded-lg border-l-2 border-blue-400">
-                  <p className="text-xs text-gray-500 mb-2">Précisez la cause alternative</p>
+                  <p className="text-xs text-gray-500 mb-2">Quelle autre cause envisagez-vous ?</p>
                   <div className="flex flex-wrap gap-2">
                     {["Pathologie sous-jacente", "Autre médicament concomitant", "Interaction médicamenteuse", "Facteur environnemental", "Terrain allergique connu"].map((c) => (
                       <Chip key={c} label={c} selected={altCauses.includes(c)} onClick={() => toggleAltCause(c)} />
@@ -235,51 +265,57 @@ export default function ImputabiliteBegaud({ onScoreChange }: { onScoreChange?: 
               )}
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-2"><span className="font-medium text-gray-700">S3 —</span> L&apos;effet est-il spécifique / hautement évocateur du médicament ?</p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-800">L&apos;effet est-il très caractéristique du médicament ?</p>
+                {expertMode && <span className="text-xs font-mono bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">S3 — Spécificité</span>}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { v: "oui", label: "Oui (ex. syndrome de Stevens-Johnson, agranulocytose)" },
-                  { v: "non", label: "Non / effet non spécifique" },
-                ].map((o) => <OptionButton key={o.v} label={o.label} selected={answers.s3 === o.v} onClick={() => setAnswer("s3", o.v)} />)}
+                  { v: "oui", label: "Oui — effet hautement évocateur", sub: "ex. Stevens-Johnson, agranulocytose" },
+                  { v: "non", label: "Non — effet non spécifique" },
+                ].map((o) => <OptionButton key={o.v} label={o.label} sublabel={o.sub} selected={answers.s3 === o.v} onClick={() => setAnswer("s3", o.v)} />)}
               </div>
             </div>
           </div>
           <div className="flex gap-2 mt-5">
             <button onClick={() => goTo(0)} className="px-4 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 transition-colors">← Retour</button>
-            <button onClick={() => goTo(2)} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">Bibliographie →</button>
+            <button onClick={() => goTo(2)} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">Suivant →</button>
           </div>
         </div>
       )}
 
-      {/* STEP 2 — Bibliographie + Gravité */}
+      {/* STEP 2 — Bibliographie + Gravité (langage naturel, code B masqué) */}
       {step === 2 && (
         <div>
           <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-            <div className="w-7 h-7 rounded-full bg-blue-900 text-blue-100 flex items-center justify-center text-xs font-medium shrink-0">B</div>
+            <div className="w-7 h-7 rounded-full bg-blue-900 text-blue-100 flex items-center justify-center text-xs font-medium shrink-0">3</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Bibliographie & gravité</p>
-              <p className="text-xs text-gray-400">Imputabilité extrinsèque + critères CIOMS</p>
+              <p className="text-sm font-medium text-gray-900">Données publiées & gravité</p>
+              <p className="text-xs text-gray-400">Ce que la littérature dit de cet effet avec ce médicament</p>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <p className="text-xs text-gray-500 mb-2"><span className="font-medium text-gray-700">B —</span> Notoriété de l&apos;association dans la littérature</p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-800">Cet effet a-t-il déjà été publié en association avec ce médicament ?</p>
+                {expertMode && <span className="text-xs font-mono bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">B — Imputabilité extrinsèque</span>}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { v: "e1", label: "E1 — Non décrit", sub: "aucune donnée publiée" },
-                  { v: "e2", label: "E2 — Décrit mais rare", sub: "cas isolés, case reports" },
-                  { v: "e3", label: "E3 — Bien documenté", sub: "essais cliniques, RCP, Vidal" },
+                  { v: "e1", label: "Non, aucune donnée publiée", sub: "effet potentiellement nouveau" },
+                  { v: "e2", label: "Oui, cas isolés dans la littérature", sub: "case reports, données limitées" },
+                  { v: "e3", label: "Oui, bien documenté", sub: "essais cliniques, RCP, bases de données" },
                 ].map((o) => <OptionButton key={o.v} label={o.label} sublabel={o.sub} selected={answers.b1 === o.v} onClick={() => setAnswer("b1", o.v)} />)}
               </div>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-2"><span className="font-medium text-gray-700">Gravité —</span> Critères CIOMS / ICH E2A</p>
+              <p className="text-sm font-medium text-gray-800 mb-2">Gravité de l&apos;effet — cochez tout ce qui s&apos;applique</p>
               <div className="flex flex-wrap gap-2">
                 {GRAVE_CRITERIA.map((g) => <Chip key={g.id} label={g.label} selected={gravite.includes(g.id)} onClick={() => toggleGravite(g.id)} />)}
               </div>
               {GRAVE_CRITERIA.filter((g) => g.id !== "non_grave").some((g) => gravite.includes(g.id)) && (
                 <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
-                  Effet grave détecté — déclaration obligatoire sous 15 jours (loi 17-04 / ICH E2A). Délai réduit à 7 jours si fatal ou pronostic vital engagé.
+                  ⚡ Effet grave — déclaration obligatoire sous 15 jours (loi 17-04 / ICH E2A). Délai réduit à 7 jours si fatal ou pronostic vital engagé.
                 </div>
               )}
             </div>
