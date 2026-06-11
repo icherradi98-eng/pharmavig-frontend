@@ -338,7 +338,7 @@ export default function FormulairePatient() {
   const [submitError, setSubmitError] = useState("");
   const [geoLoading, setGeoLoading]   = useState(false);
   const [triedNext, setTriedNext]     = useState(false);
-  const [draftRestored]               = useState(() => !!localStorage.getItem(DRAFT_KEY));
+  const [draftRestored]               = useState(() => typeof window !== "undefined" && !!localStorage.getItem(DRAFT_KEY));
   // ── #10 : toast feedback sauvegarde ─────────────────────────────────────
   const [savedToast, setSavedToast]   = useState(false);
   const firstSave                     = useRef(false);
