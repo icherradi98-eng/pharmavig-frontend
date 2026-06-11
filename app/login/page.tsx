@@ -57,6 +57,14 @@ function LoginForm() {
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-700 mb-4">
               ⚠️ {error}
+              {error.toLowerCase().includes("vérifié") && (
+                <p className="mt-2 text-xs text-red-600">
+                  Vous n&apos;avez pas reçu l&apos;email ?{" "}
+                  <Link href="/resend-verification" className="underline font-medium">
+                    Renvoyer le lien
+                  </Link>
+                </p>
+              )}
             </div>
           )}
 
