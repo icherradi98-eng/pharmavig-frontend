@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 type Status = "loading" | "success" | "error" | "already";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<Status>("loading");
@@ -33,7 +33,6 @@ export default function VerifyEmailPage() {
         } else {
           setStatus("success");
           setMessage(data.detail);
-          // Redirection automatique vers login après 3 secondes
           setTimeout(() => router.push("/login"), 3000);
         }
       })
@@ -46,7 +45,6 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
-        {/* Logo */}
         <div className="mb-6">
           <span className="text-2xl font-black text-emerald-600">PharmaVig</span>
           <p className="text-xs text-gray-400 mt-1">Pharmacovigilance · المملكة المغربية 🇲🇦</p>
@@ -67,10 +65,7 @@ export default function VerifyEmailPage() {
             <h1 className="text-xl font-bold text-gray-900 mb-2">Email vérifié !</h1>
             <p className="text-gray-500 text-sm mb-6">{message}</p>
             <p className="text-xs text-gray-400 mb-4">Redirection automatique dans 3 secondes…</p>
-            <Link
-              href="/login"
-              className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors"
-            >
+            <Link href="/login" className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors">
               Se connecter →
             </Link>
           </>
@@ -83,10 +78,7 @@ export default function VerifyEmailPage() {
             </div>
             <h1 className="text-xl font-bold text-gray-900 mb-2">Déjà vérifié</h1>
             <p className="text-gray-500 text-sm mb-6">{message}</p>
-            <Link
-              href="/login"
-              className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors"
-            >
+            <Link href="/login" className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors">
               Se connecter →
             </Link>
           </>
@@ -99,18 +91,21 @@ export default function VerifyEmailPage() {
             </div>
             <h1 className="text-xl font-bold text-gray-900 mb-2">Lien invalide</h1>
             <p className="text-gray-500 text-sm mb-6">{message}</p>
-            <p className="text-xs text-gray-400 mb-4">
-              Le lien a peut-être expiré ou déjà été utilisé.
-            </p>
-            <Link
-              href="/login"
-              className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors"
-            >
+            <p className="text-xs text-gray-400 mb-4">Le lien a peut-être expiré ou déjà été utilisé.</p>
+            <Link href="/login" className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors">
               Retour à la connexion
             </Link>
           </>
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

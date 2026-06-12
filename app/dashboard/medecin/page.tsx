@@ -144,7 +144,7 @@ export default function MedecinVueEnsemble() {
                   <Link href="/dashboard/medecin/profil" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100 group">
                     <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                       <span className="text-emerald-600 font-bold text-sm">
-                        {user?.specialite && user?.num_ordre ? "✓" : "1"}
+                        {user?.specialite ? "✓" : "1"}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
