@@ -769,20 +769,12 @@ export default function FormulaireMedecin() {
     }));
   }
 
-  function generatePvNumber() {
-    const year = new Date().getFullYear();
-    const seq = Math.floor(Math.random() * 90000) + 10000;
-    return `PV-MA-${year}-${seq}`;
-  }
-
   async function handleSubmit() {
     if (!form.consentement) return;
     setSubmitError("");
-    const pv = generatePvNumber();
-    setPvNumber(pv);
     try {
       const submitFn = user ? api.createReport : api.createAnonymousReport;
-      await submitFn({
+      const resp = await submitFn({
         source: "medecin",
         patient_age: form.patientAge,
         patient_sexe: form.patientSexe,
@@ -828,6 +820,10 @@ export default function FormulaireMedecin() {
           begaud_score: imputScore ?? undefined,
         },
       });
+      const ref = resp?.id
+        ? `PV-MA-${new Date().getFullYear()}-${String(resp.id).slice(0, 8).toUpperCase()}`
+        : `PV-MA-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`;
+      setPvNumber(ref);
       localStorage.removeItem(DRAFT_KEY);
       setSubmitted(true);
     } catch (err: unknown) {
@@ -852,29 +848,100 @@ export default function FormulaireMedecin() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 max-w-md w-full text-center">
-          <div className="text-5xl mb-4">✅</div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Déclaration envoyée au CAPM</h1>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 max-w-lg w-full">
+
+          {/* Titre */}
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">✅</span>
+            </div>
+            <h1 className="text-xl font-bold text-gray-900 mb-1">Déclaration transmise au CAPM</h1>
+            <p className="text-gray-500 text-sm">Votre déclaration a bien été enregistrée.</p>
+          </div>
+
+          {/* Numéro de référence */}
           {pvNumber && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2 text-sm font-mono font-bold text-emerald-700 mb-3">
-              {pvNumber}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 text-center mb-4">
+              <p className="text-xs text-emerald-600 font-medium mb-1">Référence de déclaration</p>
+              <p className="text-lg font-mono font-bold text-emerald-800">{pvNumber}</p>
+              <p className="text-xs text-emerald-600 mt-1">Conservez cette référence pour le suivi</p>
             </div>
           )}
-          <p className="text-gray-500 text-sm mb-1">Vous recevrez un accusé de réception par email.</p>
+
+          {/* Alerte si sérieux */}
           {isSerieux && (
-            <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-xs text-red-700 font-medium">
-              ⚡ Déclaration sérieuse — traitement prioritaire sous 24h
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4 flex items-start gap-2">
+              <span className="text-base">⚡</span>
+              <div>
+                <p className="text-sm font-bold text-red-700">Déclaration sérieuse</p>
+                <p className="text-xs text-red-600">
+                  {isFatal
+                    ? "Cas fatal ou mettant en jeu le pronostic vital — délai de notification CAPM : 7 jours."
+                    : "Traitement prioritaire — délai de notification CAPM : 15 jours."}
+                </p>
+              </div>
             </div>
           )}
-          <div className="mt-6 flex flex-col gap-2">
-            <Link href="/dashboard/medecin" className="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
+
+          {/* Que se passe-t-il maintenant */}
+          <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
+            <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-100">
+              <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Que se passe-t-il maintenant ?</p>
+            </div>
+            <div className="divide-y divide-gray-100">
+              <div className="flex items-start gap-3 px-4 py-3">
+                <span className="text-base mt-0.5">📧</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Accusé de réception par email</p>
+                  <p className="text-xs text-gray-500">Un email de confirmation vous a été envoyé avec le numéro de référence.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 px-4 py-3">
+                <span className="text-base mt-0.5">🔬</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Analyse CAPM</p>
+                  <p className="text-xs text-gray-500">
+                    Le CAPM analysera cette déclaration.{" "}
+                    {delaiLegal ? `Délai réglementaire : ${delaiLegal} jours.` : "Délai habituel : 30 jours."}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 px-4 py-3">
+                <span className="text-base mt-0.5">📄</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">PDF CIOMS disponible</p>
+                  <p className="text-xs text-gray-500">Téléchargez le formulaire CIOMS complet depuis "Mes déclarations".</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 px-4 py-3">
+                <span className="text-base mt-0.5">📊</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Suivi du statut</p>
+                  <p className="text-xs text-gray-500">Consultez l&apos;évolution de votre déclaration dans "Mes déclarations".</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/dashboard/medecin/mes-declarations"
+              className="w-full text-center bg-emerald-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors"
+            >
+              Voir mes déclarations →
+            </Link>
+            <Link href="/dashboard/medecin" className="w-full text-center text-sm text-gray-500 hover:text-gray-700 underline py-2">
               Retour au tableau de bord
             </Link>
-            <button onClick={() => { setForm(INITIAL); setStep(1); setSubmitted(false); setDraftRestored(false); localStorage.removeItem(DRAFT_KEY); }}
-              className="text-sm text-gray-500 hover:text-gray-700 underline">
+            <button
+              onClick={() => { setForm(INITIAL); setStep(1); setSubmitted(false); setDraftRestored(false); localStorage.removeItem(DRAFT_KEY); }}
+              className="w-full text-center text-xs text-gray-400 hover:text-gray-500 underline"
+            >
               Faire une nouvelle déclaration
             </button>
           </div>
+
         </div>
       </div>
     );

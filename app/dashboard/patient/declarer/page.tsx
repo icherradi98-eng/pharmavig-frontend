@@ -336,6 +336,7 @@ export default function FormulairePatient() {
   });
   const [submitted, setSubmitted]     = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [reportRef, setReportRef]     = useState<string>("");
   const [geoLoading, setGeoLoading]   = useState(false);
   const [triedNext, setTriedNext]     = useState(false);
   const [draftRestored]               = useState(() => typeof window !== "undefined" && !!localStorage.getItem(DRAFT_KEY));
@@ -447,8 +448,11 @@ export default function FormulairePatient() {
         contact_tel:           form.contactTel || undefined,
         raw_data:              form,
       };
-      if (user) { await api.createReport(payload); }
-      else       { await api.createAnonymousReport(payload); }
+      const resp = user
+        ? await api.createReport(payload)
+        : await api.createAnonymousReport(payload);
+      const ref = resp?.id ? `PV-${new Date().getFullYear()}-${String(resp.id).slice(0, 8).toUpperCase()}` : "";
+      setReportRef(ref);
       localStorage.removeItem(DRAFT_KEY);
       setSubmitted(true);
     } catch (err: unknown) {
@@ -458,15 +462,81 @@ export default function FormulairePatient() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 max-w-md w-full text-center">
-          <div className="text-5xl mb-4">✅</div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Déclaration envoyée !</h1>
-          <p className="text-gray-500 text-sm mb-2">Merci — votre signalement aide à protéger d&apos;autres patients au Maroc.</p>
-          <p className="text-emerald-700 text-sm font-medium mb-6" dir="rtl">شكرا بزاف — بلاغتك كتساعد المرضى الآخرين فالمغرب 🇲🇦</p>
-          <Link href="/dashboard/patient" className="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
-            Retour au tableau de bord
-          </Link>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 max-w-lg w-full">
+
+          {/* Titre */}
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">✅</span>
+            </div>
+            <h1 className="text-xl font-bold text-gray-900 mb-1">Déclaration envoyée !</h1>
+            <p className="text-gray-500 text-sm">Merci — votre signalement aide à protéger d&apos;autres patients au Maroc.</p>
+            <p className="text-emerald-700 text-sm font-medium mt-1" dir="rtl">شكرا بزاف — بلاغتك كتساعد المرضى الآخرين فالمغرب 🇲🇦</p>
+          </div>
+
+          {/* Numéro de référence */}
+          {reportRef && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 text-center mb-6">
+              <p className="text-xs text-emerald-600 font-medium mb-1">Numéro de référence</p>
+              <p className="text-lg font-mono font-bold text-emerald-800">{reportRef}</p>
+              <p className="text-xs text-emerald-600 mt-1">Conservez ce numéro pour le suivi de votre déclaration</p>
+            </div>
+          )}
+
+          {/* Que se passe-t-il maintenant */}
+          <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
+            <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-100">
+              <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Que se passe-t-il maintenant ?</p>
+            </div>
+            <div className="divide-y divide-gray-100">
+              <div className="flex items-start gap-3 px-4 py-3">
+                <span className="text-base mt-0.5">📧</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Accusé de réception</p>
+                  <p className="text-xs text-gray-500">Vous recevrez un email de confirmation dans quelques minutes.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 px-4 py-3">
+                <span className="text-base mt-0.5">🔬</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Analyse par le CAPM</p>
+                  <p className="text-xs text-gray-500">Le Centre Anti-Poison et de Pharmacovigilance du Maroc analysera votre déclaration.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 px-4 py-3">
+                <span className="text-base mt-0.5">📋</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Suivi de votre dossier</p>
+                  <p className="text-xs text-gray-500">Retrouvez votre déclaration et son statut dans votre espace personnel.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 px-4 py-3">
+                <span className="text-base mt-0.5">⚠️</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">En cas d&apos;urgence médicale</p>
+                  <p className="text-xs text-gray-500">Contactez immédiatement le <strong>SAMU (15)</strong> ou rendez-vous aux urgences. Cette déclaration ne remplace pas une consultation médicale.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/dashboard/patient"
+              className="w-full text-center bg-emerald-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors"
+            >
+              Retour au tableau de bord
+            </Link>
+            <button
+              onClick={() => { setForm(INITIAL); setSubmitted(false); setReportRef(""); localStorage.removeItem(DRAFT_KEY); }}
+              className="w-full text-center text-sm text-gray-400 hover:text-gray-600 underline py-2"
+            >
+              Faire une autre déclaration
+            </button>
+          </div>
+
         </div>
       </div>
     );
