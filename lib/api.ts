@@ -94,6 +94,31 @@ async function adminRequest<T>(path: string, options: RequestInit = {}): Promise
   return res.json();
 }
 
+// ── Terrain public (sans auth) ────────────────────────────────────────────────
+export type TerrainOut = {
+  dci: string;
+  total: number;
+  graves: number;
+  graves_pct: number;
+  begaud_avg: number | null;
+  top_effets: { terme: string; count: number }[];
+  by_evolution: { evolution: string; count: number }[];
+  by_source: Record<string, number>;
+  last_report_date: string | null;
+};
+
+export async function fetchTerrain(dci: string): Promise<TerrainOut | null> {
+  try {
+    const res = await fetch(`${BASE}/drugs/${encodeURIComponent(dci)}/terrain`, {
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
 export const api = {
   // Auth
   register: (data: Record<string, unknown>) =>

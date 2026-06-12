@@ -14,6 +14,7 @@ import {
   type ExtractedIndication, type ExtractedDosage, type ExtractedContraindication,
   type ExtractedInteraction, type ExtractedAdverseEffect,
 } from "@/lib/drugApi";
+import { fetchTerrain, type TerrainOut } from "@/lib/api";
 
 const TABS = [
   { id: "effets", label: "Effets indésirables" },
@@ -24,12 +25,6 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
-type TerrainDeclaration = {
-  drugDci: string;
-  grave: boolean;
-  begaud: number;
-  meddraPt: string;
-};
 
 export default function MedicamentProfil() {
   const params = useParams<{ slug: string }>();
@@ -44,6 +39,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
   const [events, setEvents] = useState<AdverseEvent[] | undefined>(undefined);
   const [bdpm, setBdpm] = useState<BdpmDrug | null | undefined>(undefined);
   const [related, setRelated] = useState<string[] | undefined>(undefined);
+  const [terrain, setTerrain] = useState<TerrainOut | null | undefined>(undefined);
   const [tab, setTab] = useState<TabId>("effets");
   const [partial, setPartial] = useState(false);
 
@@ -57,6 +53,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
       fetchAdverseEvents(name).then((r) => !cancelled && setEvents(r)),
       fetchAnsm(name).then((r) => !cancelled && setBdpm(r)),
       fetchRxnormRelated(name).then((r) => !cancelled && setRelated(r)),
+      fetchTerrain(name).then((r) => !cancelled && setTerrain(r)),
     ]).finally(() => clearTimeout(timeoutFlag));
 
     return () => { cancelled = true; clearTimeout(timeoutFlag); };
@@ -73,9 +70,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
   const fdaChemicalName = label?.generic_name && titleCaseFr(label.generic_name) !== dci ? label.generic_name : undefined;
   const brandNames = label?.brand_name || (bdpm?.denomination ? [bdpm.denomination] : []);
 
-  // Les données terrain seront alimentées par l'API agrégée PharmaVig (Railway/Supabase)
-  // quand l'endpoint public /drugs/{dci}/terrain sera disponible.
-  const localDeclarations: TerrainDeclaration[] = [];
+  // terrain est undefined pendant le chargement, null si erreur/indispo, TerrainOut sinon
 
   const loading = label === undefined || events === undefined;
   const noFdaData = label === null && bdpm === null;
@@ -174,7 +169,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
                 {tab === "effets" && <TabEffets label={label} events={events || []} dci={dci} />}
                 {tab === "indications" && <TabIndications label={label} dci={dci} />}
                 {tab === "interactions" && <TabInteractions label={label} dci={dci} />}
-                {tab === "terrain" && <TabTerrain declarations={localDeclarations} dci={dci} onDeclare={declareWithDrug} />}
+                {tab === "terrain" && <TabTerrain terrain={terrain} dci={dci} onDeclare={declareWithDrug} />}
 
                 <p className="text-xs text-gray-400 mt-6">
                   Apparentés RxNorm : {related && related.length > 0 ? related.join(", ") : "—"}
@@ -311,7 +306,7 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
           </div>
         ) : (
           <ul className="space-y-1.5">
-            {displayEffects.map((e, i) => {
+            {displayEffects.map((e) => {
               const severe = isSevere(e.original);
               const freq = usesFaers && e.count !== undefined
                 ? faersFrequencyLabel(e.count, totalFaers)
@@ -322,7 +317,7 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
 
               return (
                 <li
-                  key={i}
+                  key={e.original}
                   className={`flex items-center justify-between gap-3 text-sm rounded-lg px-3 py-2 ${
                     severe
                       ? "bg-red-50 text-red-700 border border-red-100"
@@ -379,8 +374,8 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
                     }}
                   />
                   <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                    {chartData.map((d, i) => (
-                      <Cell key={i} fill={d.isTop3 ? "#dc2626" : "#2563eb"} />
+                    {chartData.map((d) => (
+                      <Cell key={d.reaction} fill={d.isTop3 ? "#dc2626" : "#2563eb"} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -482,8 +477,8 @@ function TabIndications({ label, dci }: { label: FdaLabel | null | undefined; dc
           ) : indications && indications.length > 0 ? (
             <>
               <ul className="space-y-2 mb-3">
-                {indications.map((ind, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700 bg-blue-50/60 border border-blue-100 rounded-lg px-3 py-2">
+                {indications.map((ind) => (
+                  <li key={ind} className="flex items-start gap-2.5 text-sm text-gray-700 bg-blue-50/60 border border-blue-100 rounded-lg px-3 py-2">
                     <span className="text-blue-400 font-bold mt-0.5 shrink-0">›</span>
                     <span>{ind}</span>
                   </li>
@@ -505,8 +500,8 @@ function TabIndications({ label, dci }: { label: FdaLabel | null | undefined; dc
           ) : dosages && dosages.length > 0 ? (
             <>
               <div className="space-y-2 mb-3">
-                {dosages.map((d, i) => (
-                  <div key={i} className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+                {dosages.map((d) => (
+                  <div key={d.population} className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
                         {d.population}
@@ -597,8 +592,8 @@ function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; d
           ) : contraindications && contraindications.length > 0 ? (
             <>
               <ul className="space-y-2 mb-3">
-                {contraindications.map((ci, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-red-800 bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
+                {contraindications.map((ci) => (
+                  <li key={ci.ci} className="flex items-start gap-2.5 text-sm text-red-800 bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
                     <span className="text-red-500 mt-0.5 shrink-0 font-bold">✕</span>
                     <span>{ci.ci}</span>
                   </li>
@@ -637,8 +632,8 @@ function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; d
                       <span className="text-[11px] text-gray-400">{group.length} interaction{group.length > 1 ? "s" : ""}</span>
                     </div>
                     <div className="space-y-2">
-                      {group.map((inter, i) => (
-                        <div key={i} className={`border rounded-xl px-4 py-3 ${s.row}`}>
+                      {group.map((inter) => (
+                        <div key={inter.medicament} className={`border rounded-xl px-4 py-3 ${s.row}`}>
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <p className="text-sm font-semibold text-gray-900">
                               {inter.medicament}
@@ -676,10 +671,21 @@ function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; d
 
 /* ---------------- TAB 4 — Données terrain PharmaVig ---------------- */
 
-function TabTerrain({ declarations, dci, onDeclare }: { declarations: TerrainDeclaration[]; dci: string; onDeclare: () => void }) {
-  const topEffects = useMemoTopEffects(declarations);
+function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | undefined; dci: string; onDeclare: () => void }) {
+  // Chargement en cours
+  if (terrain === undefined) {
+    return (
+      <Section title="Données terrain PharmaVig Maroc">
+        <div className="text-center py-8">
+          <div className="inline-block w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3" />
+          <p className="text-gray-400 text-sm">Chargement des données terrain…</p>
+        </div>
+      </Section>
+    );
+  }
 
-  if (declarations.length === 0) {
+  // Aucune donnée (erreur réseau ou 0 déclaration)
+  if (terrain === null || terrain.total === 0) {
     return (
       <Section title="Données terrain PharmaVig Maroc">
         <div className="text-center py-8">
@@ -705,44 +711,59 @@ function TabTerrain({ declarations, dci, onDeclare }: { declarations: TerrainDec
     );
   }
 
-  const total = declarations.length;
-  const graves = declarations.filter((d) => d.grave).length;
-  const gravesPct = Math.round((graves / total) * 100);
-  const begaudAvg = declarations.reduce((s, d) => s + d.begaud, 0) / total;
-  const horsRcp = Math.max(0, total - declarations.length + Math.floor(total * 0.15)); // estimation prototype
+  const { total, graves, graves_pct, begaud_avg, top_effets, by_evolution, last_report_date } = terrain;
 
   return (
     <Section title="Données terrain PharmaVig Maroc">
+      {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
         <Stat label="Déclarations PharmaVig" value={String(total)} />
-        <Stat label="Effets graves" value={`${graves} (${gravesPct}%)`} />
-        <Stat label="Score Bégaud moyen" value={`I${begaudAvg.toFixed(1)}`} />
-        <Stat label="Effets hors RCP signalés" value={String(horsRcp)} highlight={horsRcp > 0} />
+        <Stat label="Effets graves" value={`${graves} (${graves_pct}%)`} highlight={graves_pct >= 30} />
+        <Stat label="Score Bégaud moyen" value={begaud_avg !== null ? `I${begaud_avg.toFixed(1)}` : "N/A"} />
+        <Stat label="Dernier signalement" value={last_report_date ? new Date(last_report_date).toLocaleDateString("fr-MA", { month: "short", year: "numeric" }) : "—"} />
       </div>
 
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Top 3 effets rapportés localement</p>
-      <ul className="space-y-1.5 mb-5">
-        {topEffects.map(([pt, count]) => (
-          <li key={pt} className="text-sm bg-gray-50 text-gray-600 rounded-lg px-3 py-2 flex items-center justify-between">
-            <span>{pt}</span>
-            <span className="text-xs font-semibold text-gray-400">{count} cas</span>
-          </li>
-        ))}
-      </ul>
+      {/* Top effets MedDRA */}
+      {top_effets.length > 0 && (
+        <>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Top effets rapportés localement</p>
+          <ul className="space-y-1.5 mb-5">
+            {top_effets.map(({ terme, count }) => (
+              <li key={terme} className="text-sm bg-gray-50 text-gray-600 rounded-lg px-3 py-2 flex items-center justify-between">
+                <span>{terme}</span>
+                <span className="text-xs font-semibold text-gray-400">{count} cas</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
-      <p className="text-xs text-gray-400">
-        Données issues des déclarations PharmaVig Maroc. Toutes les déclarations sont anonymisées conformément à la loi 09-08.
-      </p>
+      {/* Répartition par évolution */}
+      {by_evolution.length > 0 && (
+        <>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Évolution observée</p>
+          <div className="flex flex-wrap gap-2 mb-5">
+            {by_evolution.map(({ evolution, count }) => (
+              <span key={evolution} className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full px-3 py-1">
+                {evolution} · {count}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
+
+      <div className="flex items-start gap-2 mt-2">
+        <span className="text-sm shrink-0">ℹ️</span>
+        <p className="text-xs text-gray-400">
+          Données agrégées et anonymisées issues des déclarations PharmaVig Maroc. Conformément à la loi 09-08 (CNDP), aucune donnée identifiante n&apos;est exposée.
+        </p>
+      </div>
+
+      <button onClick={onDeclare} className="mt-4 text-sm text-emerald-600 hover:underline font-medium">
+        + Contribuer — Déclarer un cas →
+      </button>
     </Section>
   );
-}
-
-function useMemoTopEffects(declarations: TerrainDeclaration[]): [string, number][] {
-  return useMemo(() => {
-    const counts: Record<string, number> = {};
-    declarations.forEach((d) => { counts[d.meddraPt] = (counts[d.meddraPt] || 0) + 1; });
-    return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3);
-  }, [declarations]);
 }
 
 function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
