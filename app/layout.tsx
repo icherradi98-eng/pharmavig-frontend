@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PharmaVig Maroc — Pharmacovigilance digitale",
-  description: "Plateforme de déclaration des effets indésirables médicamenteux au Maroc",
+  title: "MAIA DAWA — Pharmacovigilance Intelligence",
+  description: "Plateforme de pharmacovigilance digitale au Maroc — Déclaration et suivi des effets indésirables médicamenteux",
 };
 
 export default function RootLayout({
