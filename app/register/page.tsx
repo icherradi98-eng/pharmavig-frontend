@@ -14,7 +14,7 @@ const SPECIALITES = [
 
 function RegisterForm() {
   const searchParams = useSearchParams();
-  const role = searchParams.get("role") || "patient";
+  const [role, setRole] = useState(searchParams.get("role") || "");
 
   const [form, setForm] = useState({
     email: "", password: "", confirmPassword: "",
@@ -72,14 +72,42 @@ function RegisterForm() {
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
           <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Créer un compte</h1>
-              <p className="text-sm text-gray-500 mt-0.5">Profil : <strong>{roleLabels[role] || role}</strong></p>
-            </div>
-            <Link href={`/login?role=${role}`} className="text-xs text-gray-400 hover:text-gray-600 underline">
+            <h1 className="text-xl font-bold text-gray-900">Créer un compte</h1>
+            <Link href="/login" className="text-xs text-gray-400 hover:text-gray-600 underline">
               Déjà un compte ?
             </Link>
           </div>
+
+          {/* Sélecteur de rôle */}
+          {!role && (
+            <div className="mb-6">
+              <p className="text-sm font-medium text-gray-700 mb-3">Je suis :</p>
+              <div className="grid grid-cols-2 gap-3">
+                <button type="button" onClick={() => setRole("medecin")}
+                  className="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
+                  <span className="text-2xl">🩺</span>
+                  <span className="text-sm font-semibold text-gray-700">Médecin</span>
+                  <span className="text-xs text-gray-400 text-center">Professionnel de santé</span>
+                </button>
+                <button type="button" onClick={() => setRole("patient")}
+                  className="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
+                  <span className="text-2xl">👤</span>
+                  <span className="text-sm font-semibold text-gray-700">Patient</span>
+                  <span className="text-xs text-gray-400 text-center">Déclarer un effet indésirable</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {role && (
+            <div className="flex items-center gap-2 mb-5 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+              <span className="text-lg">{role === "medecin" ? "🩺" : "👤"}</span>
+              <span className="text-sm font-medium text-emerald-800">{roleLabels[role] || role}</span>
+              <button type="button" onClick={() => setRole("")} className="ml-auto text-xs text-emerald-600 underline hover:text-emerald-800">
+                Changer
+              </button>
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-700 mb-4">
@@ -87,7 +115,7 @@ function RegisterForm() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className={`space-y-4 ${!role ? "hidden" : ""}`}>
             {/* Champs communs */}
             <div className="grid grid-cols-2 gap-3">
               <div>
