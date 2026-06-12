@@ -49,6 +49,32 @@ export default function DeclarationDetail() {
   const [report, setReport] = useState<ReportDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  async function downloadPdf() {
+    if (!report) return;
+    setPdfLoading(true);
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+      const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
+      const res = await fetch(`${apiBase}/reports/${report.id}/pdf`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Erreur génération PDF");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const ref = (report.capm_reference || report.id.slice(0, 8)).toUpperCase();
+      a.download = `PharmaVig_CIOMS_${ref}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert("Impossible de générer le PDF. Réessayez.");
+    } finally {
+      setPdfLoading(false);
+    }
+  }
 
   // Guard : rediriger si non authentifié ou mauvais rôle
   useEffect(() => {
@@ -110,6 +136,22 @@ export default function DeclarationDetail() {
             <span className="text-xs bg-red-100 text-red-600 font-bold px-2 py-1 rounded-full">⚡ Sérieux</span>
           )}
           <span className={`text-xs font-semibold px-3 py-1 rounded-full ${st.color}`}>{st.label}</span>
+          <button
+            onClick={downloadPdf}
+            disabled={pdfLoading}
+            className="flex items-center gap-1.5 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {pdfLoading ? (
+              <>
+                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Génération…
+              </>
+            ) : (
+              <>
+                📄 Télécharger CIOMS
+              </>
+            )}
+          </button>
         </div>
       </header>
 
