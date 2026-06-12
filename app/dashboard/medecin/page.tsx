@@ -122,13 +122,85 @@ export default function MedecinVueEnsemble() {
             </div>
 
             {stats.total === 0 ? (
-              <div className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-white">
-                <p className="text-2xl mb-3">📋</p>
-                <p className="text-gray-600 font-medium">Aucune déclaration encore</p>
-                <p className="text-gray-400 text-sm mt-1 mb-5">Vos statistiques et graphiques apparaîtront ici après votre première déclaration d&apos;effet indésirable.</p>
-                <Link href="/dashboard/medecin/nouvelle-declaration" className="bg-emerald-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
-                  Faire ma première déclaration →
-                </Link>
+              <div className="space-y-4">
+                {/* Bannière de bienvenue */}
+                <div className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-6 text-white">
+                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-200 mb-2">Bienvenue sur PharmaVig</p>
+                  <h2 className="text-xl font-bold mb-1">
+                    Bonjour Dr. {user?.prenom || user?.nom || ""} 👋
+                  </h2>
+                  <p className="text-emerald-100 text-sm leading-relaxed">
+                    Votre espace de pharmacovigilance est prêt. Suivez ces 3 étapes pour commencer.
+                  </p>
+                </div>
+
+                {/* Checklist 3 étapes */}
+                <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-100">
+                    <p className="text-sm font-bold text-gray-700">Pour commencer</p>
+                  </div>
+
+                  {/* Étape 1 — Profil */}
+                  <Link href="/dashboard/medecin/profil" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100 group">
+                    <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <span className="text-emerald-600 font-bold text-sm">
+                        {user?.specialite && user?.num_ordre ? "✓" : "1"}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">
+                        Compléter mon profil médecin
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Spécialité, N° Ordre, établissement — requis pour les déclarations officielles
+                      </p>
+                    </div>
+                    <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
+                  </Link>
+
+                  {/* Étape 2 — Première déclaration */}
+                  <Link href="/dashboard/medecin/nouvelle-declaration" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100 group">
+                    <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                      <span className="text-blue-600 font-bold text-sm">2</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">
+                        Faire ma première déclaration
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Formulaire CIOMS avec score d&apos;imputabilité Bégaud — transmis au CAPM
+                      </p>
+                    </div>
+                    <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
+                  </Link>
+
+                  {/* Étape 3 — Référentiel */}
+                  <Link href="/dashboard/medecin/molecules" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors group">
+                    <div className="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
+                      <span className="text-violet-600 font-bold text-sm">3</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">
+                        Explorer le référentiel médicament
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Recherchez une molécule, vérifiez ses contre-indications et interactions
+                      </p>
+                    </div>
+                    <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
+                  </Link>
+                </div>
+
+                {/* Rappel légal */}
+                <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 flex items-start gap-3">
+                  <span className="text-amber-500 text-base mt-0.5">⚖️</span>
+                  <div>
+                    <p className="text-sm font-semibold text-amber-800">Obligation de déclaration</p>
+                    <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">
+                      La loi marocaine 17-04 impose aux professionnels de santé de déclarer tout effet indésirable grave ou inattendu au Centre Anti-Poison et de Pharmacovigilance du Maroc (CAPM).
+                    </p>
+                  </div>
+                </div>
               </div>
             ) : (
               <>

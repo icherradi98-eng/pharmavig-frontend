@@ -70,6 +70,15 @@ export default function MesMolecules() {
       <PageHeader title="Mes molécules" subtitle="Configurez votre liste de surveillance — elle alimente vos alertes personnalisées et vos comparatifs" />
 
       <div className="px-5 md:px-8 py-6 space-y-6">
+        {/* Source des données */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-5 py-3 flex items-start gap-3">
+          <span className="text-blue-500 text-base mt-0.5">ℹ️</span>
+          <div className="text-xs text-blue-700 leading-relaxed">
+            <span className="font-semibold">Source des données :</span> Base nationale des médicaments autorisés au Maroc (Direction du Médicament et de la Pharmacie — DMP), complétée par les données OMS/WHO Essential Medicines.
+            Mise à jour : <span className="font-semibold">juin 2026</span>.
+            Les informations présentes ne remplacent pas la notice officielle ni l&apos;avis d&apos;un pharmacien.
+          </div>
+        </div>
         <SectionCard title="Ajouter une molécule à surveiller">
           <div className="relative max-w-md">
             <input
