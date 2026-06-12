@@ -230,7 +230,7 @@ function ReferentielSection() {
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-0 divide-x" style={{ divideColor: "rgba(255,255,255,0.06)" }}>
+      <div className="grid grid-cols-3 gap-0 divide-x divide-white/10">
         <div className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div><h3 className="font-bold text-base text-white">{drug.name}</h3><p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{drug.class}</p></div>
@@ -291,7 +291,7 @@ const FAQ_ITEMS = [
 function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
   return (
-    <div className="divide-y rounded-2xl overflow-hidden" style={{ border: `1px solid rgba(15,91,87,0.12)`, divideColor: C.creamDark }}>
+    <div className="divide-y rounded-2xl overflow-hidden" style={{ border: `1px solid rgba(15,91,87,0.12)` }}>
       {FAQ_ITEMS.map((item, i) => (
         <div key={i}>
           <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between px-6 py-4 text-left transition-colors" style={{ background: open === i ? "rgba(15,91,87,0.03)" : "#fff" }}>
