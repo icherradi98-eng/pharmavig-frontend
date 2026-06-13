@@ -11,11 +11,16 @@ import {
   EMPTY_PROFILE, readProfile, saveProfile, readRecentPatients, pushRecentPatient, removeRecentPatient,
   nextOrdonnanceNumber, emptyMedRx, posologieLabel, dureeLabel, ageFromDateNaissance,
   searchMedicaments, checkInteraction, buildWhatsAppLink, buildSummaryText, normalizeForme, voieFromForme,
-  saveToHistory, deleteFromHistory,
+  saveToHistory, deleteFromHistory, readHistory,
 } from "@/lib/ordonnancier";
 import { parsePostologie } from "@/lib/parsePostologie";
+import MedecinLayout, { PageHeader } from "@/components/medecin/MedecinLayout";
+import {
+  type RxTemplate, allTemplates, favoriteTemplates, saveTemplate, bumpUsage,
+  findByDiagnostic, QUICK_DIAGNOSES,
+} from "@/lib/templates";
 
-const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500";
+const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol";
 const labelCls = "block text-xs text-gray-500 mb-1";
 
 const FORMES = ["Comprimé", "Gélule", "Sirop", "Solution injectable", "Patch", "Pommade / Crème", "Inhalateur", "Autre"] as const;
@@ -113,6 +118,49 @@ export default function NouvelleOrdonnance() {
   const [generated, setGenerated] = useState<SavedOrdonnance | null>(null);
   const [prescriptionToken, setPrescriptionToken] = useState<string | null>(null);
   const [suiviLoading, setSuiviLoading] = useState(false);
+
+  // ── Modèles + démarrage rapide ──────────────────────────────────────────────
+  const [favTemplates, setFavTemplates] = useState<RxTemplate[]>([]);
+  const [allTpls, setAllTpls] = useState<RxTemplate[]>([]);
+  const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
+  const [recentOrdos, setRecentOrdos] = useState<SavedOrdonnance[]>([]);
+  const [saveTplOpen, setSaveTplOpen] = useState(false);
+
+  useEffect(() => {
+    setFavTemplates(favoriteTemplates());
+    setAllTpls(allTemplates());
+    setRecentOrdos(readHistory().slice(0, 4));
+  }, []);
+
+  function applyTemplate(t: RxTemplate) {
+    setMeds(t.meds.map((m, i) => ({ ...m, id: i + 1 })));
+    setNextMedId(t.meds.length + 1);
+    setSuiviActif(t.suiviDefault);
+    setMotif((prev) => prev || t.diagnostic || "");
+    bumpUsage(t.id);
+    setTemplatePickerOpen(false);
+  }
+
+  function applyDiagnostic(diag: string) {
+    setMotif(diag);
+    const t = findByDiagnostic(diag);
+    if (t) applyTemplate(t);
+  }
+
+  function reuseOrdo(o: SavedOrdonnance) {
+    setMeds(o.meds.map((m, i) => ({ ...m, id: i + 1 })));
+    setNextMedId(o.meds.length + 1);
+    setMotif((prev) => prev || o.patient.motif || "");
+  }
+
+  function handleSaveAsTemplate(nom: string) {
+    const validMeds = meds.filter((m) => m.nom.trim());
+    if (!nom.trim() || validMeds.length === 0) return;
+    saveTemplate({ nom: nom.trim(), diagnostic: motif || undefined, meds: validMeds, suiviDefault: suiviActif });
+    setAllTpls(allTemplates());
+    setFavTemplates(favoriteTemplates());
+    setSaveTplOpen(false);
+  }
 
   // Vérification d'interactions — dérivée du contenu (pure), résultat mis en cache
   // et alimenté UNIQUEMENT depuis le callback asynchrone (jamais de setState synchrone dans l'effet).
@@ -236,6 +284,7 @@ export default function NouvelleOrdonnance() {
 
   if (generated) {
     return (
+      <MedecinLayout>
       <OrdonnancePreview
         ordonnance={generated}
         doctorName={doctorName}
@@ -267,20 +316,53 @@ export default function NouvelleOrdonnance() {
           router.push("/prescriptions/nouvelle");
         }}
       />
+      </MedecinLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-5">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Nouvelle ordonnance</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Rédigez et imprimez une ordonnance conforme, en quelques secondes.</p>
+    <MedecinLayout>
+      <PageHeader
+        title="Nouvelle ordonnance"
+        subtitle="Rédigez, imprimez et activez le suivi patient — en quelques secondes."
+        action={
+          <Link href="/ordonnances/historique" className="text-sm font-semibold text-petrol hover:text-petrol-dark">Historique →</Link>
+        }
+      />
+      <div className="px-6 md:px-8 py-6 w-full max-w-3xl mx-auto pb-28">
+
+        {/* ── Démarrage rapide ── */}
+        <div className="bg-white rounded-2xl p-4 mb-5" style={{ border: "1px solid var(--md-cream-dark)" }}>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-gold">Démarrage rapide</p>
+            <button onClick={() => setTemplatePickerOpen(true)} className="text-xs font-semibold text-petrol hover:text-petrol-dark">Tous les modèles →</button>
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/ordonnances/historique" className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">📚 Historique</Link>
-            <Link href="/dashboard/medecin" className="text-sm text-gray-400 hover:text-gray-600">← Retour</Link>
+          <div className="flex gap-2 flex-wrap">
+            {favTemplates.map((t) => (
+              <button key={t.id} onClick={() => applyTemplate(t)} className="text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-colors" style={{ background: "rgba(212,175,55,0.12)", color: "#92700a", border: "1px solid rgba(212,175,55,0.4)" }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg>
+                {t.nom}
+              </button>
+            ))}
+            {recentOrdos.map((o) => (
+              <button key={o.id} onClick={() => reuseOrdo(o)} className="text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 bg-white hover:border-petrol transition-colors" style={{ border: "1px solid var(--md-cream-dark)", color: "var(--md-text-secondary)" }} title="Réutiliser les médicaments">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+                {o.patient.nom} · {o.meds[0]?.nom ?? "—"}
+              </button>
+            ))}
+            {favTemplates.length === 0 && recentOrdos.length === 0 && (
+              <p className="text-xs" style={{ color: "var(--md-text-muted)" }}>Vos modèles favoris et ordonnances récentes apparaîtront ici.</p>
+            )}
+          </div>
+          <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--md-cream-dark)" }}>
+            <p className="text-[11px] mb-2" style={{ color: "var(--md-text-muted)" }}>Diagnostic rapide — charge un modèle</p>
+            <div className="flex gap-2 flex-wrap">
+              {QUICK_DIAGNOSES.map((d) => (
+                <button key={d} onClick={() => applyDiagnostic(d)} className="text-xs font-medium px-3 py-1.5 rounded-full bg-white hover:border-petrol hover:text-petrol transition-colors" style={{ border: "1px solid var(--md-cream-dark)", color: "var(--md-text-secondary)" }}>
+                  {d}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -289,8 +371,8 @@ export default function NouvelleOrdonnance() {
           <div className="bg-white border border-gray-200 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold text-gray-900">En-tête médecin</h2>
-              <button onClick={() => setProfileModalOpen(true)} className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">
-                ✏️ Modifier mon profil
+              <button onClick={() => setProfileModalOpen(true)} className="text-xs text-petrol hover:text-petrol-dark font-medium">
+                Modifier mon profil
               </button>
             </div>
             <div className="border border-dashed border-gray-200 rounded-xl p-4 bg-gray-50 text-sm">
@@ -337,7 +419,7 @@ export default function NouvelleOrdonnance() {
                   <ul className="absolute z-10 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                     {filteredRecent.map((p, i) => (
                       <li key={i} className="flex items-center group">
-                        <button type="button" onMouseDown={() => pickRecentPatient(p)} className="flex-1 text-left px-3 py-2 text-sm hover:bg-emerald-50 flex items-center justify-between">
+                        <button type="button" onMouseDown={() => pickRecentPatient(p)} className="flex-1 text-left px-3 py-2 text-sm hover:bg-petrol/5 flex items-center justify-between">
                           <span>{p.nom}</span>
                           <span className="text-xs text-gray-400">Patient récent{p.age ? ` · ${p.age}` : ""}</span>
                         </button>
@@ -369,7 +451,7 @@ export default function NouvelleOrdonnance() {
                     }}
                   />
                   {patientDateNaissance && (
-                    <span className="shrink-0 text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg whitespace-nowrap">
+                    <span className="shrink-0 text-sm font-semibold text-petrol bg-petrol/10 border border-petrol/20 px-3 py-2 rounded-lg whitespace-nowrap">
                       {ageFromDateNaissance(patientDateNaissance) || "—"}
                     </span>
                   )}
@@ -377,7 +459,7 @@ export default function NouvelleOrdonnance() {
                 {!patientDateNaissance && (
                   <div className="flex gap-2 mt-1.5">
                     <span className="text-xs text-gray-400">ou saisir directement :</span>
-                    <input className="border-b border-gray-300 text-xs w-20 focus:outline-none focus:border-emerald-500" value={ageMode === "age" ? patientAge : ""} onChange={(e) => { setAgeMode("age"); setPatientAge(e.target.value); }} placeholder="45 ans" />
+                    <input className="border-b border-gray-300 text-xs w-20 focus:outline-none focus:border-petrol" value={ageMode === "age" ? patientAge : ""} onChange={(e) => { setAgeMode("age"); setPatientAge(e.target.value); }} placeholder="45 ans" />
                   </div>
                 )}
               </div>
@@ -390,7 +472,7 @@ export default function NouvelleOrdonnance() {
                       key={s}
                       type="button"
                       onClick={() => setPatientSexe(patientSexe === s ? "" : s)}
-                      className={`flex-1 border rounded-lg py-2.5 text-sm font-medium transition-colors ${patientSexe === s ? "bg-emerald-600 border-emerald-600 text-white shadow-sm" : "border-gray-300 text-gray-600 hover:bg-gray-50"}`}
+                      className={`flex-1 border rounded-lg py-2.5 text-sm font-medium transition-colors ${patientSexe === s ? "bg-petrol border-petrol text-white shadow-sm" : "border-gray-300 text-gray-600 hover:bg-gray-50"}`}
                     >
                       {label}
                     </button>
@@ -418,7 +500,10 @@ export default function NouvelleOrdonnance() {
           <div className="bg-white border border-gray-200 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold text-gray-900">Médicaments prescrits *</h2>
-              <button onClick={addMed} className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">+ Ajouter un médicament</button>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setSaveTplOpen(true)} className="text-xs text-petrol hover:text-petrol-dark font-medium">Enregistrer comme modèle</button>
+                <button onClick={addMed} className="text-xs text-petrol hover:text-petrol-dark font-medium">+ Ajouter</button>
+              </div>
             </div>
             <div className="space-y-4">
               {meds.map((m, idx) => (
@@ -438,8 +523,8 @@ export default function NouvelleOrdonnance() {
                   </div>
                 )}
                 {interactionResult === "aucune" && (
-                  <div className="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1 text-xs text-emerald-700 font-medium">
-                    ✓ Aucune interaction connue détectée
+                  <div className="inline-flex items-center gap-1.5 bg-mint/10 border border-mint/30 rounded-full px-3 py-1 text-xs text-mint font-medium">
+                    Aucune interaction connue détectée
                   </div>
                 )}
                 {interactionResult === "indisponible" && (
@@ -449,93 +534,77 @@ export default function NouvelleOrdonnance() {
             )}
           </div>
 
-          {/* ── 🛡️ Suivi PharmaVig — carte principale, hors Options ── */}
-          <div className={`border-2 rounded-2xl p-5 transition-colors ${suiviActif ? "border-emerald-400 bg-emerald-50" : "border-gray-200 bg-white"}`}>
-            {/* Header */}
+          {/* ── Suivi PharmaVig — bloc star (la proposition de valeur) ── */}
+          <div className="rounded-2xl p-5 transition-colors" style={{ border: suiviActif ? "2px solid var(--md-petrol)" : "2px solid var(--md-cream-dark)", background: suiviActif ? "rgba(15,91,87,0.04)" : "#fff" }}>
+            {/* Header + toggle */}
             <div className="flex items-start justify-between gap-3 mb-4">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${suiviActif ? "bg-emerald-600" : "bg-gray-200"}`}>
-                  <span className="text-xl">🛡️</span>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: suiviActif ? "var(--md-petrol)" : "#e5e7eb" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={suiviActif ? "#fff" : "#9ca3af"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z"/><path d="M9 12l2 2 4-4"/></svg>
                 </div>
                 <div>
-                  <p className="text-base font-bold text-gray-900">Suivi de tolérance PharmaVig</p>
-                  <p className={`text-xs font-medium ${suiviActif ? "text-emerald-700" : "text-gray-400"}`}>
+                  <p className="text-base font-bold" style={{ color: "var(--md-night)" }}>Suivi de tolérance</p>
+                  <p className="text-xs font-medium" style={{ color: suiviActif ? "var(--md-petrol)" : "var(--md-text-muted)" }}>
                     {suiviActif ? "Activé — le patient sera surveillé automatiquement" : "Désactivé"}
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setSuiviActif(!suiviActif)}
-                className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${suiviActif ? "bg-emerald-500" : "bg-gray-300"}`}
-              >
+              <button type="button" onClick={() => setSuiviActif(!suiviActif)} className="relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors" style={{ background: suiviActif ? "var(--md-petrol)" : "#d1d5db" }}>
                 <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${suiviActif ? "translate-x-6" : "translate-x-1"}`} />
               </button>
             </div>
 
+            {/* La boucle — proposition de valeur visuelle */}
+            <div className="rounded-xl px-3 py-3 mb-4" style={{ background: suiviActif ? "#fff" : "#f9fafb", border: `1px solid ${suiviActif ? "rgba(15,91,87,0.15)" : "#e5e7eb"}` }}>
+              <div className="flex items-center justify-between gap-1">
+                {[
+                  { l: "Prescription", on: true },
+                  { l: "Suivi", on: suiviActif },
+                  { l: "Signal", on: suiviActif },
+                  { l: "Déclaration", on: suiviActif },
+                  { l: "National", on: suiviActif },
+                ].map((step, i, arr) => (
+                  <div key={step.l} className="flex items-center flex-1 last:flex-none">
+                    <div className="flex flex-col items-center gap-1 shrink-0">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ background: step.on ? "var(--md-gold)" : "#d1d5db" }} />
+                      <span className="text-[9.5px] font-semibold whitespace-nowrap" style={{ color: step.on ? "var(--md-petrol)" : "var(--md-text-muted)" }}>{step.l}</span>
+                    </div>
+                    {i < arr.length - 1 && <span className="flex-1 h-px mx-1" style={{ background: step.on ? "var(--md-gold)" : "#e5e7eb" }} />}
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Stat choc */}
-            <div className={`rounded-xl px-4 py-3 mb-4 ${suiviActif ? "bg-white border border-emerald-200" : "bg-gray-50 border border-gray-200"}`}>
-              <p className={`text-sm leading-relaxed ${suiviActif ? "text-emerald-900" : "text-gray-500"}`}>
+            <div className="rounded-xl px-4 py-3 mb-4" style={{ background: suiviActif ? "rgba(212,175,55,0.1)" : "#f9fafb", border: `1px solid ${suiviActif ? "rgba(212,175,55,0.3)" : "#e5e7eb"}` }}>
+              <p className="text-sm leading-relaxed" style={{ color: suiviActif ? "var(--md-night)" : "var(--md-text-muted)" }}>
                 <span className="font-bold">95 % des effets indésirables ne sont jamais signalés.</span>{" "}
-                Activez le suivi pour détecter précocement les problèmes de tolérance.
+                Le suivi les détecte précocement — et transforme chaque cas en connaissance nationale.
               </p>
             </div>
 
             {suiviActif ? (
               <div className="space-y-4">
-                {/* Timeline J+7 / J+30 / J+90 */}
                 <div>
-                  <p className="text-xs font-semibold text-emerald-800 mb-2 uppercase tracking-wide">Questionnaires automatiques</p>
+                  <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: "var(--md-petrol)" }}>Questionnaires automatiques</p>
                   <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { label: "J+7", desc: "Tolérance initiale" },
-                      { label: "J+30", desc: "Bilan intermédiaire" },
-                      { label: "J+90", desc: "Suivi long terme" },
-                    ].map((item) => (
-                      <div key={item.label} className="bg-white border border-emerald-200 rounded-xl p-3 text-center">
-                        <p className="text-sm font-bold text-emerald-700">{item.label}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+                    {[{ label: "J+7", desc: "Tolérance initiale" }, { label: "J+30", desc: "Bilan intermédiaire" }, { label: "J+90", desc: "Suivi long terme" }].map((item) => (
+                      <div key={item.label} className="bg-white rounded-xl p-3 text-center" style={{ border: "1px solid rgba(15,91,87,0.15)" }}>
+                        <p className="text-sm font-bold" style={{ color: "var(--md-petrol)" }}>{item.label}</p>
+                        <p className="text-xs mt-0.5" style={{ color: "var(--md-text-muted)" }}>{item.desc}</p>
                       </div>
                     ))}
                   </div>
                 </div>
-
-                {/* Ce qui se passe en cas d'effet */}
                 <div>
-                  <p className="text-xs font-semibold text-emerald-800 mb-2 uppercase tracking-wide">En cas d&apos;effet signalé</p>
-                  <div className="space-y-1.5">
-                    {[
-                      "🔔 Notification immédiate au médecin",
-                      "📋 Déclaration CAPM pré-remplie automatiquement",
-                      "📊 Contribution à la pharmacovigilance nationale",
-                    ].map((item) => (
-                      <div key={item} className="flex items-center gap-2 text-xs text-emerald-800 bg-white border border-emerald-100 rounded-lg px-3 py-2">
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Téléphone patient */}
-                <div>
-                  <label className="text-xs font-semibold text-emerald-800 block mb-1.5">
-                    📱 Téléphone patient <span className="font-normal text-emerald-600">(pour recevoir le lien de suivi)</span>
+                  <label className="text-xs font-semibold block mb-1.5" style={{ color: "var(--md-petrol)" }}>
+                    Téléphone patient <span className="font-normal" style={{ color: "var(--md-text-muted)" }}>(pour recevoir le lien de suivi)</span>
                   </label>
-                  <input
-                    type="tel"
-                    value={patientTelephone}
-                    onChange={(e) => setPatientTelephone(e.target.value)}
-                    placeholder="+212 6 XX XX XX XX"
-                    className="w-full border border-emerald-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-                  />
+                  <input type="tel" value={patientTelephone} onChange={(e) => setPatientTelephone(e.target.value)} placeholder="+212 6 XX XX XX XX" className="w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-petrol bg-white" style={{ border: "1px solid rgba(15,91,87,0.3)" }} />
                 </div>
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={() => setSuiviActif(true)}
-                className="w-full border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm text-gray-500 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors"
-              >
+              <button type="button" onClick={() => setSuiviActif(true)} className="w-full border-2 border-dashed rounded-xl py-3 text-sm transition-colors hover:bg-petrol/5" style={{ borderColor: "#d1d5db", color: "var(--md-text-muted)" }}>
                 Activer le suivi pharmacovigilance →
               </button>
             )}
@@ -558,7 +627,7 @@ export default function NouvelleOrdonnance() {
                       { v: "exception", l: "Médicaments d'exception" },
                     ] as const).map((opt) => (
                       <button key={opt.v} type="button" onClick={() => setOrdonnanceType(opt.v)}
-                        className={`flex-1 border rounded-lg py-2 px-3 text-xs font-medium text-left transition-colors ${ordonnanceType === opt.v ? "bg-emerald-50 border-emerald-400 text-emerald-700" : "border-gray-300 text-gray-600 hover:bg-gray-50"}`}>
+                        className={`flex-1 border rounded-lg py-2 px-3 text-xs font-medium text-left transition-colors ${ordonnanceType === opt.v ? "bg-petrol/10 border-petrol text-petrol" : "border-gray-300 text-gray-600 hover:bg-gray-50"}`}>
                         {opt.l}
                       </button>
                     ))}
@@ -583,28 +652,34 @@ export default function NouvelleOrdonnance() {
             )}
           </div>
 
-          <p className="text-xs text-gray-400 text-center px-4">
-            🔒 Vos ordonnances sont stockées uniquement sur cet appareil. PharmaVig ne conserve aucune donnée patient.
+          <p className="text-xs text-center px-4" style={{ color: "var(--md-text-muted)" }}>
+            Vos ordonnances sont stockées uniquement sur cet appareil. MAIA DAWA ne conserve aucune donnée patient.
           </p>
         </div>
       </div>
 
-      {/* Bouton générer — sticky */}
-      <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-gray-200 px-4 py-3 z-20">
-        <div className="max-w-2xl mx-auto">
+      {/* Bouton générer — sticky, décalé sous la sidebar */}
+      <div className="fixed bottom-16 md:bottom-0 left-0 md:left-[240px] right-0 bg-white/95 backdrop-blur px-4 py-3 z-20" style={{ borderTop: "1px solid var(--md-cream-dark)" }}>
+        <div className="max-w-3xl mx-auto">
           <button
             onClick={handleGenerate}
             disabled={!canGenerate()}
-            className="w-full bg-emerald-600 disabled:bg-gray-300 text-white py-3 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors"
+            className="w-full bg-petrol disabled:bg-gray-300 text-white py-3 rounded-lg text-sm font-semibold hover:bg-petrol-dark transition-colors"
           >
-            {suiviActif ? "🛡️ Générer + activer le suivi patient" : "📄 Générer l'ordonnance"}
+            {suiviActif ? "Générer + activer le suivi patient" : "Générer l'ordonnance"}
           </button>
           {!canGenerate() && (
-            <p className="text-xs text-gray-400 text-center mt-1.5">Renseignez au moins le nom du patient et un médicament.</p>
+            <p className="text-xs text-center mt-1.5" style={{ color: "var(--md-text-muted)" }}>Renseignez au moins le nom du patient et un médicament.</p>
           )}
         </div>
       </div>
 
+      {templatePickerOpen && (
+        <TemplatePicker templates={allTpls} onApply={applyTemplate} onClose={() => setTemplatePickerOpen(false)} />
+      )}
+      {saveTplOpen && (
+        <SaveTemplateModal onSave={handleSaveAsTemplate} onClose={() => setSaveTplOpen(false)} />
+      )}
       {profileModalOpen && (
         <ProfileModal
           initial={profile}
@@ -612,6 +687,65 @@ export default function NouvelleOrdonnance() {
           onSave={(p) => { setProfile(p); saveProfile(p); setProfileModalOpen(false); }}
         />
       )}
+    </MedecinLayout>
+  );
+}
+
+// ── Sélecteur de modèles ──────────────────────────────────────────────────────
+
+function TemplatePicker({ templates, onApply, onClose }: { templates: RxTemplate[]; onApply: (t: RxTemplate) => void; onClose: () => void }) {
+  const persos = templates.filter((t) => t.scope === "perso");
+  const specs = templates.filter((t) => t.scope === "specialite");
+  function Group({ title, list }: { title: string; list: RxTemplate[] }) {
+    if (list.length === 0) return null;
+    return (
+      <div className="mb-4">
+        <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: "var(--md-text-muted)" }}>{title}</p>
+        <div className="space-y-2">
+          {list.map((t) => (
+            <button key={t.id} onClick={() => onApply(t)} className="w-full text-left rounded-xl px-4 py-3 flex items-center justify-between gap-3 hover:bg-petrol/5 transition-colors" style={{ border: "1px solid var(--md-cream-dark)" }}>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold" style={{ color: "var(--md-night)" }}>{t.nom}</p>
+                <p className="text-xs truncate" style={{ color: "var(--md-text-muted)" }}>
+                  {t.meds.map((m) => m.nom).filter(Boolean).join(", ")}
+                  {t.specialite ? ` · ${t.specialite}` : ""}
+                </p>
+              </div>
+              <span className="text-xs font-semibold shrink-0 text-petrol">Appliquer →</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4">
+      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold" style={{ color: "var(--md-night)" }}>Modèles d&apos;ordonnance</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+        </div>
+        <Group title="Mes modèles" list={persos} />
+        <Group title="Modèles par spécialité" list={specs} />
+        {templates.length === 0 && <p className="text-sm" style={{ color: "var(--md-text-muted)" }}>Aucun modèle pour l&apos;instant.</p>}
+      </div>
+    </div>
+  );
+}
+
+function SaveTemplateModal({ onSave, onClose }: { onSave: (nom: string) => void; onClose: () => void }) {
+  const [nom, setNom] = useState("");
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4">
+      <div className="bg-white rounded-2xl w-full max-w-sm p-6">
+        <h3 className="font-bold mb-1" style={{ color: "var(--md-night)" }}>Enregistrer comme modèle</h3>
+        <p className="text-xs mb-4" style={{ color: "var(--md-text-muted)" }}>Les médicaments actuels seront sauvegardés (sans aucune donnée patient).</p>
+        <input autoFocus value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Nom du modèle — ex. Diabète type 2" className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-petrol mb-4" />
+        <div className="flex gap-2">
+          <button onClick={onClose} className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50">Annuler</button>
+          <button onClick={() => onSave(nom)} disabled={!nom.trim()} className="flex-1 bg-petrol disabled:bg-gray-300 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-petrol-dark">Enregistrer</button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -728,7 +862,7 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
                   <button
                     type="button"
                     onMouseDown={() => pickSuggestion(s)}
-                    className="w-full text-left px-4 py-2.5 hover:bg-emerald-50 transition-colors"
+                    className="w-full text-left px-4 py-2.5 hover:bg-petrol/5 transition-colors"
                   >
                     <div className="flex items-baseline justify-between gap-2">
                       <span className="text-sm font-semibold text-gray-900 truncate">{s.nom}</span>
@@ -742,7 +876,7 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
                     {s.dosages && s.dosages.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1">
                         {s.dosages.slice(0, 4).map((d) => (
-                          <span key={d} className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
+                          <span key={d} className="text-xs bg-petrol/5 text-petrol border border-petrol/20 px-2 py-0.5 rounded-full">
                             {d}
                           </span>
                         ))}
@@ -757,10 +891,10 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
 
         {/* Badge auto-rempli + récapitulatif */}
         {autoFilled && (med.forme || med.voie) && (
-          <div className="flex flex-wrap items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
-            <span className="text-xs font-semibold text-emerald-700">✓ Auto-rempli :</span>
-            {med.forme && <span className="text-xs bg-white border border-emerald-200 text-emerald-700 px-2 py-0.5 rounded-full">{med.forme}</span>}
-            {med.voie && <span className="text-xs bg-white border border-emerald-200 text-emerald-700 px-2 py-0.5 rounded-full">{VOIES.find(v => v.value === med.voie)?.label}</span>}
+          <div className="flex flex-wrap items-center gap-2 bg-petrol/5 border border-petrol/20 rounded-lg px-3 py-2">
+            <span className="text-xs font-semibold text-petrol">✓ Auto-rempli :</span>
+            {med.forme && <span className="text-xs bg-white border border-petrol/20 text-petrol px-2 py-0.5 rounded-full">{med.forme}</span>}
+            {med.voie && <span className="text-xs bg-white border border-petrol/20 text-petrol px-2 py-0.5 rounded-full">{VOIES.find(v => v.value === med.voie)?.label}</span>}
             <button type="button" onClick={() => setAutoFilled(false)} className="ml-auto text-xs text-gray-400 hover:text-gray-600">Modifier</button>
           </div>
         )}
@@ -777,8 +911,8 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
                   onClick={() => onChange({ dosage: d })}
                   className={`px-3 py-1.5 rounded-full border text-sm font-medium transition-colors ${
                     med.dosage === d
-                      ? "bg-emerald-600 border-emerald-600 text-white shadow-sm"
-                      : "border-gray-300 text-gray-700 hover:border-emerald-400 hover:bg-emerald-50"
+                      ? "bg-petrol border-petrol text-white shadow-sm"
+                      : "border-gray-300 text-gray-700 hover:border-petrol hover:bg-petrol/5"
                   }`}
                 >
                   {d}
@@ -838,7 +972,7 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
           {posologieParsed && (
             <div className={`flex items-center gap-2 flex-wrap text-xs px-3 py-2 rounded-lg border ${
               posologieParsed.confidence >= 0.65
-                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                ? "bg-petrol/5 border-petrol/20 text-petrol"
                 : "bg-gray-50 border-gray-200 text-gray-600"
             }`}>
               <span className="font-semibold">{posologieParsed.confidence >= 0.65 ? "✅ Parsé :" : "⚙️ Détecté :"}</span>
@@ -869,7 +1003,7 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
             {med.dureeChronique ? (
               <div className={`${inputCls} bg-gray-50 text-gray-500 flex items-center justify-between`}>
                 <span>Traitement chronique</span>
-                <button type="button" onClick={() => onChange({ dureeChronique: false })} className="text-xs text-emerald-600 underline">Définir une durée</button>
+                <button type="button" onClick={() => onChange({ dureeChronique: false })} className="text-xs text-petrol underline">Définir une durée</button>
               </div>
             ) : (
               <div className="flex gap-2">
@@ -879,7 +1013,7 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
                   <option value="semaines">semaines</option>
                   <option value="mois">mois</option>
                 </select>
-                <button type="button" onClick={() => onChange({ dureeChronique: true })} className="text-xs text-gray-400 hover:text-emerald-600 underline whitespace-nowrap shrink-0">Chronique</button>
+                <button type="button" onClick={() => onChange({ dureeChronique: true })} className="text-xs text-gray-400 hover:text-petrol underline whitespace-nowrap shrink-0">Chronique</button>
               </div>
             )}
           </div>
@@ -996,7 +1130,7 @@ function ProfileModal({ initial, onClose, onSave }: { initial: DoctorProfile; on
 
         <div className="flex gap-2 mt-5">
           <button onClick={onClose} className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50">Annuler</button>
-          <button onClick={() => onSave(form)} className="flex-1 bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700">Enregistrer</button>
+          <button onClick={() => onSave(form)} className="flex-1 bg-petrol text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-petrol-dark">Enregistrer</button>
         </div>
       </div>
     </div>
@@ -1078,7 +1212,7 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
   }
 
   function handleWhatsApp() {
-    const msg = `Votre ordonnance du ${dateLabel} (${ordonnance.numero}) — générée via PharmaVig.ma. Merci de la présenter à votre pharmacien.`;
+    const msg = `Votre ordonnance du ${dateLabel} (${ordonnance.numero}) — générée via MAIA DAWA. Merci de la présenter à votre pharmacien.`;
     window.open(buildWhatsAppLink(msg), "_blank");
   }
 
@@ -1091,11 +1225,11 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="px-4 md:px-8 py-8">
       <div className="max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-4">
           <button onClick={onBack} className="text-sm text-gray-400 hover:text-gray-600">← Modifier</button>
-          <span className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full font-medium">Aperçu — {ordonnance.numero}</span>
+          <span className="text-xs bg-petrol/5 text-petrol px-2.5 py-1 rounded-full font-medium">Aperçu — {ordonnance.numero}</span>
         </div>
 
         {/* Aperçu PDF */}
@@ -1107,10 +1241,10 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
           )}
 
           <div className="flex items-center gap-2 text-xs text-gray-300">
-            <div className="w-6 h-6 bg-emerald-600 rounded-md flex items-center justify-center">
+            <div className="w-6 h-6 bg-petrol rounded-md flex items-center justify-center">
               <span className="text-white font-black text-[9px]">PV</span>
             </div>
-            PharmaVig.ma
+            MAIA DAWA
           </div>
 
           <div className="flex items-start justify-between border-b border-gray-200 pb-4">
@@ -1186,7 +1320,7 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
           </div>
 
           <div className="text-center text-xs text-gray-400 pt-2 border-t border-gray-100">
-            Validité de l&apos;ordonnance : {validiteLabel} · Généré via PharmaVig.ma
+            Validité de l&apos;ordonnance : {validiteLabel} · Généré via MAIA DAWA
           </div>
         </div>
 
@@ -1195,7 +1329,7 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
           <button onClick={() => window.print()} className="bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
             🖨️ Imprimer
           </button>
-          <button onClick={handleDownload} disabled={downloading} className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
+          <button onClick={handleDownload} disabled={downloading} className="bg-petrol hover:bg-petrol-dark disabled:opacity-60 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
             {downloading ? "Génération..." : "⬇️ Télécharger PDF"}
           </button>
           <button onClick={handleWhatsApp} className="bg-[#25D366] hover:brightness-95 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
@@ -1213,12 +1347,12 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
         </div>
 
         {/* Carte suivi — proéminente, toujours visible après génération */}
-        <div className={`mt-5 rounded-xl border-2 p-5 ${ordonnance.suiviActif ? "border-emerald-400 bg-emerald-50" : "border-gray-200 bg-gray-50"}`}>
+        <div className={`mt-5 rounded-xl border-2 p-5 ${ordonnance.suiviActif ? "border-petrol bg-petrol/5" : "border-gray-200 bg-gray-50"}`}>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xl">🛡️</span>
-            <p className="text-base font-bold text-gray-900">Suivi de tolérance PharmaVig</p>
+            <p className="text-base font-bold text-gray-900">Suivi de tolérance</p>
             {ordonnance.suiviActif && (
-              <span className="ml-auto text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full">
+              <span className="ml-auto text-xs font-bold text-petrol bg-petrol/10 border border-petrol/20 px-2.5 py-1 rounded-full">
                 {suiviLoading ? "Activation…" : prescriptionToken ? "ACTIVÉ ✓" : "ACTIVÉ"}
               </span>
             )}
@@ -1229,27 +1363,27 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
               {/* Questionnaires programmés */}
               <div className="flex gap-2 flex-wrap">
                 {["J+7", "J+30", "J+90"].map((j) => (
-                  <span key={j} className="text-xs bg-white border border-emerald-200 text-emerald-700 rounded-full px-3 py-1.5 font-medium">📅 {j}</span>
+                  <span key={j} className="text-xs bg-white border border-petrol/20 text-petrol rounded-full px-3 py-1.5 font-medium">📅 {j}</span>
                 ))}
               </div>
-              <p className="text-xs text-emerald-700">En cas d&apos;effet signalé → notification immédiate + déclaration CAPM pré-remplie.</p>
+              <p className="text-xs text-petrol">En cas d&apos;effet signalé → notification immédiate + déclaration CAPM pré-remplie.</p>
 
               {suiviLoading ? (
-                <div className="flex items-center gap-2 text-sm text-emerald-700">
-                  <div className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                <div className="flex items-center gap-2 text-sm text-petrol">
+                  <div className="w-4 h-4 border-2 border-petrol border-t-transparent rounded-full animate-spin" />
                   Enregistrement du suivi…
                 </div>
               ) : prescriptionToken ? (
                 /* Lien réel disponible → actions immédiates */
                 <div className="space-y-2">
                   {/* Lien de check-in */}
-                  <div className="bg-white border border-emerald-200 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
+                  <div className="bg-white border border-petrol/20 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
                     <span className="text-xs text-gray-500 truncate">
                       {typeof window !== "undefined" ? `${window.location.origin}/suivi/${prescriptionToken}` : `/suivi/${prescriptionToken}`}
                     </span>
                     <button
                       onClick={() => navigator.clipboard.writeText(`${window.location.origin}/suivi/${prescriptionToken}`)}
-                      className="text-xs text-emerald-600 font-semibold shrink-0 hover:text-emerald-700"
+                      className="text-xs text-petrol font-semibold shrink-0 hover:text-petrol"
                     >
                       Copier
                     </button>
@@ -1268,7 +1402,7 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
                   </button>
                   <button
                     onClick={() => window.open(`/dashboard/medecin/suivi`, "_blank")}
-                    className="w-full border border-emerald-300 text-emerald-700 py-2 rounded-lg text-sm font-medium hover:bg-emerald-50 transition-colors"
+                    className="w-full border border-petrol/30 text-petrol py-2 rounded-lg text-sm font-medium hover:bg-petrol/5 transition-colors"
                   >
                     Voir dans le tableau de suivi →
                   </button>
@@ -1277,7 +1411,7 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
                 /* API suivi indisponible → fallback vers le formulaire manuel */
                 <button
                   onClick={onGoToSuivi}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors"
+                  className="w-full bg-petrol hover:bg-petrol-dark text-white py-2.5 rounded-lg text-sm font-semibold transition-colors"
                 >
                   Finaliser le suivi manuellement →
                 </button>
@@ -1288,7 +1422,7 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
               <p className="text-sm text-gray-600 mb-3">Détectez automatiquement les effets indésirables grâce au suivi actif (check-ins J+7, J+30, J+90).</p>
               <button
                 onClick={onGoToSuivi}
-                className="w-full border-2 border-emerald-400 text-emerald-700 font-semibold py-2.5 rounded-lg text-sm hover:bg-emerald-50 transition-colors"
+                className="w-full border-2 border-petrol text-petrol font-semibold py-2.5 rounded-lg text-sm hover:bg-petrol/5 transition-colors"
               >
                 🛡️ Activer le suivi pour ce patient →
               </button>
@@ -1297,7 +1431,7 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
         </div>
 
         <p className="text-xs text-gray-400 text-center mt-5">
-          🔒 Vos ordonnances sont stockées uniquement sur cet appareil. PharmaVig ne conserve aucune donnée patient.
+          🔒 Vos ordonnances sont stockées uniquement sur cet appareil. MAIA DAWA ne conserve aucune donnée patient.
         </p>
 
         <style jsx global>{`

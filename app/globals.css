@@ -16,8 +16,23 @@
   --background: var(--md-cream);
   --foreground: var(--md-night);
 
+  --md-text-muted: #8a9ab0;
+  --md-text-secondary: #4a5568;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+/* Couleurs de marque exposées comme utilitaires Tailwind (bg-petrol, text-gold, ring-petrol…) */
+@theme {
+  --color-petrol: #0F5B57;
+  --color-petrol-dark: #0a3f3c;
+  --color-gold: #D4AF37;
+  --color-gold-light: #f5e9a8;
+  --color-mint: #2FA88F;
+  --color-night: #1F2D3D;
+  --color-cream: #F7F3EE;
+  --color-cream-dark: #ede8e2;
 }
 
 @theme inline {
