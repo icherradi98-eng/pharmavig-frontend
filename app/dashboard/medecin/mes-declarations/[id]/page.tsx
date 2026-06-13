@@ -55,21 +55,23 @@ export default function DeclarationDetail() {
     if (!report) return;
     setPdfLoading(true);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-      const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
-      const res = await fetch(`${apiBase}/reports/${report.id}/pdf`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const { generateDeclarationPDF } = await import("@/lib/generateDeclarationPDF");
+      const raw = (report.raw_data as Record<string, unknown>) ?? {};
+      const pvNumber = report.capm_reference
+        ? report.capm_reference
+        : `PV-MA-${new Date(report.created_at).getFullYear()}-${report.id.slice(0, 8).toUpperCase()}`;
+      await generateDeclarationPDF(raw, {
+        pvNumber,
+        declarantNom:           String(raw.declarantNom ?? ""),
+        declarantPrenom:        String(raw.declarantPrenom ?? ""),
+        declarantSpecialite:    String(raw.declarantSpecialite ?? ""),
+        declarantEmail:         String(raw.declarantEmail ?? ""),
+        declarantTel:           String(raw.declarantTel ?? ""),
+        declarantNumOrdre:      String(raw.declarantNumOrdre ?? ""),
+        declarantEtablissement: String(raw.declarantEtablissement ?? ""),
+        declarantVille:         String(raw.declarantVille ?? ""),
       });
-      if (!res.ok) throw new Error("Erreur génération PDF");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      const ref = (report.capm_reference || report.id.slice(0, 8)).toUpperCase();
-      a.download = `PharmaVig_CIOMS_${ref}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
+    } catch {
       alert("Impossible de générer le PDF. Réessayez.");
     } finally {
       setPdfLoading(false);
@@ -216,6 +218,27 @@ export default function DeclarationDetail() {
           <Row label="Laboratoire" value={report.drug_laboratoire} />
           {raw && <Row label="N° AMM" value={raw.medicamentAMM as string} />}
         </Section>
+
+        {/* CTA interactions — depuis la fiche déclaration */}
+        {report.drug_dci && (
+          <div className="bg-teal-50 border border-teal-200 rounded-xl px-5 py-3 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-teal-800 mb-0.5">
+                🔍 Vérifier les interactions de {report.drug_dci}
+              </p>
+              <p className="text-xs text-teal-600">
+                Consultez toutes les interactions connues pour ce médicament dans la base MAIA DAWA.
+              </p>
+            </div>
+            <Link
+              href={`/interactions?drug1=${encodeURIComponent(report.drug_dci)}`}
+              className="shrink-0 px-4 py-2 rounded-xl text-white text-xs font-bold transition-colors"
+              style={{ background: "#0F5B57" }}
+            >
+              Vérifier →
+            </Link>
+          </div>
+        )}
 
         {/* Médicaments concomitants */}
         {report.concomitants && report.concomitants.length > 0 && (

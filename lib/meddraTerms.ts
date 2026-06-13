@@ -1,0 +1,312 @@
+/**
+ * Base locale de termes MedDRA prioritaires — 250 Preferred Terms (PT)
+ * Organisée par Système Organe Classe (SOC) · Codes MedDRA v27.0
+ * Priorité : cardiovasculaire, neurologique, dermatologique, hépatique,
+ *            hématologique, rénal, allergique, oncologique, respiratoire,
+ *            métabolique, musculosquelettique, psychiatrique, endocrinien, vasculaire.
+ */
+
+export type MedDRATerm = { pt: string; code: string; soc: string };
+
+export const MEDDRA_TERMS: MedDRATerm[] = [
+
+  // ── Gastro-intestinal ─────────────────────────────────────────────
+  { pt: "Nausées",                            code: "10028813", soc: "Gastro-intestinal" },
+  { pt: "Vomissements",                       code: "10047700", soc: "Gastro-intestinal" },
+  { pt: "Diarrhée",                           code: "10012735", soc: "Gastro-intestinal" },
+  { pt: "Douleur abdominale",                 code: "10000081", soc: "Gastro-intestinal" },
+  { pt: "Constipation",                       code: "10010774", soc: "Gastro-intestinal" },
+  { pt: "Hémorragie gastro-intestinale",      code: "10017955", soc: "Gastro-intestinal" },
+  { pt: "Colite",                             code: "10009887", soc: "Gastro-intestinal" },
+  { pt: "Dyspepsie",                          code: "10013946", soc: "Gastro-intestinal" },
+  { pt: "Flatulences",                        code: "10016766", soc: "Gastro-intestinal" },
+  { pt: "Stomatite",                          code: "10042127", soc: "Gastro-intestinal" },
+  { pt: "Mucite",                             code: "10028127", soc: "Gastro-intestinal" },
+  { pt: "Sécheresse buccale",                 code: "10013781", soc: "Gastro-intestinal" },
+  { pt: "Œsophagite",                         code: "10030198", soc: "Gastro-intestinal" },
+  { pt: "Pancréatite",                        code: "10033645", soc: "Gastro-intestinal" },
+  { pt: "Ulcère gastroduodénal",              code: "10018900", soc: "Gastro-intestinal" },
+  { pt: "Méléna",                             code: "10027203", soc: "Gastro-intestinal" },
+  { pt: "Rectorragie",                        code: "10018830", soc: "Gastro-intestinal" },
+  { pt: "Gêne abdominale",                    code: "10000060", soc: "Gastro-intestinal" },
+  { pt: "Iléus",                              code: "10021328", soc: "Gastro-intestinal" },
+  { pt: "Entérocolite",                       code: "10014890", soc: "Gastro-intestinal" },
+
+  // ── Peau et tissu sous-cutané ─────────────────────────────────────
+  { pt: "Éruption cutanée",                   code: "10037844", soc: "Peau et tissu sous-cutané" },
+  { pt: "Urticaire",                          code: "10046735", soc: "Peau et tissu sous-cutané" },
+  { pt: "Prurit",                             code: "10037087", soc: "Peau et tissu sous-cutané" },
+  { pt: "Angio-œdème",                        code: "10002424", soc: "Peau et tissu sous-cutané" },
+  { pt: "Syndrome de Stevens-Johnson",        code: "10042033", soc: "Peau et tissu sous-cutané" },
+  { pt: "Nécrolyse épidermique toxique",      code: "10028506", soc: "Peau et tissu sous-cutané" },
+  { pt: "Alopécie",                           code: "10001760", soc: "Peau et tissu sous-cutané" },
+  { pt: "Photosensibilité",                   code: "10034976", soc: "Peau et tissu sous-cutané" },
+  { pt: "Rash maculo-papuleux",               code: "10037868", soc: "Peau et tissu sous-cutané" },
+  { pt: "Érythème",                           code: "10015150", soc: "Peau et tissu sous-cutané" },
+  { pt: "Dermite de contact",                 code: "10012442", soc: "Peau et tissu sous-cutané" },
+  { pt: "Psoriasis",                          code: "10037153", soc: "Peau et tissu sous-cutané" },
+  { pt: "Acné",                               code: "10000496", soc: "Peau et tissu sous-cutané" },
+  { pt: "Pemphigoïde bulleuse",               code: "10003914", soc: "Peau et tissu sous-cutané" },
+  { pt: "Dermatose palmoplantaire",           code: "10056704", soc: "Peau et tissu sous-cutané" },
+  { pt: "Xérose cutanée",                     code: "10048082", soc: "Peau et tissu sous-cutané" },
+  { pt: "Érythrodermie",                      code: "10015157", soc: "Peau et tissu sous-cutané" },
+  { pt: "Éruption médicamenteuse",            code: "10013786", soc: "Peau et tissu sous-cutané" },
+  { pt: "Hyperpigmentation cutanée",          code: "10020929", soc: "Peau et tissu sous-cutané" },
+  { pt: "Réaction de photosensibilité",       code: "10034981", soc: "Peau et tissu sous-cutané" },
+
+  // ── Système nerveux ───────────────────────────────────────────────
+  { pt: "Céphalées",                          code: "10019211", soc: "Système nerveux" },
+  { pt: "Vertiges",                           code: "10047340", soc: "Système nerveux" },
+  { pt: "Somnolence",                         code: "10041349", soc: "Système nerveux" },
+  { pt: "Convulsions",                        code: "10010952", soc: "Système nerveux" },
+  { pt: "Neuropathie périphérique",           code: "10029331", soc: "Système nerveux" },
+  { pt: "Accident vasculaire cérébral",       code: "10008190", soc: "Système nerveux" },
+  { pt: "Tremblements",                       code: "10044565", soc: "Système nerveux" },
+  { pt: "Paresthésies",                       code: "10033775", soc: "Système nerveux" },
+  { pt: "Encéphalopathie",                    code: "10014625", soc: "Système nerveux" },
+  { pt: "Ataxie",                             code: "10003591", soc: "Système nerveux" },
+  { pt: "Dysarthrie",                         code: "10013887", soc: "Système nerveux" },
+  { pt: "Migraine",                           code: "10027599", soc: "Système nerveux" },
+  { pt: "Syndrome de Guillain-Barré",         code: "10018767", soc: "Système nerveux" },
+  { pt: "Méningite aseptique",                code: "10027209", soc: "Système nerveux" },
+  { pt: "Hypertension intracrânienne",        code: "10020894", soc: "Système nerveux" },
+  { pt: "Neuropathie optique",                code: "10029825", soc: "Système nerveux" },
+  { pt: "Syncope",                            code: "10042772", soc: "Système nerveux" },
+  { pt: "Dyskinésie",                         code: "10013916", soc: "Système nerveux" },
+  { pt: "Névralgie",                          code: "10029223", soc: "Système nerveux" },
+  { pt: "Paralysie faciale",                  code: "10033546", soc: "Système nerveux" },
+
+  // ── Psychiatrie ───────────────────────────────────────────────────
+  { pt: "Insomnie",                           code: "10022437", soc: "Psychiatrie" },
+  { pt: "Confusion mentale",                  code: "10010300", soc: "Psychiatrie" },
+  { pt: "Hallucinations",                     code: "10019063", soc: "Psychiatrie" },
+  { pt: "Anxiété",                            code: "10002855", soc: "Psychiatrie" },
+  { pt: "Dépression",                         code: "10012378", soc: "Psychiatrie" },
+  { pt: "Agitation",                          code: "10001497", soc: "Psychiatrie" },
+  { pt: "Idées suicidaires",                  code: "10042458", soc: "Psychiatrie" },
+  { pt: "Délire",                             code: "10012218", soc: "Psychiatrie" },
+  { pt: "Labilité émotionnelle",              code: "10024419", soc: "Psychiatrie" },
+  { pt: "Troubles du comportement",           code: "10004221", soc: "Psychiatrie" },
+
+  // ── Cardiaque ─────────────────────────────────────────────────────
+  { pt: "Palpitations",                       code: "10033557", soc: "Cardiaque" },
+  { pt: "Allongement QT",                     code: "10053698", soc: "Cardiaque" },
+  { pt: "Bradycardie",                        code: "10006093", soc: "Cardiaque" },
+  { pt: "Tachycardie",                        code: "10043071", soc: "Cardiaque" },
+  { pt: "Fibrillation auriculaire",           code: "10016281", soc: "Cardiaque" },
+  { pt: "Infarctus du myocarde",              code: "10027433", soc: "Cardiaque" },
+  { pt: "Myocardite",                         code: "10028606", soc: "Cardiaque" },
+  { pt: "Insuffisance cardiaque",             code: "10019280", soc: "Cardiaque" },
+  { pt: "Bloc auriculo-ventriculaire",        code: "10005670", soc: "Cardiaque" },
+  { pt: "Tachycardie ventriculaire",          code: "10043108", soc: "Cardiaque" },
+  { pt: "Fibrillation ventriculaire",         code: "10047302", soc: "Cardiaque" },
+  { pt: "Torsade de pointes",                 code: "10044091", soc: "Cardiaque" },
+  { pt: "Péricardite",                        code: "10034199", soc: "Cardiaque" },
+  { pt: "Épanchement péricardique",           code: "10034164", soc: "Cardiaque" },
+  { pt: "Cardiomyopathie",                    code: "10007541", soc: "Cardiaque" },
+  { pt: "Arrêt cardiaque",                    code: "10007515", soc: "Cardiaque" },
+  { pt: "Flutter auriculaire",                code: "10001685", soc: "Cardiaque" },
+  { pt: "Douleur thoracique",                 code: "10008479", soc: "Cardiaque" },
+  { pt: "Extrasystoles",                      code: "10015963", soc: "Cardiaque" },
+  { pt: "Angor",                              code: "10002383", soc: "Cardiaque" },
+
+  // ── Vasculaire ────────────────────────────────────────────────────
+  { pt: "Hypertension artérielle",            code: "10020772", soc: "Vasculaire" },
+  { pt: "Hypotension",                        code: "10021097", soc: "Vasculaire" },
+  { pt: "Thromboembolie veineuse",            code: "10043607", soc: "Vasculaire" },
+  { pt: "Embolie pulmonaire",                 code: "10014522", soc: "Vasculaire" },
+  { pt: "Thrombose veineuse profonde",        code: "10043569", soc: "Vasculaire" },
+  { pt: "Hypotension orthostatique",          code: "10021105", soc: "Vasculaire" },
+  { pt: "Flush",                              code: "10016825", soc: "Vasculaire" },
+  { pt: "Vasculite",                          code: "10046851", soc: "Vasculaire" },
+  { pt: "Phénomène de Raynaud",               code: "10038378", soc: "Vasculaire" },
+  { pt: "Thrombose artérielle",               code: "10043565", soc: "Vasculaire" },
+
+  // ── Hépatobiliaire ────────────────────────────────────────────────
+  { pt: "Hépatotoxicité",                     code: "10019851", soc: "Hépatobiliaire" },
+  { pt: "Cytolyse hépatique",                 code: "10061218", soc: "Hépatobiliaire" },
+  { pt: "Ictère",                             code: "10023126", soc: "Hépatobiliaire" },
+  { pt: "Insuffisance hépatique",             code: "10019670", soc: "Hépatobiliaire" },
+  { pt: "Hépatite médicamenteuse",            code: "10019837", soc: "Hépatobiliaire" },
+  { pt: "Élévation des transaminases",        code: "10001551", soc: "Hépatobiliaire" },
+  { pt: "Cholestase",                         code: "10008612", soc: "Hépatobiliaire" },
+  { pt: "Stéatose hépatique",                 code: "10053219", soc: "Hépatobiliaire" },
+  { pt: "Lithiase biliaire",                  code: "10018022", soc: "Hépatobiliaire" },
+  { pt: "Hépatomégalie",                      code: "10019842", soc: "Hépatobiliaire" },
+
+  // ── Rénal et urinaire ─────────────────────────────────────────────
+  { pt: "Insuffisance rénale aiguë",          code: "10069339", soc: "Rénal et urinaire" },
+  { pt: "Néphrotoxicité",                     code: "10029155", soc: "Rénal et urinaire" },
+  { pt: "Protéinurie",                        code: "10037032", soc: "Rénal et urinaire" },
+  { pt: "Insuffisance rénale chronique",      code: "10038474", soc: "Rénal et urinaire" },
+  { pt: "Hématurie",                          code: "10018916", soc: "Rénal et urinaire" },
+  { pt: "Syndrome néphrotique",               code: "10029155", soc: "Rénal et urinaire" },
+  { pt: "Tubulopathie",                       code: "10060943", soc: "Rénal et urinaire" },
+  { pt: "Dysurie",                            code: "10013990", soc: "Rénal et urinaire" },
+  { pt: "Rétention urinaire",                 code: "10038695", soc: "Rénal et urinaire" },
+  { pt: "Néphrite interstitielle",            code: "10029023", soc: "Rénal et urinaire" },
+
+  // ── Système immunitaire / Allergique ──────────────────────────────
+  { pt: "Anaphylaxie",                        code: "10002198", soc: "Système immunitaire" },
+  { pt: "Hypersensibilité",                   code: "10020751", soc: "Système immunitaire" },
+  { pt: "Réaction anaphylactoïde",            code: "10002216", soc: "Système immunitaire" },
+  { pt: "Maladie du sérum",                   code: "10040079", soc: "Système immunitaire" },
+  { pt: "Syndrome DRESS",                     code: "10013700", soc: "Système immunitaire" },
+  { pt: "Lupus médicamenteux",                code: "10024670", soc: "Système immunitaire" },
+  { pt: "Réaction allergique",                code: "10001718", soc: "Système immunitaire" },
+  { pt: "Choc anaphylactique",                code: "10002199", soc: "Système immunitaire" },
+  { pt: "Syndrome d'hypersensibilité",        code: "10020756", soc: "Système immunitaire" },
+  { pt: "Réaction de type allergique",        code: "10048904", soc: "Système immunitaire" },
+
+  // ── Sang et lymphe / Hématologique ───────────────────────────────
+  { pt: "Thrombocytopénie",                   code: "10043554", soc: "Sang et lymphe" },
+  { pt: "Neutropénie",                        code: "10029354", soc: "Sang et lymphe" },
+  { pt: "Anémie",                             code: "10002272", soc: "Sang et lymphe" },
+  { pt: "Agranulocytose",                     code: "10001561", soc: "Sang et lymphe" },
+  { pt: "Leucopénie",                         code: "10024384", soc: "Sang et lymphe" },
+  { pt: "Aplasie médullaire",                 code: "10002961", soc: "Sang et lymphe" },
+  { pt: "Anémie hémolytique",                 code: "10002289", soc: "Sang et lymphe" },
+  { pt: "Neutropénie fébrile",                code: "10016288", soc: "Sang et lymphe" },
+  { pt: "Pancytopénie",                       code: "10033661", soc: "Sang et lymphe" },
+  { pt: "Purpura",                            code: "10037549", soc: "Sang et lymphe" },
+  { pt: "CIVD",                               code: "10013442", soc: "Sang et lymphe" },
+  { pt: "Lymphopénie",                        code: "10025327", soc: "Sang et lymphe" },
+  { pt: "Éosinophilie",                       code: "10014950", soc: "Sang et lymphe" },
+  { pt: "Hypercoagulabilité",                 code: "10053568", soc: "Sang et lymphe" },
+  { pt: "Méthémoglobinémie",                  code: "10027478", soc: "Sang et lymphe" },
+
+  // ── Respiratoire ──────────────────────────────────────────────────
+  { pt: "Dyspnée",                            code: "10013968", soc: "Respiratoire" },
+  { pt: "Bronchospasme",                      code: "10006482", soc: "Respiratoire" },
+  { pt: "Toux",                               code: "10011224", soc: "Respiratoire" },
+  { pt: "Pneumopathie interstitielle",        code: "10035742", soc: "Respiratoire" },
+  { pt: "Pneumopathie d'hypersensibilité",    code: "10035742", soc: "Respiratoire" },
+  { pt: "Épanchement pleural",                code: "10035598", soc: "Respiratoire" },
+  { pt: "Hypertension pulmonaire",            code: "10058990", soc: "Respiratoire" },
+  { pt: "Bronchite",                          code: "10006451", soc: "Respiratoire" },
+  { pt: "Rhinite",                            code: "10039083", soc: "Respiratoire" },
+  { pt: "Hémoptysie",                         code: "10019523", soc: "Respiratoire" },
+  { pt: "Pneumonie",                          code: "10035664", soc: "Respiratoire" },
+  { pt: "Fibrose pulmonaire",                 code: "10016749", soc: "Respiratoire" },
+  { pt: "Asthme",                             code: "10003553", soc: "Respiratoire" },
+
+  // ── Métabolisme et nutrition ──────────────────────────────────────
+  { pt: "Hypoglycémie",                       code: "10020993", soc: "Métabolisme et nutrition" },
+  { pt: "Hyperkaliémie",                      code: "10020951", soc: "Métabolisme et nutrition" },
+  { pt: "Hyponatrémie",                       code: "10021036", soc: "Métabolisme et nutrition" },
+  { pt: "Acidose lactique",                   code: "10001145", soc: "Métabolisme et nutrition" },
+  { pt: "Hyperuricémie",                      code: "10020903", soc: "Métabolisme et nutrition" },
+  { pt: "Hypercalcémie",                      code: "10020587", soc: "Métabolisme et nutrition" },
+  { pt: "Hypocalcémie",                       code: "10020655", soc: "Métabolisme et nutrition" },
+  { pt: "Hypomagnésémie",                     code: "10021027", soc: "Métabolisme et nutrition" },
+  { pt: "Dyslipidémie",                       code: "10058108", soc: "Métabolisme et nutrition" },
+  { pt: "Diabète induit",                     code: "10012601", soc: "Métabolisme et nutrition" },
+  { pt: "Hyperglycémie",                      code: "10020635", soc: "Métabolisme et nutrition" },
+  { pt: "Perte de poids",                     code: "10047900", soc: "Métabolisme et nutrition" },
+  { pt: "Anorexie",                           code: "10002862", soc: "Métabolisme et nutrition" },
+  { pt: "Déshydratation",                     code: "10012174", soc: "Métabolisme et nutrition" },
+  { pt: "Hypophosphatémie",                   code: "10021079", soc: "Métabolisme et nutrition" },
+
+  // ── Musculosquelettique ───────────────────────────────────────────
+  { pt: "Rhabdomyolyse",                      code: "10039020", soc: "Musculosquelettique" },
+  { pt: "Myopathie",                          code: "10028597", soc: "Musculosquelettique" },
+  { pt: "Arthralgies",                        code: "10003239", soc: "Musculosquelettique" },
+  { pt: "Myalgies",                           code: "10028411", soc: "Musculosquelettique" },
+  { pt: "Ostéoporose",                        code: "10031282", soc: "Musculosquelettique" },
+  { pt: "Ostéonécrose",                       code: "10031243", soc: "Musculosquelettique" },
+  { pt: "Fracture osseuse",                   code: "10017076", soc: "Musculosquelettique" },
+  { pt: "Tendinite",                          code: "10043255", soc: "Musculosquelettique" },
+  { pt: "Rupture tendineuse",                 code: "10039872", soc: "Musculosquelettique" },
+  { pt: "Douleurs musculaires",               code: "10028411", soc: "Musculosquelettique" },
+
+  // ── Endocrinien ───────────────────────────────────────────────────
+  { pt: "Hypothyroïdie",                      code: "10021114", soc: "Endocrinien" },
+  { pt: "Hyperthyroïdie",                     code: "10020921", soc: "Endocrinien" },
+  { pt: "Thyroïdite",                         code: "10043710", soc: "Endocrinien" },
+  { pt: "Insuffisance surrénalienne",         code: "10001367", soc: "Endocrinien" },
+  { pt: "Hypophysite",                        code: "10021058", soc: "Endocrinien" },
+  { pt: "Diabète insipide",                   code: "10012601", soc: "Endocrinien" },
+  { pt: "Aménorrhée",                         code: "10001928", soc: "Endocrinien" },
+  { pt: "Gynécomastie",                       code: "10018867", soc: "Endocrinien" },
+  { pt: "Syndrome de Cushing",                code: "10011652", soc: "Endocrinien" },
+  { pt: "Hypogonadisme",                      code: "10021069", soc: "Endocrinien" },
+
+  // ── Oncologique / Spécifique chimiothérapie ───────────────────────
+  { pt: "Mucite orale chimio-induite",        code: "10028128", soc: "Gastro-intestinal" },
+  { pt: "Cytopénie",                          code: "10011878", soc: "Sang et lymphe" },
+  { pt: "Syndrome mains-pieds",               code: "10056704", soc: "Peau et tissu sous-cutané" },
+  { pt: "Neuropathie chimio-induite",         code: "10029329", soc: "Système nerveux" },
+  { pt: "Cardiotoxicité",                     code: "10048627", soc: "Cardiaque" },
+  { pt: "Syndrome de lyse tumorale",          code: "10044359", soc: "Métabolisme et nutrition" },
+  { pt: "Extravasation",                      code: "10015832", soc: "Lésions et empoisonnements" },
+  { pt: "Réaction à la perfusion",            code: "10051792", soc: "Système immunitaire" },
+  { pt: "Pneumopathie chimio-induite",        code: "10035737", soc: "Respiratoire" },
+  { pt: "Toxicité cutanée",                   code: "10055047", soc: "Peau et tissu sous-cutané" },
+  { pt: "Aplasie post-chimiothérapie",        code: "10002961", soc: "Sang et lymphe" },
+  { pt: "Stérilité",                          code: "10021262", soc: "Organes de reproduction" },
+
+  // ── Général / Constitutionnel ─────────────────────────────────────
+  { pt: "Fatigue",                            code: "10016256", soc: "Général" },
+  { pt: "Asthénie",                           code: "10003549", soc: "Général" },
+  { pt: "Fièvre",                             code: "10016558", soc: "Général" },
+  { pt: "Frissons",                           code: "10008531", soc: "Général" },
+  { pt: "Œdème périphérique",                 code: "10030124", soc: "Général" },
+  { pt: "Malaise",                            code: "10025482", soc: "Général" },
+  { pt: "Douleur",                            code: "10033371", soc: "Général" },
+  { pt: "Réaction au site d'injection",       code: "10022041", soc: "Général" },
+  { pt: "Syndrome de sevrage",                code: "10042458", soc: "Général" },
+  { pt: "Mort subite",                        code: "10049909", soc: "Général" },
+
+  // ── Infectieux ────────────────────────────────────────────────────
+  { pt: "Infection opportuniste",             code: "10022091", soc: "Infectieux" },
+  { pt: "Sepsis",                             code: "10040047", soc: "Infectieux" },
+  { pt: "Pneumonie à Pneumocystis",           code: "10035665", soc: "Infectieux" },
+  { pt: "Réactivation virale (VHB/VHC)",     code: "10070234", soc: "Infectieux" },
+  { pt: "Infection fongique systémique",      code: "10017544", soc: "Infectieux" },
+
+  // ── Ophtalmologique ───────────────────────────────────────────────
+  { pt: "Vision trouble",                     code: "10047531", soc: "Ophtalmologique" },
+  { pt: "Kératite",                           code: "10023330", soc: "Ophtalmologique" },
+  { pt: "Uvéite",                             code: "10046851", soc: "Ophtalmologique" },
+  { pt: "Cataracte",                          code: "10007787", soc: "Ophtalmologique" },
+  { pt: "Glaucome",                           code: "10018282", soc: "Ophtalmologique" },
+
+  // ── ORL ───────────────────────────────────────────────────────────
+  { pt: "Acouphènes",                         code: "10043836", soc: "ORL" },
+  { pt: "Surdité",                            code: "10011878", soc: "ORL" },
+  { pt: "Ototoxicité",                        code: "10033091", soc: "ORL" },
+
+  // ── Compléments cardiovasculaires ────────────────────────────────
+  { pt: "Vasospasme coronaire",               code: "10047079", soc: "Cardiaque" },
+  { pt: "Épanchement péricardique",           code: "10034164", soc: "Cardiaque" },
+  { pt: "Choc cardiogénique",                 code: "10008118", soc: "Cardiaque" },
+  { pt: "Endocardite",                        code: "10014665", soc: "Cardiaque" },
+
+  // ── Compléments neurologiques ─────────────────────────────────────
+  { pt: "Méningite",                          code: "10027202", soc: "Système nerveux" },
+  { pt: "Hypertension intracrânienne",        code: "10020894", soc: "Système nerveux" },
+  { pt: "Démence",                            code: "10012271", soc: "Système nerveux" },
+  { pt: "Trouble de la mémoire",              code: "10027175", soc: "Système nerveux" },
+
+  // ── Compléments dermatologiques ───────────────────────────────────
+  { pt: "Vasculite cutanée",                  code: "10047115", soc: "Peau et tissu sous-cutané" },
+  { pt: "Folliculite",                        code: "10016936", soc: "Peau et tissu sous-cutané" },
+
+  // ── Compléments hématologiques ────────────────────────────────────
+  { pt: "Thrombose veineuse rétinienne",      code: "10043633", soc: "Sang et lymphe" },
+  { pt: "Microangiopathie thrombotique",      code: "10049567", soc: "Sang et lymphe" },
+
+  // ── Compléments rénaux ────────────────────────────────────────────
+  { pt: "Acidose tubulaire",                  code: "10001145", soc: "Rénal et urinaire" },
+  { pt: "Syndrome de Fanconi",                code: "10016203", soc: "Rénal et urinaire" },
+
+  // ── Compléments généraux ──────────────────────────────────────────
+  { pt: "Œdème de Quincke",                   code: "10002424", soc: "Peau et tissu sous-cutané" },
+  { pt: "Choc septique",                      code: "10040048", soc: "Infectieux" },
+  { pt: "Insuffisance multiviscérale",        code: "10077601", soc: "Général" },
+  { pt: "Hypersensibilité immédiate",         code: "10020752", soc: "Système immunitaire" },
+  { pt: "Érythème polymorphe",                code: "10015218", soc: "Peau et tissu sous-cutané" },
+  { pt: "Lichen plan médicamenteux",          code: "10024419", soc: "Peau et tissu sous-cutané" },
+  { pt: "Aménorrhée médicamenteuse",          code: "10001928", soc: "Endocrinien" },
+
+];

@@ -2,11 +2,16 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import ImputabiliteBegaud, { ImputScore } from "./ImputabiliteBegaud";
 import { readProfile } from "@/lib/ordonnancier";
 import { autocomplete, fetchAnsm, fetchFdaLabel, type Suggestion } from "@/lib/drugApi";
+import { MEDDRA_TERMS, type MedDRATerm } from "@/lib/meddraTerms";
+import { parsePostologie, formatPostologie } from "@/lib/parsePostologie";
+import ScanBoite, { type ScannedData } from "@/components/medecin/ScanBoite";
+import { searchLocalInteraction } from "@/lib/interactionsLocales";
 
 const DRAFT_KEY = "pharmavig_medecin_draft";
 const PREFILL_KEY = "pharmavig_prefill_declaration";
@@ -16,7 +21,9 @@ const PREFILL_KEY = "pharmavig_prefill_declaration";
 type MedicamentConcomitant = {
   id: number;
   nom: string;
-  posologie: string;
+  posologieDose: string;       // ex. "500"
+  posologieUnite: string;      // "mg" | "g" | "µg" | "mL" | "UI" | "mg/kg"
+  posologieFrequence: string;  // "1×/jour" etc.
   indication: string;
   arretAvantEI: boolean;
   suspectSecondaire: boolean;
@@ -123,7 +130,7 @@ const INITIAL: FormData = {
   medicamentDateFin: "", medicamentEnCours: false, medicamentLot: "", medicamentPeremption: "",
   medicamentLaboratoire: "", medicamentAMM: "", medicamentPrescripteur: "",
   aucunConcomitant: false,
-  medicamentsConcomitants: [],
+  medicamentsConcomitants: [] as MedicamentConcomitant[],
   eiMeddraTerm: "", eiMeddraCode: "", eiMeddraSoc: "",
   eiDescription: "", eiDateDebut: "", eiDateFin: "", eiEnCours: false, eiEvolution: "",
   graviteDeces: false, graviteVieDanger: false, graviteHospitalisation: false,
@@ -138,13 +145,12 @@ const INITIAL: FormData = {
 };
 
 const SECTIONS = [
-  { id: 1, label: "Déclarant", icon: "👨‍⚕️" },
-  { id: 2, label: "Patient", icon: "🧑" },
-  { id: 3, label: "Médicament suspect", icon: "💊" },
-  { id: 4, label: "Concomitants", icon: "📋" },
-  { id: 5, label: "Effet indésirable", icon: "⚠️" },
-  { id: 6, label: "Imputabilité", icon: "🔬" },
-  { id: 7, label: "Finalisation", icon: "📤" },
+  { id: 1, label: "Patient", icon: "🧑" },
+  { id: 2, label: "Médicament suspect", icon: "💊" },
+  { id: 3, label: "Concomitants", icon: "📋" },
+  { id: 4, label: "Effet indésirable", icon: "⚠️" },
+  { id: 5, label: "Imputabilité", icon: "🔬" },
+  { id: 6, label: "Finalisation", icon: "📤" },
 ];
 
 const SPECIALITES = [
@@ -461,77 +467,8 @@ function Field({ label, required, hint, children }: {
   );
 }
 
-// ─── MedDRA ───────────────────────────────────────────────────────────────────
-
-type MedDRATerm = { pt: string; code: string; soc: string };
-
-const MEDDRA_TERMS: MedDRATerm[] = [
-  // Gastro-intestinal
-  { pt: "Nausées", code: "10028813", soc: "Gastro-intestinal" },
-  { pt: "Vomissements", code: "10047700", soc: "Gastro-intestinal" },
-  { pt: "Diarrhée", code: "10012735", soc: "Gastro-intestinal" },
-  { pt: "Douleur abdominale", code: "10000081", soc: "Gastro-intestinal" },
-  { pt: "Constipation", code: "10010774", soc: "Gastro-intestinal" },
-  { pt: "Hémorragie gastro-intestinale", code: "10017955", soc: "Gastro-intestinal" },
-  { pt: "Colite", code: "10009887", soc: "Gastro-intestinal" },
-  // Peau
-  { pt: "Éruption cutanée", code: "10037844", soc: "Peau et tissu sous-cutané" },
-  { pt: "Urticaire", code: "10046735", soc: "Peau et tissu sous-cutané" },
-  { pt: "Prurit", code: "10037087", soc: "Peau et tissu sous-cutané" },
-  { pt: "Angio-œdème", code: "10002424", soc: "Peau et tissu sous-cutané" },
-  { pt: "Syndrome de Stevens-Johnson", code: "10042033", soc: "Peau et tissu sous-cutané" },
-  { pt: "Nécrolyse épidermique toxique", code: "10028506", soc: "Peau et tissu sous-cutané" },
-  { pt: "Alopécie", code: "10001760", soc: "Peau et tissu sous-cutané" },
-  { pt: "Photosensibilité", code: "10034976", soc: "Peau et tissu sous-cutané" },
-  // Système nerveux
-  { pt: "Céphalées", code: "10019211", soc: "Système nerveux" },
-  { pt: "Vertiges", code: "10047340", soc: "Système nerveux" },
-  { pt: "Somnolence", code: "10041349", soc: "Système nerveux" },
-  { pt: "Convulsions", code: "10010952", soc: "Système nerveux" },
-  { pt: "Neuropathie périphérique", code: "10029331", soc: "Système nerveux" },
-  { pt: "Accident vasculaire cérébral", code: "10008190", soc: "Système nerveux" },
-  { pt: "Tremblements", code: "10044565", soc: "Système nerveux" },
-  { pt: "Insomnie", code: "10022437", soc: "Psychiatrie" },
-  { pt: "Confusion mentale", code: "10010300", soc: "Psychiatrie" },
-  { pt: "Hallucinations", code: "10019063", soc: "Psychiatrie" },
-  // Cardiaque
-  { pt: "Palpitations", code: "10033557", soc: "Cardiac disorders" },
-  { pt: "Allongement QT", code: "10053698", soc: "Cardiac disorders" },
-  { pt: "Bradycardie", code: "10006093", soc: "Cardiac disorders" },
-  { pt: "Tachycardie", code: "10043071", soc: "Cardiac disorders" },
-  { pt: "Fibrillation auriculaire", code: "10016281", soc: "Cardiac disorders" },
-  { pt: "Infarctus du myocarde", code: "10027433", soc: "Cardiac disorders" },
-  // Hépatique
-  { pt: "Hépatotoxicité", code: "10019851", soc: "Hépatobiliaire" },
-  { pt: "Cytolyse hépatique", code: "10061218", soc: "Hépatobiliaire" },
-  { pt: "Ictère", code: "10023126", soc: "Hépatobiliaire" },
-  { pt: "Insuffisance hépatique", code: "10019670", soc: "Hépatobiliaire" },
-  // Rénal
-  { pt: "Insuffisance rénale aiguë", code: "10069339", soc: "Rénal et urinaire" },
-  { pt: "Néphrotoxicité", code: "10029155", soc: "Rénal et urinaire" },
-  { pt: "Protéinurie", code: "10037032", soc: "Rénal et urinaire" },
-  // Allergique / immuno
-  { pt: "Anaphylaxie", code: "10002198", soc: "Système immunitaire" },
-  { pt: "Hypersensibilité", code: "10020751", soc: "Système immunitaire" },
-  { pt: "Réaction anaphylactoïde", code: "10002216", soc: "Système immunitaire" },
-  // Hématologique
-  { pt: "Thrombocytopénie", code: "10043554", soc: "Sang et lymphe" },
-  { pt: "Neutropénie", code: "10029354", soc: "Sang et lymphe" },
-  { pt: "Anémie", code: "10002272", soc: "Sang et lymphe" },
-  { pt: "Agranulocytose", code: "10001561", soc: "Sang et lymphe" },
-  { pt: "Leucopénie", code: "10024384", soc: "Sang et lymphe" },
-  // Respiratoire
-  { pt: "Dyspnée", code: "10013968", soc: "Respiratoire" },
-  { pt: "Bronchospasme", code: "10006482", soc: "Respiratoire" },
-  { pt: "Toux", code: "10011224", soc: "Respiratoire" },
-  { pt: "Pneumopathie interstitielle", code: "10035742", soc: "Respiratoire" },
-  // Métabolique
-  { pt: "Hypoglycémie", code: "10020993", soc: "Métabolisme et nutrition" },
-  { pt: "Hyperkaliémie", code: "10020951", soc: "Métabolisme et nutrition" },
-  { pt: "Hyponatrémie", code: "10021036", soc: "Métabolisme et nutrition" },
-  { pt: "Rhabdomyolyse", code: "10039020", soc: "Musculosquelettique" },
-  { pt: "Myopathie", code: "10028597", soc: "Musculosquelettique" },
-];
+// ─── MedDRA — importé depuis lib/meddraTerms.ts (250 termes) ─────────────────
+// MedDRATerm et MEDDRA_TERMS sont importés en haut du fichier.
 
 function MedDRASearch({ value, code, soc, onChange }: {
   value: string;
@@ -639,7 +576,24 @@ function readPrefill(): Partial<FormData> | null {
     const saved = sessionStorage.getItem(PREFILL_KEY);
     if (!saved) return null;
     sessionStorage.removeItem(PREFILL_KEY);
-    return JSON.parse(saved) as Partial<FormData>;
+    const raw = JSON.parse(saved) as Partial<FormData> & { medicamentConcomitantNom?: string };
+    // Transformer medicamentConcomitantNom → première entrée medicamentsConcomitants
+    if (raw.medicamentConcomitantNom) {
+      raw.medicamentsConcomitants = [
+        {
+          id: Date.now(),
+          nom: raw.medicamentConcomitantNom,
+          posologieDose: "",
+          posologieUnite: "mg",
+          posologieFrequence: "1×/jour",
+          indication: "",
+          arretAvantEI: false,
+          suspectSecondaire: true,
+        },
+      ];
+      delete raw.medicamentConcomitantNom;
+    }
+    return raw;
   } catch {
     return null;
   }
@@ -653,17 +607,12 @@ function isDeclarantComplete(f: FormData): boolean {
 /** Retourne la liste des champs manquants pour l'étape donnée */
 function sectionErrors(step: number, f: FormData): string[] {
   const errs: string[] = [];
+  // step 1 = Patient (Déclarant supprimé du flux — validé via profil)
   if (step === 1) {
-    if (!f.declarantNom) errs.push("Nom");
-    if (!f.declarantPrenom) errs.push("Prénom");
-    if (!f.declarantSpecialite) errs.push("Spécialité");
-    if (!f.declarantEmail) errs.push("E-mail professionnel");
-  }
-  if (step === 2) {
     if (!f.patientAge) errs.push("Âge du patient");
     if (!f.patientSexe) errs.push("Sexe du patient");
   }
-  if (step === 3) {
+  if (step === 2) {
     if (!f.medicamentDCI) errs.push("DCI du médicament");
     if (!f.medicamentForme) errs.push("Forme pharmaceutique");
     if (!f.medicamentVoie) errs.push("Voie d'administration");
@@ -672,7 +621,7 @@ function sectionErrors(step: number, f: FormData): string[] {
     if (!f.medicamentIndication) errs.push("Indication");
     if (!f.medicamentDateDebut) errs.push("Date de début du traitement");
   }
-  if (step === 5) {
+  if (step === 4) {
     if (!f.eiMeddraTerm) errs.push("Effet observé");
     if (!f.eiDescription) errs.push("Description de l'effet indésirable");
     if (!f.eiDateDebut) errs.push("Date de début de l'effet");
@@ -682,49 +631,142 @@ function sectionErrors(step: number, f: FormData): string[] {
       f.graviteIncapacite ||
       f.graviteDeces ||
       f.graviteAnomalieCongenitale ||
-      f.graviteMedicalementSignificatif;
-    if (!hasGravite) errs.push("Gravité de l'effet (au moins une case)");
+      f.graviteMedicalementSignificatif ||
+      f.graviteNonSerieux; // ← fix critique : "non sérieux" est un critère de gravité valide
+    if (!hasGravite) errs.push("Gravité de l'effet (au moins une case — y compris « Non sérieux »)");
   }
   return errs;
 }
 
+/** Lien discret en section 7 pour modifier le type de déclaration (cas rares) */
+function TypeDeclarationInline({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const labels: Record<string, string> = {
+    spontanee: "Déclaration spontanée",
+    observationnelle: "Étude observationnelle",
+    litterature: "Rapport de littérature",
+  };
+  const current = labels[value] || "Déclaration spontanée";
+  return (
+    <div>
+      <p className="font-medium text-gray-800 text-xs">{current}</p>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="text-[10px] text-gray-400 underline underline-offset-2 mt-0.5 hover:text-gray-600"
+      >
+        {open ? "Fermer" : "Modifier (cas rare)"}
+      </button>
+      {open && (
+        <div className="mt-2 space-y-1">
+          {Object.entries(labels).map(([val, label]) => (
+            <label key={val} className="flex items-center gap-2 cursor-pointer text-xs text-gray-700">
+              <input
+                type="radio"
+                name="typeDeclarationInline"
+                value={val}
+                checked={value === val}
+                onChange={() => { onChange(val); setOpen(false); }}
+                className="accent-teal-700"
+              />
+              {label}
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Pré-calcul automatique Bégaud depuis les dates ──────────────────────────
+
+/**
+ * Propose c1 (chronologie d'apparition) et c2 (évolution à l'arrêt)
+ * depuis les données déjà saisies dans le formulaire.
+ * Retourne null si les données sont insuffisantes.
+ */
+function autoFillBegaud(
+  medicamentDateDebut: string,
+  eiDateDebut: string,
+  eiEvolution: string
+): Record<string, string> | null {
+  if (!medicamentDateDebut || !eiDateDebut) return null;
+
+  const tStart = new Date(medicamentDateDebut).getTime();
+  const tEI    = new Date(eiDateDebut).getTime();
+  if (isNaN(tStart) || isNaN(tEI)) return null;
+
+  const diffDays = Math.round((tEI - tStart) / (1000 * 60 * 60 * 24));
+
+  // c1 — délai d'apparition
+  let c1: string;
+  if (diffDays < 0)         c1 = "incompatible";   // EIM avant le médicament
+  else if (diffDays <= 7)   c1 = "tres_compatible"; // 0–7 j = très compatible
+  else if (diffDays <= 30)  c1 = "compatible";      // 8–30 j = compatible
+  else if (diffDays <= 365) c1 = "nr";              // > 30 j = douteux/suggère C1
+  else                      c1 = "incompatible";    // > 1 an = incompatible
+
+  // c2 — évolution à l'arrêt / sous traitement
+  let c2: string;
+  const ev = (eiEvolution || "").toLowerCase();
+  if (ev.includes("résolu") || ev.includes("résolution") || ev.includes("guéri")) {
+    c2 = "favorable";
+  } else if (ev.includes("amélioration") || ev.includes("amélio")) {
+    c2 = "favorable";
+  } else if (ev.includes("décès") || ev.includes("deces") || ev.includes("fatal")) {
+    c2 = "favorable"; // évolution conclusive
+  } else {
+    c2 = "inconnu";
+  }
+
+  return { c1, c2 };
+}
+
 export default function FormulaireMedecin() {
   const { user } = useAuth();
+  const router = useRouter();
   const [draft] = useState<{ form: FormData; step: number } | null>(() => readDraft());
   const [prefill] = useState<Partial<FormData> | null>(() => (draft ? null : readPrefill()));
   const [step, setStep] = useState(draft?.step ?? 1);
   const [form, setForm] = useState<FormData>(draft?.form ?? (prefill ? { ...INITIAL, ...prefill } : INITIAL));
-  // Mode édition de la card déclarant en Section 1
-  const [declarantEditMode, setDeclarantEditMode] = useState(false);
 
-  // Pré-remplir les infos déclarant depuis user + localStorage dès que user est disponible
-  // — seulement si on n'a pas restauré un brouillon (qui contient déjà ces infos)
-  // Si le profil est complet après pré-remplissage, avancer automatiquement à la Section 2
+  // Vérification de profil à l'entrée : redirect si profil incomplet
+  // Pré-remplit aussi les champs déclarant silencieusement (sans étape dédiée)
   const declarantPrefilled = useRef(false);
   useEffect(() => {
-    if (declarantPrefilled.current) return;
     if (!user) return;
-    if (draft) return; // brouillon existant → on ne touche pas
+    const profile = readProfile();
+    // Profil jugé complet si nom + spécialité + email présents
+    const profileComplete = !!(
+      (user.nom || profile.nom) &&
+      (profile.specialite || user.specialite) &&
+      user.email
+    );
+    if (!profileComplete) {
+      router.replace("/profile?next=/dashboard/medecin/nouvelle-declaration");
+      return;
+    }
+    // Pré-remplissage silencieux des champs déclarant (pas d'étape dédiée)
+    if (declarantPrefilled.current || draft) return;
     declarantPrefilled.current = true;
     const overrides = buildDeclarantOverrides(user);
-    setForm((prev) => {
-      const next = { ...prev, ...overrides };
-      // Skip automatique Section 1 → 2 si profil complet
-      if (isDeclarantComplete(next) && step === 1) {
-        setStep(2);
-      }
-      return next;
-    });
-  }, [user, draft, step]);
+    setForm((prev) => ({ ...prev, ...overrides }));
+  }, [user, draft, router]);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [nextConcoId, setNextConcoId] = useState(1);
   const [imputScore, setImputScore] = useState<ImputScore | null>(null);
+  const [begaudOpen, setBegaudOpen] = useState(false);
+  const [scanOpen, setScanOpen] = useState(false);
+  const [begaudInitial, setBegaudInitial] = useState<Record<string, string> | undefined>(undefined);
   const [pvNumber, setPvNumber] = useState("");
   const [draftRestored, setDraftRestored] = useState(() => draft !== null);
   const [prefilled, setPrefilled] = useState(() => prefill !== null);
   const [triedNext, setTriedNext] = useState(false); // affiche les erreurs inline seulement après tentative
   const [anneeNaissance, setAnneeNaissance] = useState(""); // champ UI uniquement, pas stocké dans form
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [dragOver, setDragOver] = useState(false);
+  const savedConcomitants = useRef<MedicamentConcomitant[]>([]); // préserve la liste lors du toggle aucunConcomitant
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-save avec debounce 800ms après chaque changement
@@ -745,12 +787,25 @@ export default function FormulaireMedecin() {
   function addConcomitant() {
     setForm((prev) => ({
       ...prev,
+      aucunConcomitant: false, // désactiver "aucun" si on ajoute un médicament
       medicamentsConcomitants: [
         ...prev.medicamentsConcomitants,
-        { id: nextConcoId, nom: "", posologie: "", indication: "", arretAvantEI: false, suspectSecondaire: false },
+        { id: nextConcoId, nom: "", posologieDose: "", posologieUnite: "mg", posologieFrequence: "1×/jour", indication: "", arretAvantEI: false, suspectSecondaire: false },
       ],
     }));
     setNextConcoId((n) => n + 1);
+  }
+
+  function toggleAucunConcomitant() {
+    const next = !form.aucunConcomitant;
+    if (next) {
+      // Sauvegarde la liste avant de la vider
+      savedConcomitants.current = form.medicamentsConcomitants;
+      setForm((prev) => ({ ...prev, aucunConcomitant: true, medicamentsConcomitants: [] }));
+    } else {
+      // Restaure la liste sauvegardée
+      setForm((prev) => ({ ...prev, aucunConcomitant: false, medicamentsConcomitants: savedConcomitants.current }));
+    }
   }
 
   function updateConcomitant(id: number, field: keyof MedicamentConcomitant, value: string | boolean) {
@@ -793,7 +848,7 @@ export default function FormulaireMedecin() {
         drug_date_fin: form.medicamentDateFin || undefined,
         drug_lot: form.medicamentLot || undefined,
         drug_laboratoire: form.medicamentLaboratoire || undefined,
-        concomitants: form.medicamentsConcomitants.map(({ nom, posologie, indication }) => ({ nom, posologie, indication })),
+        concomitants: form.medicamentsConcomitants.map(({ nom, posologieDose, posologieUnite, posologieFrequence, indication }) => ({ nom, posologie: `${posologieDose} ${posologieUnite} — ${posologieFrequence}`, indication })),
         ei_description: form.eiDescription,
         ei_date_debut: form.eiDateDebut || undefined,
         ei_date_fin: form.eiDateFin || undefined,
@@ -839,10 +894,10 @@ export default function FormulaireMedecin() {
   const delaiLegal = isFatal ? 7 : isSerieux ? 15 : null;
 
   const champsManquants = [
-    !form.medicamentDCI && "Médicament suspect — DCI (Section 3)",
-    !form.eiMeddraTerm && "Effet observé (Section 5)",
-    !form.eiDescription && "Description clinique de l'effet indésirable (Section 5)",
-    !isSerieux && !form.graviteNonSerieux && "Critère de gravité — cochez au moins une case (Section 5)",
+    !form.medicamentDCI && "Médicament suspect — DCI (Section 2)",
+    !form.eiMeddraTerm && "Effet observé (Section 4)",
+    !form.eiDescription && "Description clinique de l'effet indésirable (Section 4)",
+    !isSerieux && !form.graviteNonSerieux && "Critère de gravité — cochez au moins une case (y compris « Non sérieux ») (Section 4)",
   ].filter(Boolean) as string[];
 
   if (submitted) {
@@ -925,6 +980,28 @@ export default function FormulaireMedecin() {
 
           {/* Actions */}
           <div className="flex flex-col gap-2">
+            {/* Télécharger le PDF */}
+            {pvNumber && (
+              <button
+                onClick={async () => {
+                  const { generateDeclarationPDF } = await import("@/lib/generateDeclarationPDF");
+                  await generateDeclarationPDF(form as unknown as Record<string, unknown>, {
+                    pvNumber,
+                    declarantNom:         form.declarantNom,
+                    declarantPrenom:      form.declarantPrenom,
+                    declarantSpecialite:  form.declarantSpecialite,
+                    declarantEmail:       form.declarantEmail,
+                    declarantTel:         form.declarantTel,
+                    declarantNumOrdre:    form.declarantNumOrdre,
+                    declarantEtablissement: form.declarantEtablissement,
+                    declarantVille:       form.declarantVille,
+                  });
+                }}
+                className="w-full flex items-center justify-center gap-2 bg-teal-700 hover:bg-teal-800 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors"
+              >
+                📄 Télécharger PDF de ma déclaration
+              </button>
+            )}
             <Link
               href="/dashboard/medecin/mes-declarations"
               className="w-full text-center bg-emerald-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors"
@@ -1015,108 +1092,26 @@ export default function FormulaireMedecin() {
       {/* Contenu */}
       <main className="max-w-3xl mx-auto px-4 py-8">
 
-        {/* ── Section 1 : Déclarant ── */}
-        {step === 1 && (
-          <div className="space-y-5">
-            <SectionTitle
-              title="Informations sur le déclarant"
-              subtitle="Ces informations permettent au CAPM de vous recontacter si nécessaire. Elles restent confidentielles."
-            />
-
-            {/* ── Card récapitulative si profil complet et pas en mode édition ── */}
-            {isDeclarantComplete(form) && !declarantEditMode ? (
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shrink-0">
-                    {form.declarantPrenom?.[0]?.toUpperCase() ?? "M"}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Dr {form.declarantPrenom} {form.declarantNom}</p>
-                    <p className="text-sm text-gray-500">{form.declarantSpecialite}{form.declarantEtablissement ? ` · ${form.declarantEtablissement}` : ""}{form.declarantVille ? ` · ${form.declarantVille}` : ""}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{form.declarantEmail}{form.declarantNumOrdre ? ` · ${form.declarantNumOrdre}` : ""}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setDeclarantEditMode(true)}
-                  className="shrink-0 text-sm text-emerald-600 hover:text-emerald-800 border border-emerald-200 hover:border-emerald-400 rounded-lg px-3 py-1.5 transition-colors"
-                >
-                  Modifier ✎
-                </button>
+        {/* ── Bannière déclarant (persistante, toutes sections) ── */}
+        {form.declarantNom && (
+          <div className="mb-4 bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
+                {form.declarantPrenom?.[0]?.toUpperCase() ?? "D"}
               </div>
-            ) : (
-              /* ── Formulaire complet (profil incomplet ou mode édition) ── */
-              <div className="space-y-5">
-                <Grid>
-                  <Field label="Nom" required>
-                    <Input value={form.declarantNom} onChange={(v) => set("declarantNom", v)} placeholder="Nom de famille" />
-                  </Field>
-                  <Field label="Prénom" required>
-                    <Input value={form.declarantPrenom} onChange={(v) => set("declarantPrenom", v)} placeholder="Prénom" />
-                  </Field>
-                </Grid>
-                <Grid>
-                  <Field label="Spécialité" required>
-                    <Select
-                      value={form.declarantSpecialite}
-                      onChange={(v) => set("declarantSpecialite", v)}
-                      options={SPECIALITES}
-                      placeholder="Choisir une spécialité"
-                    />
-                  </Field>
-                  {form.declarantSpecialite === "Autre" && (
-                    <Field label="Précisez la spécialité">
-                      <Input value={form.declarantSpecialiteAutre} onChange={(v) => set("declarantSpecialiteAutre", v)} placeholder="Votre spécialité" />
-                    </Field>
-                  )}
-                  <Field label="N° d'inscription à l'Ordre" hint="N° INPE ou Conseil de l'Ordre">
-                    <Input value={form.declarantNumOrdre} onChange={(v) => set("declarantNumOrdre", v)} placeholder="Ex : MA-12345" />
-                  </Field>
-                </Grid>
-                <Grid>
-                  <Field label="Établissement / Structure de soins">
-                    <Input value={form.declarantEtablissement} onChange={(v) => set("declarantEtablissement", v)} placeholder="CHU, clinique, cabinet..." />
-                  </Field>
-                  <Field label="Ville">
-                    <Input value={form.declarantVille} onChange={(v) => set("declarantVille", v)} placeholder="Ville d'exercice" />
-                  </Field>
-                </Grid>
-                <Grid>
-                  <Field label="Email professionnel" required>
-                    <Input type="email" value={form.declarantEmail} onChange={(v) => set("declarantEmail", v)} placeholder="medecin@exemple.ma" />
-                  </Field>
-                  <Field label="Téléphone professionnel">
-                    <Input type="tel" value={form.declarantTel} onChange={(v) => set("declarantTel", v)} placeholder="+212 6XX XXX XXX" />
-                  </Field>
-                </Grid>
-                {declarantEditMode && (
-                  <button
-                    onClick={() => setDeclarantEditMode(false)}
-                    className="text-sm text-gray-500 hover:text-gray-700 underline"
-                  >
-                    ← Annuler les modifications
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Type de déclaration — replié par défaut (95% = spontanée) */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Type de déclaration</p>
-              <RadioGroup
-                value={form.typeDeclaration || "spontanee"}
-                onChange={(v) => set("typeDeclaration", v)}
-                options={[
-                  { val: "spontanee", label: "Déclaration spontanée", desc: "Observation directe en pratique courante (95% des cas)" },
-                  { val: "observationnelle", label: "Étude observationnelle", desc: "Données issues d'une étude ou d'un registre" },
-                  { val: "litterature", label: "Rapport de littérature", desc: "Cas publié dans une revue médicale" },
-                ]}
-              />
+              <span className="text-gray-700">
+                <span className="font-medium">Dr {form.declarantPrenom} {form.declarantNom}</span>
+                {form.declarantSpecialite && <span className="text-gray-400"> · {form.declarantSpecialite}</span>}
+              </span>
             </div>
+            <Link href="/profile" className="text-xs text-gray-400 hover:text-emerald-600 underline underline-offset-2">
+              Modifier mon profil
+            </Link>
           </div>
         )}
 
-        {/* ── Section 2 : Patient ── */}
-        {step === 2 && (
+        {/* ── Section 1 : Patient ── */}
+        {step === 1 && (
           <div className="space-y-5">
             <SectionTitle
               title="Informations sur le patient"
@@ -1216,25 +1211,41 @@ export default function FormulaireMedecin() {
           </div>
         )}
 
-        {/* ── Section 3 : Médicament suspect ── */}
-        {step === 3 && (
+        {/* ── Section 2 : Médicament suspect ── */}
+        {step === 2 && (
           <div className="space-y-5">
             <SectionTitle
               title="Médicament(s) suspect(s)"
               subtitle="Médicament suspecté d'être responsable de l'effet indésirable."
             />
 
-            {/* ── Recherche intelligente ── */}
+            {/* ── Recherche intelligente + bouton scan ── */}
             <Field label="Recherche rapide" hint="DCI ou nom commercial — pré-remplit automatiquement voie, forme et laboratoire">
-              <MedicamentSearch
-                onSelect={(e) => {
-                  set("medicamentDCI", e.dci);
-                  if (e.nomCommercial) set("medicamentNomCommercial", e.nomCommercial);
-                  if (e.voie) set("medicamentVoie", e.voie);
-                  if (e.forme) set("medicamentForme", e.forme);
-                  if (e.laboratoire) set("medicamentLaboratoire", e.laboratoire);
-                }}
-              />
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <MedicamentSearch
+                    onSelect={(e) => {
+                      set("medicamentDCI", e.dci);
+                      if (e.nomCommercial) set("medicamentNomCommercial", e.nomCommercial);
+                      if (e.voie) set("medicamentVoie", e.voie);
+                      if (e.forme) set("medicamentForme", e.forme);
+                      if (e.laboratoire) set("medicamentLaboratoire", e.laboratoire);
+                    }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setScanOpen(true)}
+                  title="Scanner la boîte de médicament"
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                  <span className="hidden sm:inline">Scanner</span>
+                </button>
+              </div>
             </Field>
 
             <Grid>
@@ -1253,19 +1264,70 @@ export default function FormulaireMedecin() {
                 <Select value={form.medicamentVoie} onChange={(v) => set("medicamentVoie", v)} options={VOIES} placeholder="Sélectionner" />
               </Field>
             </Grid>
-            <Grid>
-              <Field label="Posologie" required hint="Dose par prise">
-                <Input value={form.medicamentPosologie} onChange={(v) => set("medicamentPosologie", v)} placeholder="Ex : 500 mg, 1 g, 240 mg..." />
-              </Field>
-              <Field label="Fréquence" required>
-                <Select
-                  value={form.medicamentFrequence}
-                  onChange={(v) => set("medicamentFrequence", v)}
-                  options={["1×/jour", "2×/jour", "3×/jour", "4×/jour", "1×/semaine", "Autre"]}
-                  placeholder="Sélectionner"
-                />
-              </Field>
-            </Grid>
+            {/* Posologie intelligente */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-800">
+                  Posologie & Fréquence <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                  ✦ Parser IA
+                </span>
+              </div>
+              <p className="text-xs text-gray-400">Tapez librement — la posologie est analysée automatiquement.</p>
+              <input
+                type="text"
+                value={`${form.medicamentPosologie}${form.medicamentPosologie && form.medicamentFrequence ? " " : ""}${form.medicamentFrequence}`}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  const parsed = parsePostologie(raw);
+                  if (parsed && parsed.confidence >= 0.65) {
+                    // Confiance haute → auto-split dans les deux champs
+                    const doseStr = parsed.dose && parsed.unite ? `${parsed.dose} ${parsed.unite}` : parsed.dose;
+                    set("medicamentPosologie", doseStr);
+                    if (parsed.frequence) set("medicamentFrequence", parsed.frequence);
+                  } else {
+                    // Confiance faible → stocker brut dans posologie seulement
+                    set("medicamentPosologie", raw);
+                    set("medicamentFrequence", "");
+                  }
+                }}
+                placeholder="Ex : 500 mg 2x/jour · 1g matin et soir · 175 mg/m² J1-J21"
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                style={{ "--tw-ring-color": "rgba(15,91,87,0.3)" } as React.CSSProperties}
+              />
+              {/* Feedback parser en temps réel */}
+              {(() => {
+                const raw = `${form.medicamentPosologie}${form.medicamentPosologie && form.medicamentFrequence ? " " : ""}${form.medicamentFrequence}`;
+                const parsed = raw ? parsePostologie(raw) : null;
+                if (!parsed) return null;
+                const hasAll = parsed.dose && parsed.unite && parsed.frequence;
+                return (
+                  <div className={`flex items-center gap-2 flex-wrap text-xs px-3 py-2 rounded-lg border ${hasAll ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-gray-50 border-gray-200 text-gray-600"}`}>
+                    <span className="font-semibold">{hasAll ? "✅ Parsé :" : "⚙️ Détecté :"}</span>
+                    {parsed.dose && <span className="px-2 py-0.5 rounded-full bg-white border border-gray-300 font-mono">{parsed.dose}</span>}
+                    {parsed.unite && <span className="px-2 py-0.5 rounded-full bg-white border border-gray-300 font-mono">{parsed.unite}</span>}
+                    {parsed.frequence && <span className="px-2 py-0.5 rounded-full bg-white border border-gray-300 font-mono">{parsed.frequence}</span>}
+                    <span className="text-gray-400 ml-auto">
+                      {Math.round(parsed.confidence * 100)}% confiance
+                    </span>
+                  </div>
+                );
+              })()}
+              {/* Fallback : champs manuels si parser insuffisant */}
+              {form.medicamentPosologie && !form.medicamentFrequence && (
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <Field label="Fréquence" required>
+                    <Select
+                      value={form.medicamentFrequence}
+                      onChange={(v) => set("medicamentFrequence", v)}
+                      options={["1×/jour", "2×/jour", "3×/jour", "4×/jour", "1×/semaine", "1×/2 semaines", "1×/3 semaines", "Autre"]}
+                      placeholder="Sélectionner"
+                    />
+                  </Field>
+                </div>
+              )}
+            </div>
             <Field label="Indication thérapeutique" required hint="Pourquoi ce médicament a-t-il été prescrit ?">
               <Input value={form.medicamentIndication} onChange={(v) => set("medicamentIndication", v)} placeholder="Ex : diabète type 2, mélanome métastatique, infection urinaire..." />
             </Field>
@@ -1316,8 +1378,8 @@ export default function FormulaireMedecin() {
           </div>
         )}
 
-        {/* ── Section 4 : Médicaments concomitants ── */}
-        {step === 4 && (
+        {/* ── Section 3 : Médicaments concomitants ── */}
+        {step === 3 && (
           <div className="space-y-5">
             <SectionTitle
               title="Médicaments concomitants"
@@ -1326,11 +1388,8 @@ export default function FormulaireMedecin() {
             <CheckRow
               label="✅ Le patient ne prenait aucun autre médicament concomitant"
               checked={form.aucunConcomitant}
-              onChange={() => {
-                const next = !form.aucunConcomitant;
-                setForm((prev) => ({ ...prev, aucunConcomitant: next, medicamentsConcomitants: next ? [] : prev.medicamentsConcomitants }));
-              }}
-              desc="Confirmez explicitement l'absence de co-médications (inclus automédication et phytothérapie)"
+              onChange={toggleAucunConcomitant}
+              desc="Confirmez explicitement l'absence de co-médications (inclus automédication et phytothérapie). Décochez pour restaurer une liste précédente."
             />
 
             {!form.aucunConcomitant && form.medicamentsConcomitants.length === 0 && (
@@ -1346,20 +1405,66 @@ export default function FormulaireMedecin() {
                   <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Médicament {i + 1}</span>
                   <button onClick={() => removeConcomitant(m.id)} className="text-xs text-red-400 hover:text-red-600">Supprimer ×</button>
                 </div>
-                <Grid cols={3}>
-                  <div className="md:col-span-1">
+                <div className="space-y-3">
+                  <div>
                     <FieldLabel label="Nom / DCI" />
                     <Input value={m.nom} onChange={(v) => updateConcomitant(m.id, "nom", v)} placeholder="Nom ou DCI" />
+                    {/* Alerte interaction inline — vérification synchrone sur la table locale */}
+                    {(() => {
+                      if (!form.medicamentDCI || m.nom.length < 3) return null;
+                      const ix = searchLocalInteraction(form.medicamentDCI, m.nom);
+                      if (!ix || (ix.niveau !== "CI" && ix.niveau !== "majeur")) return null;
+                      const isCI = ix.niveau === "CI";
+                      return (
+                        <div className={`mt-2 rounded-lg px-3 py-2.5 border text-xs flex items-start gap-2 ${isCI ? "bg-red-50 border-red-300 text-red-800" : "bg-orange-50 border-orange-300 text-orange-800"}`}>
+                          <span className="text-base shrink-0">{isCI ? "🚫" : "⚠️"}</span>
+                          <div className="flex-1">
+                            <span className="font-bold">{isCI ? "Contre-indication absolue" : "Interaction majeure"} :</span>{" "}
+                            {ix.consequence}
+                            <a
+                              href={`/interactions?drug1=${encodeURIComponent(form.medicamentDCI)}&drug2=${encodeURIComponent(m.nom)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ml-2 underline font-semibold"
+                            >
+                              Voir le détail →
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
-                  <div>
-                    <FieldLabel label="Posologie" />
-                    <Input value={m.posologie} onChange={(v) => updateConcomitant(m.id, "posologie", v)} placeholder="Ex : 10 mg/j" />
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <FieldLabel label="Dose" />
+                      <Input value={m.posologieDose} onChange={(v) => updateConcomitant(m.id, "posologieDose", v)} placeholder="Ex : 10" type="number" />
+                    </div>
+                    <div>
+                      <FieldLabel label="Unité" />
+                      <select
+                        value={m.posologieUnite}
+                        onChange={(e) => updateConcomitant(m.id, "posologieUnite", e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                      >
+                        {["mg", "g", "µg", "mL", "UI", "mg/kg", "%", "autre"].map((u) => <option key={u} value={u}>{u}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <FieldLabel label="Fréquence" />
+                      <select
+                        value={m.posologieFrequence}
+                        onChange={(e) => updateConcomitant(m.id, "posologieFrequence", e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                      >
+                        {["1×/jour", "2×/jour", "3×/jour", "4×/jour", "1×/semaine", "si besoin", "autre"].map((f) => <option key={f} value={f}>{f}</option>)}
+                      </select>
+                    </div>
                   </div>
                   <div>
                     <FieldLabel label="Indication" />
-                    <Input value={m.indication} onChange={(v) => updateConcomitant(m.id, "indication", v)} placeholder="Ex : HTA" />
+                    <Input value={m.indication} onChange={(v) => updateConcomitant(m.id, "indication", v)} placeholder="Ex : HTA, anxiété, douleur..." />
                   </div>
-                </Grid>
+                </div>
                 <div className="flex gap-3 pt-1">
                   <label className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs cursor-pointer transition-all ${m.arretAvantEI ? "border-amber-400 bg-amber-50 text-amber-700" : "border-gray-200 text-gray-500"}`}>
                     <input type="checkbox" className="accent-amber-500" checked={m.arretAvantEI} onChange={() => updateConcomitant(m.id, "arretAvantEI", !m.arretAvantEI)} />
@@ -1386,8 +1491,8 @@ export default function FormulaireMedecin() {
           </div>
         )}
 
-        {/* ── Section 5 : Effet indésirable ── */}
-        {step === 5 && (
+        {/* ── Section 4 : Effet indésirable ── */}
+        {step === 4 && (
           <div className="space-y-5">
             <SectionTitle
               title="Description de l'effet indésirable"
@@ -1474,26 +1579,131 @@ export default function FormulaireMedecin() {
           </div>
         )}
 
-        {/* ── Section 6 : Imputabilité ── */}
-        {step === 6 && (
+        {/* ── Section 5 : Imputabilité ── */}
+        {step === 5 && (
           <div className="space-y-5">
             <SectionTitle
               title="Imputabilité médicamenteuse"
               subtitle="Méthode française (BÉGAUD) — évaluation du lien de causalité entre le médicament et l'EIM."
             />
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <ImputabiliteBegaud onScoreChange={(score) => setImputScore(score)} />
+
+            {/* Accordéon avec badge Optionnel + pré-calcul */}
+            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+              {/* En-tête de l'accordéon */}
+              <button
+                type="button"
+                onClick={() => setBegaudOpen((o) => !o)}
+                className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">🔬</span>
+                  <div className="text-left">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-semibold text-gray-900 text-sm">Questionnaire Bégaud</p>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                        Optionnel
+                      </span>
+                      {imputScore && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                          ✅ Score I{imputScore.Iscore} enregistré
+                        </span>
+                      )}
+                      {begaudInitial && !imputScore && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                          ✦ Pré-rempli automatiquement
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {imputScore
+                        ? `Imputabilité ${["I0 — Exclu", "I1 — Douteux", "I2 — Plausible", "I3 — Probable", "I4 — Très probable"][imputScore.Iscore]}`
+                        : "Evaluez le lien de causalité médicament → EIM (recommandé pour cas sérieux)"}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-gray-400 text-lg">{begaudOpen ? "▲" : "▼"}</span>
+              </button>
+
+              {/* Suggestion auto-calcul (visible même accordéon fermé) */}
+              {!begaudOpen && !imputScore && (() => {
+                const suggestion = autoFillBegaud(form.medicamentDateDebut, form.eiDateDebut, form.eiEvolution);
+                if (!suggestion) return null;
+                const c1Label: Record<string, string> = {
+                  tres_compatible: "Très compatible (0–7 j)",
+                  compatible:      "Compatible (8–30 j)",
+                  nr:              "Douteux (> 30 j)",
+                  incompatible:    "Incompatible",
+                };
+                const c2Label: Record<string, string> = {
+                  favorable: "Favorable",
+                  inconnu:   "Inconnu / non évalué",
+                };
+                return (
+                  <div className="mx-5 mb-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <p className="text-xs font-semibold text-blue-700 mb-2">
+                      ✦ Pré-calcul automatique disponible depuis les dates saisies
+                    </p>
+                    <div className="flex gap-4 text-xs text-blue-800 mb-3">
+                      <span><strong>Chronologie C :</strong> {c1Label[suggestion.c1] ?? suggestion.c1}</span>
+                      <span><strong>Évolution C2 :</strong> {c2Label[suggestion.c2] ?? suggestion.c2}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBegaudInitial(suggestion);
+                        setBegaudOpen(true);
+                      }}
+                      className="text-xs font-semibold bg-blue-700 text-white px-3 py-1.5 rounded-lg hover:bg-blue-800 transition-colors"
+                    >
+                      Ouvrir le questionnaire pré-rempli →
+                    </button>
+                  </div>
+                );
+              })()}
+
+              {/* Corps de l'accordéon */}
+              {begaudOpen && (
+                <div className="border-t border-gray-100 px-5 pt-4 pb-5">
+                  {/* Bouton pré-remplir si disponible et pas encore utilisé */}
+                  {!begaudInitial && (() => {
+                    const suggestion = autoFillBegaud(form.medicamentDateDebut, form.eiDateDebut, form.eiEvolution);
+                    if (!suggestion) return null;
+                    return (
+                      <div className="mb-4 bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center justify-between gap-3">
+                        <p className="text-xs text-blue-700">
+                          ✦ Chronologie calculée depuis les dates — <strong>C1 suggéré</strong>
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setBegaudInitial(suggestion)}
+                          className="text-xs font-semibold text-blue-700 border border-blue-300 bg-white px-3 py-1 rounded-lg hover:bg-blue-50"
+                        >
+                          Appliquer la suggestion
+                        </button>
+                      </div>
+                    );
+                  })()}
+
+                  <ImputabiliteBegaud
+                    key={JSON.stringify(begaudInitial)}
+                    onScoreChange={(score) => setImputScore(score)}
+                    initialAnswers={begaudInitial}
+                  />
+                </div>
+              )}
             </div>
-            {imputScore && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-800">
-                ✅ Score enregistré — Imputabilité {["I0", "I1", "I2", "I3", "I4"][imputScore.Iscore]} · {imputScore.isGrave ? "⚡ Effet grave" : "Non grave"}
-              </div>
+
+            {/* Passer sans imputabilité */}
+            {!imputScore && (
+              <p className="text-xs text-center text-gray-400">
+                L'imputabilité est recommandée pour les cas sérieux mais n'est pas obligatoire pour soumettre la déclaration.
+              </p>
             )}
           </div>
         )}
 
-        {/* ── Section 7 : Finalisation ── */}
-        {step === 7 && (
+        {/* ── Section 6 : Finalisation ── */}
+        {step === 6 && (
           <div className="space-y-5">
             <SectionTitle title="Finalisation et envoi" subtitle="Vérifiez votre déclaration avant envoi au CAPM." />
 
@@ -1503,7 +1713,7 @@ export default function FormulaireMedecin() {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-gray-500 mb-1">Type de déclaration</p>
-                  <p className="font-medium text-gray-800 capitalize">{form.typeDeclaration || "—"}</p>
+                  <TypeDeclarationInline value={form.typeDeclaration} onChange={(v) => set("typeDeclaration", v)} />
                 </div>
                 {delaiLegal && (
                   <div className={`rounded-lg p-3 ${isFatal ? "bg-red-100" : "bg-amber-50"}`}>
@@ -1550,13 +1760,55 @@ export default function FormulaireMedecin() {
               )}
             </div>
 
-            <Field label="Documents joints" hint="Ordonnance, résultats biologiques, imagerie, courrier de sortie...">
-              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 hover:border-emerald-400 rounded-xl p-5 text-sm text-gray-500 hover:text-emerald-600 transition-all cursor-pointer">
-                📎 Joindre des fichiers (PDF, JPG, PNG)
-                <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" multiple onChange={() => set("documents", true)} />
+            {/* Upload documents — drag & drop */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-medium text-gray-800">Documents joints</label>
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                  ✦ Extraction IA — à venir
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mb-2">Ordonnance, résultats biologiques, imagerie, courrier de sortie. L&apos;IA extraira automatiquement les données pertinentes dans une prochaine version.</p>
+              <label
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(false);
+                  const files = Array.from(e.dataTransfer.files).filter(f => /\.(pdf|jpe?g|png)$/i.test(f.name));
+                  if (files.length) { setUploadedFiles(prev => [...prev, ...files]); set("documents", true); }
+                }}
+                className={`flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-xl p-6 transition-all cursor-pointer ${dragOver ? "border-emerald-500 bg-emerald-50" : "border-gray-300 hover:border-emerald-400 hover:bg-gray-50"}`}
+              >
+                <svg className="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 13.5l3 3m0 0l3-3m-3 3v-6m1.06-4.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" /></svg>
+                <p className="text-sm text-gray-500 font-medium">Glissez vos fichiers ici ou <span className="text-emerald-600 underline">cliquez pour sélectionner</span></p>
+                <p className="text-xs text-gray-400">PDF, JPG, PNG — max 10 Mo par fichier</p>
+                <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" multiple onChange={(e) => {
+                  const files = Array.from(e.target.files ?? []);
+                  if (files.length) { setUploadedFiles(prev => [...prev, ...files]); set("documents", true); }
+                }} />
               </label>
-              {form.documents && <p className="text-xs text-emerald-600 mt-1">✓ Fichier(s) joint(s)</p>}
-            </Field>
+
+              {/* Liste des fichiers uploadés */}
+              {uploadedFiles.length > 0 && (
+                <div className="mt-2 space-y-1.5">
+                  {uploadedFiles.map((f, i) => (
+                    <div key={i} className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
+                      <span className="text-base">{f.name.endsWith(".pdf") ? "📄" : "🖼️"}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-gray-800 truncate">{f.name}</p>
+                        <p className="text-[10px] text-gray-400">{(f.size / 1024).toFixed(0)} Ko</p>
+                      </div>
+                      <span className="text-[10px] bg-violet-100 text-violet-700 font-semibold px-1.5 py-0.5 rounded shrink-0">IA prête</span>
+                      <button type="button" onClick={() => { setUploadedFiles(prev => prev.filter((_, j) => j !== i)); if (uploadedFiles.length <= 1) set("documents", false); }}
+                        className="text-gray-400 hover:text-red-500 transition-colors shrink-0">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <Field label="Commentaires libres">
               <Textarea
@@ -1723,6 +1975,23 @@ export default function FormulaireMedecin() {
           );
         })()}
       </main>
+
+      {/* ── Modal scan de boîte ── */}
+      {scanOpen && (
+        <ScanBoite
+          onClose={() => setScanOpen(false)}
+          onScanned={(data: ScannedData) => {
+            // Pré-remplir les champs médicament depuis le scan
+            if (data.nomCommercial) set("medicamentNomCommercial", data.nomCommercial);
+            if (data.dci)           set("medicamentDCI", data.dci);
+            if (data.lot)           set("medicamentLot", data.lot);
+            if (data.expiryDate) {
+              // expiryDate = YYYY-MM-DD → champ type="month" attend YYYY-MM
+              set("medicamentPeremption", data.expiryDate.substring(0, 7));
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

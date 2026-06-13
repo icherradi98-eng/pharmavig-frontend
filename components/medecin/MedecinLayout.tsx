@@ -44,6 +44,15 @@ function IconAlertes() {
     </svg>
   );
 }
+function IconInteractions() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="7" cy="8" r="3"/><circle cx="17" cy="16" r="3"/>
+      <path d="M10 8h4m-2-2v4"/><path d="M14 16h-4m2-2v4"/>
+      <line x1="10" y1="10" x2="14" y2="14" strokeDasharray="2 2"/>
+    </svg>
+  );
+}
 function IconMolecules() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -64,13 +73,14 @@ function IconProfil() {
 // ── Navigation items ──────────────────────────────────────────────────────────
 
 const NAV_ITEMS = [
-  { href: "/dashboard/medecin", label: "Vue d'ensemble", Icon: IconDashboard, match: (p: string) => p === "/dashboard/medecin" },
-  { href: "/dashboard/medecin/mes-declarations", label: "Déclarations", Icon: IconDeclarations, match: (p: string) => p.startsWith("/dashboard/medecin/mes-declarations") },
-  { href: "/ordonnances/nouvelle", label: "Ordonnances", Icon: IconOrdonnances, match: (p: string) => p.startsWith("/ordonnances") },
-  { href: "/dashboard/medecin/surveillance", label: "Surveillance", Icon: IconSurveillance, match: (p: string) => p.startsWith("/dashboard/medecin/surveillance") || p.startsWith("/prescriptions") },
-  { href: "/dashboard/medecin/alertes", label: "Alertes", Icon: IconAlertes, match: (p: string) => p.startsWith("/dashboard/medecin/alertes"), hasAlert: true },
-  { href: "/dashboard/medecin/molecules", label: "Molécules", Icon: IconMolecules, match: (p: string) => p.startsWith("/dashboard/medecin/molecules") },
-  { href: "/dashboard/medecin/profil", label: "Profil", Icon: IconProfil, match: (p: string) => p.startsWith("/dashboard/medecin/profil") },
+  { href: "/dashboard/medecin",                  label: "Vue d'ensemble", Icon: IconDashboard,     match: (p: string) => p === "/dashboard/medecin" },
+  { href: "/dashboard/medecin/mes-declarations", label: "Déclarations",   Icon: IconDeclarations,  match: (p: string) => p.startsWith("/dashboard/medecin/mes-declarations") || p.startsWith("/dashboard/medecin/nouvelle-declaration") },
+  { href: "/dashboard/medecin/suivi",            label: "Suivi patients", Icon: IconSurveillance,  match: (p: string) => p.startsWith("/dashboard/medecin/suivi") || p.startsWith("/dashboard/medecin/surveillance") || p.startsWith("/prescriptions") },
+  { href: "/ordonnances/nouvelle",               label: "Ordonnances",    Icon: IconOrdonnances,   match: (p: string) => p.startsWith("/ordonnances") },
+  { href: "/dashboard/medecin/alertes",          label: "Alertes",        Icon: IconAlertes,       match: (p: string) => p.startsWith("/dashboard/medecin/alertes"), hasAlert: true },
+  { href: "/interactions",                       label: "Interactions",   Icon: IconInteractions,  match: (p: string) => p.startsWith("/interactions") },
+  { href: "/dashboard/medecin/molecules",        label: "Molécules",      Icon: IconMolecules,     match: (p: string) => p.startsWith("/dashboard/medecin/molecules") },
+  { href: "/dashboard/medecin/profil",           label: "Profil",         Icon: IconProfil,        match: (p: string) => p.startsWith("/dashboard/medecin/profil") },
 ];
 
 const READ_ALERTS_KEY = "pharmavig_medecin_alerts_read";

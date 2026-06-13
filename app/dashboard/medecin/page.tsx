@@ -7,9 +7,12 @@ import {
   PieChart, Pie, Cell,
 } from "recharts";
 import { useAuth } from "@/context/AuthContext";
-import MedecinLayout, { PageHeader, SectionCard, DemoBanner } from "@/components/medecin/MedecinLayout";
+import MedecinLayout, { PageHeader, SectionCard, DemoBanner, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
 import { NATIONAL_BENCHMARK } from "@/lib/mockMedecinData";
 import { api, type ReportStats } from "@/lib/api";
+
+// Nombre total d'alertes réglementaires publiées (doit rester synchronisé avec alertes/page.tsx)
+const TOTAL_PUBLISHED_ALERTS = 8;
 
 const BEGAUD_LABELS: Record<number, string> = {
   0: "Exclu", 1: "Douteux", 2: "Plausible", 3: "Vraisemblable", 4: "Très vraisemblable",
@@ -26,7 +29,8 @@ const SOC_COLORS = ["#047857", "#0d9488", "#0891b2", "#2563eb", "#7c3aed"];
 
 export default function MedecinVueEnsemble() {
   const { user } = useAuth();
-  const unread = 0; // sera alimenté par les vraies alertes CAPM/ANSM/EMA
+  // Badge alertes non lues — live depuis localStorage (même clé que alertes/page.tsx)
+  const unread = useUnreadAlertsCount(TOTAL_PUBLISHED_ALERTS);
 
   const [stats, setStats] = useState<ReportStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -92,33 +96,46 @@ export default function MedecinVueEnsemble() {
           </div>
         ) : (
           <>
-            {/* KPI cards */}
+            {/* KPI cards — cliquables → mes-declarations filtrées */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <SectionCard>
-                <p className="text-xs text-gray-500 mb-1">Total déclarations</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
-                <p className="text-xs text-gray-400 mt-1">depuis votre inscription</p>
-              </SectionCard>
-              <SectionCard>
-                <p className="text-xs text-gray-500 mb-1">Ce mois-ci</p>
-                <p className="text-3xl font-bold text-emerald-600">{stats.this_month}</p>
-                <p className="text-xs text-gray-400 mt-1">{new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}</p>
-              </SectionCard>
-              <SectionCard>
-                <p className="text-xs text-gray-500 mb-1">Effets graves</p>
-                <p className="text-3xl font-bold text-red-600">{stats.graves} <span className="text-base font-medium text-gray-400">({stats.graves_pct}%)</span></p>
-                <p className="text-xs text-gray-400 mt-1">critères ICH E2A</p>
-              </SectionCard>
-              <SectionCard>
-                <p className="text-xs text-gray-500 mb-1">Score Bégaud moyen</p>
-                {begaudAvg !== null ? (
-                  <span className={`inline-block text-sm font-bold px-2.5 py-1 rounded-full ${begaudBadge.color}`}>
-                    I{begaudAvg.toFixed(1)} — {begaudBadge.label}
-                  </span>
-                ) : (
-                  <p className="text-xs text-gray-400 mt-1">Disponible après votre première déclaration avec score d&apos;imputabilité</p>
-                )}
-              </SectionCard>
+              <Link href="/dashboard/medecin/mes-declarations" className="block group">
+                <SectionCard className="hover:shadow-md transition-shadow cursor-pointer group-hover:border-teal-200">
+                  <p className="text-xs text-gray-500 mb-1">Total déclarations</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+                  <p className="text-xs text-gray-400 mt-1 group-hover:text-teal-600">Voir toutes →</p>
+                </SectionCard>
+              </Link>
+              <Link href="/dashboard/medecin/mes-declarations" className="block group">
+                <SectionCard className="hover:shadow-md transition-shadow cursor-pointer group-hover:border-teal-200">
+                  <p className="text-xs text-gray-500 mb-1">Ce mois-ci</p>
+                  <p className="text-3xl font-bold text-emerald-600">{stats.this_month}</p>
+                  <p className="text-xs text-gray-400 mt-1">{new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}</p>
+                </SectionCard>
+              </Link>
+              <Link href="/dashboard/medecin/mes-declarations?gravite=grave" className="block group">
+                <SectionCard className="hover:shadow-md transition-shadow cursor-pointer group-hover:border-red-200">
+                  <p className="text-xs text-gray-500 mb-1">Effets graves</p>
+                  <p className="text-3xl font-bold text-red-600">
+                    {stats.graves}{" "}
+                    <span className="text-base font-medium text-gray-400">({stats.graves_pct}%)</span>
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1 group-hover:text-red-500">Critères ICH E2A →</p>
+                </SectionCard>
+              </Link>
+              <Link href="/dashboard/medecin/alertes" className="block group">
+                <SectionCard className="hover:shadow-md transition-shadow cursor-pointer group-hover:border-amber-200">
+                  <p className="text-xs text-gray-500 mb-1">Alertes de sécurité</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-3xl font-bold text-amber-600">{unread}</p>
+                    {unread > 0 && (
+                      <span className="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">non lues</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 group-hover:text-amber-600">
+                    {unread > 0 ? "Voir les alertes →" : "Toutes lues ✓"}
+                  </p>
+                </SectionCard>
+              </Link>
             </div>
 
             {stats.total === 0 ? (
@@ -134,11 +151,35 @@ export default function MedecinVueEnsemble() {
                   </p>
                 </div>
 
-                {/* Checklist 3 étapes */}
+                {/* Checklist — 4 étapes dont démo en premier */}
                 <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-                  <div className="px-6 py-4 border-b border-gray-100">
+                  <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <p className="text-sm font-bold text-gray-700">Pour commencer</p>
+                    <span className="text-xs text-gray-400">4 étapes</span>
                   </div>
+
+                  {/* Étape 0 — Démo (toujours affichée pour les nouveaux) */}
+                  <Link href="/demo" className="flex items-center gap-4 px-6 py-4 hover:bg-amber-50/60 transition-colors border-b border-gray-100 group">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: "rgba(212,175,55,0.15)" }}>
+                      <span style={{ color: "var(--md-gold)" }} className="font-bold text-sm">▶</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-gray-800 group-hover:text-amber-700">
+                          Explorer en mode démonstration
+                        </p>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                          style={{ background: "rgba(212,175,55,0.2)", color: "var(--md-gold)" }}>
+                          DEMO
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Cas clinique Paclitaxel pré-rempli — aucune donnée réelle soumise
+                      </p>
+                    </div>
+                    <span className="text-gray-300 group-hover:text-amber-400 text-lg shrink-0">→</span>
+                  </Link>
 
                   {/* Étape 1 — Profil */}
                   <Link href="/dashboard/medecin/profil" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100 group">
@@ -155,7 +196,9 @@ export default function MedecinVueEnsemble() {
                         Spécialité, N° Ordre, établissement — requis pour les déclarations officielles
                       </p>
                     </div>
-                    <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
+                    <span className={`text-lg shrink-0 ${user?.specialite ? "text-emerald-400" : "text-gray-300 group-hover:text-emerald-500"}`}>
+                      {user?.specialite ? "✓" : "→"}
+                    </span>
                   </Link>
 
                   {/* Étape 2 — Première déclaration */}
@@ -174,17 +217,24 @@ export default function MedecinVueEnsemble() {
                     <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
                   </Link>
 
-                  {/* Étape 3 — Référentiel */}
-                  <Link href="/dashboard/medecin/molecules" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors group">
-                    <div className="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
-                      <span className="text-violet-600 font-bold text-sm">3</span>
+                  {/* Étape 3 — Alertes */}
+                  <Link href="/dashboard/medecin/alertes" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors group">
+                    <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                      <span className="text-amber-600 font-bold text-sm">3</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">
-                        Explorer le référentiel médicament
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">
+                          Consulter les alertes de sécurité
+                        </p>
+                        {unread > 0 && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">
+                            {unread} non lues
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        Recherchez une molécule, vérifiez ses contre-indications et interactions
+                        Veille réglementaire CAPM, EMA, ANSM — personnalisée pour vos molécules
                       </p>
                     </div>
                     <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>

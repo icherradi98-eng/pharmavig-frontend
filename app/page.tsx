@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const C = {
   petrol:     "#0F5B57",
@@ -13,6 +13,76 @@ const C = {
   cream:      "#F7F3EE",
   creamDark:  "#ede8e2",
 };
+
+const NAV_LINKS = [
+  ["Référentiel", "/medicaments"],
+  ["Démo", "/demo"],
+  ["Contact", "/contact"],
+  ["Connexion", "/login"],
+] as const;
+
+function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  return (
+    <nav className="sticky top-0 z-50 backdrop-blur-md" style={{ background: "rgba(247,243,238,0.93)", borderBottom: `1px solid ${C.creamDark}` }}>
+      <div className="flex items-center justify-between px-6 md:px-12 py-3">
+        <Link href="/" onClick={() => setMenuOpen(false)}><MaiaLogo /></Link>
+
+        <div className="hidden md:flex items-center gap-1">
+          {NAV_LINKS.map(([label, href]) => (
+            <Link key={label} href={href} className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: "#6b7280" }}
+              onMouseEnter={e => (e.currentTarget.style.color = C.petrol)} onMouseLeave={e => (e.currentTarget.style.color = "#6b7280")}>
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link href="/register" className="px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm" style={{ background: C.petrol, color: "#fff" }}>
+            Commencer
+          </Link>
+          <button
+            className="md:hidden flex flex-col justify-center items-center w-9 h-9 rounded-lg gap-1.5 transition-colors"
+            style={{ background: menuOpen ? C.creamDark : "transparent" }}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label="Menu"
+          >
+            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: C.night, transform: menuOpen ? "translateY(4px) rotate(45deg)" : "none" }} />
+            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: C.night, opacity: menuOpen ? 0 : 1 }} />
+            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: C.night, transform: menuOpen ? "translateY(-4px) rotate(-45deg)" : "none" }} />
+          </button>
+        </div>
+      </div>
+
+      {menuOpen && (
+        <div className="md:hidden px-6 pb-4 flex flex-col gap-1" style={{ borderTop: `1px solid ${C.creamDark}` }}>
+          {NAV_LINKS.map(([label, href]) => (
+            <Link
+              key={label}
+              href={href}
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors"
+              style={{ color: C.night }}
+              onMouseEnter={e => { e.currentTarget.style.background = C.creamDark; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+            >
+              {label}
+              <svg className="w-4 h-4 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </Link>
+          ))}
+          <Link
+            href="/register"
+            onClick={() => setMenuOpen(false)}
+            className="mt-2 w-full text-center py-3 rounded-xl text-sm font-bold"
+            style={{ background: C.petrol, color: "#fff" }}
+          >
+            Commencer gratuitement →
+          </Link>
+        </div>
+      )}
+    </nav>
+  );
+}
 
 function IconArrow() {
   return <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>;
@@ -46,16 +116,14 @@ function MaiaLogo({ dark = false }: { dark?: boolean }) {
   );
 }
 
-// ── HERO DASHBOARD — version grande ──────────────────────────────────────────
+// ── HERO DASHBOARD ────────────────────────────────────────────────────────────
 
 function HeroDashboard() {
   return (
     <div className="relative w-full select-none">
-      {/* Glow */}
       <div className="absolute -inset-6 rounded-3xl blur-3xl opacity-20 pointer-events-none" style={{ background: `radial-gradient(ellipse at 50% 50%, ${C.petrol}, transparent 70%)` }} />
 
       <div className="relative rounded-2xl overflow-hidden shadow-2xl" style={{ border: `1px solid rgba(15,91,87,0.2)` }}>
-        {/* Browser bar */}
         <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: C.night, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-red-400"/><div className="w-2.5 h-2.5 rounded-full bg-amber-400"/><div className="w-2.5 h-2.5 rounded-full" style={{ background: C.mint }}/></div>
           <div className="flex-1 mx-3 rounded-md px-3 py-1 text-[10px]" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.3)" }}>maiadawa.ma/dashboard · Dr. Cherradi · Oncologie</div>
@@ -66,7 +134,6 @@ function HeroDashboard() {
         </div>
 
         <div className="flex" style={{ background: C.cream }}>
-          {/* Sidebar */}
           <div className="w-48 shrink-0 hidden lg:flex flex-col" style={{ background: C.night }}>
             <div className="px-4 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
               <MaiaLogo dark />
@@ -77,7 +144,7 @@ function HeroDashboard() {
                 { label: "Vue d'ensemble", active: true },
                 { label: "Déclarations", badge: "" },
                 { label: "Alertes sécurité", badge: "3" },
-                { label: "Surveillance", badge: "12" },
+                { label: "Suivi patients", badge: "12" },
                 { label: "Ordonnances", badge: "" },
                 { label: "Molécules", badge: "" },
               ].map((item) => (
@@ -96,9 +163,7 @@ function HeroDashboard() {
             </div>
           </div>
 
-          {/* Main */}
           <div className="flex-1 p-4 space-y-3">
-            {/* Alert urgente */}
             <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl" style={{ background: "#fde8e8", border: "1px solid #fecaca" }}>
               <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ background: "#C0392B" }}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M12 9v4m0 4h.01"/></svg>
@@ -110,13 +175,12 @@ function HeroDashboard() {
               <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" style={{ background: "#C0392B", color: "#fff" }}>Urgent</span>
             </div>
 
-            {/* KPI row */}
             <div className="grid grid-cols-4 gap-2.5">
               {[
                 { label: "Déclarations", val: "23", sub: "+5 ce mois", color: C.night, bg: "#fff" },
                 { label: "Suivis actifs", val: "12", sub: "2 en attente", color: C.gold, bg: "#fff" },
                 { label: "Alertes actives", val: "3", sub: "1 urgent", color: "#C0392B", bg: "#fff" },
-                { label: "Score Bégaud", val: "2.8", sub: "Vraisemblable", color: C.petrol, bg: "#fff" },
+                { label: "Score Bégaud", val: "I3", sub: "Vraisemblable", color: C.petrol, bg: "#fff" },
               ].map((k) => (
                 <div key={k.label} className="rounded-xl p-3" style={{ background: k.bg, border: "1px solid rgba(15,91,87,0.08)" }}>
                   <p className="text-[10px] mb-1" style={{ color: "#8a9ab0" }}>{k.label}</p>
@@ -126,9 +190,7 @@ function HeroDashboard() {
               ))}
             </div>
 
-            {/* Charts + lists */}
             <div className="grid grid-cols-3 gap-2.5">
-              {/* Activity chart */}
               <div className="col-span-1 rounded-xl p-3 bg-white" style={{ border: "1px solid rgba(15,91,87,0.08)" }}>
                 <p className="text-[10px] font-semibold mb-2" style={{ color: C.night }}>Activité déclarations</p>
                 <div className="flex items-end gap-1" style={{ height: 48 }}>
@@ -139,7 +201,6 @@ function HeroDashboard() {
                 <p className="text-[9px] mt-1.5" style={{ color: "#8a9ab0" }}>6 mois · 23 déclarations</p>
               </div>
 
-              {/* Patients */}
               <div className="col-span-1 rounded-xl p-3 bg-white" style={{ border: "1px solid rgba(15,91,87,0.08)" }}>
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-[10px] font-semibold" style={{ color: C.night }}>Patients en suivi</p>
@@ -163,7 +224,6 @@ function HeroDashboard() {
                 </div>
               </div>
 
-              {/* Alertes */}
               <div className="col-span-1 rounded-xl p-3 bg-white" style={{ border: "1px solid rgba(15,91,87,0.08)" }}>
                 <p className="text-[10px] font-semibold mb-2" style={{ color: C.night }}>Alertes récentes</p>
                 <div className="space-y-1.5">
@@ -189,7 +249,6 @@ function HeroDashboard() {
               </div>
             </div>
 
-            {/* Déclaration récente */}
             <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl" style={{ background: "rgba(15,91,87,0.07)", border: "1px solid rgba(15,91,87,0.15)" }}>
               <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ background: C.petrol }}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
@@ -205,7 +264,277 @@ function HeroDashboard() {
   );
 }
 
-// ── RÉFÉRENTIEL SECTION ───────────────────────────────────────────────────────
+// ── WALKTHROUGH PRODUIT (4 modules, sticky scroll) ─────────────────────────────
+
+type ModuleId = "decl" | "ref" | "ord" | "suivi";
+
+const MODULES: {
+  id: ModuleId; idx: string; url: string; name: string; free?: boolean;
+  desc: string; meta: string[];
+}[] = [
+  {
+    id: "decl", idx: "01 / 04", url: "maiadawa.ma/declaration", name: "Déclaration", free: true,
+    desc: "Formulaire CIOMS structuré, codage MedDRA automatique, gradation CTCAE, imputabilité de Bégaud calculée, transmission au CAPM.",
+    meta: ["MedDRA", "CTCAE", "Bégaud", "CIOMS · ICH E2B(R3)"],
+  },
+  {
+    id: "ref", idx: "02 / 04", url: "maiadawa.ma/referentiel", name: "Référentiel",
+    desc: "Effets indésirables, contre-indications, interactions, et alertes EMA · FDA · ANSM · CAPM en temps réel — avec les données de terrain marocaines.",
+    meta: ["Alertes officielles", "Interactions", "Données vie réelle"],
+  },
+  {
+    id: "ord", idx: "03 / 04", url: "maiadawa.ma/ordonnance", name: "Ordonnancier",
+    desc: "DCI en autocomplete, posologies structurées, contrôle d'interactions, export PDF A4. Les données patient restent sur votre appareil.",
+    meta: ["PDF A4", "100% local · loi 09-08"],
+  },
+  {
+    id: "suivi", idx: "04 / 04", url: "maiadawa.ma/suivi", name: "Suivi patient",
+    desc: "Questionnaires ePRO automatiques (J+7, J+14, J+21). Une réponse à risque est codée en signal — et pré-remplit la déclaration.",
+    meta: ["ePRO", "Détection de signal", "Lien sécurisé"],
+  },
+];
+
+function ScreenDeclaration() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div><p className="text-sm font-bold" style={{ color: C.night }}>Déclaration de pharmacovigilance</p><p className="text-[11px]" style={{ color: "#8a9ab0" }}>PV-MA-2026-00187 · 8 sections CIOMS</p></div>
+        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>Transmis CAPM</span>
+      </div>
+      <div className="rounded-xl p-3.5 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+        <div className="grid grid-cols-3 gap-2.5">
+          {[["Patient", "F.Z. · 47 ans · F"], ["Médicament", "Pembrolizumab 200mg"], ["Date EI", "02 / 06 / 2026"]].map(([k, v]) => (
+            <div key={k} className="rounded-lg p-2.5" style={{ background: C.cream }}><p className="text-[9px] mb-0.5" style={{ color: "#8a9ab0" }}>{k}</p><p className="text-[11px] font-semibold" style={{ color: C.night }}>{v}</p></div>
+          ))}
+        </div>
+      </div>
+      <div className="rounded-xl p-3.5 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+        <div className="flex items-center justify-between rounded-lg px-3 py-2.5 mb-2" style={{ border: `1px solid ${C.creamDark}` }}>
+          <span className="text-xs" style={{ color: "#8a9ab0" }}>Effet indésirable observé</span><span className="text-xs font-bold" style={{ color: C.night }}>Myocardite</span>
+        </div>
+        <div className="rounded-md px-2.5 py-1.5 font-mono text-[10.5px]" style={{ background: "rgba(15,91,87,0.07)", color: C.petrol }}>MedDRA PT · Myocardite #10028606 — SOC Affections cardiaques · CTCAE Grade 3</div>
+      </div>
+      <div className="rounded-xl p-3.5 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+        <p className="text-[10px] font-bold uppercase tracking-wide mb-2" style={{ color: "#8a9ab0" }}>Imputabilité — méthode de Bégaud</p>
+        <div className="flex gap-1 mb-2">{[1,1,1,0].map((on, i) => <span key={i} className="flex-1 h-2 rounded" style={{ background: on ? C.gold : C.creamDark }} />)}</div>
+        <div className="flex items-center justify-between text-[11px]"><span style={{ color: "#8a9ab0" }}>Score intrinsèque</span><span className="font-bold" style={{ color: C.petrol }}>I3 — Vraisemblable</span></div>
+        <div className="mt-2.5 flex items-center gap-2"><div className="flex-1 h-1.5 rounded-full" style={{ background: C.creamDark }}><div className="h-full rounded-full" style={{ width: "100%", background: C.petrol }} /></div><span className="text-[10px] font-bold whitespace-nowrap" style={{ color: C.petrol }}>PDF CIOMS ↓</span></div>
+      </div>
+    </div>
+  );
+}
+
+function ScreenReferentiel() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div><p className="text-sm font-bold" style={{ color: C.night }}>Référentiel de sécurité</p><p className="text-[11px]" style={{ color: "#8a9ab0" }}>Pembrolizumab · Anti-PD-1 · Immunothérapie</p></div>
+        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" style={{ background: "#fde8e8", color: "#C0392B" }}>2 alertes</span>
+      </div>
+      <div className="flex items-center gap-2 rounded-lg px-3 py-2.5 bg-white text-xs" style={{ border: `1px solid ${C.creamDark}`, color: "#8a9ab0" }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round"/></svg>
+        Rechercher un médicament, une DCI…
+      </div>
+      <div className="grid grid-cols-2 gap-2.5">
+        <div className="rounded-xl p-3 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+          <p className="text-[10px] font-bold uppercase tracking-wide mb-2" style={{ color: "#8a9ab0" }}>EI majeurs connus</p>
+          {["Myocardite (signal EMA)", "Pneumopathie inflammatoire", "Colite immune"].map((ei) => (
+            <div key={ei} className="flex items-start gap-1.5 mb-1.5"><span className="font-bold" style={{ color: C.gold }}>›</span><span className="text-[11px]" style={{ color: "#4a5568" }}>{ei}</span></div>
+          ))}
+        </div>
+        <div className="rounded-xl p-3 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+          <p className="text-[10px] font-bold uppercase tracking-wide mb-2" style={{ color: "#8a9ab0" }}>Alertes réglementaires</p>
+          <div className="rounded-lg p-2 mb-1.5" style={{ background: "rgba(192,57,43,0.1)", border: "1px solid rgba(192,57,43,0.25)" }}>
+            <span className="text-[8px] font-bold px-1.5 py-0.5 rounded text-white" style={{ background: "#C0392B" }}>EMA · URGENT</span>
+            <p className="text-[10px] mt-1" style={{ color: "#4a5568" }}>Monitoring cardiaque avant chaque cycle.</p>
+          </div>
+          <div className="rounded-lg p-2" style={{ background: "rgba(212,175,55,0.12)", border: "1px solid rgba(212,175,55,0.25)" }}>
+            <span className="text-[8px] font-bold px-1.5 py-0.5 rounded text-white" style={{ background: "#92700a" }}>FDA</span>
+            <p className="text-[10px] mt-1" style={{ color: "#4a5568" }}>RCP — encéphalite immune ajoutée.</p>
+          </div>
+        </div>
+      </div>
+      <div className="rounded-xl p-3.5" style={{ background: C.night }}>
+        <div className="flex items-baseline gap-2 mb-2"><span className="text-2xl font-black text-white">89</span><span className="text-[11px]" style={{ color: "rgba(255,255,255,0.5)" }}>cas signalés au Maroc · données terrain</span></div>
+        {[["Pneumopathie", 31, 93], ["Myocardite", 18, 54]].map(([ei, pct, w]) => (
+          <div key={String(ei)} className="mb-1.5">
+            <div className="flex justify-between text-[11px] mb-0.5"><span style={{ color: "rgba(255,255,255,0.6)" }}>{ei}</span><span className="font-bold" style={{ color: C.gold }}>{pct}%</span></div>
+            <div className="h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }}><div className="h-full rounded-full" style={{ width: `${w}%`, background: C.petrol }} /></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScreenOrdonnancier() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div><p className="text-sm font-bold" style={{ color: C.night }}>Nouvelle ordonnance</p><p className="text-[11px]" style={{ color: "#8a9ab0" }}>Dr. I. Cherradi · Oncologie</p></div>
+        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>100% local</span>
+      </div>
+      <div className="rounded-xl p-3.5 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+        <div className="flex items-center justify-between rounded-lg px-3 py-2.5 mb-2.5" style={{ border: `1px solid ${C.creamDark}` }}>
+          <span className="text-xs" style={{ color: "#8a9ab0" }}>DCI</span><span className="text-xs font-bold" style={{ color: C.night }}>Pembrolizumab</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2.5">
+          {[["Dosage", "200 mg"], ["Fréquence", "1× / 3 sem."], ["Durée", "4 cycles"]].map(([k, v]) => (
+            <div key={k} className="rounded-lg p-2.5" style={{ background: C.cream }}><p className="text-[9px] mb-0.5" style={{ color: "#8a9ab0" }}>{k}</p><p className="text-[11px] font-semibold" style={{ color: C.night }}>{v}</p></div>
+          ))}
+        </div>
+      </div>
+      <div className="rounded-xl p-3 flex items-center gap-2.5" style={{ background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.3)" }}>
+        <span className="text-base">⚠️</span>
+        <p className="text-[11px]" style={{ color: "#92700a" }}><strong>Contrôle d&apos;interaction</strong> — aucune interaction majeure détectée avec le traitement en cours.</p>
+      </div>
+      <div className="rounded-xl p-3.5 bg-white flex items-center justify-between" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+        <span className="text-xs font-bold" style={{ color: C.night }}>Ordonnance prête</span>
+        <span className="text-[10px] font-bold whitespace-nowrap" style={{ color: C.petrol }}>Imprimer PDF A4 ↓</span>
+      </div>
+    </div>
+  );
+}
+
+function ScreenSuivi() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div><p className="text-sm font-bold" style={{ color: C.night }}>Suivi patient · ePRO</p><p className="text-[11px]" style={{ color: "#8a9ab0" }}>12 patients actifs · 1 signal</p></div>
+        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" style={{ background: C.goldLight, color: "#92700a" }}>J+14</span>
+      </div>
+      <div className="rounded-xl p-3.5 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+        {[
+          { i: "F", t: "F.Z. · Pembrolizumab", j: "J+14", s: "⚠ Signal", bg: "#fde8e8", col: "#C0392B" },
+          { i: "M", t: "M.B. · Méthotrexate", j: "J+7", s: "✓ RAS", bg: "rgba(15,91,87,0.08)", col: C.petrol },
+          { i: "A", t: "A.O. · Pembrolizumab", j: "J+21", s: "⏳ Attente", bg: "#f3f4f6", col: "#9ca3af" },
+        ].map((p, idx) => (
+          <div key={p.i} className="flex items-center justify-between py-2" style={{ borderBottom: idx < 2 ? `1px solid ${C.cream}` : "none" }}>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>{p.i}</span>
+              <span style={{ color: C.night }}>{p.t} <span style={{ color: "#8a9ab0" }}>{p.j}</span></span>
+            </div>
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ background: p.bg, color: p.col }}>{p.s}</span>
+          </div>
+        ))}
+      </div>
+      <div className="rounded-xl p-3.5 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
+        <p className="text-[11px] mb-2" style={{ color: "#4a5568" }}>Réponse de F.Z. — check-in J+14 :</p>
+        <div className="flex flex-wrap gap-1.5">
+          <span className="text-[11px] px-2.5 py-1.5 rounded-full font-bold" style={{ background: "#fde8e8", color: "#C0392B", border: "1px solid #fecaca" }}>Essoufflement</span>
+          <span className="text-[11px] px-2.5 py-1.5 rounded-full text-white" style={{ background: C.petrol }}>Fatigue</span>
+          <span className="text-[11px] px-2.5 py-1.5 rounded-full" style={{ background: C.cream, border: `1px solid ${C.creamDark}` }}>Nausées</span>
+        </div>
+        <div className="rounded-md px-2.5 py-1.5 font-mono text-[10.5px] mt-2.5" style={{ background: "rgba(15,91,87,0.07)", color: C.petrol }}>→ Signal codé · pré-remplit une déclaration CIOMS</div>
+      </div>
+    </div>
+  );
+}
+
+function ProductWindow({ active }: { active: ModuleId }) {
+  const mod = MODULES.find((m) => m.id === active)!;
+  return (
+    <div className="w-full rounded-2xl overflow-hidden bg-white" style={{ boxShadow: "0 24px 70px -30px rgba(15,91,87,0.5)", border: "1px solid rgba(15,91,87,0.12)" }}>
+      <div className="flex items-center gap-2 px-3.5 py-2.5" style={{ background: C.night }}>
+        <div className="flex gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-red-400" /><span className="w-2.5 h-2.5 rounded-full bg-amber-400" /><span className="w-2.5 h-2.5 rounded-full" style={{ background: C.mint }} /></div>
+        <div className="flex-1 mx-2 rounded-md px-3 py-1 text-[10px]" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.35)" }}>{mod.url}</div>
+        <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: C.mint }} /><span className="text-[9px]" style={{ color: C.mint }}>En direct</span></div>
+      </div>
+      <div className="p-4" style={{ background: C.cream, minHeight: 440 }}>
+        <div key={active} className="mw-fade">
+          {active === "decl" && <ScreenDeclaration />}
+          {active === "ref" && <ScreenReferentiel />}
+          {active === "ord" && <ScreenOrdonnancier />}
+          {active === "suivi" && <ScreenSuivi />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductWalkthrough() {
+  const [active, setActive] = useState<ModuleId>("decl");
+
+  useEffect(() => {
+    const els = MODULES
+      .map((m) => document.getElementById(`mod-${m.id}`))
+      .filter(Boolean) as HTMLElement[];
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.getAttribute("data-mod") as ModuleId);
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <section className="w-full px-6 md:px-12 py-12 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-10">
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: C.gold }}>La plateforme</p>
+          <h2 className="text-3xl font-bold max-w-2xl" style={{ color: C.night }}>Quatre modules qui partagent les mêmes données</h2>
+          <p className="text-base mt-3 max-w-xl" style={{ color: "#6b7280" }}>
+            La déclaration est gratuite et reste le point d&apos;entrée. Les autres modules s&apos;ajoutent quand vous en avez besoin.
+          </p>
+        </div>
+
+        {/* Mobile : écran produit sticky en haut */}
+        <div className="lg:hidden sticky top-16 z-20 -mx-6 px-6 py-3 mb-4" style={{ background: "rgba(247,243,238,0.96)", backdropFilter: "blur(8px)", borderBottom: `1px solid ${C.creamDark}` }}>
+          <ProductWindow active={active} />
+        </div>
+
+        <div className="grid lg:grid-cols-[340px_1fr] gap-12 items-start">
+          {/* Légendes (cibles de scroll) */}
+          <div>
+            {MODULES.map((m) => {
+              const on = active === m.id;
+              return (
+                <div
+                  key={m.id}
+                  id={`mod-${m.id}`}
+                  data-mod={m.id}
+                  className="lg:min-h-[78vh] flex flex-col justify-center py-7 lg:py-0 pl-5 transition-all duration-500"
+                  style={{ borderLeft: `2px solid ${on ? C.gold : C.creamDark}`, opacity: on ? 1 : 0.45 }}
+                >
+                  <p className="text-xs font-semibold tracking-wide mb-2.5" style={{ color: "#8a9ab0" }}>{m.idx}</p>
+                  <h3 className="text-2xl font-bold mb-1.5 flex items-center gap-2.5" style={{ color: C.night }}>
+                    {m.name}
+                    {m.free && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>Gratuit</span>}
+                  </h3>
+                  <p className="text-sm leading-relaxed max-w-sm" style={{ color: "#6b7280" }}>{m.desc}</p>
+                  <div className="flex flex-wrap gap-1.5 mt-3.5">
+                    {m.meta.map((x) => (
+                      <span key={x} className="text-[10.5px] font-semibold px-2.5 py-1 rounded-lg bg-white" style={{ border: `1px solid ${C.creamDark}`, color: "#4a5568" }}>{x}</span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Écran produit fixe (desktop) */}
+          <div className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
+            <ProductWindow active={active} />
+          </div>
+        </div>
+
+        {/* Liaison — énoncée une seule fois */}
+        <div className="mt-8 rounded-2xl px-7 py-5 flex items-center gap-4" style={{ background: C.cream, border: `1px solid ${C.creamDark}` }}>
+          <span className="text-xl" style={{ color: C.gold }}>↪</span>
+          <p className="text-sm leading-relaxed" style={{ color: "#4a5568" }}>
+            <strong style={{ color: C.night }}>Les modules ne sont pas cloisonnés.</strong> Un signal de suivi devient une déclaration pré-remplie ; une déclaration enrichit le référentiel ; le référentiel signale les risques au moment de prescrire.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── RÉFÉRENTIEL SECTION (interactif) ──────────────────────────────────────────
 
 const REF_DRUGS = [
   { name: "Metformine", class: "Biguanide · Antidiabétique", alerts: 0, eis: ["Acidose lactique (rare, grave)", "Nausées, diarrhée", "Carence B12"], cas: 34, signal: false },
@@ -230,7 +559,7 @@ function ReferentielSection() {
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-0 divide-x divide-white/10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:divide-x divide-white/10">
         <div className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div><h3 className="font-bold text-base text-white">{drug.name}</h3><p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{drug.class}</p></div>
@@ -239,7 +568,7 @@ function ReferentielSection() {
           <p className="text-[9px] font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.25)" }}>EI majeurs connus</p>
           {drug.eis.map((ei) => <div key={ei} className="flex items-start gap-1.5 mb-1.5"><span style={{ color: C.gold }}>›</span><span className="text-[11px]" style={{ color: "rgba(255,255,255,0.65)" }}>{ei}</span></div>)}
         </div>
-        <div className="p-4" style={{ borderLeft: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="p-4">
           <p className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.25)" }}>Alertes réglementaires</p>
           {drug.alerts === 0 ? (
             <div className="flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.mint} strokeWidth="2.5" strokeLinecap="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg><p className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>Aucune alerte active</p></div>
@@ -261,7 +590,7 @@ function ReferentielSection() {
             </div>
           )}
         </div>
-        <div className="p-4" style={{ borderLeft: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="p-4">
           <p className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.25)" }}>Données terrain MAIA DAWA</p>
           <div className="flex items-center gap-3 mb-3">
             <div className="text-3xl font-black text-white">{drug.cas}</div>
@@ -313,47 +642,32 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: C.cream }}>
 
-      {/* ── NAVBAR ── */}
-      <nav className="flex items-center justify-between px-6 md:px-12 py-3 sticky top-0 z-50 backdrop-blur-md" style={{ background: "rgba(247,243,238,0.93)", borderBottom: `1px solid ${C.creamDark}` }}>
-        <Link href="/"><MaiaLogo /></Link>
-        <div className="hidden md:flex items-center gap-1">
-          {[["Référentiel", "/medicaments"], ["À propos", "/about"], ["Connexion", "/login"]].map(([label, href]) => (
-            <Link key={label} href={href} className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: "#6b7280" }}
-              onMouseEnter={e => (e.currentTarget.style.color = C.petrol)} onMouseLeave={e => (e.currentTarget.style.color = "#6b7280")}>{label}</Link>
-          ))}
-        </div>
-        <Link href="/register" className="px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm" style={{ background: C.petrol, color: "#fff" }}
-          onMouseEnter={e => (e.currentTarget.style.background = C.petrolDark)} onMouseLeave={e => (e.currentTarget.style.background = C.petrol)}>
-          Commencer gratuitement
-        </Link>
-      </nav>
+      <Navbar />
 
       <main className="flex-1">
 
         {/* ── HERO ── */}
-        <section className="w-full px-6 md:px-12 pt-10 pb-8" style={{ background: `linear-gradient(160deg, ${C.cream} 0%, #fff 55%, rgba(15,91,87,0.03) 100%)` }}>
+        <section className="w-full px-6 md:px-12 pt-12 pb-10" style={{ background: `linear-gradient(160deg, ${C.cream} 0%, #fff 55%, rgba(15,91,87,0.03) 100%)` }}>
           <div className="max-w-7xl mx-auto">
-            {/* Top: badge + headline + CTA */}
             <div className="flex flex-col lg:flex-row lg:items-end gap-6 mb-8">
               <div className="flex-1">
-                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white" style={{ border: `1px solid ${C.creamDark}` }}>
+                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-5 bg-white" style={{ border: `1px solid ${C.creamDark}` }}>
                   <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: C.mint }} />
                   <span className="text-xs font-medium" style={{ color: "#4a5568" }}>Plateforme en service · Maroc 🇲🇦</span>
                 </div>
-                <h1 className="text-5xl md:text-6xl font-black leading-[1.05] tracking-tight mb-4" style={{ color: C.night }}>
-                  La sécurité<br />
-                  <span style={{ color: C.petrol }}>médicamenteuse</span><br />
-                  <span className="text-4xl md:text-5xl font-bold" style={{ color: "#6b7280" }}>numérisée au Maroc</span>
+                <h1 className="text-4xl md:text-5xl font-black leading-[1.08] tracking-tight mb-4" style={{ color: C.night }}>
+                  La sécurité médicamenteuse,<br />
+                  <span style={{ color: C.petrol }}>intégrée à la pratique clinique.</span>
                 </h1>
-                <p className="text-base leading-relaxed max-w-lg mb-5" style={{ color: "#6b7280" }}>
-                  Déclaration, suivi patient ePRO, alertes personnalisées et référentiel médicament — depuis un seul outil conforme aux standards CAPM · ICH E2B · Bégaud.
+                <p className="text-base leading-relaxed max-w-lg mb-6" style={{ color: "#6b7280" }}>
+                  Déclaration, référentiel, ordonnancier et suivi patient — réunis dans une plateforme conforme aux standards CAPM · ICH E2B · Bégaud.
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-5">
                   <Link href="/register" className="px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 shadow-sm transition-all" style={{ background: C.petrol, color: "#fff" }}>
                     Commencer gratuitement <IconArrow />
                   </Link>
-                  <Link href="/medicaments" className="px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 bg-white transition-colors" style={{ border: `1px solid ${C.creamDark}`, color: C.night }}>
-                    Explorer le référentiel
+                  <Link href="/dashboard/invite" className="px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 bg-white transition-colors" style={{ border: `1px solid ${C.creamDark}`, color: C.night }}>
+                    Déclarer sans compte
                   </Link>
                 </div>
                 <div className="flex flex-wrap gap-4 text-xs" style={{ color: "#8a9ab0" }}>
@@ -363,161 +677,40 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Trust metrics — vertical right */}
-              <div className="hidden lg:flex flex-col gap-2 shrink-0 pb-1">
-                {[{ val: "95%", label: "EIM non signalés" }, { val: "5 min", label: "par déclaration" }, { val: "5 modules", label: "intégrés" }, { val: "Loi 17-04", label: "conforme" }].map(s => (
+              <div className="hidden lg:flex flex-col gap-3 shrink-0 pb-1">
+                {[{ val: "95%", label: "des EIM jamais signalés" }, { val: "5 min", label: "par déclaration complète" }, { val: "CAPM", label: "compatible · ICH E2B" }].map(s => (
                   <div key={s.val} className="text-right">
-                    <div className="text-xl font-black" style={{ color: C.petrol }}>{s.val}</div>
-                    <div className="text-[10px]" style={{ color: "#8a9ab0" }}>{s.label}</div>
+                    <div className="text-2xl font-black" style={{ color: C.petrol }}>{s.val}</div>
+                    <div className="text-[11px]" style={{ color: "#8a9ab0" }}>{s.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Dashboard — pleine largeur */}
             <HeroDashboard />
           </div>
         </section>
 
-        {/* ── TRUST BAR ── */}
-        <section className="w-full py-4 px-6 md:px-12 bg-white" style={{ borderTop: `1px solid ${C.creamDark}`, borderBottom: `1px solid ${C.creamDark}` }}>
-          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            {[
-              { val: "95%", label: "des EIM jamais signalés au Maroc" },
-              { val: "5 min", label: "pour une déclaration complète" },
-              { val: "ICH E2B R3", label: "standard international" },
-              { val: "CAPM", label: "compatible officiel" },
-              { val: "Bégaud", label: "méthode d'imputabilité" },
-            ].map((s, i) => (
-              <div key={i} className="flex items-center gap-2.5">
-                <span className="text-lg font-black" style={{ color: C.petrol }}>{s.val}</span>
-                <span className="text-xs" style={{ color: "#8a9ab0" }}>{s.label}</span>
-              </div>
-            ))}
+        {/* ── BANDE PROBLÈME (calme, factuelle) ── */}
+        <section className="w-full px-6 md:px-12 py-7" style={{ background: C.night }}>
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+            <span className="text-4xl font-black shrink-0" style={{ color: C.gold }}>95%</span>
+            <p className="text-base leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
+              Au Maroc, près de <strong className="text-white">95% des effets indésirables ne sont jamais signalés</strong> — le plus souvent par manque d&apos;outil intégré, pas par manque de volonté. MAIA DAWA place la déclaration là où elle doit être : dans le flux clinique.
+            </p>
           </div>
         </section>
 
-        {/* ── PROBLÈME + FEATURES côte à côte ── */}
-        <section className="w-full px-6 md:px-12 py-10" style={{ background: C.night }}>
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
-            {/* Problème */}
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold }}>Le problème</p>
-              <div className="flex items-baseline gap-3 mb-3">
-                <span className="text-7xl font-black" style={{ color: C.gold }}>95%</span>
-                <span className="text-2xl font-bold text-white leading-tight">des effets<br />indésirables<br />non signalés</span>
-              </div>
-              <p className="text-sm leading-relaxed mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
-                Au Maroc, la pharmacovigilance repose encore sur des formulaires papier et la mémoire des professionnels. MAIA DAWA intègre la déclaration directement dans la pratique clinique.
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {[["Formulaires papier → PDF", "Déclaration numérique en 5 min"], ["Alertes manuelles", "Alertes en temps réel"], ["Aucun suivi patient", "Suivi ePRO automatisé"], ["Données dispersées", "Référentiel centralisé"]].map(([before, after]) => (
-                  <div key={before} className="rounded-lg p-2.5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                    <p className="text-[10px] line-through mb-0.5" style={{ color: "rgba(255,255,255,0.25)" }}>{before}</p>
-                    <p className="text-[11px] font-semibold" style={{ color: C.gold }}>{after}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* ── WALKTHROUGH PRODUIT ── */}
+        <ProductWalkthrough />
 
-            {/* 4 features */}
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.mint} strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="5" r="2"/><circle cx="19" cy="14" r="2"/><circle cx="5" cy="14" r="2"/><line x1="12" y1="7" x2="19" y2="12"/><line x1="12" y1="7" x2="5" y2="12"/></svg>, title: "Référentiel", desc: "Base nationale DMP + OMS. Alertes EMA·FDA·ANSM·CAPM en temps réel." },
-                { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="1.8" strokeLinecap="round"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>, title: "Alertes", desc: "Uniquement les molécules que vous prescrivez. Filtrage intelligent par spécialité." },
-                { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2FA88F" strokeWidth="1.8" strokeLinecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>, title: "Ordonnancier", desc: "DCI autocomplete, posologies structurées, PDF A4 imprimable. 100% local." },
-                { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C0392B" strokeWidth="1.8" strokeLinecap="round"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>, title: "Suivi ePRO", desc: "Check-ins automatiques J+7/14/21. Chaque signal → déclaration pré-remplie." },
-              ].map((f) => (
-                <div key={f.title} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <div className="mb-2">{f.icon}</div>
-                  <p className="font-bold text-sm text-white mb-1">{f.title}</p>
-                  <p className="text-[11px] leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>{f.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── FEATURES DÉTAILLÉES 2 colonnes ── */}
-        <section className="w-full px-6 md:px-12 py-10 bg-white">
+        {/* ── RÉFÉRENTIEL (interactif) ── */}
+        <section className="w-full px-6 md:px-12 py-12" style={{ background: C.cream }}>
           <div className="max-w-7xl mx-auto">
             <div className="flex items-end justify-between mb-6">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: C.gold }}>Une seule plateforme</p>
-                <h2 className="text-3xl font-bold" style={{ color: C.night }}>Tout ce qu&apos;il vous faut, intégré</h2>
-              </div>
-              <Link href="/register" className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors" style={{ background: C.petrol, color: "#fff" }}>
-                Commencer gratuitement <IconArrow />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Card large gauche */}
-              <div className="row-span-2 rounded-2xl p-6 flex flex-col justify-between" style={{ background: C.cream, border: `1px solid ${C.creamDark}` }}>
-                <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg mb-4" style={{ background: "rgba(15,91,87,0.1)" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.petrol} strokeWidth="2" strokeLinecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    <span className="text-xs font-bold uppercase tracking-wide" style={{ color: C.petrol }}>Déclaration pharmacovigilance</span>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2" style={{ color: C.night }}>Formulaire CIOMS pré-rempli, PDF généré automatiquement</h3>
-                  <p className="text-sm mb-4" style={{ color: "#6b7280" }}>Imputabilité Bégaud calculée automatiquement. Export PDF CIOMS conforme. Transmission directe au CAPM en 1 clic.</p>
-                  <ul className="space-y-2 mb-5">
-                    {["Méthode Bégaud intégrée (0→4)", "8 sections CIOMS complètes", "Référence PV-MA-XXXX générée", "Historique et suivi du statut CAPM"].map(item => (
-                      <li key={item} className="flex items-center gap-2 text-sm" style={{ color: "#4a5568" }}><IconCheck />{item}</li>
-                    ))}
-                  </ul>
-                </div>
-                {/* Mini mockup déclaration */}
-                <div className="bg-white rounded-xl p-3 shadow-sm" style={{ border: `1px solid rgba(15,91,87,0.1)` }}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-bold" style={{ color: C.night }}>PV-MA-2026-00187</span>
-                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>Transmis CAPM</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[["Patient", "F.Z. · 47 ans · F"], ["Médicament", "Pembrolizumab 200mg"], ["Imputabilité", "Bégaud 3 — Vraisemblable"]].map(([k, v]) => (
-                      <div key={k} className="rounded-lg p-2" style={{ background: C.cream }}>
-                        <p className="text-[9px] mb-0.5" style={{ color: "#8a9ab0" }}>{k}</p>
-                        <p className="text-[10px] font-semibold" style={{ color: C.night }}>{v}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-2 pt-2 border-t flex items-center gap-2" style={{ borderColor: C.creamDark }}>
-                    <div className="flex-1 h-1.5 rounded-full" style={{ background: C.creamDark }}>
-                      <div className="h-full rounded-full" style={{ width: "100%", background: C.petrol }} />
-                    </div>
-                    <span className="text-[9px] font-bold" style={{ color: C.petrol }}>PDF CIOMS ↓</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 3 cards droite */}
-              {[
-                { color: C.gold, bg: C.goldLight, title: "Alertes de sécurité en temps réel", desc: "EMA · FDA · ANSM · CAPM filtrées selon vos molécules prescrites. Zéro bruit.", items: ["Filtrage par spécialité et molécules", "Criticité : urgent / important / info", "Lien vers source officielle"] },
-                { color: C.mint, bg: "rgba(47,168,143,0.1)", title: "Surveillance patient ePRO", desc: "Check-ins automatiques. Le patient répond en 2 min via un lien sécurisé.", items: ["Protocoles J+7, J+14, J+21", "Détection signal urgent automatique", "Notification médecin immédiate"] },
-                { color: C.petrol, bg: "rgba(15,91,87,0.08)", title: "Ordonnancier professionnel", desc: "DCI, posologies, contre-indications — stocké uniquement sur votre appareil.", items: ["Autocomplete DCI + alertes interactions", "PDF A4 conforme CAPM", "Historique complet local"] },
-              ].map((c) => (
-                <div key={c.title} className="rounded-2xl p-5 bg-white" style={{ border: `1px solid ${C.creamDark}` }}>
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-3" style={{ background: c.bg }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.color} strokeWidth="2" strokeLinecap="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg>
-                  </div>
-                  <h3 className="font-bold text-sm mb-1.5" style={{ color: C.night }}>{c.title}</h3>
-                  <p className="text-xs mb-3" style={{ color: "#6b7280" }}>{c.desc}</p>
-                  <ul className="space-y-1">
-                    {c.items.map(item => <li key={item} className="flex items-center gap-1.5 text-xs" style={{ color: "#4a5568" }}><IconCheck />{item}</li>)}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── RÉFÉRENTIEL ── */}
-        <section className="w-full px-6 md:px-12 py-10" style={{ background: C.cream }}>
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-end justify-between mb-5">
-              <div>
                 <p className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: C.gold }}>Référentiel</p>
-                <h2 className="text-3xl font-bold" style={{ color: C.night }}>Le premier référentiel marocain<br />de sécurité médicamenteuse</h2>
+                <h2 className="text-3xl font-bold" style={{ color: C.night }}>Le premier référentiel marocain<br className="hidden md:block" /> de sécurité médicamenteuse</h2>
               </div>
               <Link href="/medicaments" className="hidden md:flex items-center gap-2 text-sm font-semibold" style={{ color: C.petrol }}>
                 Explorer tout le référentiel <IconArrow />
@@ -527,51 +720,20 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── WORKFLOW compact ── */}
-        <section className="w-full px-6 md:px-12 py-10 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-6">
-              <p className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: C.gold }}>De la prescription à la déclaration</p>
-              <h2 className="text-2xl font-bold" style={{ color: C.night }}>Comment MAIA DAWA améliore la pharmacovigilance</h2>
-            </div>
-            <div className="grid grid-cols-5 gap-2">
-              {[
-                { num: "01", title: "Prescription", desc: "Ordonnancier DCI" },
-                { num: "02", title: "Suivi patient", desc: "Check-in automatique" },
-                { num: "03", title: "Signal détecté", desc: "EI identifié" },
-                { num: "04", title: "Déclaration", desc: "Formulaire pré-rempli" },
-                { num: "05", title: "Transmission", desc: "CAPM notifié", last: true },
-              ].map((step, i) => (
-                <div key={step.title} className="relative flex flex-col items-center text-center">
-                  {i < 4 && <div className="absolute top-5 left-1/2 w-full h-px" style={{ background: `linear-gradient(to right, ${C.creamDark}, ${C.creamDark})`, zIndex: 0 }} />}
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-2 z-10 shadow-sm relative"
-                    style={{ background: step.last ? C.petrol : "#fff", border: `1px solid ${step.last ? C.petrol : C.creamDark}` }}>
-                    {step.last
-                      ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinecap="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg>
-                      : <span className="text-xs font-black" style={{ color: C.petrol }}>{step.num}</span>}
-                  </div>
-                  <p className="font-semibold text-xs mb-0.5" style={{ color: C.night }}>{step.title}</p>
-                  <p className="text-[10px]" style={{ color: "#8a9ab0" }}>{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── CONFORMITÉ + VISION côte à côte ── */}
-        <section className="w-full px-6 md:px-12 py-10" style={{ background: C.night }}>
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
+        {/* ── CONFORMITÉ + TRAJECTOIRE (calme) ── */}
+        <section className="w-full px-6 md:px-12 py-12" style={{ background: C.night }}>
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold }}>Standards internationaux</p>
-              <h2 className="text-2xl font-bold text-white mb-4">Construit selon les exigences des autorités sanitaires</h2>
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold }}>Standards</p>
+              <h2 className="text-2xl font-bold text-white mb-5">Construit sur les exigences de la pharmacovigilance</h2>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: "Méthode de Bégaud", desc: "Score imputabilité officiel" },
+                  { label: "Méthode de Bégaud", desc: "Imputabilité officielle" },
                   { label: "MedDRA", desc: "Terminologie internationale" },
-                  { label: "ICH E2B(R3)", desc: "Transmission données" },
+                  { label: "ICH E2B(R3)", desc: "Transmission des données" },
+                  { label: "CIOMS", desc: "Format de déclaration" },
                   { label: "Loi 17-04", desc: "Pharmacovigilance Maroc" },
-                  { label: "Loi 09-08 / CNDP", desc: "Protection données" },
-                  { label: "CIOMS", desc: "Format déclaration" },
+                  { label: "Loi 09-08 / CNDP", desc: "Protection des données" },
                 ].map((c) => (
                   <div key={c.label} className="flex items-center gap-2.5 rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(15,91,87,0.4)", color: C.gold }}><IconShield /></div>
@@ -581,10 +743,10 @@ export default function LandingPage() {
               </div>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold }}>Notre vision</p>
-              <h2 className="text-2xl font-bold text-white mb-4">Vers la première infrastructure de pharmacovigilance numérique d&apos;Afrique francophone</h2>
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold }}>Trajectoire</p>
+              <h2 className="text-2xl font-bold text-white mb-4">Déployé au Maroc. Conçu pour l&apos;Afrique francophone.</h2>
               <p className="text-sm leading-relaxed mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
-                Connecter professionnels de santé, patients et autorités sanitaires pour améliorer la détection précoce des risques médicamenteux — faire du Maroc un modèle pour la région.
+                Connecter professionnels de santé, patients et autorités sanitaires pour améliorer la détection précoce des risques médicamenteux.
               </p>
               <div className="grid grid-cols-3 gap-3">
                 {[{ val: "Maroc", sub: "Phase 1 · 2026" }, { val: "Afrique", sub: "Francophone · 2027" }, { val: "MENA", sub: "Expansion · 2028" }].map(s => (
@@ -598,8 +760,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── FAQ + CTA côte à côte ── */}
-        <section className="w-full px-6 md:px-12 py-10 bg-white">
+        {/* ── FAQ + CTA ── */}
+        <section className="w-full px-6 md:px-12 py-12 bg-white">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-start">
             <div>
               <p className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: C.gold }}>FAQ</p>
@@ -608,25 +770,17 @@ export default function LandingPage() {
             </div>
             <div className="rounded-2xl p-8 flex flex-col items-center text-center" style={{ background: C.night }}>
               <MaiaLogo dark />
-              <h3 className="text-2xl font-bold text-white mt-5 mb-3">Rejoignez les professionnels<br />qui font confiance à MAIA DAWA</h3>
-              <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>Ordonnancier · Alertes · Suivi ePRO · Déclaration CAPM<br />Gratuit pour les médecins.</p>
+              <h3 className="text-2xl font-bold text-white mt-5 mb-3">Commencez en quelques minutes</h3>
+              <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>Déclaration · Référentiel · Ordonnancier · Suivi<br />Gratuit pour les médecins.</p>
               <div className="flex flex-col gap-2.5 w-full max-w-xs">
                 <Link href="/register" className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors" style={{ background: C.gold, color: C.night }}>
                   Commencer gratuitement <IconArrow />
                 </Link>
                 <Link href="/dashboard/invite" className="w-full py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 text-white border transition-colors" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
-                  Signaler sans compte
+                  Déclarer sans compte
                 </Link>
               </div>
-              <div className="mt-5 grid grid-cols-3 gap-3 w-full">
-                {[["23+", "Déclarations"], ["12+", "Patients suivis"], ["100%", "Conforme"]].map(([v, l]) => (
-                  <div key={l} className="rounded-lg py-2" style={{ background: "rgba(255,255,255,0.05)" }}>
-                    <p className="font-bold text-sm" style={{ color: C.gold }}>{v}</p>
-                    <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>{l}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="text-[10px] mt-4" style={{ color: "rgba(255,255,255,0.2)" }}>Sans engagement · Données stockées sur votre appareil · CNDP</p>
+              <p className="text-[10px] mt-5" style={{ color: "rgba(255,255,255,0.2)" }}>Sans engagement · Données stockées sur votre appareil · CNDP</p>
             </div>
           </div>
         </section>
@@ -643,9 +797,9 @@ export default function LandingPage() {
               <a href="mailto:contact@maiadawa.ma" className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>contact@maiadawa.ma</a>
             </div>
             {[
-              { title: "Plateforme", links: [["Référentiel", "/medicaments"], ["Ordonnancier", "/ordonnances/nouvelle"], ["Surveillance", "/dashboard/medecin/surveillance"], ["Alertes", "/dashboard/medecin/alertes"]] },
+              { title: "Plateforme", links: [["Référentiel", "/medicaments"], ["Interactions", "/interactions"], ["Ordonnancier", "/ordonnances/nouvelle"], ["Suivi patients", "/dashboard/medecin/suivi"], ["Alertes", "/dashboard/medecin/alertes"]] },
               { title: "Déclarer", links: [["Médecin", "/login"], ["Patient", "/login"], ["Sans compte", "/dashboard/invite"], ["CAPM officiel ↗", "https://capm.ma"]] },
-              { title: "Légal", links: [["Confidentialité", "/confidentialite"], ["Conditions", "/conditions"], ["Mentions légales", "/mentions-legales"], ["À propos", "/about"]] },
+              { title: "Entreprise", links: [["Contact & Partenariats", "/contact"], ["Confidentialité", "/confidentialite"], ["Conditions", "/conditions"], ["À propos", "/about"]] },
             ].map((col) => (
               <div key={col.title}>
                 <h3 className="font-semibold text-[10px] uppercase tracking-wider mb-3 text-white">{col.title}</h3>

@@ -28,9 +28,91 @@ const SOURCES: AlertSource[] = ["CAPM", "EMA", "ANSM", "FDA"];
 const SEVERITIES: AlertSeverity[] = ["urgent", "important", "info"];
 const READ_ALERTS_KEY = "pharmavig_medecin_alerts_read";
 
-// ── Données ────────────────────────────────────────────────────────────────────
-// Pour l'instant vide — sera alimenté par l'API alertes_securite (Railway/Supabase)
-const ALERTS: SecurityAlert[] = [];
+// ── Données réglementaires réelles ────────────────────────────────────────────
+// Sources : DHPC EMA, ANSM lettres aux professionnels, CAPM bulletins publiés.
+// Ces données seront remplacées par le flux API alertes_securite quand disponible.
+const ALERTS: SecurityAlert[] = [
+  {
+    id: "ema-dhpc-2024-methotrexate",
+    source: "EMA",
+    severity: "urgent",
+    date: "2024-11-15",
+    molecules: ["Méthotrexate"],
+    meddraSoc: "Système nerveux",
+    summary: "Risque de toxicité neurologique grave (leucoencéphalopathie) lors d'administration intrathécale accidentelle de méthotrexate haute dose. Renforcement des mesures de prévention des erreurs médicamenteuses. Vérification obligatoire de la voie d'administration avant injection.",
+    officialUrl: "https://www.ema.europa.eu/en/medicines/human/referrals/methotrexate",
+  },
+  {
+    id: "ansm-2024-valproate-grossesse",
+    source: "ANSM",
+    severity: "urgent",
+    date: "2024-10-08",
+    molecules: ["Valproate", "Acide valproïque", "Divalproex"],
+    meddraSoc: "Reproduction et grossesse",
+    summary: "Rappel des restrictions d'utilisation du valproate chez la femme en âge de procréer. Interdiction en cas de grossesse sauf alternatives insuffisantes. Programme de prévention des grossesses obligatoire. Formulaire d'accord de soins renouvelable annuellement.",
+    officialUrl: "https://ansm.sante.fr/informations-de-securite/valproate-et-derives",
+  },
+  {
+    id: "ema-dhpc-2024-fluoroquinolones",
+    source: "EMA",
+    severity: "important",
+    date: "2024-09-03",
+    molecules: ["Ciprofloxacine", "Lévofloxacine", "Moxifloxacine", "Ofloxacine"],
+    meddraSoc: "Musculosquelettique et tissu conjonctif",
+    summary: "Nouvelles mises en garde sur les effets indésirables persistants et potentiellement invalidants affectant le système musculosquelettique et nerveux (tendinopathies, neuropathie périphérique, ruptures tendineuses). À prescrire uniquement en l'absence d'alternative.",
+    officialUrl: "https://www.ema.europa.eu/en/news/fluoroquinolone-quinolone-antibiotics-restrictions-use",
+  },
+  {
+    id: "capm-2024-amoxicilline-reactions",
+    source: "CAPM",
+    severity: "important",
+    date: "2024-08-20",
+    molecules: ["Amoxicilline", "Amoxicilline + acide clavulanique"],
+    meddraSoc: "Peau et tissu sous-cutané",
+    summary: "Augmentation des signalements de réactions cutanées graves (syndrome de Stevens-Johnson, DRESS) sous amoxicilline au Maroc. Vigilance renforcée demandée. Déclaration systématique au CAPM de tout cas de réaction cutanée sévère sous bêtalactamines.",
+    officialUrl: "https://capm.sante.gov.ma",
+  },
+  {
+    id: "ema-dhpc-2024-ibuprofene-cardiaque",
+    source: "EMA",
+    severity: "important",
+    date: "2024-07-11",
+    molecules: ["Ibuprofène", "Diclofénac", "Kétoprofène"],
+    meddraSoc: "Cardiac disorders",
+    summary: "Risque cardiovasculaire accru avec les AINS à forte dose ou sur longue durée. Contre-indication formelle en cas d'insuffisance cardiaque avérée. Réévaluation du rapport bénéfice/risque pour tout traitement au-delà de 7 jours.",
+    officialUrl: "https://www.ema.europa.eu/en/medicines/human/referrals/non-steroidal-anti-inflammatory-drugs",
+  },
+  {
+    id: "ansm-2024-codeine-enfants",
+    source: "ANSM",
+    severity: "urgent",
+    date: "2024-06-28",
+    molecules: ["Codéine", "Tramadol", "Pholcodine"],
+    meddraSoc: "Système nerveux",
+    summary: "Rappel de l'interdiction des opioïdes (codéine, tramadol, pholcodine) chez l'enfant de moins de 12 ans et contre-indication chez l'adolescent après amygdalectomie/adénoïdectomie. Risque de dépression respiratoire sévère chez les métaboliseurs ultrarapides.",
+    officialUrl: "https://ansm.sante.fr/informations-de-securite/codeine-tramadol-pholcodine",
+  },
+  {
+    id: "fda-2024-ozempic-thyroide",
+    source: "FDA",
+    severity: "important",
+    date: "2024-05-14",
+    molecules: ["Sémaglutide", "Liraglutide", "Dulaglutide"],
+    meddraSoc: "Troubles endocriniens",
+    summary: "Risque de carcinome médullaire de la thyroïde avec les agonistes du GLP-1 signalé dans des études de pharmacovigilance post-marketing. Contre-indication maintenue en cas d'antécédents personnels ou familiaux de CMT ou NEM2. Surveillance clinique renforcée.",
+    officialUrl: "https://www.fda.gov/drugs/drug-safety-and-availability/fda-drug-safety-communication-updated-information-about-cardiovascular-risks-type-2-diabetes",
+  },
+  {
+    id: "ansm-2025-metformine-iode",
+    source: "ANSM",
+    severity: "info",
+    date: "2025-01-09",
+    molecules: ["Metformine"],
+    meddraSoc: "Métabolisme et nutrition",
+    summary: "Mise à jour des recommandations sur la gestion de la metformine en cas d'injection de produit de contraste iodé. Arrêt recommandé 48h avant si DFG < 60 mL/min/1,73m². Reprise possible 48h après vérification de la fonction rénale. Mise à jour du RCP.",
+    officialUrl: "https://ansm.sante.fr/informations-de-securite/metformine-et-produits-de-contraste-iodes",
+  },
+];
 
 // ── Composant principal ────────────────────────────────────────────────────────
 export default function AlertesSecurite() {

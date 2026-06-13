@@ -40,6 +40,23 @@ body {
   outline-offset: 2px;
 }
 
+/* ── Walkthrough produit (homepage) ──────────────────────────────────────── */
+@keyframes mwFade {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.mw-fade { animation: mwFade .45s ease both; }
+
+@keyframes mwUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.mw-up { animation: mwUp .6s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mw-fade, .mw-up { animation: none; }
+}
+
 /* ── Impression ordonnance ───────────────────────────────────────────────── */
 @media print {
   body * { visibility: hidden; }

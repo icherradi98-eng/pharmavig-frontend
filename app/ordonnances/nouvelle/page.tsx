@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
 import {
   type DoctorProfile, type RecentPatient, type MedicamentRx, type OrdonnanceType,
   type MedicamentSuggestion, type InteractionResult, type SavedOrdonnance,
@@ -12,6 +13,7 @@ import {
   searchMedicaments, checkInteraction, buildWhatsAppLink, buildSummaryText, normalizeForme, voieFromForme,
   saveToHistory, deleteFromHistory,
 } from "@/lib/ordonnancier";
+import { parsePostologie } from "@/lib/parsePostologie";
 
 const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500";
 const labelCls = "block text-xs text-gray-500 mb-1";
@@ -36,12 +38,33 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+/**
+ * Fusionne le profil localStorage avec les données du compte utilisateur.
+ * Le localStorage prend toujours le dessus (le médecin peut customiser).
+ * Les champs vides sont seedés depuis `user` → plus de profil "fantôme" au premier lancement.
+ */
+function mergeProfileWithUser(saved: DoctorProfile, user: { nom?: string; prenom?: string; specialite?: string; email?: string } | null): DoctorProfile {
+  if (!user) return saved;
+  return {
+    ...saved,
+    nom:        saved.nom        || user.nom        || "",
+    prenom:     saved.prenom     || user.prenom      || "",
+    specialite: saved.specialite || user.specialite  || "",
+  };
+}
+
 export default function NouvelleOrdonnance() {
   const { user } = useAuth();
   const router = useRouter();
 
-  const [profile, setProfile] = useState<DoctorProfile>(() => readProfile());
+  const [profile, setProfile] = useState<DoctorProfile>(() => mergeProfileWithUser(readProfile(), null));
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+
+  // Seeder le profil depuis user dès qu'il est disponible (évite l'en-tête vide au premier rendu)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    setProfile((prev) => mergeProfileWithUser(prev, user));
+  }, [user?.nom, user?.prenom, user?.specialite]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pré-remplissage depuis un renouvellement OU une duplication (lu une seule fois, via sessionStorage)
   // — "renouvellement" reprend tout (même patient) ; "duplication" ne reprend que les médicaments
@@ -88,6 +111,8 @@ export default function NouvelleOrdonnance() {
   const [patientTelephone, setPatientTelephone] = useState("");
 
   const [generated, setGenerated] = useState<SavedOrdonnance | null>(null);
+  const [prescriptionToken, setPrescriptionToken] = useState<string | null>(null);
+  const [suiviLoading, setSuiviLoading] = useState(false);
 
   // Vérification d'interactions — dérivée du contenu (pure), résultat mis en cache
   // et alimenté UNIQUEMENT depuis le callback asynchrone (jamais de setState synchrone dans l'effet).
@@ -145,10 +170,11 @@ export default function NouvelleOrdonnance() {
     return patientNom.trim().length > 0 && meds.some((m) => m.nom.trim().length > 0);
   }
 
-  function handleGenerate() {
+  async function handleGenerate() {
     if (!canGenerate()) return;
     const numero = nextOrdonnanceNumber();
     const validMeds = meds.filter((m) => m.nom.trim());
+    const firstMed = validMeds[0];
     const ordonnance: SavedOrdonnance = {
       id: `${Date.now()}`,
       numero,
@@ -164,6 +190,43 @@ export default function NouvelleOrdonnance() {
     pushRecentPatient({ nom: ordonnance.patient.nom, age: ordonnance.patient.age, dateNaissance: ordonnance.patient.dateNaissance, sexe: ordonnance.patient.sexe, poids: ordonnance.patient.poids, lastUsed: new Date().toISOString() });
     setRecentPatients(readRecentPatients());
     setGenerated(ordonnance);
+
+    // ── S3.1 : Créer la prescription dans le système de suivi si activé ──
+    if (suiviActif && firstMed) {
+      setSuiviLoading(true);
+      // Initiales depuis le nom complet (ex. "Fatima Zahra Alami" → "F.Z.A")
+      const initiales = patientNom.trim()
+        .split(/\s+/)
+        .map((p) => p[0]?.toUpperCase())
+        .filter(Boolean)
+        .join(".");
+
+      const prescriptionPayload: Record<string, unknown> = {
+        patient_initiales: initiales,
+        patient_age:       ageFinal || undefined,
+        patient_sexe:      patientSexe || undefined,
+        drug_dci:          firstMed.dci || firstMed.nom,
+        drug_dose:         firstMed.dosage || undefined,
+        drug_frequence:    posologieLabel(firstMed),
+        drug_duree:        dureeLabel(firstMed),
+        indication:        motif || undefined,
+        date_debut:        date,
+        monitoring_active: true,
+        protocol_type:     "standard",
+        contact_method:    patientTelephone ? "whatsapp" : "email",
+        contact_tel:       patientTelephone || undefined,
+      };
+
+      try {
+        const rx = await api.createPrescription(prescriptionPayload);
+        setPrescriptionToken(rx.access_token);
+      } catch {
+        // Suivi non créé (backend indispo) — l'ordonnance existe quand même
+        setPrescriptionToken(null);
+      } finally {
+        setSuiviLoading(false);
+      }
+    }
   }
 
   const doctorName = (profile.nom || profile.prenom)
@@ -178,18 +241,17 @@ export default function NouvelleOrdonnance() {
         doctorName={doctorName}
         specialite={specialite}
         profile={profile}
+        prescriptionToken={prescriptionToken}
+        suiviLoading={suiviLoading}
+        patientTelephone={patientTelephone}
         onBack={() => {
-          // On retire le brouillon de l'historique pour éviter les doublons si le médecin régénère après modification.
           deleteFromHistory(generated.id);
           setGenerated(null);
+          setPrescriptionToken(null);
         }}
         onGoToSuivi={() => {
-          // On transmet les infos déjà saisies à la prescription suivie pour éviter une double saisie.
-          const initiales = generated.patient.nom
-            .split(/\s+/)
-            .map((p) => p[0]?.toUpperCase())
-            .filter(Boolean)
-            .join(".");
+          // Fallback si l'API suivi a échoué : on redirige vers le formulaire manuel
+          const initiales = generated.patient.nom.split(/\s+/).map((p) => p[0]?.toUpperCase()).filter(Boolean).join(".");
           const firstMed = generated.meds[0];
           const prefill = {
             initiales,
@@ -603,6 +665,33 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
   }
 
   const [autoFilled, setAutoFilled] = useState(false);
+  const [posologieSaisie, setPosologieSaisie] = useState("");
+  const [posologieParsed, setPosologieParsed] = useState<ReturnType<typeof parsePostologie>>(null);
+
+  function handlePosologieSaisie(value: string) {
+    setPosologieSaisie(value);
+    const parsed = parsePostologie(value);
+    setPosologieParsed(parsed);
+    if (parsed && parsed.confidence >= 0.65) {
+      // Auto-remplissage : dosage + fréquence
+      const doseStr = [parsed.dose, parsed.unite].filter(Boolean).join(" ");
+      if (doseStr) onChange({ dosage: doseStr });
+      // Mapper la fréquence parsée vers frequenceNombre + frequenceUnite
+      const freq = parsed.frequence;
+      if (freq) {
+        const match = freq.match(/^(\d+)[×x]\/(jour|semaine|mois)/);
+        if (match) {
+          onChange({ frequenceNombre: match[1], frequenceUnite: match[2] as "jour" | "semaine" | "mois" });
+        } else if (/semaine/i.test(freq)) {
+          const nb = freq.match(/^(\d+)/)?.[1] || "1";
+          onChange({ frequenceNombre: nb, frequenceUnite: "semaine" });
+        } else if (/mois/i.test(freq)) {
+          const nb = freq.match(/^(\d+)/)?.[1] || "1";
+          onChange({ frequenceNombre: nb, frequenceUnite: "mois" });
+        }
+      }
+    }
+  }
 
   return (
     <div className="border border-gray-200 rounded-xl p-4 relative">
@@ -734,10 +823,37 @@ function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
           </div>
         )}
 
-        {/* Ligne 3 — posologie / durée structurées */}
+        {/* Ligne 3 — Saisie rapide posologie (parser IA) */}
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <label className={labelCls + " mb-0"}>Posologie rapide</label>
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">✦ Parser IA</span>
+          </div>
+          <input
+            className={inputCls}
+            value={posologieSaisie}
+            onChange={(e) => handlePosologieSaisie(e.target.value)}
+            placeholder="Ex : 500 mg 2×/jour · 1g matin et soir · 175 mg/m² J1–J21"
+          />
+          {posologieParsed && (
+            <div className={`flex items-center gap-2 flex-wrap text-xs px-3 py-2 rounded-lg border ${
+              posologieParsed.confidence >= 0.65
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : "bg-gray-50 border-gray-200 text-gray-600"
+            }`}>
+              <span className="font-semibold">{posologieParsed.confidence >= 0.65 ? "✅ Parsé :" : "⚙️ Détecté :"}</span>
+              {posologieParsed.dose && <span className="px-2 py-0.5 rounded-full bg-white border border-gray-300 font-mono">{posologieParsed.dose}</span>}
+              {posologieParsed.unite && <span className="px-2 py-0.5 rounded-full bg-white border border-gray-300 font-mono">{posologieParsed.unite}</span>}
+              {posologieParsed.frequence && <span className="px-2 py-0.5 rounded-full bg-white border border-gray-300 font-mono">{posologieParsed.frequence}</span>}
+              <span className="text-gray-400 ml-auto">{Math.round(posologieParsed.confidence * 100)}% confiance</span>
+            </div>
+          )}
+        </div>
+
+        {/* Ligne 3b — posologie / durée structurées (affichées en détail) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className={labelCls}>Posologie</label>
+            <label className={labelCls}>Posologie (détail)</label>
             <div className="flex gap-2">
               <input className={inputCls} value={med.quantite} onChange={(e) => onChange({ quantite: e.target.value })} placeholder="1 comprimé" />
               <input className={`${inputCls} w-16 shrink-0 text-center`} value={med.frequenceNombre} onChange={(e) => onChange({ frequenceNombre: e.target.value })} inputMode="numeric" />
@@ -889,11 +1005,14 @@ function ProfileModal({ initial, onClose, onSave }: { initial: DoctorProfile; on
 
 // ── Aperçu / génération PDF ───────────────────────────────────────────────────
 
-function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, onBack, onGoToSuivi }: {
+function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescriptionToken, suiviLoading, patientTelephone, onBack, onGoToSuivi }: {
   ordonnance: SavedOrdonnance;
   doctorName: string;
   specialite?: string;
   profile: DoctorProfile;
+  prescriptionToken: string | null;
+  suiviLoading: boolean;
+  patientTelephone: string;
   onBack: () => void;
   onGoToSuivi: () => void;
 }) {
@@ -1099,24 +1218,70 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, onBack
             <span className="text-xl">🛡️</span>
             <p className="text-base font-bold text-gray-900">Suivi de tolérance PharmaVig</p>
             {ordonnance.suiviActif && (
-              <span className="ml-auto text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full">ACTIVÉ</span>
+              <span className="ml-auto text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full">
+                {suiviLoading ? "Activation…" : prescriptionToken ? "ACTIVÉ ✓" : "ACTIVÉ"}
+              </span>
             )}
           </div>
+
           {ordonnance.suiviActif ? (
-            <div className="space-y-2">
-              <p className="text-sm text-emerald-800 font-medium">Questionnaires programmés pour ce patient :</p>
+            <div className="space-y-3">
+              {/* Questionnaires programmés */}
               <div className="flex gap-2 flex-wrap">
-                <span className="text-xs bg-white border border-emerald-200 text-emerald-700 rounded-full px-3 py-1.5 font-medium">📅 J+7</span>
-                <span className="text-xs bg-white border border-emerald-200 text-emerald-700 rounded-full px-3 py-1.5 font-medium">📅 J+30</span>
-                <span className="text-xs bg-white border border-emerald-200 text-emerald-700 rounded-full px-3 py-1.5 font-medium">📅 J+90</span>
+                {["J+7", "J+30", "J+90"].map((j) => (
+                  <span key={j} className="text-xs bg-white border border-emerald-200 text-emerald-700 rounded-full px-3 py-1.5 font-medium">📅 {j}</span>
+                ))}
               </div>
-              <p className="text-xs text-emerald-700 mt-1">En cas d&apos;effet signalé → vous êtes notifié + déclaration CAPM pré-remplie automatiquement.</p>
-              <button
-                onClick={onGoToSuivi}
-                className="mt-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors"
-              >
-                Envoyer le lien au patient →
-              </button>
+              <p className="text-xs text-emerald-700">En cas d&apos;effet signalé → notification immédiate + déclaration CAPM pré-remplie.</p>
+
+              {suiviLoading ? (
+                <div className="flex items-center gap-2 text-sm text-emerald-700">
+                  <div className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                  Enregistrement du suivi…
+                </div>
+              ) : prescriptionToken ? (
+                /* Lien réel disponible → actions immédiates */
+                <div className="space-y-2">
+                  {/* Lien de check-in */}
+                  <div className="bg-white border border-emerald-200 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
+                    <span className="text-xs text-gray-500 truncate">
+                      {typeof window !== "undefined" ? `${window.location.origin}/suivi/${prescriptionToken}` : `/suivi/${prescriptionToken}`}
+                    </span>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(`${window.location.origin}/suivi/${prescriptionToken}`)}
+                      className="text-xs text-emerald-600 font-semibold shrink-0 hover:text-emerald-700"
+                    >
+                      Copier
+                    </button>
+                  </div>
+                  {/* Envoyer via WhatsApp */}
+                  <button
+                    onClick={() => {
+                      const link = `${window.location.origin}/suivi/${prescriptionToken}`;
+                      const firstMed = ordonnance.meds[0];
+                      const msg = `Bonjour,\n\nVotre médecin souhaite suivre votre traitement par ${firstMed?.nom || "médicament"} pour s'assurer de sa bonne tolérance.\n\nMerci de répondre à ce court questionnaire de suivi :\n${link}\n\n(3 minutes max, en français ou en darija)`;
+                      window.open(buildWhatsAppLink(msg), "_blank");
+                    }}
+                    className="w-full bg-[#25D366] hover:brightness-95 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors"
+                  >
+                    💬 Envoyer le lien au patient via WhatsApp
+                  </button>
+                  <button
+                    onClick={() => window.open(`/dashboard/medecin/suivi`, "_blank")}
+                    className="w-full border border-emerald-300 text-emerald-700 py-2 rounded-lg text-sm font-medium hover:bg-emerald-50 transition-colors"
+                  >
+                    Voir dans le tableau de suivi →
+                  </button>
+                </div>
+              ) : (
+                /* API suivi indisponible → fallback vers le formulaire manuel */
+                <button
+                  onClick={onGoToSuivi}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors"
+                >
+                  Finaliser le suivi manuellement →
+                </button>
+              )}
             </div>
           ) : (
             <div>
