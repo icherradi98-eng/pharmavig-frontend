@@ -66,7 +66,7 @@ function RegisterForm() {
             <div className="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">PV</span>
             </div>
-            <span className="font-semibold text-gray-900 text-xl">PharmaVig</span>
+            <span className="font-semibold text-gray-900 text-xl">MAIA DAWA</span>
           </Link>
         </div>
 

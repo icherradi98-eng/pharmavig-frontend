@@ -220,7 +220,7 @@ export default function ProfilMedecin() {
                 {profileSaved && <span className="text-xs text-emerald-600">✓ Enregistré</span>}
               </div>
               <p className="mt-3 text-xs text-gray-400">
-                Ces informations sont stockées uniquement sur cet appareil (localStorage). PharmaVig ne conserve pas vos données professionnelles.
+                Ces informations sont stockées uniquement sur cet appareil (localStorage). MAIA DAWA ne conserve pas vos données professionnelles.
               </p>
             </>
           ) : (

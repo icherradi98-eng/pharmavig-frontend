@@ -1,5 +1,5 @@
 // Helpers pour le module "Ordonnancier" — tout est stocké en localStorage
-// (aucune donnée patient n'est envoyée à un serveur PharmaVig).
+// (aucune donnée patient n'est envoyée à un serveur MAIA DAWA).
 
 export const KEYS = {
   profile: "pharmavig_ordo_profil",
@@ -371,6 +371,6 @@ export function buildSummaryText(o: {
     lines.push(`${i + 1}. ${m.nom}${m.dosage ? ` ${m.dosage}` : ""} — ${posologieLabel(m)}, ${dureeLabel(m)}`);
     if (m.instructions) lines.push(`   ${m.instructions}`);
   });
-  lines.push("", "Généré via PharmaVig.ma");
+  lines.push("", "Généré via maiadawa.ma");
   return lines.join("\n");
 }

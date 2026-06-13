@@ -13,7 +13,7 @@ export default function PatientDashboard() {
             <span className="text-white font-bold text-sm">PV</span>
           </div>
           <div>
-            <span className="font-semibold text-gray-900">PharmaVig</span>
+            <span className="font-semibold text-gray-900">MAIA DAWA</span>
             <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Patient</span>
           </div>
         </div>

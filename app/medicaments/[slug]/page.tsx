@@ -20,7 +20,7 @@ const TABS = [
   { id: "effets", label: "Effets indésirables" },
   { id: "indications", label: "Indications & Posologie" },
   { id: "interactions", label: "Interactions & Contre-indications" },
-  { id: "terrain", label: "Données terrain PharmaVig" },
+  { id: "terrain", label: "Données terrain MAIA DAWA" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -60,7 +60,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
   }, [name]);
 
   useEffect(() => {
-    document.title = `${capitalize(name)} — Effets indésirables & Données de sécurité | PharmaVig Maroc`;
+    document.title = `${capitalize(name)} — Effets indésirables & Données de sécurité | MAIA DAWA`;
   }, [name]);
 
   // On affiche la DCI telle que recherchée par l'utilisateur (en français), pas la
@@ -85,7 +85,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 md:px-10 py-4 flex items-center justify-between">
-        <Link href="/medicaments" className="font-bold text-lg text-emerald-700">PharmaVig Maroc — Médicaments</Link>
+        <Link href="/medicaments" className="font-bold text-lg text-emerald-700">MAIA DAWA — Médicaments</Link>
         <Link href="/medicaments" className="text-sm font-medium text-gray-600 hover:text-emerald-700">← Nouvelle recherche</Link>
       </header>
 
@@ -244,7 +244,7 @@ function Disclaimer() {
     <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl px-5 py-4">
       <p className="text-xs text-gray-500 leading-relaxed">
         Les données affichées proviennent des bases de données publiques FDA (États-Unis), NIH et ANSM (France). Elles peuvent
-        différer des RCPs marocains officiels. PharmaVig Maroc n&apos;est pas responsable des décisions cliniques basées sur ces
+        différer des RCPs marocains officiels. MAIA DAWA n&apos;est pas responsable des décisions cliniques basées sur ces
         informations. Consultez toujours le RCP marocain et le CAPM.
       </p>
     </div>
@@ -669,13 +669,13 @@ function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; d
   );
 }
 
-/* ---------------- TAB 4 — Données terrain PharmaVig ---------------- */
+/* ---------------- TAB 4 — Données terrain MAIA DAWA ---------------- */
 
 function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | undefined; dci: string; onDeclare: () => void }) {
   // Chargement en cours
   if (terrain === undefined) {
     return (
-      <Section title="Données terrain PharmaVig Maroc">
+      <Section title="Données terrain MAIA DAWA">
         <div className="text-center py-8">
           <div className="inline-block w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3" />
           <p className="text-gray-400 text-sm">Chargement des données terrain…</p>
@@ -687,13 +687,13 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
   // Aucune donnée (erreur réseau ou 0 déclaration)
   if (terrain === null || terrain.total === 0) {
     return (
-      <Section title="Données terrain PharmaVig Maroc">
+      <Section title="Données terrain MAIA DAWA">
         <div className="text-center py-8">
           <span className="text-3xl">📋</span>
           <p className="text-gray-700 font-medium mt-3">Aucun signal terrain pour {dci} pour l&apos;instant.</p>
           <p className="text-gray-400 text-sm mt-1 max-w-sm mx-auto">
             Les données terrain sont constituées par les déclarations d&apos;effets indésirables
-            soumises par les professionnels de santé marocains via PharmaVig.
+            soumises par les professionnels de santé marocains via MAIA DAWA.
           </p>
           <button onClick={onDeclare} className="mt-5 inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
             Contribuer — Déclarer un cas →
@@ -703,7 +703,7 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
           <span className="text-lg shrink-0">🔬</span>
           <p className="text-xs text-blue-700 leading-relaxed">
             <span className="font-semibold">Pourquoi ces données comptent :</span> 95% des effets indésirables
-            ne sont jamais signalés. Chaque déclaration PharmaVig contribue à la
+            ne sont jamais signalés. Chaque déclaration MAIA DAWA contribue à la
             pharmacovigilance nationale et permet de détecter des signaux que les essais cliniques n&apos;ont pas captés.
           </p>
         </div>
@@ -714,10 +714,10 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
   const { total, graves, graves_pct, begaud_avg, top_effets, by_evolution, last_report_date } = terrain;
 
   return (
-    <Section title="Données terrain PharmaVig Maroc">
+    <Section title="Données terrain MAIA DAWA">
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-        <Stat label="Déclarations PharmaVig" value={String(total)} />
+        <Stat label="Déclarations MAIA DAWA" value={String(total)} />
         <Stat label="Effets graves" value={`${graves} (${graves_pct}%)`} highlight={graves_pct >= 30} />
         <Stat label="Score Bégaud moyen" value={begaud_avg !== null ? `I${begaud_avg.toFixed(1)}` : "N/A"} />
         <Stat label="Dernier signalement" value={last_report_date ? new Date(last_report_date).toLocaleDateString("fr-MA", { month: "short", year: "numeric" }) : "—"} />
@@ -755,7 +755,7 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
       <div className="flex items-start gap-2 mt-2">
         <span className="text-sm shrink-0">ℹ️</span>
         <p className="text-xs text-gray-400">
-          Données agrégées et anonymisées issues des déclarations PharmaVig Maroc. Conformément à la loi 09-08 (CNDP), aucune donnée identifiante n&apos;est exposée.
+          Données agrégées et anonymisées issues des déclarations MAIA DAWA. Conformément à la loi 09-08 (CNDP), aucune donnée identifiante n&apos;est exposée.
         </p>
       </div>
 

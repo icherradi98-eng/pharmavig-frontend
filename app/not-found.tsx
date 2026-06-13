@@ -9,7 +9,7 @@ export default function NotFound() {
             <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-sm">
               <span className="text-white font-black text-sm">PV</span>
             </div>
-            <span className="font-bold text-gray-900 text-xl">PharmaVig</span>
+            <span className="font-bold text-gray-900 text-xl">MAIA DAWA</span>
           </Link>
         </div>
 

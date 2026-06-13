@@ -47,7 +47,7 @@ export type ExtractResponse<T> = {
 // ── Extraction structurée via backend ────────────────────────────────────────
 
 /**
- * Envoie le texte brut FDA d'une section au backend PharmaVig.
+ * Envoie le texte brut FDA d'une section au backend MAIA DAWA.
  * Le backend appelle Claude et retourne des données structurées en JSON.
  * Résultat mis en cache localStorage 24h pour éviter les appels redondants.
  */
@@ -620,7 +620,7 @@ export function parseEffects(text?: string): ParsedEffect[] {
 
 // ---- Mini-dictionnaire MedDRA FR (termes d'effets indésirables courants) ----
 // Couvre les termes les plus fréquemment rencontrés dans les RCP FDA pour les
-// classes de molécules les plus déclarées sur PharmaVig (oncologie, diabète,
+// classes de molécules les plus déclarées sur MAIA DAWA (oncologie, diabète,
 // antibiotiques, AINS, cardiovasculaire...). Liste non exhaustive — les termes
 // absents sont affichés avec leur libellé original.
 export const MEDDRA_FR_DICT: Record<string, string> = {

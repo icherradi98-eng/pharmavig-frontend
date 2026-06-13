@@ -188,7 +188,7 @@ export default function HistoriqueOrdonnances() {
         )}
 
         <p className="text-xs text-gray-400 text-center mt-6">
-          🔒 Vos ordonnances sont stockées uniquement sur cet appareil. PharmaVig ne conserve aucune donnée patient.
+          🔒 Vos ordonnances sont stockées uniquement sur cet appareil. MAIA DAWA ne conserve aucune donnée patient.
         </p>
       </div>
     </div>

@@ -8,7 +8,7 @@ export default function InviteDashboard() {
           <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">PV</span>
           </div>
-          <span className="font-semibold text-gray-900">PharmaVig</span>
+          <span className="font-semibold text-gray-900">MAIA DAWA</span>
           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-medium">Invité</span>
         </div>
         <Link href="/login" className="text-sm text-emerald-600 font-medium hover:underline">

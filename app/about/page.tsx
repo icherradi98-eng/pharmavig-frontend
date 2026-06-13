@@ -23,7 +23,7 @@ export default function AboutPage() {
           <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-sm">
             <span className="text-white font-black text-sm tracking-tight">PV</span>
           </div>
-          <Link href="/" className="font-bold text-gray-900 text-lg tracking-tight">PharmaVig</Link>
+          <Link href="/" className="font-bold text-gray-900 text-lg tracking-tight">MAIA DAWA</Link>
         </div>
         <div className="flex items-center gap-6">
           <Link href="/about" className="text-emerald-600 font-semibold text-sm">À propos</Link>
@@ -39,13 +39,13 @@ export default function AboutPage() {
         {/* Hero */}
         <section className="w-full px-8 py-20 text-center" style={{background: "linear-gradient(135deg, #f0fdf4 0%, #eff6ff 50%, #f0fdf4 100%)"}}>
           <div className="max-w-3xl mx-auto">
-            <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full mb-6 uppercase tracking-wide">À propos de PharmaVig</span>
+            <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full mb-6 uppercase tracking-wide">À propos de MAIA DAWA</span>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-5">
               La pharmacovigilance sauve des vies.<br />
               <span className="text-emerald-600">Encore faut-il la pratiquer.</span>
             </h1>
             <p className="text-gray-600 text-base leading-relaxed max-w-2xl mx-auto">
-              PharmaVig est la première plateforme digitale de pharmacovigilance au Maroc, conçue pour transformer la déclaration des effets indésirables médicamenteux en un acte simple, accessible et systématique.
+              MAIA DAWA est la première plateforme digitale de pharmacovigilance au Maroc, conçue pour transformer la déclaration des effets indésirables médicamenteux en un acte simple, accessible et systématique.
             </p>
           </div>
         </section>
@@ -77,7 +77,7 @@ export default function AboutPage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Rendre la pharmacovigilance accessible à tous</h2>
             <p className="text-gray-600 mb-10 max-w-2xl">
-              PharmaVig a été développée pour lever les barrières structurelles à la déclaration des effets indésirables. Notre mission repose sur trois piliers fondamentaux :
+              MAIA DAWA a été développée pour lever les barrières structurelles à la déclaration des effets indésirables. Notre mission repose sur trois piliers fondamentaux :
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
@@ -112,7 +112,7 @@ export default function AboutPage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Une solution construite avec et pour le terrain</h2>
             <p className="text-gray-600 mb-10 max-w-2xl">
-              PharmaVig n&apos;est pas un outil générique adapté au contexte marocain. C&apos;est une solution conçue depuis le terrain, par des professionnels de santé exerçant dans des centres hospitaliers universitaires marocains, en collaboration directe avec les autorités de pharmacovigilance nationales.
+              MAIA DAWA n&apos;est pas un outil générique adapté au contexte marocain. C&apos;est une solution conçue depuis le terrain, par des professionnels de santé exerçant dans des centres hospitaliers universitaires marocains, en collaboration directe avec les autorités de pharmacovigilance nationales.
             </p>
             <div className="flex flex-col gap-5">
               {[
@@ -122,11 +122,11 @@ export default function AboutPage() {
                 },
                 {
                   titre: "Interface adaptée au contexte LMIC",
-                  texte: "Contrairement aux solutions européennes ou américaines, PharmaVig intègre les spécificités des systèmes de santé à ressources limitées : multilinguisme, accès mobile prioritaire, formulaires simplifiés pour les patients non médicaux.",
+                  texte: "Contrairement aux solutions européennes ou américaines, MAIA DAWA intègre les spécificités des systèmes de santé à ressources limitées : multilinguisme, accès mobile prioritaire, formulaires simplifiés pour les patients non médicaux.",
                 },
                 {
                   titre: "Transmission directe au CAPM",
-                  texte: "Chaque déclaration soumise via PharmaVig est automatiquement intégrée dans la base de données nationale du Centre Anti-Poison et de Pharmacovigilance du Maroc, sans ressaisie manuelle.",
+                  texte: "Chaque déclaration soumise via MAIA DAWA est automatiquement intégrée dans la base de données nationale du Centre Anti-Poison et de Pharmacovigilance du Maroc, sans ressaisie manuelle.",
                 },
               ].map((item) => (
                 <div key={item.titre} className="flex gap-4 items-start border-l-4 border-emerald-500 pl-5 py-2">
@@ -151,7 +151,7 @@ export default function AboutPage() {
               La sous-déclaration des EIM n&apos;est pas un problème marocain — c&apos;est un problème africain. Avec 54 pays, plus d&apos;1,4 milliard d&apos;habitants et des systèmes de santé en pleine structuration, l&apos;Afrique francophone représente le territoire où l&apos;impact d&apos;une pharmacovigilance digitale accessible serait le plus significatif.
             </p>
             <p className="text-gray-600 mb-12 max-w-3xl leading-relaxed">
-              PharmaVig est déployée au Maroc en phase pilote. Notre feuille de route prévoit une extension progressive aux pays d&apos;Afrique francophone — Tunisie, Sénégal, Côte d&apos;Ivoire, Cameroun — en adaptant les formulaires aux autorités nationales de chaque pays.
+              MAIA DAWA est déployée au Maroc en phase pilote. Notre feuille de route prévoit une extension progressive aux pays d&apos;Afrique francophone — Tunisie, Sénégal, Côte d&apos;Ivoire, Cameroun — en adaptant les formulaires aux autorités nationales de chaque pays.
             </p>
 
             {/* Timeline */}
@@ -186,12 +186,12 @@ export default function AboutPage() {
                 {
                   icon: "🔒",
                   title: "Loi 09-08",
-                  text: "PharmaVig est conforme à la loi marocaine 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel.",
+                  text: "MAIA DAWA est conforme à la loi marocaine 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel.",
                 },
                 {
                   icon: "🛡️",
                   title: "Données médicales chiffrées",
-                  text: "Toutes les données de santé transmises via PharmaVig sont chiffrées en transit (TLS 1.3) et au repos. Aucune donnée n'est partagée avec des tiers à des fins commerciales.",
+                  text: "Toutes les données de santé transmises via MAIA DAWA sont chiffrées en transit (TLS 1.3) et au repos. Aucune donnée n'est partagée avec des tiers à des fins commerciales.",
                 },
                 {
                   icon: "📋",
@@ -230,14 +230,14 @@ export default function AboutPage() {
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Rejoignez le mouvement</h2>
             <p className="text-green-100 text-base mb-8 leading-relaxed">
-              Chaque professionnel de santé qui déclare un effet indésirable contribue à un système de santé plus sûr pour tous. Rejoignez les milliers de soignants qui font confiance à PharmaVig.
+              Chaque professionnel de santé qui déclare un effet indésirable contribue à un système de santé plus sûr pour tous. Rejoignez les milliers de soignants qui font confiance à MAIA DAWA.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/declarer"
                 className="inline-block bg-white text-green-700 font-semibold px-8 py-3 rounded-full shadow-md hover:bg-green-50 transition-colors">
                 Faire une déclaration →
               </Link>
-              <Link href="mailto:contact@pharmavig.ma"
+              <Link href="mailto:contact@maiadawa.ma"
                 className="inline-block border-2 border-white text-white font-semibold px-8 py-3 rounded-full hover:bg-white/10 transition-colors">
                 Nous contacter
               </Link>
@@ -255,13 +255,13 @@ export default function AboutPage() {
                 <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-black text-xs">PV</span>
                 </div>
-                <span className="text-white font-bold text-base">PharmaVig</span>
+                <span className="text-white font-bold text-base">MAIA DAWA</span>
               </div>
               <p className="text-gray-400 text-sm mb-5 leading-relaxed">La pharmacovigilance digitale au Maroc.</p>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">À propos</Link></li>
                 <li><Link href="/about#mission" className="text-gray-400 hover:text-white transition-colors">Notre mission</Link></li>
-                <li><a href="mailto:contact@pharmavig.ma" className="text-gray-400 hover:text-white transition-colors">contact@pharmavig.ma</a></li>
+                <li><a href="mailto:contact@maiadawa.ma" className="text-gray-400 hover:text-white transition-colors">contact@maiadawa.ma</a></li>
               </ul>
             </div>
             <div>
@@ -294,7 +294,7 @@ export default function AboutPage() {
         </div>
         <div className="border-t border-gray-800 px-8 py-5">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-gray-500">© 2025 PharmaVig. Tous droits réservés. · Maroc · Afrique francophone</p>
+            <p className="text-xs text-gray-500">© 2025 MAIA DAWA. Tous droits réservés. · Maroc · Afrique francophone</p>
             <div className="flex items-center gap-4">
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
@@ -302,7 +302,7 @@ export default function AboutPage() {
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               </a>
-              <a href="mailto:contact@pharmavig.ma" className="text-gray-500 hover:text-white transition-colors">
+              <a href="mailto:contact@maiadawa.ma" className="text-gray-500 hover:text-white transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </a>
             </div>

@@ -534,7 +534,7 @@ export default function NouvelleOrdonnance() {
             )}
           </div>
 
-          {/* ── Suivi PharmaVig — bloc star (la proposition de valeur) ── */}
+          {/* ── Suivi MAIA DAWA — bloc star (la proposition de valeur) ── */}
           <div className="rounded-2xl p-5 transition-colors" style={{ border: suiviActif ? "2px solid var(--md-petrol)" : "2px solid var(--md-cream-dark)", background: suiviActif ? "rgba(15,91,87,0.04)" : "#fff" }}>
             {/* Header + toggle */}
             <div className="flex items-start justify-between gap-3 mb-4">

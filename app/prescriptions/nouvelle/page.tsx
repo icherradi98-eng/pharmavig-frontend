@@ -424,7 +424,7 @@ function PrescriptionSuccess({ prescription, doctorName }: { prescription: Presc
               <span className="text-white font-black text-sm">PV</span>
             </div>
             <div>
-              <div className="font-bold text-gray-900">PharmaVig Maroc</div>
+              <div className="font-bold text-gray-900">MAIA DAWA</div>
               <div className="text-xs text-gray-400">Ordonnance de suivi pharmacovigilance</div>
             </div>
           </div>

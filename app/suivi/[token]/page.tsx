@@ -318,7 +318,7 @@ function Shell({ lang, setLang, dir, children }: { lang: Lang; setLang: (l: Lang
           <div className="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-black text-xs">PV</span>
           </div>
-          <span className="font-semibold text-gray-900 text-sm">PharmaVig</span>
+          <span className="font-semibold text-gray-900 text-sm">MAIA DAWA</span>
         </div>
         <div className="flex bg-gray-100 rounded-full p-0.5 text-xs font-medium">
           <button onClick={() => setLang("fr")} className={`px-3 py-1 rounded-full transition-colors ${lang === "fr" ? "bg-white shadow text-gray-900" : "text-gray-500"}`}>Français</button>

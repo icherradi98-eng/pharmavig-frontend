@@ -36,14 +36,14 @@ export default function AdminLogin() {
             <span className="text-white font-black text-sm">PV</span>
           </div>
           <div>
-            <div className="text-white font-bold text-lg">PharmaVig</div>
+            <div className="text-white font-bold text-lg">MAIA DAWA</div>
             <div className="text-gray-400 text-xs">Administration CAPM</div>
           </div>
         </div>
 
         <div className="bg-gray-800 rounded-2xl border border-gray-700 p-8">
           <h1 className="text-white font-bold text-xl mb-1">Espace administrateur</h1>
-          <p className="text-gray-400 text-sm mb-6">Accès restreint — CAPM / PharmaVig</p>
+          <p className="text-gray-400 text-sm mb-6">Accès restreint — CAPM / MAIA DAWA</p>
 
           {error && (
             <div className="bg-red-900/40 border border-red-700 rounded-lg px-4 py-2.5 text-sm text-red-300 mb-4">
@@ -60,7 +60,7 @@ export default function AdminLogin() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder-gray-500"
-                placeholder="admin@pharmavig.ma"
+                placeholder="admin@maiadawa.ma"
               />
             </div>
             <div>

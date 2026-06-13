@@ -142,7 +142,7 @@ export default function MedecinVueEnsemble() {
               <div className="space-y-4">
                 {/* Bannière de bienvenue */}
                 <div className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-6 text-white">
-                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-200 mb-2">Bienvenue sur PharmaVig</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-200 mb-2">Bienvenue sur MAIA DAWA</p>
                   <h2 className="text-xl font-bold mb-1">
                     Bonjour Dr. {user?.prenom || user?.nom || ""} 👋
                   </h2>
@@ -325,7 +325,7 @@ export default function MedecinVueEnsemble() {
                   </SectionCard>
                 )}
 
-                <SectionCard title="Vous vs la communauté PharmaVig">
+                <SectionCard title="Vous vs la communauté MAIA DAWA">
                   {stats.total < 5 ? (
                     <div className="text-center py-8">
                       <p className="text-gray-400 text-sm">📊 Disponible après 5 déclarations</p>

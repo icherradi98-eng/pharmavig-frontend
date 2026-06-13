@@ -46,7 +46,7 @@ function VerifyEmailContent() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
         <div className="mb-6">
-          <span className="text-2xl font-black text-emerald-600">PharmaVig</span>
+          <span className="text-2xl font-black text-emerald-600">MAIA DAWA</span>
           <p className="text-xs text-gray-400 mt-1">Pharmacovigilance · المملكة المغربية 🇲🇦</p>
         </div>
 
