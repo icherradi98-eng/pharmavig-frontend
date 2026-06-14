@@ -189,7 +189,7 @@ export default function ScanBoite({ onScanned, onClose }: ScanBoiteProps) {
       startZXingLoop();
       return;
     }
-    // @ts-expect-error
+    // @ts-expect-error BarcodeDetector n'est pas encore dans les types lib.dom de TS
     const detector = new window.BarcodeDetector({
       formats: ["data_matrix", "qr_code", "ean_13", "ean_8", "code_128", "pdf417"],
     });

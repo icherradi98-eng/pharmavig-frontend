@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
   });
-  const [sessionExpired, setSessionExpired] = useState(false);
+  const [, setSessionExpired] = useState(false);
   const loading = false;
   const router = useRouter();
 
