@@ -191,7 +191,7 @@ function Label({ fr, dar, required }: { fr: string; dar: string; required?: bool
   return (
     <div className="mb-2">
       <span className="font-medium text-gray-900 text-sm">{fr}{required && <span className="text-red-500 ml-1">★</span>}</span>
-      <div className="text-xs text-emerald-700 mt-0.5" dir="rtl">{dar}</div>
+      <div className="text-xs text-petrol mt-0.5" dir="rtl">{dar}</div>
     </div>
   );
 }
@@ -203,7 +203,7 @@ function RadioGroup({ options, value, onChange }: {
   return (
     <div className="flex flex-col gap-2">
       {options.map((o) => (
-        <label key={o.val} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${value === o.val ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
+        <label key={o.val} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${value === o.val ? "border-petrol bg-petrol/5" : "border-gray-200 hover:border-gray-300"}`}>
           <input type="radio" className="accent-emerald-600" checked={value === o.val} onChange={() => onChange(o.val)} />
           <div>
             <div className="text-sm text-gray-800">{o.fr}</div>
@@ -217,7 +217,7 @@ function RadioGroup({ options, value, onChange }: {
 
 function CheckboxItem({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
   return (
-    <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all text-sm ${checked ? "border-emerald-400 bg-emerald-50 text-emerald-800" : "border-gray-200 text-gray-700 hover:border-gray-300"}`}>
+    <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all text-sm ${checked ? "border-petrol/40 bg-petrol/5 text-petrol" : "border-gray-200 text-gray-700 hover:border-gray-300"}`}>
       <input type="checkbox" className="accent-emerald-600" checked={checked} onChange={onChange} />
       {label}
     </label>
@@ -226,9 +226,9 @@ function CheckboxItem({ label, checked, onChange }: { label: string; checked: bo
 
 function InfoBox({ text, textDar }: { text: string; textDar?: string }) {
   return (
-    <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-xs text-blue-700">
+    <div className="bg-petrol/5 border border-petrol/10 rounded-xl p-3 mb-4 text-xs text-petrol">
       <p>💡 {text}</p>
-      {textDar && <p className="mt-1 text-blue-600" dir="rtl">🇲🇦 {textDar}</p>}
+      {textDar && <p className="mt-1 text-petrol" dir="rtl">🇲🇦 {textDar}</p>}
     </div>
   );
 }
@@ -260,10 +260,10 @@ function AgePicker({ value, onChange }: { value: string; onChange: (v: string) =
           <button key={r.val} type="button" onClick={() => onChange(r.val)}
             className={`snap-center shrink-0 flex flex-col items-center justify-center px-5 py-4 rounded-2xl border-2 transition-all min-w-[120px] ${
               value === r.val
-                ? "border-emerald-500 bg-emerald-50 shadow-md scale-105"
-                : "border-gray-200 bg-white text-gray-600 hover:border-emerald-300"
+                ? "border-petrol bg-petrol/5 shadow-md scale-105"
+                : "border-gray-200 bg-white text-gray-600 hover:border-petrol/30"
             }`}>
-            <span className={`text-base font-bold ${value === r.val ? "text-emerald-800" : "text-gray-700"}`}>{r.fr}</span>
+            <span className={`text-base font-bold ${value === r.val ? "text-petrol" : "text-gray-700"}`}>{r.fr}</span>
             <span className="text-xs mt-1 text-gray-400" dir="rtl">{r.dar}</span>
           </button>
         ))}
@@ -271,7 +271,7 @@ function AgePicker({ value, onChange }: { value: string; onChange: (v: string) =
       <p className="text-xs text-gray-400 text-center mt-1">← Faites défiler / سحب لليمين أو اليسار →</p>
       {value && value !== "nr" && (
         <div className="mt-2 text-center">
-          <span className="inline-block bg-emerald-100 text-emerald-800 text-sm font-semibold px-4 py-1.5 rounded-full">
+          <span className="inline-block bg-petrol/10 text-petrol text-sm font-semibold px-4 py-1.5 rounded-full">
             ✓ {AGE_RANGES.find((r) => r.val === value)?.fr}
           </span>
         </div>
@@ -305,13 +305,13 @@ function IndicationSearch({ value, onChange }: { value: string; onChange: (v: st
       <input type="text" value={value} onChange={(e) => search(e.target.value)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         placeholder="Ex : tension, infection, douleur... / وصّف علاش كتاخود الدوا"
-        className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-petrol"
       />
       {open && (
         <div className="absolute top-full left-0 right-0 z-20 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
           {suggestions.map((s) => (
             <button key={s} type="button" onMouseDown={() => { onChangeRef.current(s); setOpen(false); }}
-              className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-800 transition-colors border-b border-gray-50 last:border-0">
+              className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-petrol/5 hover:text-petrol transition-colors border-b border-gray-50 last:border-0">
               {s}
             </button>
           ))}
@@ -467,20 +467,20 @@ export default function FormulairePatient() {
 
           {/* Titre */}
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-petrol/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">✅</span>
             </div>
             <h1 className="text-xl font-bold text-gray-900 mb-1">Déclaration envoyée !</h1>
             <p className="text-gray-500 text-sm">Merci — votre signalement aide à protéger d&apos;autres patients au Maroc.</p>
-            <p className="text-emerald-700 text-sm font-medium mt-1" dir="rtl">شكرا بزاف — بلاغتك كتساعد المرضى الآخرين فالمغرب 🇲🇦</p>
+            <p className="text-petrol text-sm font-medium mt-1" dir="rtl">شكرا بزاف — بلاغتك كتساعد المرضى الآخرين فالمغرب 🇲🇦</p>
           </div>
 
           {/* Numéro de référence */}
           {reportRef && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 text-center mb-6">
-              <p className="text-xs text-emerald-600 font-medium mb-1">Numéro de référence</p>
-              <p className="text-lg font-mono font-bold text-emerald-800">{reportRef}</p>
-              <p className="text-xs text-emerald-600 mt-1">Conservez ce numéro pour le suivi de votre déclaration</p>
+            <div className="bg-petrol/5 border border-petrol/20 rounded-xl px-5 py-3 text-center mb-6">
+              <p className="text-xs text-petrol font-medium mb-1">Numéro de référence</p>
+              <p className="text-lg font-mono font-bold text-petrol">{reportRef}</p>
+              <p className="text-xs text-petrol mt-1">Conservez ce numéro pour le suivi de votre déclaration</p>
             </div>
           )}
 
@@ -525,7 +525,7 @@ export default function FormulairePatient() {
           <div className="flex flex-col gap-2">
             <Link
               href="/dashboard/patient"
-              className="w-full text-center bg-emerald-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors"
+              className="w-full text-center bg-petrol text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-petrol-dark transition-colors"
             >
               Retour au tableau de bord
             </Link>
@@ -574,7 +574,7 @@ export default function FormulairePatient() {
       </header>
 
       <div className="h-1 bg-gray-200">
-        <div className="h-1 bg-emerald-500 transition-all duration-300" style={{ width: `${(step / SECTIONS.length) * 100}%` }} />
+        <div className="h-1 bg-petrol transition-all duration-300" style={{ width: `${(step / SECTIONS.length) * 100}%` }} />
       </div>
 
       <div className="overflow-x-auto border-b border-gray-100 bg-white px-6">
@@ -582,7 +582,7 @@ export default function FormulairePatient() {
           {SECTIONS.map((s) => (
             <button key={s.id}
               onClick={() => { if (s.id < step) { setTriedNext(false); setStep(s.id); } }}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${step === s.id ? "bg-emerald-600 text-white" : s.id < step ? "bg-emerald-100 text-emerald-700 cursor-pointer" : "text-gray-400 cursor-default"}`}>
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${step === s.id ? "bg-petrol text-white" : s.id < step ? "bg-petrol/10 text-petrol cursor-pointer" : "text-gray-400 cursor-default"}`}>
               {s.id}. {s.label}
             </button>
           ))}
@@ -619,13 +619,13 @@ export default function FormulairePatient() {
                 </p>
               )}
               {form.regionAuto && form.region && (
-                <div className="mb-2 flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
-                  <span className="text-emerald-600 text-xs">📍 Région détectée :</span>
-                  <span className="text-emerald-800 text-xs font-semibold">{form.region}</span>
+                <div className="mb-2 flex items-center gap-2 bg-petrol/5 border border-petrol/20 rounded-lg px-3 py-2">
+                  <span className="text-petrol text-xs">📍 Région détectée :</span>
+                  <span className="text-petrol text-xs font-semibold">{form.region}</span>
                 </div>
               )}
               <select value={form.region} onChange={(e) => set("region", e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol">
                 <option value="">{form.regionAuto ? "Modifier ma région..." : "Choisir une région / اختار منطقة"}</option>
                 {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
                 <option value="nr">Je préfère ne pas répondre / ما بغيتش نجاوب</option>
@@ -641,7 +641,7 @@ export default function FormulairePatient() {
               <Label fr="Nom du médicament" dar="سمية الدوا" required />
               <input type="text" placeholder="Ex : Doliprane, Amoxicilline..."
                 value={form.medicamentNom} onChange={(e) => set("medicamentNom", e.target.value)}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
             </div>
             <Collapsible label="Vous avez la boîte sous la main ?" labelDar="عندك العلبة قدامك؟">
               <p className="text-xs text-gray-400 mb-1">Optionnel — très utile pour la déclaration.</p>
@@ -655,14 +655,14 @@ export default function FormulairePatient() {
                     <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
                     <input type="text" placeholder={ph} value={form[field] as string}
                       onChange={(e) => set(field, e.target.value)}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
                   </div>
                 ))}
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Date de début du traitement</label>
                   <input type="date" value={form.medicamentDateDebut}
                     onChange={(e) => set("medicamentDateDebut", e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
                 </div>
               </div>
             </Collapsible>
@@ -702,7 +702,7 @@ export default function FormulairePatient() {
               <InfoBox text="Pas besoin de mots médicaux — écrivez comme vous le raconteriez à un ami." textDar="ما خاصكش تكون طبيب — هدر بحال ما كتحدّث لواحد صاحبك" />
               <textarea rows={4} value={form.description} onChange={(e) => set("description", e.target.value)}
                 placeholder="Ex : J'ai eu des boutons rouges sur les bras 2 jours après avoir commencé le médicament..."
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none" />
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-petrol resize-none" />
             </div>
 
             {/* Symptômes avec clés internes (#13) */}
@@ -788,7 +788,7 @@ export default function FormulairePatient() {
                 ].map((o) => (
                   <label key={o.val} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
                     form.gravite === o.val
-                      ? o.danger ? "border-red-500 bg-red-50" : "border-emerald-500 bg-emerald-50"
+                      ? o.danger ? "border-red-500 bg-red-50" : "border-petrol bg-petrol/5"
                       : "border-gray-200 hover:border-gray-300"
                   }`}>
                     <input type="radio" className="accent-emerald-600" checked={form.gravite === o.val} onChange={() => set("gravite", o.val)} />
@@ -851,7 +851,7 @@ export default function FormulairePatient() {
               {form.autresMedicaments === "oui" && (
                 <textarea rows={2} placeholder="Lesquels ? / أشمنين؟"
                   value={form.autresMedicamentsDetail} onChange={(e) => set("autresMedicamentsDetail", e.target.value)}
-                  className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none" />
+                  className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol resize-none" />
               )}
             </div>
             <div>
@@ -899,7 +899,7 @@ export default function FormulairePatient() {
               {form.reactionPassee === "oui" && (
                 <input type="text" placeholder="Avec quel médicament ? / أشمن دوا؟"
                   value={form.reactionPasseeDetail} onChange={(e) => set("reactionPasseeDetail", e.target.value)}
-                  className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
               )}
             </div>
           </div>
@@ -928,21 +928,21 @@ export default function FormulairePatient() {
               {form.contact === "email" && (
                 <input type="email" placeholder="votre@email.com" value={form.contactEmail}
                   onChange={(e) => set("contactEmail", e.target.value)}
-                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
               )}
               {form.contact === "tel" && (
                 <input type="tel" placeholder="+212 6XX XXX XXX" value={form.contactTel}
                   onChange={(e) => set("contactTel", e.target.value)}
-                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
               )}
             </div>
             <div>
               <Label fr="Avez-vous des documents ou photos à joindre ?" dar="واش عندك وثيقة أو صورة تزيدها؟" />
-              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 hover:border-emerald-400 rounded-xl p-6 text-sm text-gray-500 hover:text-emerald-600 transition-all cursor-pointer">
+              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 hover:border-petrol/40 rounded-xl p-6 text-sm text-gray-500 hover:text-petrol transition-all cursor-pointer">
                 📎 Joindre un fichier / زيد وثيقة
                 <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={() => set("documents", true)} />
               </label>
-              {form.documents && <p className="text-xs text-emerald-600 mt-1">✓ Fichier joint</p>}
+              {form.documents && <p className="text-xs text-petrol mt-1">✓ Fichier joint</p>}
             </div>
 
             {/* Récap enrichi */}
@@ -959,7 +959,7 @@ export default function FormulairePatient() {
               <p>📝 Description : <span className={`font-medium ${form.description ? "text-gray-900" : "text-amber-600"}`}>{form.description ? "✓ Remplie" : "⚠️ Manquante"}</span></p>
             </div>
 
-            <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${form.consentement ? "border-emerald-500 bg-emerald-50" : "border-gray-300"}`}>
+            <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${form.consentement ? "border-petrol bg-petrol/5" : "border-gray-300"}`}>
               <input type="checkbox" className="accent-emerald-600 mt-1" checked={form.consentement}
                 onChange={(e) => set("consentement", e.target.checked)} />
               <div>
@@ -980,7 +980,7 @@ export default function FormulairePatient() {
               disabled={!form.consentement || !form.medicamentNom || !form.description}
               className={`w-full py-4 rounded-xl font-bold text-white text-base transition-all ${
                 form.consentement && form.medicamentNom && form.description
-                  ? "bg-emerald-600 hover:bg-emerald-700 shadow-md"
+                  ? "bg-petrol hover:bg-petrol-dark shadow-md"
                   : "bg-gray-300 cursor-not-allowed"
               }`}>
               Envoyer ma déclaration / سيفيت البلاغة →
@@ -1035,7 +1035,7 @@ export default function FormulairePatient() {
                 className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                   triedNext && hasErrs
                     ? "bg-red-100 text-red-700 border border-red-300"
-                    : "bg-emerald-600 text-white hover:bg-emerald-700"
+                    : "bg-petrol text-white hover:bg-petrol-dark"
                 }`}>
                 Suivant →
               </button>

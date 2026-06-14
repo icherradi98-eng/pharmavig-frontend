@@ -1104,7 +1104,7 @@ export default function FormulaireMedecin() {
                 {form.declarantSpecialite && <span className="text-gray-400"> · {form.declarantSpecialite}</span>}
               </span>
             </div>
-            <Link href="/profile" className="text-xs text-gray-400 hover:text-emerald-600 underline underline-offset-2">
+            <Link href="/dashboard/medecin/profil" className="text-xs text-gray-400 hover:text-emerald-600 underline underline-offset-2">
               Modifier mon profil
             </Link>
           </div>

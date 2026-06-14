@@ -79,7 +79,7 @@ const STATUS_CONFIG: Record<PatientStatus, {
 }> = {
   alerte:     { label: "Alerte",      badge: "bg-red-100 text-red-700 border border-red-300",     row: "border-l-4 border-l-red-400",    icon: "🔴", sort: 0 },
   en_attente: { label: "En attente",  badge: "bg-amber-100 text-amber-700 border border-amber-300", row: "border-l-4 border-l-amber-400",  icon: "🟡", sort: 1 },
-  repondu:    { label: "Répondu",     badge: "bg-emerald-100 text-emerald-700 border border-emerald-300", row: "border-l-4 border-l-emerald-400", icon: "🟢", sort: 2 },
+  repondu:    { label: "Répondu",     badge: "bg-petrol/10 text-petrol border border-petrol/30", row: "border-l-4 border-l-petrol/40", icon: "🟢", sort: 2 },
   termine:    { label: "Terminé",     badge: "bg-gray-100 text-gray-500 border border-gray-200",   row: "border-l-4 border-l-gray-200",   icon: "⚪", sort: 3 },
 };
 
@@ -118,7 +118,7 @@ function PatientRow({
 
         {/* Avatar initiales */}
         <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 text-white"
-          style={{ background: status === "alerte" ? "#ef4444" : status === "en_attente" ? "#f59e0b" : status === "repondu" ? "#10b981" : "#9ca3af" }}>
+          style={{ background: status === "alerte" ? "#ef4444" : status === "en_attente" ? "#f59e0b" : status === "repondu" ? "#2FA88F" : "#9ca3af" }}>
           {rx.patient_initiales?.slice(0, 2).toUpperCase() ?? "??"}
         </div>
 
@@ -156,7 +156,7 @@ function PatientRow({
             {lastReplied && !nextPending && (
               <>
                 <span>·</span>
-                <span className="text-emerald-600">Dernière réponse {formatDate(lastReplied.responded_at)}</span>
+                <span className="text-petrol">Dernière réponse {formatDate(lastReplied.responded_at)}</span>
               </>
             )}
           </div>
@@ -427,12 +427,12 @@ export default function SuiviActifPage() {
               onClick={() => setFilter(filter === s ? "tous" : s)}
               className={`bg-white border rounded-xl px-4 py-3 text-left transition-all hover:shadow-sm ${
                 filter === s ? "ring-2 ring-offset-1" : ""
-              } ${s === "alerte" ? "border-red-200" : s === "en_attente" ? "border-amber-200" : s === "repondu" ? "border-emerald-200" : "border-gray-200"}`}
-              style={filter === s ? { "--tw-ring-color": s === "alerte" ? "#ef4444" : s === "en_attente" ? "#f59e0b" : s === "repondu" ? "#10b981" : "#9ca3af" } as React.CSSProperties : {}}
+              } ${s === "alerte" ? "border-red-200" : s === "en_attente" ? "border-amber-200" : s === "repondu" ? "border-petrol/20" : "border-gray-200"}`}
+              style={filter === s ? { "--tw-ring-color": s === "alerte" ? "#ef4444" : s === "en_attente" ? "#f59e0b" : s === "repondu" ? "#2FA88F" : "#9ca3af" } as React.CSSProperties : {}}
             >
               <p className="text-2xl font-bold text-gray-900">{count}</p>
               <p className={`text-xs font-semibold mt-0.5 ${
-                s === "alerte" ? "text-red-600" : s === "en_attente" ? "text-amber-600" : s === "repondu" ? "text-emerald-600" : "text-gray-400"
+                s === "alerte" ? "text-red-600" : s === "en_attente" ? "text-amber-600" : s === "repondu" ? "text-petrol" : "text-gray-400"
               }`}>
                 {cfg.icon} {cfg.label}
               </p>

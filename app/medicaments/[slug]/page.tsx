@@ -85,8 +85,8 @@ function DrugProfileContent({ slug }: { slug: string }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 md:px-10 py-4 flex items-center justify-between">
-        <Link href="/medicaments" className="font-bold text-lg text-emerald-700">MAIA DAWA — Médicaments</Link>
-        <Link href="/medicaments" className="text-sm font-medium text-gray-600 hover:text-emerald-700">← Nouvelle recherche</Link>
+        <Link href="/medicaments" className="font-bold text-lg text-petrol">MAIA DAWA — Médicaments</Link>
+        <Link href="/medicaments" className="text-sm font-medium text-gray-600 hover:text-petrol">← Nouvelle recherche</Link>
       </header>
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-5 md:px-8 py-8">
@@ -96,7 +96,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
           <>
             {/* Header */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-              <h1 className="text-3xl font-bold text-blue-700">{dci}</h1>
+              <h1 className="text-3xl font-bold text-petrol">{dci}</h1>
               {fdaChemicalName && (
                 <p className="text-gray-400 text-xs mt-1">Dénomination FDA : {fdaChemicalName}</p>
               )}
@@ -104,16 +104,16 @@ function DrugProfileContent({ slug }: { slug: string }) {
                 <p className="text-gray-400 text-sm mt-1">Noms commerciaux : {brandNames.slice(0, 6).join(", ")}</p>
               )}
               <div className="flex flex-wrap gap-2 mt-4">
-                {bdpm?.forme && <Badge color="bg-emerald-100 text-emerald-700">{bdpm.forme}</Badge>}
-                {bdpm?.voies?.[0] && <Badge color="bg-blue-100 text-blue-700">Voie : {bdpm.voies[0]}</Badge>}
-                {!bdpm?.voies?.[0] && label?.route?.[0] && <Badge color="bg-blue-100 text-blue-700">Voie : {label.route[0]}</Badge>}
+                {bdpm?.forme && <Badge color="bg-petrol/10 text-petrol">{bdpm.forme}</Badge>}
+                {bdpm?.voies?.[0] && <Badge color="bg-petrol/10 text-petrol">Voie : {bdpm.voies[0]}</Badge>}
+                {!bdpm?.voies?.[0] && label?.route?.[0] && <Badge color="bg-petrol/10 text-petrol">Voie : {label.route[0]}</Badge>}
                 {label?.pharm_class_epc?.[0] && <Badge color="bg-violet-100 text-violet-700">{label.pharm_class_epc[0]}</Badge>}
                 {label?.manufacturer_name?.[0] && <Badge color="bg-gray-100 text-gray-600">🏭 {label.manufacturer_name[0]}</Badge>}
               </div>
 
               {bdpm && (
-                <div className="mt-4 bg-emerald-50/60 border border-emerald-100 rounded-xl px-4 py-3 text-sm text-gray-700 space-y-1.5">
-                  <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-1">Source : BDPM (ANSM, France)</p>
+                <div className="mt-4 bg-petrol/5 border border-petrol/10 rounded-xl px-4 py-3 text-sm text-gray-700 space-y-1.5">
+                  <p className="text-xs font-semibold text-petrol uppercase tracking-wide mb-1">Source : BDPM (ANSM, France)</p>
                   {bdpm.denomination && <p><span className="text-gray-400">Dénomination officielle : </span>{bdpm.denomination}</p>}
                   {bdpm.substances && bdpm.substances.length > 0 && (
                     <p><span className="text-gray-400">Composition : </span>{bdpm.substances.join(", ")}</p>
@@ -135,7 +135,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
 
               <button
                 onClick={declareWithDrug}
-                className="mt-5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                className="mt-5 bg-petrol hover:bg-petrol-dark text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 Déclarer un cas avec ce médicament →
               </button>
@@ -158,7 +158,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
                       key={t.id}
                       onClick={() => setTab(t.id)}
                       className={`shrink-0 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-                        tab === t.id ? "border-emerald-600 text-emerald-700" : "border-transparent text-gray-500 hover:text-gray-800"
+                        tab === t.id ? "border-petrol text-petrol" : "border-transparent text-gray-500 hover:text-gray-800"
                       }`}
                     >
                       {t.label}
@@ -228,7 +228,7 @@ function NoDataMessage({ name }: { name: string }) {
         Ce médicament est peut-être commercialisé sous un autre nom ou uniquement au Maroc. Essayez une recherche par nom commercial.
       </p>
       <div className="flex flex-wrap gap-3 justify-center mt-5">
-        <Link href="/medicaments" className="text-sm font-medium text-emerald-700 border border-emerald-200 bg-emerald-50 px-4 py-2 rounded-lg hover:bg-emerald-100">
+        <Link href="/medicaments" className="text-sm font-medium text-petrol border border-petrol/20 bg-petrol/5 px-4 py-2 rounded-lg hover:bg-petrol/10">
           ← Nouvelle recherche
         </Link>
         <a href="https://capm.ma" target="_blank" rel="noreferrer" className="text-sm font-medium text-gray-600 border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50">
@@ -299,7 +299,7 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
             <p className="text-sm text-gray-600">
               Données d&apos;effets indésirables limitées pour cette molécule dans les sources disponibles.{" "}
-              <a href="https://dmp.sante.gov.ma" target="_blank" rel="noreferrer" className="text-emerald-700 font-medium underline">
+              <a href="https://dmp.sante.gov.ma" target="_blank" rel="noreferrer" className="text-petrol font-medium underline">
                 Consulter le RCP officiel →
               </a>
             </p>
@@ -390,9 +390,9 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
 
       {/* ── Section 3 : alertes ── */}
       <Section title="Alertes de sécurité actives">
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-center gap-3">
-          <span className="text-emerald-600 text-lg">✅</span>
-          <p className="text-sm text-emerald-800">
+        <div className="bg-petrol/5 border border-petrol/20 rounded-xl px-4 py-3 flex items-center gap-3">
+          <span className="text-petrol text-lg">✅</span>
+          <p className="text-sm text-petrol">
             Aucune alerte de sécurité active recensée pour {dci} — Dernière vérification :{" "}
             {new Date("2026-06-07").toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}
           </p>
@@ -406,7 +406,7 @@ function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined;
 
 function ExtractionBadge({ source }: { source: string }) {
   if (source === "llm") return (
-    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full font-semibold">
+    <span className="inline-flex items-center gap-1 text-[10px] text-petrol bg-petrol/5 border border-petrol/10 px-2 py-0.5 rounded-full font-semibold">
       ✦ Extrait par IA · données structurées
     </span>
   );
@@ -478,8 +478,8 @@ function TabIndications({ label, dci }: { label: FdaLabel | null | undefined; dc
             <>
               <ul className="space-y-2 mb-3">
                 {indications.map((ind) => (
-                  <li key={ind} className="flex items-start gap-2.5 text-sm text-gray-700 bg-blue-50/60 border border-blue-100 rounded-lg px-3 py-2">
-                    <span className="text-blue-400 font-bold mt-0.5 shrink-0">›</span>
+                  <li key={ind} className="flex items-start gap-2.5 text-sm text-gray-700 bg-petrol/5 border border-petrol/10 rounded-lg px-3 py-2">
+                    <span className="text-petrol/60 font-bold mt-0.5 shrink-0">›</span>
                     <span>{ind}</span>
                   </li>
                 ))}
@@ -503,7 +503,7 @@ function TabIndications({ label, dci }: { label: FdaLabel | null | undefined; dc
                 {dosages.map((d) => (
                   <div key={d.population} className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+                      <span className="text-[11px] font-bold text-petrol bg-petrol/5 border border-petrol/10 px-2 py-0.5 rounded-full">
                         {d.population}
                       </span>
                       {d.voie && (
@@ -536,8 +536,8 @@ function TabIndications({ label, dci }: { label: FdaLabel | null | undefined; dc
         )}
       </Section>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
-        <p className="text-xs text-blue-800 leading-relaxed">
+      <div className="bg-petrol/5 border border-petrol/10 rounded-xl px-4 py-3">
+        <p className="text-xs text-petrol leading-relaxed">
           Données issues des sources FDA/EMA, normalisées par extraction IA. Consultez toujours le RCP marocain officiel et le CAPM pour les spécificités locales.
         </p>
       </div>
@@ -602,7 +602,7 @@ function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; d
               <ExtractionBadge source={ciSource} />
             </>
           ) : (
-            <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2.5">
+            <div className="flex items-center gap-2 text-sm text-petrol bg-petrol/5 border border-petrol/10 rounded-lg px-3 py-2.5">
               <span>✅</span>
               <span>Aucune contre-indication absolue identifiée dans cette source.</span>
             </div>
@@ -646,7 +646,7 @@ function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; d
                           <p className="text-sm text-gray-700">{inter.consequence}</p>
                           {inter.conduite && (
                             <p className="text-xs font-semibold text-gray-600 mt-1.5 flex items-center gap-1">
-                              <span className="text-emerald-600">→</span> {inter.conduite}
+                              <span className="text-petrol">→</span> {inter.conduite}
                             </p>
                           )}
                         </div>
@@ -658,7 +658,7 @@ function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; d
               <ExtractionBadge source={interSource} />
             </>
           ) : (
-            <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2.5">
+            <div className="flex items-center gap-2 text-sm text-petrol bg-petrol/5 border border-petrol/10 rounded-lg px-3 py-2.5">
               <span>✅</span>
               <span>Aucune interaction cliniquement significative identifiée dans cette source.</span>
             </div>
@@ -677,7 +677,7 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
     return (
       <Section title="Données terrain MAIA DAWA">
         <div className="text-center py-8">
-          <div className="inline-block w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3" />
+          <div className="inline-block w-6 h-6 border-2 border-petrol border-t-transparent rounded-full animate-spin mb-3" />
           <p className="text-gray-400 text-sm">Chargement des données terrain…</p>
         </div>
       </Section>
@@ -695,13 +695,13 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
             Les données terrain sont constituées par les déclarations d&apos;effets indésirables
             soumises par les professionnels de santé marocains via MAIA DAWA.
           </p>
-          <button onClick={onDeclare} className="mt-5 inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+          <button onClick={onDeclare} className="mt-5 inline-block bg-petrol hover:bg-petrol-dark text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
             Contribuer — Déclarer un cas →
           </button>
         </div>
-        <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3 text-left">
+        <div className="mt-4 bg-petrol/5 border border-petrol/10 rounded-xl p-4 flex gap-3 text-left">
           <span className="text-lg shrink-0">🔬</span>
-          <p className="text-xs text-blue-700 leading-relaxed">
+          <p className="text-xs text-petrol leading-relaxed">
             <span className="font-semibold">Pourquoi ces données comptent :</span> 95% des effets indésirables
             ne sont jamais signalés. Chaque déclaration MAIA DAWA contribue à la
             pharmacovigilance nationale et permet de détecter des signaux que les essais cliniques n&apos;ont pas captés.
@@ -744,7 +744,7 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Évolution observée</p>
           <div className="flex flex-wrap gap-2 mb-5">
             {by_evolution.map(({ evolution, count }) => (
-              <span key={evolution} className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full px-3 py-1">
+              <span key={evolution} className="text-xs bg-petrol/5 text-petrol border border-petrol/10 rounded-full px-3 py-1">
                 {evolution} · {count}
               </span>
             ))}
@@ -759,7 +759,7 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
         </p>
       </div>
 
-      <button onClick={onDeclare} className="mt-4 text-sm text-emerald-600 hover:underline font-medium">
+      <button onClick={onDeclare} className="mt-4 text-sm text-petrol hover:underline font-medium">
         + Contribuer — Déclarer un cas →
       </button>
     </Section>
@@ -778,7 +778,7 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
 function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-5">
-      <h3 className="font-semibold text-gray-900 border-l-4 border-emerald-500 pl-3 mb-1">{title}</h3>
+      <h3 className="font-semibold text-gray-900 border-l-4 border-petrol pl-3 mb-1">{title}</h3>
       {subtitle && <p className="text-xs text-gray-400 pl-3.5 mb-3">{subtitle}</p>}
       <div className={subtitle ? "" : "mt-3"}>{children}</div>
     </div>
