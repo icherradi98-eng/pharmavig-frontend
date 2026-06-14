@@ -65,7 +65,7 @@ export default function ProfilPatient() {
             <span className="text-lg">🔒</span>
             <div>
               <p className="text-sm font-medium text-gray-800 mb-1">Confidentialité</p>
-              <p className="text-sm text-gray-500">Vos déclarations sont anonymisées — aucun nom ne figure dans les rapports transmis au CAPM, conformément à la loi 09-08.</p>
+              <p className="text-sm text-gray-500">Vos déclarations sont anonymisées — aucun nom ne figure dans les rapports anonymisés, conformément à la loi 09-08.</p>
             </div>
           </div>
         </div>

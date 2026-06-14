@@ -37,13 +37,13 @@ export default function AdminLogin() {
           </div>
           <div>
             <div className="text-white font-bold text-lg">MAIA DAWA</div>
-            <div className="text-gray-400 text-xs">Administration CAPM</div>
+            <div className="text-gray-400 text-xs">Administration MAIA DAWA</div>
           </div>
         </div>
 
         <div className="bg-gray-800 rounded-2xl border border-gray-700 p-8">
           <h1 className="text-white font-bold text-xl mb-1">Espace administrateur</h1>
-          <p className="text-gray-400 text-sm mb-6">Accès restreint — CAPM / MAIA DAWA</p>
+          <p className="text-gray-400 text-sm mb-6">Accès restreint — MAIA DAWA</p>
 
           {error && (
             <div className="bg-red-900/40 border border-red-700 rounded-lg px-4 py-2.5 text-sm text-red-300 mb-4">

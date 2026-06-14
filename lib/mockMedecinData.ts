@@ -65,7 +65,7 @@ export const MOCK_ALERTS: MockAlert[] = [
   },
   {
     id: "a3",
-    source: "CAPM",
+    source: "ANSM",
     severity: "info",
     date: "2026-04-28",
     molecules: ["Tramadol"],
@@ -122,13 +122,13 @@ export const COMMON_MOLECULES = [
 ];
 
 export const MOCK_PROFILE = {
-  prenom: "Inès",
-  nom: "Cherradi",
+  prenom: "Amine",
+  nom: "Bennani",
   specialite: "Oncologie médicale",
   cnom: "CNOM-12458",
   etablissement: "CHU Mohammed VI",
   ville: "Rabat",
-  email: "icherradi@um6ss.ma",
+  email: "a.bennani@example.com",
   telephone: "+212 6 00 00 00 00",
 };
 

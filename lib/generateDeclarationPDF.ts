@@ -139,7 +139,7 @@ export async function generateDeclarationPDF(
   doc.setFontSize(8.5);
   doc.setFont("helvetica", "normal");
   setColor(...GRAY_TXT);
-  doc.text("Formulaire conforme CIOMS II — à destination du CAPM (Maroc)", W / 2, y + 5.5, { align: "center" });
+  doc.text("Formulaire conforme CIOMS II — conforme aux standards de pharmacovigilance", W / 2, y + 5.5, { align: "center" });
 
   // Référence & date
   const dateStr = new Date().toLocaleDateString("fr-FR", {
@@ -353,7 +353,7 @@ export async function generateDeclarationPDF(
     doc.setFont("helvetica", "normal");
     setColor(200, 230, 228);
     doc.text(
-      `MAIA DAWA — Déclaration ${meta.pvNumber} — Confidentiel CAPM`,
+      `MAIA DAWA — Déclaration ${meta.pvNumber} — Confidentiel`,
       margin, 295
     );
     doc.text(`Page ${i} / ${totalPages}`, W - margin, 295, { align: "right" });

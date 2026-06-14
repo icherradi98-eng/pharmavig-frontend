@@ -46,7 +46,7 @@ const ALERTS = [
   { src: "EMA", color: C.red, dci: "Méthotrexate", txt: "Neurotoxicité intrathécale — erreur de voie", date: "15 nov.", sev: "urgent" as const },
   { src: "ANSM", color: C.petrol, dci: "Valproate", txt: "Programme grossesse renforcé", date: "8 oct.", sev: "urgent" as const },
   { src: "FDA", color: "#92700a", dci: "Ciprofloxacine", txt: "Atteintes musculo-tendineuses", date: "3 sept.", sev: "important" as const },
-  { src: "CAPM", color: C.petrolDark, dci: "Amoxicilline", txt: "Réactions cutanées (SJS / DRESS)", date: "20 août", sev: "important" as const },
+  { src: "ANSM", color: C.petrolDark, dci: "Amoxicilline", txt: "Réactions cutanées (SJS / DRESS)", date: "20 août", sev: "important" as const },
 ];
 
 function MaiaLogo() {
@@ -226,7 +226,7 @@ export default function MedicamentsSearch() {
                   ))}
                 </div>
               </div>
-              <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-white px-2.5 py-1.5 rounded-full self-center" style={{ background: C.red }}>⚑ 1 alerte CAPM</span>
+              <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-white px-2.5 py-1.5 rounded-full self-center" style={{ background: C.red }}>⚑ 1 alerte</span>
             </div>
 
             <div className="grid md:grid-cols-2">

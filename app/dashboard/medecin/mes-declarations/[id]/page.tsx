@@ -8,8 +8,8 @@ import { useAuth } from "@/context/AuthContext";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   brouillon:     { label: "Brouillon",        color: "bg-gray-100 text-gray-600" },
-  soumis:        { label: "Soumis au CAPM",   color: "bg-blue-100 text-blue-700" },
-  transmis_capm: { label: "Transmis au CAPM", color: "bg-emerald-100 text-emerald-700" },
+  soumis:        { label: "Soumis",   color: "bg-blue-100 text-blue-700" },
+  transmis_capm: { label: "Transmis", color: "bg-emerald-100 text-emerald-700" },
   traite:        { label: "Traité",           color: "bg-violet-100 text-violet-700" },
 };
 
@@ -159,12 +159,12 @@ export default function DeclarationDetail() {
 
       <main className="max-w-4xl mx-auto px-6 py-8 space-y-4">
 
-        {/* Référence CAPM */}
+        {/* Référence */}
         {report.capm_reference && (
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 flex items-center gap-3">
             <span className="text-emerald-600 text-lg">✅</span>
             <div>
-              <p className="text-sm font-semibold text-emerald-800">Référence CAPM</p>
+              <p className="text-sm font-semibold text-emerald-800">Référence</p>
               <p className="text-xs font-mono text-emerald-700">{report.capm_reference}</p>
             </div>
           </div>

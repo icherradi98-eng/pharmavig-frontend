@@ -28,7 +28,7 @@ export default function InviteDashboard() {
           <div>
             <p className="text-sm text-amber-800 font-medium">Créez un compte pour un suivi complet</p>
             <p className="text-xs text-amber-700 mt-0.5">
-              Avec un compte, vous pouvez retrouver vos déclarations passées, recevoir des mises à jour et être recontacté par le CAPM.
+              Avec un compte, vous pouvez retrouver vos déclarations passées, recevoir des mises à jour et être recontacté si nécessaire.
             </p>
             <Link href="/login" className="text-xs text-amber-900 font-semibold underline mt-1 inline-block">
               Créer un compte gratuitement →

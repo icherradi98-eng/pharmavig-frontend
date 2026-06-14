@@ -253,7 +253,7 @@ function LiveScore({ score, complete, expertMode }: { score: ImputScore; complet
       {/* Alertes */}
       {complete && score.isGrave && score.Iscore >= 2 && (
         <div className="mt-3 px-3 py-2 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 font-medium">
-          ⚡ Déclaration obligatoire — effet grave I≥2. Délai CAPM : 15j (7j si fatal).
+          ⚡ Déclaration obligatoire — effet grave I≥2. Délai réglementaire : 15j (7j si fatal).
         </div>
       )}
     </div>
@@ -517,7 +517,7 @@ export default function ImputabiliteBegaud({
         <QuestionBlock
           questionId="gravite" answered={gravite.length > 0} fresh={!prevUnlocked.includes("gravite")}
           label="Gravité de l'effet — cochez tout ce qui s'applique"
-          hint="Détermine le délai réglementaire de transmission au CAPM"
+          hint="Détermine le délai réglementaire de transmission de la déclaration"
         >
           <div className="flex flex-wrap gap-2">
             {GRAVITE_ITEMS.map((g) => (

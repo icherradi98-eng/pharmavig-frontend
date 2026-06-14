@@ -132,7 +132,7 @@ export default function MesMolecules() {
                   </button>
                   {open && (
                     <div className="absolute z-10 mt-2 w-64 bg-white border border-gray-200 rounded-xl shadow-lg p-4 text-sm">
-                      <p className="text-xs font-semibold text-gray-500 mb-1">Alertes CAPM / ANSM / EMA</p>
+                      <p className="text-xs font-semibold text-gray-500 mb-1">Alertes EMA / ANSM / FDA</p>
                       <p className="text-gray-400 text-xs mb-3">
                         Aucune alerte active pour cette molécule.
                       </p>
@@ -153,7 +153,7 @@ export default function MesMolecules() {
           <div>
             <p className="text-sm font-semibold text-blue-900 mb-0.5">Veille automatique en cours de déploiement</p>
             <p className="text-xs text-blue-700 leading-relaxed">
-              Dès qu&apos;une alerte CAPM, ANSM ou EMA concernera une molécule de votre liste,
+              Dès qu&apos;une alerte EMA, ANSM ou FDA concernera une molécule de votre liste,
               vous serez notifié ici. En attendant, consultez directement{" "}
               <a href="https://capm.sante.gov.ma" target="_blank" rel="noreferrer" className="underline font-medium">capm.sante.gov.ma</a>{" "}
               et{" "}

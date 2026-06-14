@@ -126,7 +126,7 @@ function HeroDashboard() {
       <div className="relative rounded-2xl overflow-hidden shadow-2xl" style={{ border: `1px solid rgba(15,91,87,0.2)` }}>
         <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: C.night, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-red-400"/><div className="w-2.5 h-2.5 rounded-full bg-amber-400"/><div className="w-2.5 h-2.5 rounded-full" style={{ background: C.mint }}/></div>
-          <div className="flex-1 mx-3 rounded-md px-3 py-1 text-[10px]" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.3)" }}>maiadawa.ma/dashboard · Dr. Cherradi · Oncologie</div>
+          <div className="flex-1 mx-3 rounded-md px-3 py-1 text-[10px]" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.3)" }}>maiadawa.ma/dashboard · Dr. Bennani · Oncologie</div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: C.mint }} />
             <span className="text-[9px]" style={{ color: C.mint }}>En direct</span>
@@ -158,7 +158,7 @@ function HeroDashboard() {
             <div className="px-3 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: C.petrol, color: C.gold }}>IC</div>
-                <div><p className="text-[10px] font-semibold text-white">Dr. I. Cherradi</p><p className="text-[9px]" style={{ color: "rgba(255,255,255,0.35)" }}>Oncologie · CHU Rabat</p></div>
+                <div><p className="text-[10px] font-semibold text-white">Dr. A. Bennani</p><p className="text-[9px]" style={{ color: "rgba(255,255,255,0.35)" }}>Oncologie · CHU Rabat</p></div>
               </div>
             </div>
           </div>
@@ -231,7 +231,7 @@ function HeroDashboard() {
                     { src: "EMA", drug: "Pembrolizumab", txt: "Signal myocardite", sev: "urgent" },
                     { src: "FDA", drug: "Apixaban", txt: "Interaction warfarine", sev: "important" },
                     { src: "ANSM", drug: "Méthotrexate", txt: "Mise à jour RCP", sev: "info" },
-                    { src: "CAPM", drug: "Amoxicilline", txt: "Retrait de lot", sev: "urgent" },
+                    { src: "ANSM", drug: "Amoxicilline", txt: "Retrait de lot", sev: "urgent" },
                   ].map((a) => (
                     <div key={a.drug} className="flex items-center gap-2">
                       <span className="text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{
@@ -253,7 +253,7 @@ function HeroDashboard() {
               <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ background: C.petrol }}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
               </div>
-              <span className="text-[11px] font-semibold" style={{ color: C.petrol }}>Déclaration PV-MA-2026-00187 transmise au CAPM</span>
+              <span className="text-[11px] font-semibold" style={{ color: C.petrol }}>Déclaration PV-MA-2026-00187 · format CIOMS</span>
               <span className="text-[10px] ml-auto" style={{ color: C.mint }}>F.Z. · Pembrolizumab · il y a 2h</span>
               <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(15,91,87,0.12)", color: C.petrol }}>PDF CIOMS ↓</span>
             </div>
@@ -302,7 +302,7 @@ function HeroDeclaration() {
             <div className="px-3 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: C.petrol, color: C.gold }}>IC</div>
-                <div><p className="text-[10px] font-semibold text-white">Dr. I. Cherradi</p><p className="text-[9px]" style={{ color: "rgba(255,255,255,0.35)" }}>Oncologie · CHU Rabat</p></div>
+                <div><p className="text-[10px] font-semibold text-white">Dr. A. Bennani</p><p className="text-[9px]" style={{ color: "rgba(255,255,255,0.35)" }}>Oncologie · CHU Rabat</p></div>
               </div>
             </div>
           </div>
@@ -367,7 +367,7 @@ function HeroDeclaration() {
               <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ background: C.petrol }}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
               </div>
-              <span className="text-[11px] font-semibold" style={{ color: C.petrol }}>Prête à transmettre au CAPM</span>
+              <span className="text-[11px] font-semibold" style={{ color: C.petrol }}>Prête à transmettre · format CIOMS</span>
               <span className="text-[10px] ml-auto font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(15,91,87,0.12)", color: C.petrol }}>PDF CIOMS ↓</span>
             </div>
           </div>
@@ -387,12 +387,12 @@ const MODULES: {
 }[] = [
   {
     id: "decl", idx: "01 / 04", url: "maiadawa.ma/declaration", name: "Déclaration", free: true,
-    desc: "Formulaire CIOMS structuré, codage MedDRA automatique, gradation CTCAE, imputabilité de Bégaud calculée, transmission au CAPM.",
+    desc: "Formulaire CIOMS structuré, codage MedDRA automatique, gradation CTCAE, imputabilité de Bégaud calculée, export au format CIOMS.",
     meta: ["MedDRA", "CTCAE", "Bégaud", "CIOMS · ICH E2B(R3)"],
   },
   {
     id: "ref", idx: "02 / 04", url: "maiadawa.ma/referentiel", name: "Référentiel",
-    desc: "Effets indésirables, contre-indications, interactions, et alertes EMA · FDA · ANSM · CAPM en temps réel — avec les données de terrain marocaines.",
+    desc: "Effets indésirables, contre-indications, interactions, et alertes EMA · FDA · ANSM en temps réel — avec les données de terrain marocaines.",
     meta: ["Alertes officielles", "Interactions", "Données vie réelle"],
   },
   {
@@ -412,7 +412,7 @@ function ScreenDeclaration() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div><p className="text-sm font-bold" style={{ color: C.night }}>Déclaration de pharmacovigilance</p><p className="text-[11px]" style={{ color: "#8a9ab0" }}>PV-MA-2026-00187 · 8 sections CIOMS</p></div>
-        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>Transmis CAPM</span>
+        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>Format CIOMS</span>
       </div>
       <div className="rounded-xl p-3.5 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
         <div className="grid grid-cols-3 gap-2.5">
@@ -478,7 +478,7 @@ function ScreenOrdonnancier() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <div><p className="text-sm font-bold" style={{ color: C.night }}>Nouvelle ordonnance</p><p className="text-[11px]" style={{ color: "#8a9ab0" }}>Dr. I. Cherradi · Oncologie</p></div>
+        <div><p className="text-sm font-bold" style={{ color: C.night }}>Nouvelle ordonnance</p><p className="text-[11px]" style={{ color: "#8a9ab0" }}>Dr. A. Bennani · Oncologie</p></div>
         <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>100% local</span>
       </div>
       <div className="rounded-xl p-3.5 bg-white" style={{ border: "1px solid rgba(15,91,87,0.1)" }}>
@@ -727,8 +727,8 @@ function ReferentielSection() {
 // ── FAQ ───────────────────────────────────────────────────────────────────────
 
 const FAQ_ITEMS = [
-  { q: "Mes données sont-elles confidentielles ?", a: "Oui. MAIA DAWA respecte la loi 09-08. Les données cliniques restent sur votre appareil. Seules les déclarations anonymisées sont transmises au CAPM." },
-  { q: "La plateforme est-elle reconnue par le CAPM ?", a: "MAIA DAWA est développée selon les standards ICH E2B R3 et la méthode d'imputabilité de Bégaud utilisée par le système national de pharmacovigilance marocain." },
+  { q: "Mes données sont-elles confidentielles ?", a: "Oui. MAIA DAWA respecte la loi 09-08. Les données cliniques restent sur votre appareil. Vous gardez le contrôle de la transmission de vos déclarations." },
+  { q: "La plateforme suit-elle les standards de pharmacovigilance ?", a: "MAIA DAWA est développée selon les standards internationaux ICH E2B R3, le format CIOMS et la méthode d'imputabilité de Bégaud." },
   { q: "L'ordonnancier stocke-t-il les données patient ?", a: "Non. Les ordonnances restent sur votre appareil uniquement (localStorage). MAIA DAWA ne conserve aucune donnée patient sur ses serveurs — conformément à la loi 09-08." },
   { q: "Peut-on utiliser MAIA DAWA sans être médecin ?", a: "Les patients peuvent signaler via un lien sécurisé envoyé par leur médecin. Les professionnels bénéficient d'un espace dédié avec toutes les fonctionnalités avancées." },
 ];
@@ -776,7 +776,7 @@ export default function LandingPage() {
                   en 5 minutes. <span style={{ color: C.petrol }}>Gratuitement.</span>
                 </h1>
                 <p className="text-base leading-relaxed max-w-lg mb-6" style={{ color: "#6b7280" }}>
-                  La déclaration est gratuite et le restera. Autour d&apos;elle : référentiel de sécurité, ordonnancier et suivi patient — conformes aux standards CAPM · ICH E2B · Bégaud.
+                  La déclaration est gratuite et le restera. Autour d&apos;elle : référentiel de sécurité, ordonnancier et suivi patient — conformes aux standards ICH E2B · CIOMS · Bégaud.
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-5">
                   <Link href="/dashboard/invite" className="px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 shadow-sm transition-all" style={{ background: C.petrol, color: "#fff" }}>
@@ -794,7 +794,7 @@ export default function LandingPage() {
               </div>
 
               <div className="hidden lg:flex flex-col gap-3 shrink-0 pb-1">
-                {[{ val: "5 min", label: "par déclaration complète" }, { val: "CAPM", label: "compatible · ICH E2B" }, { val: "Bégaud", label: "imputabilité intégrée" }].map(s => (
+                {[{ val: "5 min", label: "par déclaration complète" }, { val: "CIOMS", label: "format de déclaration" }, { val: "Bégaud", label: "imputabilité intégrée" }].map(s => (
                   <div key={s.val} className="text-right">
                     <div className="text-2xl font-black" style={{ color: C.petrol }}>{s.val}</div>
                     <div className="text-[11px]" style={{ color: "#8a9ab0" }}>{s.label}</div>
@@ -928,7 +928,7 @@ export default function LandingPage() {
             </div>
             {[
               { title: "Plateforme", links: [["Référentiel", "/medicaments"], ["Interactions", "/interactions"], ["Ordonnancier", "/ordonnances/nouvelle"], ["Suivi patients", "/dashboard/medecin/suivi"], ["Alertes", "/dashboard/medecin/alertes"]] },
-              { title: "Déclarer", links: [["Médecin", "/login"], ["Patient", "/login"], ["Sans compte", "/dashboard/invite"], ["CAPM officiel ↗", "https://capm.ma"]] },
+              { title: "Déclarer", links: [["Médecin", "/login"], ["Patient", "/login"], ["Sans compte", "/dashboard/invite"]] },
               { title: "Entreprise", links: [["Contact & Partenariats", "/contact"], ["Confidentialité", "/confidentialite"], ["Conditions", "/conditions"], ["À propos", "/about"]] },
             ].map((col) => (
               <div key={col.title}>

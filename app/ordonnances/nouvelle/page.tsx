@@ -1366,7 +1366,7 @@ function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescr
                   <span key={j} className="text-xs bg-white border border-petrol/20 text-petrol rounded-full px-3 py-1.5 font-medium">📅 {j}</span>
                 ))}
               </div>
-              <p className="text-xs text-petrol">En cas d&apos;effet signalé → notification immédiate + déclaration CAPM pré-remplie.</p>
+              <p className="text-xs text-petrol">En cas d&apos;effet signalé → notification immédiate + déclaration pré-remplie (CIOMS).</p>
 
               {suiviLoading ? (
                 <div className="flex items-center gap-2 text-sm text-petrol">

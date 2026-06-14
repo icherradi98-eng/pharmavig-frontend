@@ -89,7 +89,7 @@ export default function AboutPage() {
                 {
                   icon: "⚡",
                   title: "Efficacité",
-                  text: "Une déclaration complète en moins de 5 minutes, avec auto-complétion des médicaments, reconnaissance de la DCI et transmission directe et sécurisée au CAPM.",
+                  text: "Une déclaration complète en moins de 5 minutes, avec auto-complétion des médicaments, reconnaissance de la DCI et documentation structurée au format CIOMS.",
                 },
                 {
                   icon: "📊",
@@ -112,7 +112,7 @@ export default function AboutPage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Une solution construite avec et pour le terrain</h2>
             <p className="text-gray-600 mb-10 max-w-2xl">
-              MAIA DAWA n&apos;est pas un outil générique adapté au contexte marocain. C&apos;est une solution conçue depuis le terrain, par des professionnels de santé exerçant dans des centres hospitaliers universitaires marocains, en collaboration directe avec les autorités de pharmacovigilance nationales.
+              MAIA DAWA n&apos;est pas un outil générique adapté au contexte marocain. C&apos;est une solution conçue depuis le terrain, par des professionnels de santé exerçant dans des centres hospitaliers universitaires marocains, au plus près des réalités cliniques locales.
             </p>
             <div className="flex flex-col gap-5">
               {[
@@ -125,8 +125,8 @@ export default function AboutPage() {
                   texte: "Contrairement aux solutions européennes ou américaines, MAIA DAWA intègre les spécificités des systèmes de santé à ressources limitées : multilinguisme, accès mobile prioritaire, formulaires simplifiés pour les patients non médicaux.",
                 },
                 {
-                  titre: "Transmission directe au CAPM",
-                  texte: "Chaque déclaration soumise via MAIA DAWA est automatiquement intégrée dans la base de données nationale du Centre Anti-Poison et de Pharmacovigilance du Maroc, sans ressaisie manuelle.",
+                  titre: "Documentation au format CIOMS",
+                  texte: "Chaque déclaration est structurée au format CIOMS et selon la méthode de Bégaud, prête pour le système national de pharmacovigilance — sans ressaisie manuelle.",
                 },
               ].map((item) => (
                 <div key={item.titre} className="flex gap-4 items-start border-l-4 border-emerald-500 pl-5 py-2">

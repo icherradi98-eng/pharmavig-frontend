@@ -56,7 +56,7 @@ const PARTNERS: { id: PartnerType; label: string; icon: React.ReactNode; color: 
   {
     id: "institution", label: "Institution publique", color: C.gold, bg: "rgba(212,175,55,0.08)",
     icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M3 21h18M3 7v1a3 3 0 006 0V7m0 1a3 3 0 006 0V7m0 1a3 3 0 006 0V7M4 7l8-4 8 4M12 3v4"/></svg>,
-    title: "Partenariat institutionnel", desc: "Ministère de la Santé, CAPM, AMMPS, universités — construisons ensemble l'infrastructure numérique de la pharmacovigilance marocaine.", cta: "Explorer un partenariat",
+    title: "Partenariat institutionnel", desc: "Ministère de la Santé, AMMPS, universités — construisons ensemble l'infrastructure numérique de la pharmacovigilance marocaine.", cta: "Explorer un partenariat",
   },
   {
     id: "pharma", label: "Industrie pharmaceutique", color: "#7c3aed", bg: "rgba(124,58,237,0.07)",
@@ -165,7 +165,7 @@ function PartnerForm({ type, cta, color }: { type: PartnerType; cta: string; col
 
       {type === "institution" && (
         <>
-          <FormField label="Organisation" placeholder="Ministère de la Santé, CAPM, Université…" required />
+          <FormField label="Organisation" placeholder="Ministère de la Santé, Université…" required />
           <div className="grid grid-cols-2 gap-3">
             <FormField label="Nom & Prénom" placeholder="Votre nom…" required />
             <FormField label="Fonction / Direction" placeholder="Directeur, Chef de service…" required />
@@ -387,7 +387,7 @@ export default function ContactPage() {
                 )}
                 {activePartner === "institution" && (
                   <div className="space-y-2.5">
-                    {["Compatible avec les standards CAPM et ICH E2B R3", "API disponible pour intégration aux systèmes existants", "Données agrégées anonymisées pour la surveillance nationale", "Accord de partenariat formel avec clauses CNDP", "Réunion de présentation à votre direction"].map(item => (
+                    {["Conforme aux standards ICH E2B R3 et au format CIOMS", "API disponible pour intégration aux systèmes existants", "Données agrégées anonymisées pour la surveillance nationale", "Cadre de confidentialité conforme à la loi 09-08 (CNDP)", "Réunion de présentation à votre direction"].map(item => (
                       <div key={item} className="flex items-center gap-2.5 bg-white rounded-xl px-3 py-2" style={{ border: `1px solid rgba(212,175,55,0.15)` }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinecap="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg>
                         <span className="text-xs" style={{ color: C.night }}>{item}</span>

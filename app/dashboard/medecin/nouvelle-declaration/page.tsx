@@ -111,7 +111,7 @@ type FormData = {
   commentaires: string;
   consentement: boolean;
   notifAccuseReception: boolean;   // email immédiat à la soumission
-  notifSuiviStatut: boolean;       // email quand le CAPM change le statut
+  notifSuiviStatut: boolean;       // email quand le statut de la déclaration change
   notifEmail: string;              // adresse cible (pré-remplie depuis declarantEmail)
 };
 
@@ -531,7 +531,7 @@ function MedDRASearch({ value, code, soc, onChange }: {
         </div>
       )}
       {query && !code && query.length > 2 && (
-        <p className="text-xs text-amber-600 mt-1">⚠️ Terme non codé — sera codé par le CAPM à réception.</p>
+        <p className="text-xs text-amber-600 mt-1">⚠️ Terme non codé — sera codé à réception.</p>
       )}
     </div>
   );
@@ -910,7 +910,7 @@ export default function FormulaireMedecin() {
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">✅</span>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-1">Déclaration transmise au CAPM</h1>
+            <h1 className="text-xl font-bold text-gray-900 mb-1">Déclaration enregistrée</h1>
             <p className="text-gray-500 text-sm">Votre déclaration a bien été enregistrée.</p>
           </div>
 
@@ -931,8 +931,8 @@ export default function FormulaireMedecin() {
                 <p className="text-sm font-bold text-red-700">Déclaration sérieuse</p>
                 <p className="text-xs text-red-600">
                   {isFatal
-                    ? "Cas fatal ou mettant en jeu le pronostic vital — délai de notification CAPM : 7 jours."
-                    : "Traitement prioritaire — délai de notification CAPM : 15 jours."}
+                    ? "Cas fatal ou mettant en jeu le pronostic vital — délai réglementaire de notification : 7 jours."
+                    : "Traitement prioritaire — délai réglementaire de notification : 15 jours."}
                 </p>
               </div>
             </div>
@@ -954,9 +954,9 @@ export default function FormulaireMedecin() {
               <div className="flex items-start gap-3 px-4 py-3">
                 <span className="text-base mt-0.5">🔬</span>
                 <div>
-                  <p className="text-sm font-medium text-gray-800">Analyse CAPM</p>
+                  <p className="text-sm font-medium text-gray-800">Analyse pharmacovigilance</p>
                   <p className="text-xs text-gray-500">
-                    Le CAPM analysera cette déclaration.{" "}
+                    Votre déclaration sera analysée par les services de pharmacovigilance.{" "}
                     {delaiLegal ? `Délai réglementaire : ${delaiLegal} jours.` : "Délai habituel : 30 jours."}
                   </p>
                 </div>
@@ -1554,7 +1554,7 @@ export default function FormulaireMedecin() {
                 <h3 className="font-semibold text-gray-900 text-sm">Critères de gravité (ICH E2B R3)</h3>
                 {isSerieux && <span className="text-xs bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded-full">⚡ Sérieux</span>}
               </div>
-              <p className="text-xs text-gray-500 mb-4">Un EIM est <strong>sérieux</strong> s&apos;il remplit au moins un des critères ci-dessous. Les EIM sérieux sont transmis au CAPM en priorité (délai réglementaire : 15 jours calendaires).</p>
+              <p className="text-xs text-gray-500 mb-4">Un EIM est <strong>sérieux</strong> s&apos;il remplit au moins un des critères ci-dessous. Les EIM sérieux sont traités en priorité (délai réglementaire : 15 jours calendaires).</p>
               <div className="flex flex-col gap-2">
                 <CheckRow label="Décès" checked={form.graviteDeces} onChange={() => set("graviteDeces", !form.graviteDeces)} desc="L'EIM a entraîné le décès du patient" />
                 <CheckRow label="Mise en danger de vie immédiate" checked={form.graviteVieDanger} onChange={() => set("graviteVieDanger", !form.graviteVieDanger)} desc="Le patient a été en danger vital" />
@@ -1705,7 +1705,7 @@ export default function FormulaireMedecin() {
         {/* ── Section 6 : Finalisation ── */}
         {step === 6 && (
           <div className="space-y-5">
-            <SectionTitle title="Finalisation et envoi" subtitle="Vérifiez votre déclaration avant envoi au CAPM." />
+            <SectionTitle title="Finalisation et envoi" subtitle="Vérifiez votre déclaration avant envoi." />
 
             {/* Récapitulatif */}
             <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-2 text-sm">
@@ -1717,7 +1717,7 @@ export default function FormulaireMedecin() {
                 </div>
                 {delaiLegal && (
                   <div className={`rounded-lg p-3 ${isFatal ? "bg-red-100" : "bg-amber-50"}`}>
-                    <p className="text-gray-500 mb-1">Délai légal CAPM</p>
+                    <p className="text-gray-500 mb-1">Délai légal de notification</p>
                     <p className={`font-bold ${isFatal ? "text-red-700" : "text-amber-700"}`}>{delaiLegal} jours calendaires</p>
                   </div>
                 )}
@@ -1755,7 +1755,7 @@ export default function FormulaireMedecin() {
               </div>
               {delaiLegal && (
                 <div className={`border rounded-lg p-3 text-xs mt-2 ${isFatal ? "bg-red-100 border-red-300 text-red-800" : "bg-red-50 border-red-200 text-red-700"}`}>
-                  ⚡ <strong>EIM {isFatal ? "fatal / pronostic vital engagé" : "sérieux"}</strong> — Délai réglementaire de transmission au CAPM : <strong>{delaiLegal} jours calendaires</strong>.
+                  ⚡ <strong>EIM {isFatal ? "fatal / pronostic vital engagé" : "sérieux"}</strong> — Délai réglementaire de transmission de la déclaration : <strong>{delaiLegal} jours calendaires</strong>.
                 </div>
               )}
             </div>
@@ -1851,7 +1851,7 @@ export default function FormulaireMedecin() {
                   />
                   <div>
                     <p className="text-sm font-medium text-gray-800 group-hover:text-emerald-700 transition-colors">
-                      Suivi de traitement par le CAPM
+                      Suivi du statut de la déclaration
                     </p>
                     <p className="text-xs text-gray-400 mt-0.5">Notification quand votre déclaration est prise en charge ou traitée</p>
                   </div>
@@ -1880,7 +1880,7 @@ export default function FormulaireMedecin() {
               <input type="checkbox" className="accent-emerald-600 mt-1" checked={form.consentement} onChange={(e) => set("consentement", e.target.checked)} />
               <div>
                 <p className="text-sm font-medium text-gray-900">
-                  Je certifie l&apos;exactitude des informations déclarées et consens à leur transmission anonymisée au Centre Anti-Poison et de Pharmacovigilance du Maroc (CAPM). <span className="text-red-500">*</span>
+                  Je certifie l&apos;exactitude des informations déclarées et consens à leur traitement anonymisé conforme à la loi 09-08. <span className="text-red-500">*</span>
                 </p>
                 <p className="text-xs text-gray-400 mt-1">Conformément à l&apos;article 18 de la loi 17-04 relative au Code du médicament et de la pharmacie.</p>
               </div>
@@ -1912,7 +1912,7 @@ export default function FormulaireMedecin() {
               disabled={!form.consentement || champsManquants.length > 0}
               className={`w-full py-4 rounded-xl font-bold text-white text-base transition-all ${form.consentement && champsManquants.length === 0 ? "bg-emerald-600 hover:bg-emerald-700 shadow-md" : "bg-gray-300 cursor-not-allowed"}`}
             >
-              {isFatal ? "🚨 Envoyer — Urgence 7 jours →" : isSerieux ? "⚡ Envoyer la déclaration sérieuse au CAPM →" : "Envoyer la déclaration au CAPM →"}
+              {isFatal ? "🚨 Envoyer — Urgence 7 jours →" : isSerieux ? "⚡ Envoyer la déclaration sérieuse →" : "Envoyer la déclaration →"}
             </button>
           </div>
         )}

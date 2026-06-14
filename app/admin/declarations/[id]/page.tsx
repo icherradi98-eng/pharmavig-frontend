@@ -10,7 +10,7 @@ type AdminReport = AdminReportDetail;
 
 const STATUTS = [
   { val: "soumis", label: "Soumis" },
-  { val: "transmis_capm", label: "Transmis au CAPM" },
+  { val: "transmis_capm", label: "Transmis" },
   { val: "traite", label: "Traité / Clôturé" },
 ];
 
@@ -255,11 +255,11 @@ export default function AdminDeclarationDetail() {
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5">N° de référence CAPM</label>
+                <label className="block text-xs text-gray-400 mb-1.5">N° de référence</label>
                 <input
                   value={capmRef}
                   onChange={(e) => setCapmRef(e.target.value)}
-                  placeholder="Ex : CAPM-2026-00123"
+                  placeholder="Ex : REF-2026-00123"
                   className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
                 />
               </div>

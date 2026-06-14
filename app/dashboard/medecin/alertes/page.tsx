@@ -24,12 +24,12 @@ export type SecurityAlert = {
   officialUrl: string;
 };
 
-const SOURCES: AlertSource[] = ["CAPM", "EMA", "ANSM", "FDA"];
+const SOURCES: AlertSource[] = ["EMA", "ANSM", "FDA"];
 const SEVERITIES: AlertSeverity[] = ["urgent", "important", "info"];
 const READ_ALERTS_KEY = "pharmavig_medecin_alerts_read";
 
 // ── Données réglementaires réelles ────────────────────────────────────────────
-// Sources : DHPC EMA, ANSM lettres aux professionnels, CAPM bulletins publiés.
+// Sources : DHPC EMA, lettres ANSM aux professionnels, communications FDA.
 // Ces données seront remplacées par le flux API alertes_securite quand disponible.
 const ALERTS: SecurityAlert[] = [
   {
@@ -64,13 +64,13 @@ const ALERTS: SecurityAlert[] = [
   },
   {
     id: "capm-2024-amoxicilline-reactions",
-    source: "CAPM",
+    source: "ANSM",
     severity: "important",
     date: "2024-08-20",
     molecules: ["Amoxicilline", "Amoxicilline + acide clavulanique"],
     meddraSoc: "Peau et tissu sous-cutané",
-    summary: "Augmentation des signalements de réactions cutanées graves (syndrome de Stevens-Johnson, DRESS) sous amoxicilline au Maroc. Vigilance renforcée demandée. Déclaration systématique au CAPM de tout cas de réaction cutanée sévère sous bêtalactamines.",
-    officialUrl: "https://capm.sante.gov.ma",
+    summary: "Augmentation des signalements de réactions cutanées graves (syndrome de Stevens-Johnson, DRESS) sous amoxicilline. Vigilance renforcée demandée. Déclaration systématique de tout cas de réaction cutanée sévère sous bêtalactamines.",
+    officialUrl: "https://ansm.sante.fr",
   },
   {
     id: "ema-dhpc-2024-ibuprofene-cardiaque",
@@ -173,7 +173,7 @@ export default function AlertesSecurite() {
     <MedecinLayout unreadAlerts={unread}>
       <PageHeader
         title="Alertes sécurité"
-        subtitle="Veille réglementaire personnalisée — CAPM, EMA, ANSM, FDA"
+        subtitle="Veille réglementaire personnalisée — EMA, ANSM, FDA"
       />
 
       <div className="px-5 md:px-8 py-6 space-y-5">
@@ -277,7 +277,7 @@ export default function AlertesSecurite() {
               Veille automatique en cours de déploiement
             </p>
             <p className="text-sm text-blue-700 leading-relaxed">
-              Le système d&apos;alertes MAIA DAWA intégrera prochainement les flux officiels CAPM, ANSM et EMA.
+              Le système d&apos;alertes MAIA DAWA intégrera prochainement les flux réglementaires officiels (EMA, ANSM, FDA).
               Vous serez notifié automatiquement pour les molécules que vous prescrivez.
               En attendant, consultez directement{" "}
               <a href="https://capm.sante.gov.ma" target="_blank" rel="noreferrer"

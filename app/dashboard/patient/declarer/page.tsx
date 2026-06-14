@@ -500,7 +500,7 @@ export default function FormulairePatient() {
               <div className="flex items-start gap-3 px-4 py-3">
                 <span className="text-base mt-0.5">🔬</span>
                 <div>
-                  <p className="text-sm font-medium text-gray-800">Analyse par le CAPM</p>
+                  <p className="text-sm font-medium text-gray-800">Analyse pharmacovigilance</p>
                   <p className="text-xs text-gray-500">Le Centre Anti-Poison et de Pharmacovigilance du Maroc analysera votre déclaration.</p>
                 </div>
               </div>
@@ -644,7 +644,7 @@ export default function FormulairePatient() {
                 className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
             </div>
             <Collapsible label="Vous avez la boîte sous la main ?" labelDar="عندك العلبة قدامك؟">
-              <p className="text-xs text-gray-400 mb-1">Optionnel — très utile pour le CAPM.</p>
+              <p className="text-xs text-gray-400 mb-1">Optionnel — très utile pour la déclaration.</p>
               <div className="space-y-3">
                 {[
                   { field: "medicamentLot" as const,        label: "Numéro de lot / نومرو لو",           ph: "Ex : BH2345" },

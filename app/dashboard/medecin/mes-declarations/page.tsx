@@ -8,7 +8,7 @@ import { api, type ReportOut } from "@/lib/api";
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   brouillon:     { label: "Brouillon",        color: "bg-gray-100 text-gray-600" },
   soumis:        { label: "Soumis",           color: "bg-blue-100 text-blue-700" },
-  transmis_capm: { label: "Transmis CAPM",    color: "bg-emerald-100 text-emerald-700" },
+  transmis_capm: { label: "Transmis",    color: "bg-emerald-100 text-emerald-700" },
   traite:        { label: "Traité",           color: "bg-violet-100 text-violet-700" },
 };
 
@@ -111,7 +111,7 @@ export default function MesDeclarations() {
                 className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-600">
                 <option value="">Tout statut</option>
                 <option value="soumis">Soumis</option>
-                <option value="transmis_capm">Transmis CAPM</option>
+                <option value="transmis_capm">Transmis</option>
                 <option value="traite">Traité</option>
               </select>
               <select value={sortBy} onChange={(e) => setSortBy(e.target.value as "date" | "gravite" | "drug")}
@@ -127,7 +127,7 @@ export default function MesDeclarations() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 text-left text-xs text-gray-400 uppercase tracking-wide">
-                    <th className="px-4 py-3 font-medium">Référence CAPM</th>
+                    <th className="px-4 py-3 font-medium">Référence</th>
                     <th className="px-4 py-3 font-medium">Date</th>
                     <th className="px-4 py-3 font-medium">Médicament suspect</th>
                     <th className="px-4 py-3 font-medium">Gravité</th>

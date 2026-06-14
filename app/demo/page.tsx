@@ -347,7 +347,7 @@ export default function DemoPage() {
           </div>
           <div className="flex items-center gap-2 text-sm text-emerald-700">
             <span>✅</span>
-            <span>Déclarant certifie l'exactitude des informations et autorise la transmission au CAPM</span>
+            <span>Déclarant certifie l'exactitude des informations et autorise la transmission de la déclaration</span>
           </div>
         </Card>
 
@@ -355,7 +355,7 @@ export default function DemoPage() {
         {!submitted ? (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center">
             <p className="text-sm text-gray-500 mb-4">
-              En conditions réelles, cette déclaration serait transmise instantanément au CAPM.<br/>
+              En conditions réelles, cette déclaration serait générée au format CIOMS.<br/>
               Ici, la soumission est <strong>simulée</strong> — aucune donnée n'est enregistrée.
             </p>
             <button
@@ -363,7 +363,7 @@ export default function DemoPage() {
               className="px-8 py-3 rounded-xl text-white font-semibold text-sm transition-colors"
               style={{ background: "#0F5B57" }}
             >
-              ✅ Simuler la soumission au CAPM
+              ✅ Simuler la soumission
             </button>
           </div>
         ) : (
@@ -374,9 +374,9 @@ export default function DemoPage() {
                 <span className="text-3xl">✅</span>
               </div>
               <h2 className="text-lg font-bold mb-1" style={{ color: "#0F5B57" }}>
-                Déclaration transmise au CAPM
+                Déclaration générée au format CIOMS
               </h2>
-              <p className="text-sm text-gray-500">Simulation réussie — voilà ce que recevrait le CAPM en production.</p>
+              <p className="text-sm text-gray-500">Simulation réussie — voici la déclaration générée au format CIOMS.</p>
             </div>
 
             {/* Référence */}
@@ -391,7 +391,7 @@ export default function DemoPage() {
               <span>⚡</span>
               <div>
                 <span className="font-bold text-amber-800">Médicalement significatif</span>
-                <span className="text-amber-700"> — délai de notification CAPM : </span>
+                <span className="text-amber-700"> — délai de notification réglementaire : </span>
                 <span className="font-bold text-amber-800">30 jours calendaires</span>
               </div>
             </div>
@@ -429,7 +429,7 @@ export default function DemoPage() {
         {/* ── CTA bas de page ── */}
         <div className="text-center py-6 border-t border-gray-200">
           <p className="text-sm text-gray-500 mb-3">
-            MAIA DAWA — Pharmacovigilance Intelligence · Conçu pour le Maroc · Conforme CAPM & loi 09-08
+            MAIA DAWA — Pharmacovigilance Intelligence · Conçu pour le Maroc · Format CIOMS · loi 09-08
           </p>
           <div className="flex justify-center gap-4 text-sm">
             <Link href="/" className="text-gray-400 hover:text-gray-600 underline">Accueil</Link>

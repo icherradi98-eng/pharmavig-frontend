@@ -74,7 +74,7 @@ export default function AdminDeclarations() {
           {[
             { value: filterSource, setter: setFilterSource, placeholder: "Tous les profils", options: [["medecin", "Médecin"], ["patient", "Patient"], ["pharmacien", "Pharmacien"]] },
             { value: filterSerieux, setter: setFilterSerieux, placeholder: "Toute gravité", options: [["oui", "Sérieux"], ["non", "Non sérieux"]] },
-            { value: filterStatus, setter: setFilterStatus, placeholder: "Tous les statuts", options: [["soumis", "Soumis"], ["transmis_capm", "Transmis CAPM"], ["traite", "Traité"]] },
+            { value: filterStatus, setter: setFilterStatus, placeholder: "Tous les statuts", options: [["soumis", "Soumis"], ["transmis_capm", "Transmis"], ["traite", "Traité"]] },
           ].map((f, i) => (
             <select key={i} value={f.value} onChange={(e) => f.setter(e.target.value)}
               className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">

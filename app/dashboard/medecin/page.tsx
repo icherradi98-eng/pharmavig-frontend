@@ -211,7 +211,7 @@ export default function MedecinVueEnsemble() {
                         Faire ma première déclaration
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        Formulaire CIOMS avec score d&apos;imputabilité Bégaud — transmis au CAPM
+                        Formulaire CIOMS avec score d&apos;imputabilité Bégaud — prêt à transmettre
                       </p>
                     </div>
                     <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
@@ -234,7 +234,7 @@ export default function MedecinVueEnsemble() {
                         )}
                       </div>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        Veille réglementaire CAPM, EMA, ANSM — personnalisée pour vos molécules
+                        Veille réglementaire EMA, ANSM, FDA — personnalisée pour vos molécules
                       </p>
                     </div>
                     <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
