@@ -43,3 +43,6 @@ next-env.d.ts
 # claude / artefacts locaux
 .claude/
 /mockups/
+
+# Référentiel : dataset complet régénérable (garder data/raw + scripts + seed)
+/data/normalized/
