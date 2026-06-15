@@ -91,6 +91,24 @@ function parsePrice(s) {
 }
 function splitCombo(s) { return String(s || "").split("/").map((x) => x.trim()).filter(Boolean); }
 
+// Infère la voie d'administration depuis la forme pharmaceutique (texte CNOPS).
+// Utilisé uniquement pour pré-remplir route — ne remplace pas une validation humaine.
+function inferRoute(forme) {
+  const f = strip(forme || "");
+  if (!f) return null;
+  if (/ophtalmique|collyre|oculaire/.test(f))                   return "OPHTALMIQUE";
+  if (/auriculaire|otique/.test(f))                             return "AURICULAIRE";
+  if (/nasal|rhinologique/.test(f))                             return "NASALE";
+  if (/inhalation|inhalateur|nebuliseur|aerosl|aerosol/.test(f)) return "INHALATION";
+  if (/injectable|injection|perfusion|parenteral|implant/.test(f)) return "PARENTERALE";
+  if (/vaginal|ovule/.test(f))                                  return "VAGINALE";
+  if (/rectal|suppositoire|lavement/.test(f))                   return "RECTALE";
+  if (/cutane|dermique|transdermique|patch|creme|pommade|lotion|gel|emulsion/.test(f)) return "CUTANEE";
+  if (/buccal|sublingual|gingival/.test(f))                     return "BUCCALE/SUBLINGUALE";
+  if (/comprime|gelule|capsule|sachet|granule|sirop|solution orale|suspension orale|poudre.*orale/.test(f)) return "ORALE";
+  return null;
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 const rows = parseXlsx(RAW);
 const header = rows[0].map((h) => (h || "").trim());
@@ -183,9 +201,11 @@ for (let i = 1; i < rows.length; i++) {
   presentations.push({
     id: `pres-${pid}`, medicinal_product_id: pid,
     strength: (r[col.DOSAGE1] || "").trim() || null, unit: (r[col.UNITE_DOSAGE1] || "").trim() || null,
-    pharmaceutical_form: (r[col.FORME] || "").trim() || null, route: null,
+    pharmaceutical_form: (r[col.FORME] || "").trim() || null,
+    route: inferRoute(r[col.FORME]),
     packaging: (r[col.PRESENTATION] || "").trim() || null,
-    ppv, hospital_price: parsePrice(r[col.PH]), reimbursement_base: br,
+    ppv, price_public_mad: ppv,
+    hospital_price: parsePrice(r[col.PH]), reimbursement_base: br,
     reimbursement_status: (r[col.TAUX_REMBOURSEMENT] || "").trim() ? "reimbursed" : "unknown",
     prescription_conditions: (r[col.TAUX_REMBOURSEMENT] || "").trim() ? `Taux remboursement : ${r[col.TAUX_REMBOURSEMENT].trim()}` : null,
     availability_status: "availability_unconfirmed", last_checked_at: null,

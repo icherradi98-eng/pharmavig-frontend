@@ -106,24 +106,12 @@ function gs1DateToISO(gs1: string): string {
 }
 
 // ─── Lookup OpenFDA par GTIN ──────────────────────────────────────────────────
-
-async function lookupByGTIN(gtin: string): Promise<{ nomCommercial?: string; dci?: string }> {
-  try {
-    // Supprimer le check digit (14 chiffres → NDC est dans les 11 chiffres du milieu)
-    const ndc = gtin.substring(1, 12); // approximation
-    const url = `https://api.fda.gov/drug/ndc.json?search=package_ndc:"${ndc}"&limit=1`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
-    if (!res.ok) return {};
-    const json = await res.json();
-    const r = json.results?.[0];
-    if (!r) return {};
-    return {
-      nomCommercial: r.brand_name ?? r.generic_name,
-      dci: r.generic_name,
-    };
-  } catch {
-    return {};
-  }
+// Désactivé : OpenFDA est une base US (FDA) — les GTIN marocains n'y sont pas
+// référencés et les noms retournés (brand_name FDA) peuvent différer des noms
+// commerciaux marocains, créant un risque d'erreur de déclaration.
+// À remplacer par une lookup BDPM/DMP marocain quand disponible.
+async function lookupByGTIN(_gtin: string): Promise<{ nomCommercial?: string; dci?: string }> {
+  return {};
 }
 
 // ─── Composant principal ──────────────────────────────────────────────────────
