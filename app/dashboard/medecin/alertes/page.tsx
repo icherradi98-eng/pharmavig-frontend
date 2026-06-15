@@ -24,13 +24,14 @@ export type SecurityAlert = {
   officialUrl: string;
 };
 
-const SOURCES: AlertSource[] = ["EMA", "ANSM", "FDA"];
+const SOURCES: AlertSource[] = ["EMA", "ANSM", "CAPM"];
 const SEVERITIES: AlertSeverity[] = ["urgent", "important", "info"];
 const READ_ALERTS_KEY = "pharmavig_medecin_alerts_read";
 
 // ── Données réglementaires réelles ────────────────────────────────────────────
-// Sources : DHPC EMA, lettres ANSM aux professionnels, communications FDA.
-// Ces données seront remplacées par le flux API alertes_securite quand disponible.
+// Sources : DHPC EMA, lettres ANSM aux professionnels, communications CAPM.
+// Ces données illustratives seront remplacées par le flux API alertes_securite quand disponible.
+// NE PAS utiliser les communications FDA comme source primaire — source US, non pertinente pour le marché marocain.
 const ALERTS: SecurityAlert[] = [
   {
     id: "ema-dhpc-2024-methotrexate",
@@ -93,14 +94,14 @@ const ALERTS: SecurityAlert[] = [
     officialUrl: "https://ansm.sante.fr/informations-de-securite/codeine-tramadol-pholcodine",
   },
   {
-    id: "fda-2024-ozempic-thyroide",
-    source: "FDA",
+    id: "ema-2024-glp1-thyroide",
+    source: "EMA",
     severity: "important",
     date: "2024-05-14",
     molecules: ["Sémaglutide", "Liraglutide", "Dulaglutide"],
     meddraSoc: "Troubles endocriniens",
     summary: "Risque de carcinome médullaire de la thyroïde avec les agonistes du GLP-1 signalé dans des études de pharmacovigilance post-marketing. Contre-indication maintenue en cas d'antécédents personnels ou familiaux de CMT ou NEM2. Surveillance clinique renforcée.",
-    officialUrl: "https://www.fda.gov/drugs/drug-safety-and-availability/fda-drug-safety-communication-updated-information-about-cardiovascular-risks-type-2-diabetes",
+    officialUrl: "https://www.ema.europa.eu/en/medicines/human/referrals/glp-1-receptor-agonists",
   },
   {
     id: "ansm-2025-metformine-iode",
@@ -173,7 +174,7 @@ export default function AlertesSecurite() {
     <MedecinLayout unreadAlerts={unread}>
       <PageHeader
         title="Alertes sécurité"
-        subtitle="Veille réglementaire personnalisée — EMA, ANSM, FDA"
+        subtitle="Veille réglementaire — EMA, ANSM, CAPM"
       />
 
       <div className="px-5 md:px-8 py-6 space-y-5">
@@ -277,7 +278,7 @@ export default function AlertesSecurite() {
               Veille automatique en cours de déploiement
             </p>
             <p className="text-sm text-blue-700 leading-relaxed">
-              Le système d&apos;alertes MAIA DAWA intégrera prochainement les flux réglementaires officiels (EMA, ANSM, FDA).
+              Le système d&apos;alertes MAIA DAWA intégrera prochainement les flux réglementaires officiels (EMA, ANSM, CAPM).
               Vous serez notifié automatiquement pour les molécules que vous prescrivez.
               En attendant, consultez directement{" "}
               <a href="https://capm.sante.gov.ma" target="_blank" rel="noreferrer"

@@ -1,6 +1,6 @@
 /**
  * Table locale des interactions médicamenteuses critiques.
- * 50 paires cliniquement significatives — utilisée comme fallback si OpenFDA est indisponible.
+ * 50 paires cliniquement significatives (données publiques ANSM/EMA).
  * Niveaux : "CI" (contre-indiqué), "majeur", "modéré", "mineur"
  */
 

@@ -28,7 +28,7 @@ export const MOCK_DECLARATIONS: MockDeclaration[] = [
   { id: "d12", pv: "PV-MA-2025-00488", date: "2025-12-22", drugDci: "Amlodipine", meddraSoc: "Vasculaire", meddraPt: "Œdèmes des membres inférieurs", grave: false, begaud: 3, statut: "traite" },
 ];
 
-export type MockAlertSource = "CAPM" | "EMA" | "ANSM" | "FDA";
+export type MockAlertSource = "CAPM" | "EMA" | "ANSM";
 export type MockAlertSeverity = "urgent" | "important" | "info";
 
 export type MockAlert = {
@@ -75,13 +75,13 @@ export const MOCK_ALERTS: MockAlert[] = [
   },
   {
     id: "a4",
-    source: "FDA",
+    source: "EMA",
     severity: "urgent",
     date: "2026-05-10",
     molecules: ["Nivolumab", "Opdivo"],
     meddraSoc: "Gastro-intestinal",
-    summary: "Mise à jour de l'avertissement encadré : risque accru de colite immuno-induite avec les protocoles associant ipilimumab. Nouveau protocole de surveillance recommandé tous les 2 cycles.",
-    officialUrl: "https://www.fda.gov/medwatch",
+    summary: "Mise à jour des recommandations EMA : risque accru de colite immuno-induite avec les protocoles associant ipilimumab. Nouveau protocole de surveillance recommandé tous les 2 cycles.",
+    officialUrl: "https://www.ema.europa.eu/",
   },
   {
     id: "a5",
@@ -99,7 +99,6 @@ export const ALERT_SOURCE_STYLES: Record<MockAlertSource, string> = {
   CAPM: "bg-blue-100 text-blue-700 border-blue-200",
   EMA: "bg-violet-100 text-violet-700 border-violet-200",
   ANSM: "bg-orange-100 text-orange-700 border-orange-200",
-  FDA: "bg-red-100 text-red-700 border-red-200",
 };
 
 export const ALERT_SEVERITY_STYLES: Record<MockAlertSeverity, { border: string; label: string; chip: string }> = {

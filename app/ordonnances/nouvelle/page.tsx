@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -63,13 +63,11 @@ export default function NouvelleOrdonnance() {
   const router = useRouter();
 
   const [profile, setProfile] = useState<DoctorProfile>(() => mergeProfileWithUser(readProfile(), null));
+  const effectiveProfile = useMemo(
+    () => mergeProfileWithUser(profile, user),
+    [profile, user]
+  );
   const [profileModalOpen, setProfileModalOpen] = useState(false);
-
-  // Seeder le profil depuis user dès qu'il est disponible (évite l'en-tête vide au premier rendu)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    setProfile((prev) => mergeProfileWithUser(prev, user));
-  }, [user?.nom, user?.prenom, user?.specialite]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pré-remplissage depuis un renouvellement OU une duplication (lu une seule fois, via sessionStorage)
   // — "renouvellement" reprend tout (même patient) ; "duplication" ne reprend que les médicaments
@@ -120,17 +118,11 @@ export default function NouvelleOrdonnance() {
   const [suiviLoading, setSuiviLoading] = useState(false);
 
   // ── Modèles + démarrage rapide ──────────────────────────────────────────────
-  const [favTemplates, setFavTemplates] = useState<RxTemplate[]>([]);
-  const [allTpls, setAllTpls] = useState<RxTemplate[]>([]);
+  const [favTemplates, setFavTemplates] = useState<RxTemplate[]>(() => favoriteTemplates());
+  const [allTpls, setAllTpls] = useState<RxTemplate[]>(() => allTemplates());
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
-  const [recentOrdos, setRecentOrdos] = useState<SavedOrdonnance[]>([]);
+  const [recentOrdos] = useState<SavedOrdonnance[]>(() => readHistory().slice(0, 4));
   const [saveTplOpen, setSaveTplOpen] = useState(false);
-
-  useEffect(() => {
-    setFavTemplates(favoriteTemplates());
-    setAllTpls(allTemplates());
-    setRecentOrdos(readHistory().slice(0, 4));
-  }, []);
 
   function applyTemplate(t: RxTemplate) {
     setMeds(t.meds.map((m, i) => ({ ...m, id: i + 1 })));
@@ -277,10 +269,10 @@ export default function NouvelleOrdonnance() {
     }
   }
 
-  const doctorName = (profile.nom || profile.prenom)
-    ? `Dr. ${profile.prenom || ""} ${profile.nom || ""}`.trim()
+  const doctorName = (effectiveProfile.nom || effectiveProfile.prenom)
+    ? `Dr. ${effectiveProfile.prenom || ""} ${effectiveProfile.nom || ""}`.trim()
     : (user ? `Dr. ${user.prenom || ""} ${user.nom || ""}`.trim() : "");
-  const specialite = profile.specialite || user?.specialite || "";
+  const specialite = effectiveProfile.specialite || user?.specialite || "";
 
   if (generated) {
     return (
@@ -289,10 +281,9 @@ export default function NouvelleOrdonnance() {
         ordonnance={generated}
         doctorName={doctorName}
         specialite={specialite}
-        profile={profile}
+        profile={effectiveProfile}
         prescriptionToken={prescriptionToken}
         suiviLoading={suiviLoading}
-        patientTelephone={patientTelephone}
         onBack={() => {
           deleteFromHistory(generated.id);
           setGenerated(null);
@@ -379,20 +370,20 @@ export default function NouvelleOrdonnance() {
               <p className="font-semibold text-gray-900">{doctorName || "Dr. — (complétez votre profil)"}</p>
               {specialite && <p className="text-gray-500">{specialite}</p>}
               <p className="text-gray-400 text-xs mt-1">
-                {[profile.numOrdre && `N° Ordre : ${profile.numOrdre}`, profile.etablissement, profile.ville, profile.telephone].filter(Boolean).join(" · ") || "Complétez vos coordonnées pour qu'elles apparaissent sur le PDF"}
+                {[effectiveProfile.numOrdre && `N° Ordre : ${effectiveProfile.numOrdre}`, effectiveProfile.etablissement, effectiveProfile.ville, effectiveProfile.telephone].filter(Boolean).join(" · ") || "Complétez vos coordonnées pour qu'elles apparaissent sur le PDF"}
               </p>
               <div className="flex items-center gap-4 mt-2">
-                {profile.signatureDataUrl && (
+                {effectiveProfile.signatureDataUrl && (
                   <div className="text-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={profile.signatureDataUrl} alt="Signature" className="h-10 object-contain" />
+                    <img src={effectiveProfile.signatureDataUrl} alt="Signature" className="h-10 object-contain" />
                     <p className="text-[10px] text-gray-400">Signature</p>
                   </div>
                 )}
-                {profile.cachetDataUrl && (
+                {effectiveProfile.cachetDataUrl && (
                   <div className="text-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={profile.cachetDataUrl} alt="Cachet" className="h-10 object-contain" />
+                    <img src={effectiveProfile.cachetDataUrl} alt="Cachet" className="h-10 object-contain" />
                     <p className="text-[10px] text-gray-400">Cachet</p>
                   </div>
                 )}
@@ -519,7 +510,7 @@ export default function NouvelleOrdonnance() {
                 {interactionResult === "interaction" && (
                   <div className="bg-amber-50 border border-amber-300 rounded-lg px-3 py-2 text-sm text-amber-800">
                     ⚠️ Interaction potentielle détectée entre <strong>{interactionPair[0]}</strong> et <strong>{interactionPair[1]}</strong>. Vérifiez avant de prescrire.
-                    <p className="text-xs text-amber-600 mt-1">Cette vérification est indicative (base OpenFDA). Le prescripteur reste seul responsable.</p>
+                    <p className="text-xs text-amber-600 mt-1">Cette vérification est indicative (base locale MAIA DAWA). Le prescripteur reste seul responsable.</p>
                   </div>
                 )}
                 {interactionResult === "aucune" && (
@@ -682,7 +673,7 @@ export default function NouvelleOrdonnance() {
       )}
       {profileModalOpen && (
         <ProfileModal
-          initial={profile}
+          initial={effectiveProfile}
           onClose={() => setProfileModalOpen(false)}
           onSave={(p) => { setProfile(p); saveProfile(p); setProfileModalOpen(false); }}
         />
@@ -696,28 +687,6 @@ export default function NouvelleOrdonnance() {
 function TemplatePicker({ templates, onApply, onClose }: { templates: RxTemplate[]; onApply: (t: RxTemplate) => void; onClose: () => void }) {
   const persos = templates.filter((t) => t.scope === "perso");
   const specs = templates.filter((t) => t.scope === "specialite");
-  function Group({ title, list }: { title: string; list: RxTemplate[] }) {
-    if (list.length === 0) return null;
-    return (
-      <div className="mb-4">
-        <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: "var(--md-text-muted)" }}>{title}</p>
-        <div className="space-y-2">
-          {list.map((t) => (
-            <button key={t.id} onClick={() => onApply(t)} className="w-full text-left rounded-xl px-4 py-3 flex items-center justify-between gap-3 hover:bg-petrol/5 transition-colors" style={{ border: "1px solid var(--md-cream-dark)" }}>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold" style={{ color: "var(--md-night)" }}>{t.nom}</p>
-                <p className="text-xs truncate" style={{ color: "var(--md-text-muted)" }}>
-                  {t.meds.map((m) => m.nom).filter(Boolean).join(", ")}
-                  {t.specialite ? ` · ${t.specialite}` : ""}
-                </p>
-              </div>
-              <span className="text-xs font-semibold shrink-0 text-petrol">Appliquer →</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4">
       <div className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6">
@@ -725,9 +694,32 @@ function TemplatePicker({ templates, onApply, onClose }: { templates: RxTemplate
           <h3 className="font-bold" style={{ color: "var(--md-night)" }}>Modèles d&apos;ordonnance</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
         </div>
-        <Group title="Mes modèles" list={persos} />
-        <Group title="Modèles par spécialité" list={specs} />
+        <TemplateGroup title="Mes modèles" list={persos} onApply={onApply} />
+        <TemplateGroup title="Modèles par spécialité" list={specs} onApply={onApply} />
         {templates.length === 0 && <p className="text-sm" style={{ color: "var(--md-text-muted)" }}>Aucun modèle pour l&apos;instant.</p>}
+      </div>
+    </div>
+  );
+}
+
+function TemplateGroup({ title, list, onApply }: { title: string; list: RxTemplate[]; onApply: (t: RxTemplate) => void }) {
+  if (list.length === 0) return null;
+  return (
+    <div className="mb-4">
+      <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: "var(--md-text-muted)" }}>{title}</p>
+      <div className="space-y-2">
+        {list.map((t) => (
+          <button key={t.id} onClick={() => onApply(t)} className="w-full text-left rounded-xl px-4 py-3 flex items-center justify-between gap-3 hover:bg-petrol/5 transition-colors" style={{ border: "1px solid var(--md-cream-dark)" }}>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold" style={{ color: "var(--md-night)" }}>{t.nom}</p>
+              <p className="text-xs truncate" style={{ color: "var(--md-text-muted)" }}>
+                {t.meds.map((m) => m.nom).filter(Boolean).join(", ")}
+                {t.specialite ? ` · ${t.specialite}` : ""}
+              </p>
+            </div>
+            <span className="text-xs font-semibold shrink-0 text-petrol">Appliquer →</span>
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -1139,14 +1131,13 @@ function ProfileModal({ initial, onClose, onSave }: { initial: DoctorProfile; on
 
 // ── Aperçu / génération PDF ───────────────────────────────────────────────────
 
-function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescriptionToken, suiviLoading, patientTelephone, onBack, onGoToSuivi }: {
+function OrdonnancePreview({ ordonnance, doctorName, specialite, profile, prescriptionToken, suiviLoading, onBack, onGoToSuivi }: {
   ordonnance: SavedOrdonnance;
   doctorName: string;
   specialite?: string;
   profile: DoctorProfile;
   prescriptionToken: string | null;
   suiviLoading: boolean;
-  patientTelephone: string;
   onBack: () => void;
   onGoToSuivi: () => void;
 }) {

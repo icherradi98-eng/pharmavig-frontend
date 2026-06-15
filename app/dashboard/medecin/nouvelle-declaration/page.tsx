@@ -7,9 +7,9 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import ImputabiliteBegaud, { ImputScore } from "./ImputabiliteBegaud";
 import { readProfile } from "@/lib/ordonnancier";
-import { autocomplete, fetchAnsm, fetchFdaLabel, type Suggestion } from "@/lib/drugApi";
+import { autocomplete, fetchAnsm, type Suggestion } from "@/lib/drugApi";
 import { MEDDRA_TERMS, type MedDRATerm } from "@/lib/meddraTerms";
-import { parsePostologie, formatPostologie } from "@/lib/parsePostologie";
+import { parsePostologie } from "@/lib/parsePostologie";
 import ScanBoite, { type ScannedData } from "@/components/medecin/ScanBoite";
 import { searchLocalInteraction } from "@/lib/interactionsLocales";
 
@@ -153,13 +153,6 @@ const SECTIONS = [
   { id: 6, label: "Finalisation", icon: "📤" },
 ];
 
-const SPECIALITES = [
-  "Médecine générale", "Cardiologie", "Oncologie", "Neurologie", "Pneumologie",
-  "Gastro-entérologie", "Endocrinologie", "Rhumatologie", "Dermatologie", "Pédiatrie",
-  "Gynécologie-obstétrique", "Chirurgie", "Urgences", "Réanimation", "Psychiatrie",
-  "Ophtalmologie", "ORL", "Urologie", "Hématologie", "Infectiologie", "Autre",
-];
-
 const FORMES = [
   "Comprimé", "Gélule", "Solution injectable", "Sirop", "Pommade / Crème", "Patch",
   "Suppositoire", "Inhalateur", "Gouttes", "Sachet", "Autre",
@@ -292,7 +285,7 @@ function Collapsible({ label, hint, children, defaultOpen = false }: {
   );
 }
 
-// ── Mapping BDPM / FDA → valeurs de nos selects ───────────────────────────────
+// ── Mapping BDPM / référentiel → valeurs de nos selects ─────────────────────
 
 function mapVoie(raw: string): string {
   const v = raw.toLowerCase();
@@ -375,20 +368,22 @@ function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) => void 
       }
     } catch {}
 
-    // 2. FDA — complément si BDPM insuffisant
-    if (!enrichment.voie || !enrichment.forme || !enrichment.laboratoire) {
+    // Enrichissement complémentaire via référentiel local si BDPM insuffisant
+    if (!enrichment.voie || !enrichment.forme || !enrichment.nomCommercial) {
       try {
-        const fda = await fetchFdaLabel(s.dci);
-        if (fda) {
-          if (!enrichment.voie && fda.route?.[0]) enrichment.voie = mapVoie(fda.route[0]);
-          if (!enrichment.forme && fda.route?.[0]) {
-            // OpenFDA stocke voie mais pas forme — on garde forme vide plutôt qu'incorrecte
-          }
-          if (!enrichment.laboratoire && fda.manufacturer_name?.[0]) {
-            enrichment.laboratoire = fda.manufacturer_name[0];
-          }
-          if (!enrichment.nomCommercial && fda.brand_name?.[0]) {
-            enrichment.nomCommercial = fda.brand_name[0];
+        const { searchProducts, getProductView } = await import("@/lib/referentiel/index");
+        const results = searchProducts(s.dci, 1);
+        if (results.length > 0) {
+          const view = getProductView(results[0].id);
+          if (view) {
+            if (!enrichment.forme && view.presentation?.pharmaceutical_form)
+              enrichment.forme = mapForme(view.presentation.pharmaceutical_form);
+            if (!enrichment.voie && view.presentation?.route)
+              enrichment.voie = mapVoie(view.presentation.route);
+            if (!enrichment.laboratoire && view.product.lab_name)
+              enrichment.laboratoire = view.product.lab_name;
+            if (!enrichment.nomCommercial && view.product.brand_name)
+              enrichment.nomCommercial = view.product.brand_name;
           }
         }
       } catch {}
@@ -597,11 +592,6 @@ function readPrefill(): Partial<FormData> | null {
   } catch {
     return null;
   }
-}
-
-// Profil déclarant considéré complet si nom + spécialité + email sont présents
-function isDeclarantComplete(f: FormData): boolean {
-  return !!(f.declarantNom && f.declarantPrenom && f.declarantSpecialite && f.declarantEmail);
 }
 
 /** Retourne la liste des champs manquants pour l'étape donnée */
@@ -965,14 +955,14 @@ export default function FormulaireMedecin() {
                 <span className="text-base mt-0.5">📄</span>
                 <div>
                   <p className="text-sm font-medium text-gray-800">PDF CIOMS disponible</p>
-                  <p className="text-xs text-gray-500">Téléchargez le formulaire CIOMS complet depuis "Mes déclarations".</p>
+                  <p className="text-xs text-gray-500">Téléchargez le formulaire CIOMS complet depuis &quot;Mes déclarations&quot;.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 px-4 py-3">
                 <span className="text-base mt-0.5">📊</span>
                 <div>
                   <p className="text-sm font-medium text-gray-800">Suivi du statut</p>
-                  <p className="text-xs text-gray-500">Consultez l&apos;évolution de votre déclaration dans "Mes déclarations".</p>
+                  <p className="text-xs text-gray-500">Consultez l&apos;évolution de votre déclaration dans &quot;Mes déclarations&quot;.</p>
                 </div>
               </div>
             </div>
@@ -1696,7 +1686,7 @@ export default function FormulaireMedecin() {
             {/* Passer sans imputabilité */}
             {!imputScore && (
               <p className="text-xs text-center text-gray-400">
-                L'imputabilité est recommandée pour les cas sérieux mais n'est pas obligatoire pour soumettre la déclaration.
+                L&apos;imputabilité est recommandée pour les cas sérieux mais n&apos;est pas obligatoire pour soumettre la déclaration.
               </p>
             )}
           </div>

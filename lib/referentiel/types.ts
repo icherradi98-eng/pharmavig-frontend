@@ -51,6 +51,9 @@ export type ReimbursementStatus = "reimbursed" | "not_reimbursed" | "unknown" | 
 
 // ── Registre des sources ─────────────────────────────────────────────────────
 
+/** Fraîcheur de la source : "fresh" < 2 ans, "stale" ≥ 2 ans, "unknown" si date absente. */
+export type SourceFreshness = "fresh" | "stale" | "unknown";
+
 export interface Source {
   id: string;
   source_name: string;
@@ -59,6 +62,8 @@ export interface Source {
   license: string;                 // licence / conditions d'usage
   url_or_file_reference: string;
   update_date: string | null;      // date de la donnée source
+  source_year?: number | null;     // année des données (peut différer de update_date si fichier ancien)
+  source_freshness?: SourceFreshness; // calculé à l'import
   imported_at: string | null;
   notes?: string;
 }
@@ -71,7 +76,10 @@ export interface Substance {
   dci_en: string | null;
   normalized_name: string;         // sans accents, minuscule (clé de recherche)
   synonyms: string[];
-  atc_code: string | null;         // OMS ATC (public) — null si incertain
+  // IMPORTANT : atc_code = null par défaut. Ne pas importer de dataset ATC complet
+  // avant vérification de la licence commerciale de l'OMS (usage commercial non libre).
+  // Saisie manuelle unitaire autorisée. Enrichissement en Phase 2 après validation juridique.
+  atc_code: string | null;
   therapeutic_class: string | null;
   source_id: string;
   validation_status: ValidationStatus;

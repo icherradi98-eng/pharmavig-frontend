@@ -1,0 +1,4330 @@
+{
+  "generated_at": "2026-06-14T20:53:02.586Z",
+  "total": 357,
+  "summary": {
+    "accepted": 0,
+    "needs_review": 3,
+    "rejected": 0,
+    "no_match": 0,
+    "no_data": 354
+  },
+  "top20_accepted": [],
+  "top20_rejected": [],
+  "all_results": [
+    {
+      "brand_name": "ELOXATINE 5 MG/ML",
+      "substances": [
+        "oxaliplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "needs_review",
+      "confidence": "medium",
+      "score": 55,
+      "reason": "score 55"
+    },
+    {
+      "brand_name": "ELOXATINE 5 MG/ML",
+      "substances": [
+        "oxaliplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "needs_review",
+      "confidence": "medium",
+      "score": 55,
+      "reason": "score 55"
+    },
+    {
+      "brand_name": "CLOFENE",
+      "substances": [
+        "diclofenac"
+      ],
+      "form": null,
+      "route": null,
+      "status": "needs_review",
+      "confidence": "low",
+      "score": 30,
+      "reason": "score 30"
+    },
+    {
+      "brand_name": "KLONOPIN",
+      "substances": [
+        "clonazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PRETERAX",
+      "substances": [
+        "indapamide",
+        "perindopril"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CLAFORAN",
+      "substances": [
+        "cefotaxime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "RHINOFEBRAL",
+      "substances": [
+        "paracetamol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AMOXIL",
+      "substances": [
+        "amoxicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "UNASYN",
+      "substances": [
+        "ampicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LASILIX",
+      "substances": [
+        "furosemide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "UMILINE PROFIL 30 PEN",
+      "substances": [
+        "insuline humaine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "BIRODOGYL",
+      "substances": [
+        "metronidazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PARAPLATINE",
+      "substances": [
+        "carboplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GLUCOVANCE",
+      "substances": [
+        "metformine",
+        "glibenclamide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "IXOR",
+      "substances": [
+        "omeprazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PENICILLINE G 1 M UI DIAMANT",
+      "substances": [
+        "benzylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CIPRO LP 500 MG",
+      "substances": [
+        "ciprofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CRESTOR",
+      "substances": [
+        "rosuvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CRESTOR",
+      "substances": [
+        "rosuvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DIAMICRON",
+      "substances": [
+        "gliclazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TEGRETOL",
+      "substances": [
+        "carbamazepine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZECLAR",
+      "substances": [
+        "clarithromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MICROPAKINE LP 100 MG",
+      "substances": [
+        "valproate de sodium"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MICROPAKINE LP 100 MG",
+      "substances": [
+        "valproate de sodium"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TOBRADEX",
+      "substances": [
+        "dexamethasone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CARDIX",
+      "substances": [
+        "carvedilol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CLARADOL PLUS",
+      "substances": [
+        "paracetamol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LAMICTAL",
+      "substances": [
+        "lamotrigine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "COVERSYL",
+      "substances": [
+        "perindopril"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MOSCONTIN",
+      "substances": [
+        "morphine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PENAMOX",
+      "substances": [
+        "amoxicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZOLOFT",
+      "substances": [
+        "sertraline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TOTAPEN",
+      "substances": [
+        "ampicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AMOXIL",
+      "substances": [
+        "amoxicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ORADEXON",
+      "substances": [
+        "dexamethasone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "IMIZINE 10%",
+      "substances": [
+        "metronidazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAVANIC",
+      "substances": [
+        "levofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAREG",
+      "substances": [
+        "valsartan"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LORAZEPAM PHARMA",
+      "substances": [
+        "lorazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CO-OLMETEC",
+      "substances": [
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CO-OLMETEC",
+      "substances": [
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GELUPRANE",
+      "substances": [
+        "paracetamol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CLAVULIN",
+      "substances": [
+        "amoxicilline",
+        "acide clavulanique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "NOLVADEX",
+      "substances": [
+        "tamoxifene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ELOXATINE 5 MG/ML",
+      "substances": [
+        "oxaliplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CATAFLAM",
+      "substances": [
+        "diclofenac"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TRIATEC",
+      "substances": [
+        "ramipril"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DOXINE",
+      "substances": [
+        "doxycycline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CISPLATINE EBEWE",
+      "substances": [
+        "cisplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SALBUMOL",
+      "substances": [
+        "salbutamol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MEZOR 20 MG",
+      "substances": [
+        "esomeprazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "RISPERDAL",
+      "substances": [
+        "risperidone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "RISPERDAL",
+      "substances": [
+        "risperidone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LANTUS",
+      "substances": [
+        "insuline humaine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DIPROSALIC",
+      "substances": [
+        "betamethasone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CIPROXINE",
+      "substances": [
+        "ciprofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MODURETIC",
+      "substances": [
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "INSULINE MIXTARD 30 HM PENFILL",
+      "substances": [
+        "insuline humaine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "INNOHEP 10 000 UI ANTI-XA/0,5 ML",
+      "substances": [
+        "tinzaparine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ABBOTICINE",
+      "substances": [
+        "erythromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ORACILLINE",
+      "substances": [
+        "phenoxymethylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AVANDAMET",
+      "substances": [
+        "metformine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AVANDAMET",
+      "substances": [
+        "metformine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "BACTRIM",
+      "substances": [
+        "sulfamethoxazole",
+        "trimethoprime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HYZAAR",
+      "substances": [
+        "losartan",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "FLAGYL",
+      "substances": [
+        "metronidazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DAONIL",
+      "substances": [
+        "glibenclamide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ARTOTEC",
+      "substances": [
+        "diclofenac"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CORDARONE",
+      "substances": [
+        "amiodarone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SEVREDOL",
+      "substances": [
+        "morphine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEVEMIR PENF",
+      "substances": [
+        "insuline detemir"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEVEMIR PENF",
+      "substances": [
+        "insuline detemir"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GENTAMEN 10",
+      "substances": [
+        "gentamicine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CILOXAN",
+      "substances": [
+        "ciprofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "KETUM 2.5 %",
+      "substances": [
+        "ketoprofene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AURICULARUM",
+      "substances": [
+        "dexamethasone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ASPEGIC ENF",
+      "substances": [
+        "acide acetylsalicylique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MORPHINE MERAM 1%",
+      "substances": [
+        "morphine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "COVERAM 10MG/5MG",
+      "substances": [
+        "perindopril",
+        "amlodipine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GENTAMEN 80",
+      "substances": [
+        "gentamicine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "XELODA",
+      "substances": [
+        "capecitabine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HYTACAND",
+      "substances": [
+        "candesartan",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "FLUOROURACIL EBEWE",
+      "substances": [
+        "fluorouracil"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GEMCITABINE HOSPIRA 2 G",
+      "substances": [
+        "gemcitabine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAXOTERE 20 MG/0.5 ML",
+      "substances": [
+        "docetaxel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ASPEGIC AD",
+      "substances": [
+        "acide acetylsalicylique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ACUPAXIL-30",
+      "substances": [
+        "paclitaxel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEDERTREXATE",
+      "substances": [
+        "methotrexate"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "FLUDEX LP",
+      "substances": [
+        "indapamide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PROFENID I.M",
+      "substances": [
+        "ketoprofene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PHARMAURACIL",
+      "substances": [
+        "fluorouracil"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "INNOHEP 14 000 UI ANTI-XA/0,7 ML",
+      "substances": [
+        "tinzaparine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STAPHYMYCINE",
+      "substances": [
+        "oxacilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "KETUM 2.5 %",
+      "substances": [
+        "ketoprofene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SOLU MEDROL",
+      "substances": [
+        "methylprednisolone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ADALATE",
+      "substances": [
+        "nifedipine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PENITARD",
+      "substances": [
+        "benzathine benzylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "INNOHEP 4500 UI ANTI-XA/0,45 ML",
+      "substances": [
+        "tinzaparine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HOSTACORTIN H",
+      "substances": [
+        "prednisolone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PAXIL CR 12.5 MG",
+      "substances": [
+        "paroxetine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PAXIL CR 12.5 MG",
+      "substances": [
+        "paroxetine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HYDROCORTISONE ROUSSEL",
+      "substances": [
+        "hydrocortisone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CLAVULIN",
+      "substances": [
+        "amoxicilline",
+        "acide clavulanique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DIPROSONE",
+      "substances": [
+        "betamethasone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CLAFORAN",
+      "substances": [
+        "cefotaxime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "INEXIUM",
+      "substances": [
+        "esomeprazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DILATREND",
+      "substances": [
+        "carvedilol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GEMZAR",
+      "substances": [
+        "gemcitabine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ATACAND",
+      "substances": [
+        "candesartan"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EUCALYPTINE",
+      "substances": [
+        "codeine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DOLFENE",
+      "substances": [
+        "ibuprofene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "BRUFEN",
+      "substances": [
+        "ibuprofene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ACUPAN",
+      "substances": [
+        "nefopam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TUNELUZ",
+      "substances": [
+        "fluoxetine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VANCOMYCINE MYLAN",
+      "substances": [
+        "vancomycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CAELYX 2MG/ML",
+      "substances": [
+        "doxorubicine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GENTAMICINE POMMADE",
+      "substances": [
+        "gentamicine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "FLOXAPEN",
+      "substances": [
+        "flucloxacilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CLAVULIN",
+      "substances": [
+        "amoxicilline",
+        "acide clavulanique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CALCIPARINE",
+      "substances": [
+        "heparine calcique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AMLOR",
+      "substances": [
+        "amlodipine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TEGRETOL LP",
+      "substances": [
+        "carbamazepine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EXFORGE 5 MG/80 MG",
+      "substances": [
+        "amlodipine",
+        "valsartan"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EXFORGE 5 MG/80 MG",
+      "substances": [
+        "amlodipine",
+        "valsartan"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CAPOZIDE",
+      "substances": [
+        "captopril",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ASPRO",
+      "substances": [
+        "acide acetylsalicylique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ATACAND",
+      "substances": [
+        "candesartan"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HALOPERIDOL PHARMA 5",
+      "substances": [
+        "haloperidol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "COAPROVEL",
+      "substances": [
+        "irbesartan",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PLATAMINE",
+      "substances": [
+        "cisplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOPRIL",
+      "substances": [
+        "captopril"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CALCIPARINE",
+      "substances": [
+        "heparine calcique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEXUS",
+      "substances": [
+        "docetaxel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "OROKEN",
+      "substances": [
+        "cefixime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAMOXIFENE MYLAN",
+      "substances": [
+        "tamoxifene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "XARELTO",
+      "substances": [
+        "rivaroxaban"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "XARELTO",
+      "substances": [
+        "rivaroxaban"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TENORMINE",
+      "substances": [
+        "atenolol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STAPHYMYCINE",
+      "substances": [
+        "oxacilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TENORMINE",
+      "substances": [
+        "atenolol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MICROPAKINE LP 250 MG",
+      "substances": [
+        "valproate de sodium"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EFFEXOR LP 75 MG",
+      "substances": [
+        "venlafaxine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EFFEXOR LP 75 MG",
+      "substances": [
+        "venlafaxine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VENTOLINE",
+      "substances": [
+        "salbutamol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZINNAT",
+      "substances": [
+        "cefuroxime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TOTAPEN",
+      "substances": [
+        "ampicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ENDOXAN 200 MG",
+      "substances": [
+        "cyclophosphamide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "NEURONTIN",
+      "substances": [
+        "gabapentine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PENICILLINE G 1 MEG",
+      "substances": [
+        "benzylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ERYACNE",
+      "substances": [
+        "erythromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ERYACNE",
+      "substances": [
+        "erythromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TEMESTA",
+      "substances": [
+        "lorazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CHRONADALATE L.P",
+      "substances": [
+        "nifedipine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STAPHYMYCINE",
+      "substances": [
+        "oxacilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "BETNEVAL NEOMYCINE",
+      "substances": [
+        "betamethasone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CODENFAN 1 MG/ML",
+      "substances": [
+        "codeine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ROCEPHIN IM",
+      "substances": [
+        "ceftriaxone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "METILBETASONE",
+      "substances": [
+        "methylprednisolone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LASILIX RETARD",
+      "substances": [
+        "furosemide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOVENOX",
+      "substances": [
+        "enoxaparine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CO-RENITEC",
+      "substances": [
+        "enalapril",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "RISPERDAL",
+      "substances": [
+        "risperidone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VENTOLINE",
+      "substances": [
+        "salbutamol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "RHINOCORT",
+      "substances": [
+        "budesonide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZYLORIC",
+      "substances": [
+        "allopurinol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZYLORIC",
+      "substances": [
+        "allopurinol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "NUPENTIN",
+      "substances": [
+        "gabapentine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DEROXAT",
+      "substances": [
+        "paroxetine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EFFICORT HYDROPHILE",
+      "substances": [
+        "hydrocortisone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GEMZAR",
+      "substances": [
+        "gemcitabine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AMAREL",
+      "substances": [
+        "glimepiride"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "POLERY AD.",
+      "substances": [
+        "codeine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STALEVO 50/12.5/200 MG",
+      "substances": [
+        "levodopa"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STALEVO 50/12.5/200 MG",
+      "substances": [
+        "levodopa"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EFFEXOR",
+      "substances": [
+        "venlafaxine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AZANTAX",
+      "substances": [
+        "paclitaxel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ADRIBLASTINE",
+      "substances": [
+        "doxorubicine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LYRICA",
+      "substances": [
+        "pregabalin"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STARPEN",
+      "substances": [
+        "phenoxymethylpenicilline benzathine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "OSPEN",
+      "substances": [
+        "phenoxymethylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZYLORIC",
+      "substances": [
+        "allopurinol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "COZAAR",
+      "substances": [
+        "losartan"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "IXOR",
+      "substances": [
+        "omeprazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TRITAZIDE 10MG / 25MG",
+      "substances": [
+        "ramipril",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "FLOXAPEN",
+      "substances": [
+        "flucloxacilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "XARELTO",
+      "substances": [
+        "rivaroxaban"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ENDOXAN 1 G",
+      "substances": [
+        "cyclophosphamide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "COLCHICINE",
+      "substances": [
+        "colchicine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "COLCHICINE",
+      "substances": [
+        "colchicine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEDERTREXATE 50 MG",
+      "substances": [
+        "methotrexate"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SOLUPRED",
+      "substances": [
+        "prednisolone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STAPHYPEN",
+      "substances": [
+        "flucloxacilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GLIVEC",
+      "substances": [
+        "imatinib"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DIGOXINE NATIVELLE",
+      "substances": [
+        "digoxine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "COAPROVEL",
+      "substances": [
+        "irbesartan",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TENORDATE",
+      "substances": [
+        "nifedipine",
+        "atenolol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "INEGY 10MG/10MG",
+      "substances": [
+        "simvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "COAPROVEL",
+      "substances": [
+        "irbesartan",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DILATREND",
+      "substances": [
+        "carvedilol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAVANIC",
+      "substances": [
+        "levofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAXOL",
+      "substances": [
+        "paclitaxel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AMAREL",
+      "substances": [
+        "glimepiride"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AMAREL",
+      "substances": [
+        "glimepiride"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZITHROMAX",
+      "substances": [
+        "azithromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LAMICTAL",
+      "substances": [
+        "lamotrigine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SYMBICORT TURBUHALER",
+      "substances": [
+        "budesonide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TRITAZIDE 10MG / 25MG",
+      "substances": [
+        "ramipril",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EUSAPRIM FORT",
+      "substances": [
+        "sulfamethoxazole",
+        "trimethoprime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZOCOR",
+      "substances": [
+        "simvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LASILIX SPECIAL",
+      "substances": [
+        "furosemide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VIBRAMYCINE",
+      "substances": [
+        "doxycycline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZOLOFT",
+      "substances": [
+        "sertraline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ALDACTONE",
+      "substances": [
+        "spironolactone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "NUPENTIN",
+      "substances": [
+        "gabapentine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MEDIZAPIN 7.5 MG",
+      "substances": [
+        "olanzapine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "BRUFEN",
+      "substances": [
+        "ibuprofene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "JANUMET",
+      "substances": [
+        "sitagliptine",
+        "metformine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOCATOP",
+      "substances": [
+        "desonide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "NAPROSYNE",
+      "substances": [
+        "naproxene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "NAPROSYNE",
+      "substances": [
+        "naproxene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ROCEPHIN IM",
+      "substances": [
+        "ceftriaxone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "AZIMAX",
+      "substances": [
+        "azithromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAHOR",
+      "substances": [
+        "atorvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LAMICTAL",
+      "substances": [
+        "lamotrigine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "KEPPRA 250 MG",
+      "substances": [
+        "levetiracetam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EFFICORT LIPOPHILE",
+      "substances": [
+        "hydrocortisone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "METHOTREXATE BELLON (H)",
+      "substances": [
+        "methotrexate"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LYRICA",
+      "substances": [
+        "pregabalin"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOVENOX",
+      "substances": [
+        "enoxaparine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STARPEN",
+      "substances": [
+        "phenoxymethylpenicilline benzathine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "RIFODERM",
+      "substances": [
+        "prednisolone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VALIUM",
+      "substances": [
+        "diazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SOPROL",
+      "substances": [
+        "bisoprolol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ALPRAZ",
+      "substances": [
+        "alprazolam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MICARDIS",
+      "substances": [
+        "telmisartan"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MICARDIS",
+      "substances": [
+        "telmisartan"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MEDROL",
+      "substances": [
+        "methylprednisolone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZECLAR",
+      "substances": [
+        "clarithromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VALIUM",
+      "substances": [
+        "diazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MYANTALGIC",
+      "substances": [
+        "tramadol",
+        "paracetamol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MYANTALGIC",
+      "substances": [
+        "tramadol",
+        "paracetamol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOPRESSOR RETARD",
+      "substances": [
+        "metoprolol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GALVUS 50 MG",
+      "substances": [
+        "vildagliptine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ROCEPHIN IV",
+      "substances": [
+        "ceftriaxone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZOLOFT",
+      "substances": [
+        "sertraline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZINNAT",
+      "substances": [
+        "cefuroxime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZEPAM",
+      "substances": [
+        "bromazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "IXOR",
+      "substances": [
+        "omeprazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZINNAT",
+      "substances": [
+        "cefuroxime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MONOZECLAR 500 MG",
+      "substances": [
+        "clarithromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LYRICA",
+      "substances": [
+        "pregabalin"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PENICILLINE G 1 MEG",
+      "substances": [
+        "benzylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZITHROMAX",
+      "substances": [
+        "azithromycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SEROPLEX",
+      "substances": [
+        "escitalopram"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SEROPLEX",
+      "substances": [
+        "escitalopram"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOVENOX",
+      "substances": [
+        "enoxaparine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PARAPLATINE",
+      "substances": [
+        "carboplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SINTROM",
+      "substances": [
+        "acenocoumarol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ACUPAN",
+      "substances": [
+        "nefopam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CRESTOR",
+      "substances": [
+        "rosuvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GALVUS MET 50MG/1000MG",
+      "substances": [
+        "vildagliptine",
+        "metformine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DETENSIEL",
+      "substances": [
+        "bisoprolol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STALEVO 50/12.5/200 MG",
+      "substances": [
+        "levodopa"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LODOZ",
+      "substances": [
+        "bisoprolol",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ENDOXAN 50 MG",
+      "substances": [
+        "cyclophosphamide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "STARPEN",
+      "substances": [
+        "phenoxymethylpenicilline benzathine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "FLUORO URACILE ICN",
+      "substances": [
+        "fluorouracil"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "OFLOCET",
+      "substances": [
+        "ofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "OFLOCET",
+      "substances": [
+        "ofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DIGOXINE NATIVELLE",
+      "substances": [
+        "digoxine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAHOR",
+      "substances": [
+        "atorvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAHOR",
+      "substances": [
+        "atorvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VANCOCINE",
+      "substances": [
+        "vancomycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MABTHERA",
+      "substances": [
+        "rituximab"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PULMICORT TURBUHALER",
+      "substances": [
+        "budesonide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TRIADOL",
+      "substances": [
+        "tramadol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PLAVIX",
+      "substances": [
+        "clopidogrel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PLAVIX",
+      "substances": [
+        "clopidogrel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "JANUVIA",
+      "substances": [
+        "sitagliptine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEVOTHYROX",
+      "substances": [
+        "levothyroxine sodique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CETAXON",
+      "substances": [
+        "cefotaxime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CALCIPARINE",
+      "substances": [
+        "heparine calcique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HEMIDAONIL",
+      "substances": [
+        "glibenclamide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GLIVEC",
+      "substances": [
+        "imatinib"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GLIVEC",
+      "substances": [
+        "imatinib"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZYPREXA",
+      "substances": [
+        "olanzapine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ALDACTONE",
+      "substances": [
+        "spironolactone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "OFLOCET",
+      "substances": [
+        "ofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "SEROPLEX",
+      "substances": [
+        "escitalopram"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CORTANCYL",
+      "substances": [
+        "prednisone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "OROKEN",
+      "substances": [
+        "cefixime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ALDACTAZINE",
+      "substances": [
+        "spironolactone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MABTHERA",
+      "substances": [
+        "rituximab"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZOCOR",
+      "substances": [
+        "simvastatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "RENITEC",
+      "substances": [
+        "enalapril"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "BACTRIM",
+      "substances": [
+        "sulfamethoxazole",
+        "trimethoprime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOXEN",
+      "substances": [
+        "nicardipine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TEGRETOL LP",
+      "substances": [
+        "carbamazepine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOXEN *",
+      "substances": [
+        "nicardipine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "JANUMET",
+      "substances": [
+        "sitagliptine",
+        "metformine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VALIUM",
+      "substances": [
+        "diazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "GALVUS MET 50MG/850MG",
+      "substances": [
+        "vildagliptine",
+        "metformine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HYZAAR",
+      "substances": [
+        "losartan",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "BIPRETERAX ARGININE 10 MG/2.5 MG",
+      "substances": [
+        "perindopril",
+        "indapamide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CLIACIL",
+      "substances": [
+        "phenoxymethylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ADRIBLASTINE RD",
+      "substances": [
+        "doxorubicine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "NOLVADEX",
+      "substances": [
+        "tamoxifene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PLAVIX",
+      "substances": [
+        "clopidogrel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "UFT",
+      "substances": [
+        "uracile"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PONSTYL",
+      "substances": [
+        "acide mefenamique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "UFT",
+      "substances": [
+        "uracile"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEXOMIL",
+      "substances": [
+        "bromazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MICARDIS PLUS",
+      "substances": [
+        "telmisartan",
+        "hydrochlorothiazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "XANAX",
+      "substances": [
+        "alprazolam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CORTANCYL",
+      "substances": [
+        "prednisone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HEPARINE SODIQUE LEURQUIN",
+      "substances": [
+        "heparine sodique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOPRIL",
+      "substances": [
+        "captopril"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAVANIC",
+      "substances": [
+        "levofloxacine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "NAPROSYNE",
+      "substances": [
+        "naproxene"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PROZAC",
+      "substances": [
+        "fluoxetine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VIBRA 200",
+      "substances": [
+        "doxycycline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EXTENCILLINE",
+      "substances": [
+        "benzathine benzylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOCAPRED",
+      "substances": [
+        "desonide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "RENITEC",
+      "substances": [
+        "enalapril"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "BIPEN 1 M",
+      "substances": [
+        "benzylpenicilline procaine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PLATAMINE",
+      "substances": [
+        "cisplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "KEPPRA 500 MG",
+      "substances": [
+        "levetiracetam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "KEPPRA",
+      "substances": [
+        "levetiracetam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LIOTON",
+      "substances": [
+        "heparine sodique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ANXIOL",
+      "substances": [
+        "bromazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PARAPLATINE",
+      "substances": [
+        "carboplatine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "UFT",
+      "substances": [
+        "uracile"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "VANCOMYCINE MYLAN",
+      "substances": [
+        "vancomycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DIAMICRON LM",
+      "substances": [
+        "gliclazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TEMESTA",
+      "substances": [
+        "lorazepam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ZYPREXA",
+      "substances": [
+        "olanzapine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "ALPRAZ",
+      "substances": [
+        "alprazolam"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CEKACORT",
+      "substances": [
+        "prednisone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LAROXYL",
+      "substances": [
+        "amitriptyline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LAROXYL",
+      "substances": [
+        "amitriptyline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEVOTHYROX",
+      "substances": [
+        "levothyroxine sodique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "DIAMICRON",
+      "substances": [
+        "gliclazide"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HERCEPTIN",
+      "substances": [
+        "trastuzumab"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "XELODA",
+      "substances": [
+        "capecitabine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HALDOL FORT",
+      "substances": [
+        "haloperidol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PROZAC",
+      "substances": [
+        "fluoxetine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "MONURIL ADULTE 3G",
+      "substances": [
+        "fosfomycine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "HALOPERIDOL",
+      "substances": [
+        "haloperidol"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "INEXIUM",
+      "substances": [
+        "esomeprazole"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LEVOTHYROX",
+      "substances": [
+        "levothyroxine sodique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "OROKEN",
+      "substances": [
+        "cefixime"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "CORDARONE",
+      "substances": [
+        "amiodarone"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LAROXYL",
+      "substances": [
+        "amitriptyline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "PONSTYL",
+      "substances": [
+        "acide mefenamique"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "LOXEN LP",
+      "substances": [
+        "nicardipine"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "TAXOTERE 80 MG/2 ML",
+      "substances": [
+        "docetaxel"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    },
+    {
+      "brand_name": "EXTENCILLINE",
+      "substances": [
+        "benzathine benzylpenicilline"
+      ],
+      "form": null,
+      "route": null,
+      "status": "no_data",
+      "confidence": "none",
+      "reason": "Aucun candidat BDPM retourné",
+      "score": 0
+    }
+  ]
+}

@@ -330,22 +330,16 @@ export async function searchMedicaments(query: string): Promise<MedicamentSugges
   }
 }
 
-// ── Vérification d'interactions — OpenFDA (aide indicative uniquement) ───────
+// ── Vérification d'interactions — base locale MAIA DAWA ──────────────────────
 
 export type InteractionResult = "interaction" | "aucune" | "indisponible";
 
 export async function checkInteraction(drugA: string, drugB: string): Promise<InteractionResult> {
   if (!drugA.trim() || !drugB.trim()) return "indisponible";
   try {
-    const a = encodeURIComponent(drugA.trim().toLowerCase());
-    const b = encodeURIComponent(drugB.trim().toLowerCase());
-    const url = `https://api.fda.gov/drug/label.json?search=openfda.generic_name:${a}+AND+drug_interactions:${b}&limit=1`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
-    if (res.status === 404) return "aucune";
-    if (!res.ok) return "indisponible";
-    const data = await res.json();
-    if (data?.results?.length > 0) return "interaction";
-    return "aucune";
+    const { searchLocalInteraction } = await import("@/lib/interactionsLocales");
+    const found = searchLocalInteraction(drugA, drugB);
+    return found ? "interaction" : "aucune";
   } catch {
     return "indisponible";
   }

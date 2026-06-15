@@ -14,10 +14,6 @@ import { api, type ReportStats } from "@/lib/api";
 // Nombre total d'alertes réglementaires publiées (doit rester synchronisé avec alertes/page.tsx)
 const TOTAL_PUBLISHED_ALERTS = 8;
 
-const BEGAUD_LABELS: Record<number, string> = {
-  0: "Exclu", 1: "Douteux", 2: "Plausible", 3: "Vraisemblable", 4: "Très vraisemblable",
-};
-
 const MONTH_NAMES = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
 
 function monthLabel(yyyyMM: string): string {
@@ -55,17 +51,6 @@ export default function MedecinVueEnsemble() {
     : [];
 
   const begaudAvg = stats?.begaud_avg ?? null;
-  const begaudBadge = (() => {
-    if (begaudAvg === null) return { color: "bg-gray-100 text-gray-400", label: "—" };
-    const v = begaudAvg;
-    let color = "bg-gray-100 text-gray-700";
-    if (v >= 3.5) color = "bg-emerald-100 text-emerald-700";
-    else if (v >= 2.5) color = "bg-blue-100 text-blue-700";
-    else if (v < 1.5) color = "bg-amber-100 text-amber-700";
-    const closest = Math.round(v) as 0 | 1 | 2 | 3 | 4;
-    return { color, label: BEGAUD_LABELS[closest] ?? "" };
-  })();
-
   return (
     <MedecinLayout unreadAlerts={unread}>
       <PageHeader title={`Bonjour Dr. ${user?.nom || ""}`} subtitle={today} />
@@ -234,7 +219,7 @@ export default function MedecinVueEnsemble() {
                         )}
                       </div>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        Veille réglementaire EMA, ANSM, FDA — personnalisée pour vos molécules
+                        Veille réglementaire EMA, ANSM, CAPM — personnalisée pour vos molécules
                       </p>
                     </div>
                     <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>

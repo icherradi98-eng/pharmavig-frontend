@@ -184,7 +184,7 @@ export default function DemoPage() {
 
       {/* ── Bannière démonstration ── */}
       <div className="bg-amber-500 text-white text-center py-2 text-xs font-semibold tracking-wide">
-        ⚡ MODE DÉMONSTRATION — Données fictives à des fins pédagogiques uniquement — Aucune donnée n'est enregistrée
+        ⚡ MODE DÉMONSTRATION — Données fictives à des fins pédagogiques uniquement — Aucune donnée n&apos;est enregistrée
       </div>
 
       {/* ── Header ── */}
@@ -347,7 +347,7 @@ export default function DemoPage() {
           </div>
           <div className="flex items-center gap-2 text-sm text-emerald-700">
             <span>✅</span>
-            <span>Déclarant certifie l'exactitude des informations et autorise la transmission de la déclaration</span>
+            <span>Déclarant certifie l&apos;exactitude des informations et autorise la transmission de la déclaration</span>
           </div>
         </Card>
 
@@ -356,7 +356,7 @@ export default function DemoPage() {
           <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center">
             <p className="text-sm text-gray-500 mb-4">
               En conditions réelles, cette déclaration serait générée au format CIOMS.<br/>
-              Ici, la soumission est <strong>simulée</strong> — aucune donnée n'est enregistrée.
+              Ici, la soumission est <strong>simulée</strong> — aucune donnée n&apos;est enregistrée.
             </p>
             <button
               onClick={() => setSubmitted(true)}

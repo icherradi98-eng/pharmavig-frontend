@@ -12,7 +12,6 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     // En production, logger vers un service de monitoring si disponible
-    // eslint-disable-next-line no-console
     console.error("[MAIA DAWA] Erreur non capturée :", error);
   }, [error]);
 

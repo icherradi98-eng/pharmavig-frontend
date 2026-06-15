@@ -229,7 +229,7 @@ function HeroDashboard() {
                 <div className="space-y-1.5">
                   {[
                     { src: "EMA", drug: "Pembrolizumab", txt: "Signal myocardite", sev: "urgent" },
-                    { src: "FDA", drug: "Apixaban", txt: "Interaction warfarine", sev: "important" },
+                    { src: "EMA", drug: "Apixaban", txt: "Interaction warfarine", sev: "important" },
                     { src: "ANSM", drug: "Méthotrexate", txt: "Mise à jour RCP", sev: "info" },
                     { src: "ANSM", drug: "Amoxicilline", txt: "Retrait de lot", sev: "urgent" },
                   ].map((a) => (
@@ -392,7 +392,7 @@ const MODULES: {
   },
   {
     id: "ref", idx: "02 / 04", url: "maiadawa.ma/referentiel", name: "Référentiel",
-    desc: "Effets indésirables, contre-indications, interactions, et alertes EMA · FDA · ANSM en temps réel — avec les données de terrain marocaines.",
+    desc: "Effets indésirables, contre-indications, interactions, et alertes EMA · ANSM en temps réel — avec les données de terrain marocaines.",
     meta: ["Alertes officielles", "Interactions", "Données vie réelle"],
   },
   {
@@ -462,7 +462,7 @@ function ScreenReferentiel() {
             <p className="text-[10px] mt-1" style={{ color: "#4a5568" }}>Monitoring cardiaque avant chaque cycle.</p>
           </div>
           <div className="rounded-lg p-2" style={{ background: "rgba(212,175,55,0.12)", border: "1px solid rgba(212,175,55,0.25)" }}>
-            <span className="text-[8px] font-bold px-1.5 py-0.5 rounded text-white" style={{ background: "#92700a" }}>FDA</span>
+            <span className="text-[8px] font-bold px-1.5 py-0.5 rounded text-white" style={{ background: "#92700a" }}>EMA</span>
             <p className="text-[10px] mt-1" style={{ color: "#4a5568" }}>RCP — encéphalite immune ajoutée.</p>
           </div>
         </div>
@@ -695,13 +695,13 @@ function ReferentielSection() {
                 <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.65)" }}>Signal myocardite sévère. Monitoring cardiaque avant chaque cycle.</p>
               </div>
               <div className="rounded-lg p-2.5" style={{ background: "rgba(212,175,55,0.1)", border: "1px solid rgba(212,175,55,0.2)" }}>
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: "#92700a", color: "#fff" }}>FDA</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: "#92700a", color: "#fff" }}>EMA</span>
                 <p className="text-[10px] mt-1" style={{ color: "rgba(255,255,255,0.65)" }}>Mise à jour RCP — encéphalite immune ajoutée aux EI rares.</p>
               </div>
             </div>
           ) : (
             <div className="rounded-lg p-2.5" style={{ background: "rgba(212,175,55,0.1)", border: "1px solid rgba(212,175,55,0.2)" }}>
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: "#92700a", color: "#fff" }}>FDA</span>
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: "#92700a", color: "#fff" }}>EMA</span>
               <p className="text-[10px] mt-1" style={{ color: "rgba(255,255,255,0.65)" }}>Interaction apixaban–warfarine : risque hémorragique majeur.</p>
             </div>
           )}

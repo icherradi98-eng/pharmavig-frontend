@@ -278,6 +278,7 @@ export default function ImputabiliteBegaud({
   );
 
   const setAnswer = (q: string, v: string) => {
+    setPrevUnlocked(getUnlockedQuestions(answers));
     setAnswers((prev) => {
       const next = { ...prev, [q]: v };
       // Réinitialise les questions suivantes si on change une réponse antérieure
@@ -312,7 +313,6 @@ export default function ImputabiliteBegaud({
         el?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 150);
     }
-    setPrevUnlocked(unlocked);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unlocked.join(",")]);
 

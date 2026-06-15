@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Référentiel : dataset complet régénérable (garder data/raw + scripts + seed)
 /data/normalized/
+
+# Cache API BDPM (régénérable via validate-bdpm-matches.mjs --reset)
+/data/reports/.bdpm-cache/

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
@@ -337,14 +337,19 @@ export default function FormulairePatient() {
   const [submitted, setSubmitted]     = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [reportRef, setReportRef]     = useState<string>("");
-  const [geoLoading, setGeoLoading]   = useState(false);
+  const [geoLoading, setGeoLoading]   = useState(() => !form.region);
   const [triedNext, setTriedNext]     = useState(false);
   const [draftRestored]               = useState(() => typeof window !== "undefined" && !!localStorage.getItem(DRAFT_KEY));
   // ── #10 : toast feedback sauvegarde ─────────────────────────────────────
   const [savedToast, setSavedToast]   = useState(false);
   const firstSave                     = useRef(false);
   // ── #15 : avertissement contradiction gravité ─────────────────────────
-  const [graviteWarning, setGraviteWarning] = useState(false);
+  const graviteWarning = useMemo(() => {
+    if (!form.description) return false;
+    const keywords = detectGraviteKeywords(form.description);
+    const graviteMineure = !form.gravite || form.gravite === "rien" || form.gravite === "activites";
+    return keywords && graviteMineure;
+  }, [form.description, form.gravite]);
 
   const set = useCallback(<K extends keyof FormData>(field: K, value: FormData[K]) =>
     setForm((prev) => ({ ...prev, [field]: value })), []);
@@ -377,18 +382,9 @@ export default function FormulairePatient() {
     return () => clearTimeout(timeout);
   }, [form, submitted]);
 
-  // ── Détection contradiction gravité/description (#15) ──────────────────────
-  useEffect(() => {
-    if (!form.description) { setGraviteWarning(false); return; }
-    const keywords = detectGraviteKeywords(form.description);
-    const graviteMineure = !form.gravite || form.gravite === "rien" || form.gravite === "activites";
-    setGraviteWarning(keywords && graviteMineure);
-  }, [form.description, form.gravite]);
-
   // ── Géolocalisation IP (#1 fix AbortController) ────────────────────────────
   useEffect(() => {
     if (form.region) return;
-    setGeoLoading(true);
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 4000);
     fetch("https://ipapi.co/json/", { signal: controller.signal })

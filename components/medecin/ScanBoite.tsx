@@ -65,7 +65,6 @@ function parseGS1(raw: string): Partial<ScannedData> {
   let pos = 0;
   while (pos < raw.length) {
     const ai2 = raw.substring(pos, pos + 2);
-    const ai3 = raw.substring(pos, pos + 3);
     const ai4 = raw.substring(pos, pos + 4);
 
     if (ai4 === "0100" || ai2 === "01") {
@@ -174,7 +173,7 @@ export default function ScanBoite({ onScanned, onClose }: ScanBoiteProps) {
         await videoRef.current.play();
       }
       startDetectionLoop();
-    } catch (e) {
+    } catch {
       setError("Impossible d'accéder à la caméra. Utilisez l'option 'Importer une photo'.");
       setState("error");
     }
@@ -210,14 +209,14 @@ export default function ScanBoite({ onScanned, onClose }: ScanBoiteProps) {
       const { BrowserMultiFormatReader } = await import("@zxing/browser");
       const reader = new BrowserMultiFormatReader();
       if (!videoRef.current) return;
-      reader.decodeFromVideoElement(videoRef.current, async (res, err) => {
+      reader.decodeFromVideoElement(videoRef.current, async (res) => {
         if (res) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (reader as any).reset?.();
           await handleRaw(res.getText(), res.getBarcodeFormat().toString());
         }
       });
-    } catch (e) {
+    } catch {
       setError("Scanner non disponible. Utilisez l'option 'Importer une photo'.");
       setState("error");
     }
@@ -259,7 +258,6 @@ export default function ScanBoite({ onScanned, onClose }: ScanBoiteProps) {
       canvas.width = img.width; canvas.height = img.height;
       const ctx = canvas.getContext("2d")!;
       ctx.drawImage(img, 0, 0);
-      const imageData = ctx.getImageData(0, 0, img.width, img.height);
       // Utiliser decodeFromImageUrl sur un blob URL
       const url = URL.createObjectURL(file);
       const res = await reader.decodeFromImageUrl(url);

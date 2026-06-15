@@ -45,7 +45,7 @@ const BRIEF = {
 const ALERTS = [
   { src: "EMA", color: C.red, dci: "Méthotrexate", txt: "Neurotoxicité intrathécale — erreur de voie", date: "15 nov.", sev: "urgent" as const },
   { src: "ANSM", color: C.petrol, dci: "Valproate", txt: "Programme grossesse renforcé", date: "8 oct.", sev: "urgent" as const },
-  { src: "FDA", color: "#92700a", dci: "Ciprofloxacine", txt: "Atteintes musculo-tendineuses", date: "3 sept.", sev: "important" as const },
+  { src: "EMA", color: "#92700a", dci: "Ciprofloxacine", txt: "Atteintes musculo-tendineuses", date: "3 sept.", sev: "important" as const },
   { src: "ANSM", color: C.petrolDark, dci: "Amoxicilline", txt: "Réactions cutanées (SJS / DRESS)", date: "20 août", sev: "important" as const },
 ];
 
@@ -71,11 +71,9 @@ export default function MedicamentsSearch() {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [recents, setRecents] = useState<string[]>([]);
+  const [recents, setRecents] = useState<string[]>(() => getRecentSearches());
   const [signals, setSignals] = useState<TerrainOut[] | null>(null); // null = chargement
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => { setRecents(getRecentSearches()); }, []);
 
   // Signaux Maroc — vraies données terrain des molécules courantes (compteurs réels)
   useEffect(() => {
@@ -311,8 +309,11 @@ export default function MedicamentsSearch() {
               </div>
             </div>
 
-            {/* Alertes en vigueur */}
-            <div className="grid sm:grid-cols-2 gap-2.5 mt-4">
+            {/* Alertes — exemples illustratifs de contenu réel EMA/ANSM (flux live en cours d'intégration) */}
+            <p className="text-[10px] mt-4 mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+              Exemples d&apos;alertes réglementaires EMA/ANSM · Sources officielles · Intégration flux live à venir
+            </p>
+            <div className="grid sm:grid-cols-2 gap-2.5">
               {ALERTS.map((a) => (
                 <Link key={a.dci} href={`/medicaments/${slugify(a.dci)}`} className="flex items-start gap-3 rounded-xl p-3 transition-colors" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
                   <span className="text-[9px] font-bold text-white px-1.5 py-0.5 rounded shrink-0 w-11 text-center" style={{ background: a.color }}>{a.src}</span>

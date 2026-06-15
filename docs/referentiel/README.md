@@ -71,6 +71,20 @@ Pour étendre : éditer la liste `PRIORITY` dans `build-priority-seed.mjs` (ajou
 ou relever le plafond `CAP` (produits/DCI), puis relancer le script. La validation
 pharmacien fait passer `needs_review` → `validated`.
 
+## Politique de données
+
+Voir [`DATA_POLICY.md`](./DATA_POLICY.md) pour les règles détaillées sur :
+- Ce qui est référentiel Maroc vs enrichissement clinique
+- Ce qui ne doit pas être affiché comme disponibilité réelle
+- Les sources autorisées et interdites
+- Les statuts de validation et de fraîcheur
+- Le disclaimer obligatoire
+
+## Sources désactivées (juin 2026)
+- **OpenFDA / FAERS** — entièrement retirés : `fetchFdaLabel`, `fetchAdverseEvents`, `fetchRxnormRelated` supprimés de `lib/drugApi.ts`. L'autocomplete utilise désormais le seed local. La page `/medicaments/[slug]` affiche les données du référentiel local + enrichissement BDPM.
+- **RxNorm (NIH)** — retiré : n'est pas pertinent pour le marché marocain.
+- La logique FDA n'est plus active nulle part dans le produit.
+
 ## Limites actuelles
 - Source CNOPS **2014** (à rafraîchir si une version plus récente paraît).
 - Pas d'ATC ni de classe thérapeutique dans le fichier source → `atc_code = null` (enrichissement Phase 2).

@@ -4,27 +4,108 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell,
-} from "recharts";
-import {
-  fetchFdaLabel, fetchAdverseEvents, fetchAnsm, fetchRxnormRelated,
-  unslugify, extractEffectNames, lookupMeddraFr, extractDrugSection, isSevere,
-  pregnancyRisk, PREGNANCY_STYLES,
-  type FdaLabel, type AdverseEvent, type BdpmDrug,
-  type ExtractedIndication, type ExtractedDosage, type ExtractedContraindication,
-  type ExtractedInteraction, type ExtractedAdverseEffect,
+  fetchAnsm, unslugify,
+  type BdpmDrug,
+  type LocalProductContext,
 } from "@/lib/drugApi";
 import { fetchTerrain, type TerrainOut } from "@/lib/api";
+import { getProductView, searchProducts, DISCLAIMER, type ProductView } from "@/lib/referentiel/index";
+import { normalizeSubstanceName } from "@/lib/referentiel/bdpmMatcher";
+import type { Source } from "@/lib/referentiel/types";
+
+function buildLocalContext(brandName: string, view: ProductView): LocalProductContext {
+  const substances = (view.substances ?? [])
+    .map((s) => normalizeSubstanceName(s.substance?.dci_fr ?? ""))
+    .filter((s) => s.length > 1);
+
+  // CNOPS n'a qu'une colonne DCI1 → contexte substances toujours incomplet
+  // sauf si le produit a été validé manuellement (validation_status === "validated")
+  const substanceCompletenessStatus =
+    view.product?.validation_status === "validated" ? "complete" : "incomplete";
+
+  return {
+    brandName,
+    substances,
+    form: view.presentation?.pharmaceutical_form ?? null,
+    route: view.presentation?.route ?? null,
+    substance_completeness_status: substanceCompletenessStatus,
+  };
+}
 
 const TABS = [
-  { id: "effets", label: "Effets indésirables" },
-  { id: "indications", label: "Indications & Posologie" },
-  { id: "interactions", label: "Interactions & Contre-indications" },
+  { id: "referentiel", label: "Référentiel Maroc" },
+  { id: "clinique", label: "Enrichissement clinique" },
   { id: "terrain", label: "Données terrain MAIA DAWA" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
 
+// ── Labels de source honnêtes (jamais "EMA" si la donnée ne vient pas de l'EMA) ──
+
+function SourceLabel({ source }: { source: Source | undefined }) {
+  if (!source) {
+    return (
+      <span className="text-[11px] px-2.5 py-1 rounded-full bg-gray-50 text-gray-400 border border-gray-200">
+        Source clinique : non renseignée
+      </span>
+    );
+  }
+  if (source.country === "MA") {
+    const stale = source.source_freshness === "stale";
+    return (
+      <span className={`text-[11px] px-2.5 py-1 rounded-full border font-medium ${
+        stale
+          ? "bg-amber-50 text-amber-700 border-amber-200"
+          : "bg-blue-50 text-blue-700 border-blue-200"
+      }`}>
+        Source Maroc · {source.source_name.split("—")[0].trim()}
+        {stale && source.source_year ? ` (${source.source_year} — à rafraîchir)` : ""}
+      </span>
+    );
+  }
+  return (
+    <span className="text-[11px] px-2.5 py-1 rounded-full bg-gray-50 text-gray-500 border border-gray-200">
+      Référentiel local
+    </span>
+  );
+}
+
+function ClinicalSourceLabel({ hasBdpm }: { hasBdpm: boolean }) {
+  if (!hasBdpm) {
+    return (
+      <span className="text-[11px] px-2.5 py-1 rounded-full bg-gray-50 text-gray-400 border border-gray-200">
+        Enrichissement clinique à venir
+      </span>
+    );
+  }
+  return (
+    <span className="text-[11px] px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+      Enrichissement clinique : BDPM (France — non opposable au Maroc)
+    </span>
+  );
+}
+
+// ── Badge de statut disponibilité ──────────────────────────────────────────────
+
+const AVAIL_LABELS: Record<string, { label: string; color: string }> = {
+  availability_unconfirmed:               { label: "Disponibilité à confirmer", color: "bg-amber-50 text-amber-700 border border-amber-200" },
+  availability_confirmed_by_pharmacist:   { label: "Confirmé (pharmacien)", color: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+  availability_confirmed_by_lab:          { label: "Confirmé (laboratoire)", color: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+  availability_confirmed_by_grossist:     { label: "Confirmé (grossiste)", color: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+  withdrawn_or_suspected_unavailable:     { label: "Retiré ou indisponible suspecté", color: "bg-red-50 text-red-700 border border-red-200" },
+  needs_review:                           { label: "À vérifier", color: "bg-gray-50 text-gray-500 border border-gray-200" },
+};
+
+const VALID_LABELS: Record<string, { label: string; color: string }> = {
+  needs_review:    { label: "Non vérifié", color: "bg-gray-50 text-gray-400 border border-gray-200" },
+  auto_imported:   { label: "Importé — non revu", color: "bg-amber-50 text-amber-600 border border-amber-100" },
+  validated:       { label: "Validé manuellement", color: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+};
+
+const PRODUCT_TYPE_LABELS: Record<string, string> = {
+  princeps: "Princeps", generic: "Générique", biosimilar: "Biosimilaire",
+  hybrid: "Hybride", unknown: "Type inconnu",
+};
 
 export default function MedicamentProfil() {
   const params = useParams<{ slug: string }>();
@@ -34,46 +115,26 @@ export default function MedicamentProfil() {
 function DrugProfileContent({ slug }: { slug: string }) {
   const router = useRouter();
   const name = unslugify(slug);
+  const dci = capitalize(name);
 
-  const [label, setLabel] = useState<FdaLabel | null | undefined>(undefined);
-  const [events, setEvents] = useState<AdverseEvent[] | undefined>(undefined);
+  const productView = useMemo(() => {
+    const results = searchProducts(name, 1);
+    return results.length > 0 ? (getProductView(results[0].id) ?? null) : null;
+  }, [name]);
   const [bdpm, setBdpm] = useState<BdpmDrug | null | undefined>(undefined);
-  const [related, setRelated] = useState<string[] | undefined>(undefined);
   const [terrain, setTerrain] = useState<TerrainOut | null | undefined>(undefined);
-  const [tab, setTab] = useState<TabId>("effets");
-  const [partial, setPartial] = useState(false);
+  const [tab, setTab] = useState<TabId>("referentiel");
 
   useEffect(() => {
-    let cancelled = false;
-
-    const timeoutFlag = setTimeout(() => { if (!cancelled) setPartial(true); }, 5000);
-
-    Promise.all([
-      fetchFdaLabel(name).then((r) => !cancelled && setLabel(r)),
-      fetchAdverseEvents(name).then((r) => !cancelled && setEvents(r)),
-      fetchAnsm(name).then((r) => !cancelled && setBdpm(r)),
-      fetchRxnormRelated(name).then((r) => !cancelled && setRelated(r)),
-      fetchTerrain(name).then((r) => !cancelled && setTerrain(r)),
-    ]).finally(() => clearTimeout(timeoutFlag));
-
-    return () => { cancelled = true; clearTimeout(timeoutFlag); };
-  }, [name]);
+    // Construit le contexte local pour le matching BDPM
+    const localCtx = productView ? buildLocalContext(name, productView) : undefined;
+    fetchAnsm(name, localCtx).then((r) => setBdpm(r));
+    fetchTerrain(name).then((r) => setTerrain(r));
+  }, [name, productView]);
 
   useEffect(() => {
-    document.title = `${capitalize(name)} — Effets indésirables & Données de sécurité | MAIA DAWA`;
-  }, [name]);
-
-  // On affiche la DCI telle que recherchée par l'utilisateur (en français), pas la
-  // dénomination chimique brute renvoyée par la FDA (souvent en majuscules, en
-  // anglais, avec sels/formes : "SITAGLIPTIN AND METFORMIN HYDROCHLORIDE").
-  const dci = titleCaseFr(name);
-  const fdaChemicalName = label?.generic_name && titleCaseFr(label.generic_name) !== dci ? label.generic_name : undefined;
-  const brandNames = label?.brand_name || (bdpm?.denomination ? [bdpm.denomination] : []);
-
-  // terrain est undefined pendant le chargement, null si erreur/indispo, TerrainOut sinon
-
-  const loading = label === undefined || events === undefined;
-  const noFdaData = label === null && bdpm === null;
+    document.title = `${dci} — Référentiel médicament Maroc | MAIA DAWA`;
+  }, [dci]);
 
   function declareWithDrug() {
     try {
@@ -81,6 +142,15 @@ function DrugProfileContent({ slug }: { slug: string }) {
     } catch {}
     router.push("/dashboard/medecin/nouvelle-declaration");
   }
+
+  const loading = bdpm === undefined;
+
+  // Marque commerciale de référence
+  const brandName = productView?.product?.brand_name ?? dci;
+  const labName = productView?.product?.lab_name;
+  const substanceNames = productView?.substances
+    .map((s) => s.substance?.dci_fr)
+    .filter(Boolean) as string[] | undefined;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -96,40 +166,43 @@ function DrugProfileContent({ slug }: { slug: string }) {
           <>
             {/* Header */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-              <h1 className="text-3xl font-bold text-petrol">{dci}</h1>
-              {fdaChemicalName && (
-                <p className="text-gray-400 text-xs mt-1">Dénomination FDA : {fdaChemicalName}</p>
-              )}
-              {brandNames.length > 0 && (
-                <p className="text-gray-400 text-sm mt-1">Noms commerciaux : {brandNames.slice(0, 6).join(", ")}</p>
-              )}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {bdpm?.forme && <Badge color="bg-petrol/10 text-petrol">{bdpm.forme}</Badge>}
-                {bdpm?.voies?.[0] && <Badge color="bg-petrol/10 text-petrol">Voie : {bdpm.voies[0]}</Badge>}
-                {!bdpm?.voies?.[0] && label?.route?.[0] && <Badge color="bg-petrol/10 text-petrol">Voie : {label.route[0]}</Badge>}
-                {label?.pharm_class_epc?.[0] && <Badge color="bg-violet-100 text-violet-700">{label.pharm_class_epc[0]}</Badge>}
-                {label?.manufacturer_name?.[0] && <Badge color="bg-gray-100 text-gray-600">🏭 {label.manufacturer_name[0]}</Badge>}
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div>
+                  <h1 className="text-3xl font-bold text-petrol">{brandName}</h1>
+                  {substanceNames && substanceNames.length > 0 && brandName !== substanceNames[0] && (
+                    <p className="text-gray-500 text-sm mt-1">DCI : {substanceNames.join(" / ")}</p>
+                  )}
+                  {labName && <p className="text-gray-400 text-xs mt-0.5">Laboratoire : {labName}</p>}
+                </div>
+                {productView?.product && (
+                  <div className="flex flex-col gap-1.5 items-end shrink-0">
+                    <AvailBadge status={productView.product.availability_status} />
+                    <ValidBadge status={productView.product.validation_status} />
+                    <SourceLabel source={productView.source} />
+                  </div>
+                )}
               </div>
 
-              {bdpm && (
-                <div className="mt-4 bg-petrol/5 border border-petrol/10 rounded-xl px-4 py-3 text-sm text-gray-700 space-y-1.5">
-                  <p className="text-xs font-semibold text-petrol uppercase tracking-wide mb-1">Source : BDPM (ANSM, France)</p>
-                  {bdpm.denomination && <p><span className="text-gray-400">Dénomination officielle : </span>{bdpm.denomination}</p>}
-                  {bdpm.substances && bdpm.substances.length > 0 && (
-                    <p><span className="text-gray-400">Composition : </span>{bdpm.substances.join(", ")}</p>
+              {/* Badges type produit */}
+              {productView?.product && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <Badge color="bg-petrol/10 text-petrol">
+                    {PRODUCT_TYPE_LABELS[productView.product.product_type] ?? productView.product.product_type}
+                  </Badge>
+                  {productView.presentation?.pharmaceutical_form && (
+                    <Badge color="bg-petrol/10 text-petrol">{productView.presentation.pharmaceutical_form}</Badge>
                   )}
-                  {bdpm.presentation?.prix !== undefined && (
-                    <p>
-                      <span className="text-gray-400">Prix de référence : </span>
-                      {bdpm.presentation.prix} € {bdpm.presentation.tauxRemboursement && `· Remboursement : ${bdpm.presentation.tauxRemboursement}`}
-                    </p>
+                  {productView.presentation?.route && (
+                    <Badge color="bg-petrol/10 text-petrol">Voie : {productView.presentation.route}</Badge>
                   )}
-                  {bdpm.generiques && bdpm.generiques.length > 0 && (
-                    <p><span className="text-gray-400">Génériques disponibles (référence France/Maroc) : </span>{bdpm.generiques.slice(0, 3).join(" · ")}</p>
-                  )}
-                  {bdpm.conditions && bdpm.conditions.length > 0 && (
-                    <p><span className="text-gray-400">Conditions de prescription : </span>{bdpm.conditions.join(", ")}</p>
-                  )}
+                  <ClinicalSourceLabel hasBdpm={bdpm !== undefined && bdpm !== null} />
+                </div>
+              )}
+
+              {/* Pas dans le référentiel local */}
+              {!productView && (
+                <div className="mt-3 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                  ⚠️ Ce médicament n&apos;est pas encore dans le référentiel Morocco-first. La base est en cours de construction.
                 </div>
               )}
 
@@ -141,41 +214,24 @@ function DrugProfileContent({ slug }: { slug: string }) {
               </button>
             </div>
 
-            {partial && (
-              <div className="mb-4 bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-xl px-4 py-3">
-                ⏳ Certaines données n&apos;ont pas pu être chargées dans les délais — affichage partiel.
-              </div>
-            )}
+            {/* Tabs */}
+            <div className="flex gap-1 overflow-x-auto border-b border-gray-200 mb-6">
+              {TABS.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setTab(t.id)}
+                  className={`shrink-0 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                    tab === t.id ? "border-petrol text-petrol" : "border-transparent text-gray-500 hover:text-gray-800"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
 
-            {noFdaData ? (
-              <NoDataMessage name={name} />
-            ) : (
-              <>
-                {/* Tabs */}
-                <div className="flex gap-1 overflow-x-auto border-b border-gray-200 mb-6">
-                  {TABS.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => setTab(t.id)}
-                      className={`shrink-0 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-                        tab === t.id ? "border-petrol text-petrol" : "border-transparent text-gray-500 hover:text-gray-800"
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-
-                {tab === "effets" && <TabEffets label={label} events={events || []} dci={dci} />}
-                {tab === "indications" && <TabIndications label={label} dci={dci} />}
-                {tab === "interactions" && <TabInteractions label={label} dci={dci} />}
-                {tab === "terrain" && <TabTerrain terrain={terrain} dci={dci} onDeclare={declareWithDrug} />}
-
-                <p className="text-xs text-gray-400 mt-6">
-                  Apparentés RxNorm : {related && related.length > 0 ? related.join(", ") : "—"}
-                </p>
-              </>
-            )}
+            {tab === "referentiel" && <TabReferentiel view={productView} dci={dci} />}
+            {tab === "clinique" && <TabClinique bdpm={bdpm} dci={dci} />}
+            {tab === "terrain" && <TabTerrain terrain={terrain} dci={dci} onDeclare={declareWithDrug} />}
 
             <Disclaimer />
           </>
@@ -185,24 +241,24 @@ function DrugProfileContent({ slug }: { slug: string }) {
   );
 }
 
+// ── Helpers UI ────────────────────────────────────────────────────────────────
+
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-// Met en forme une DCI française à partir du slug recherché :
-// "sitagliptine-et-metformine" -> "Sitagliptine et metformine"
-const FR_LOWERCASE_WORDS = new Set(["et", "de", "du", "des", "le", "la", "les", "à", "en"]);
-function titleCaseFr(s: string): string {
-  const words = s.trim().split(/\s+/);
-  return words
-    .map((w, i) => (i > 0 && FR_LOWERCASE_WORDS.has(w.toLowerCase()) ? w.toLowerCase() : capitalize(w.toLowerCase())))
-    .join(" ");
-}
-
-// FrenchClinicalText supprimé — remplacé par l'extraction structurée via LLM (extractDrugSection).
-
 function Badge({ children, color }: { children: React.ReactNode; color: string }) {
   return <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${color}`}>{children}</span>;
+}
+
+function AvailBadge({ status }: { status: string }) {
+  const cfg = AVAIL_LABELS[status] ?? AVAIL_LABELS["needs_review"];
+  return <span className={`text-[11px] font-semibold px-3 py-1 rounded-full ${cfg.color}`}>{cfg.label}</span>;
+}
+
+function ValidBadge({ status }: { status: string }) {
+  const cfg = VALID_LABELS[status] ?? VALID_LABELS["needs_review"];
+  return <span className={`text-[10px] px-2.5 py-0.5 rounded-full ${cfg.color}`}>{cfg.label}</span>;
 }
 
 function SkeletonHeader() {
@@ -213,466 +269,300 @@ function SkeletonHeader() {
         <div className="h-4 w-48 bg-gray-100 rounded" />
         <div className="flex gap-2"><div className="h-6 w-24 bg-gray-100 rounded-full" /><div className="h-6 w-32 bg-gray-100 rounded-full" /></div>
       </div>
-      <div className="h-10 w-full bg-gray-100 rounded" />
-      <div className="h-64 w-full bg-gray-100 rounded-2xl" />
     </div>
   );
 }
 
-function NoDataMessage({ name }: { name: string }) {
+function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
-      <span className="text-3xl">🔍</span>
-      <p className="text-gray-700 font-medium mt-3">Aucune donnée FDA disponible pour &quot;{capitalize(name)}&quot;.</p>
-      <p className="text-gray-400 text-sm mt-1 max-w-md mx-auto">
-        Ce médicament est peut-être commercialisé sous un autre nom ou uniquement au Maroc. Essayez une recherche par nom commercial.
-      </p>
-      <div className="flex flex-wrap gap-3 justify-center mt-5">
-        <Link href="/medicaments" className="text-sm font-medium text-petrol border border-petrol/20 bg-petrol/5 px-4 py-2 rounded-lg hover:bg-petrol/10">
-          ← Nouvelle recherche
-        </Link>
-        <a href="https://capm.ma" target="_blank" rel="noreferrer" className="text-sm font-medium text-gray-600 border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50">
-          Consulter le CAPM →
-        </a>
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-4">
+      <h3 className="font-semibold text-gray-900 border-l-4 border-petrol pl-3 mb-1">{title}</h3>
+      {subtitle && <p className="text-xs text-gray-400 pl-3.5 mb-3">{subtitle}</p>}
+      <div className={subtitle ? "" : "mt-3"}>{children}</div>
+    </div>
+  );
+}
+
+// ── TAB 1 — Référentiel Maroc ─────────────────────────────────────────────────
+
+function TabReferentiel({ view, dci }: { view: ProductView | null; dci: string }) {
+  if (!view) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+        <span className="text-3xl">🗂️</span>
+        <p className="text-gray-700 font-medium mt-3">
+          Médicament non encore référencé dans la base Morocco-first.
+        </p>
+        <p className="text-gray-400 text-sm mt-1 max-w-md mx-auto">
+          Le référentiel est en construction. Priorité aux 300–500 médicaments les plus utilisés.
+          Pour vérifier la disponibilité, consultez un pharmacien ou le DMP (sante.gov.ma).
+        </p>
+        <div className="flex flex-wrap gap-3 justify-center mt-5">
+          <Link href="/medicaments" className="text-sm font-medium text-petrol border border-petrol/20 bg-petrol/5 px-4 py-2 rounded-lg hover:bg-petrol/10">
+            ← Nouvelle recherche
+          </Link>
+          <a href="https://dmp.sante.gov.ma" target="_blank" rel="noreferrer" className="text-sm font-medium text-gray-600 border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50">
+            DMP Maroc →
+          </a>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-function Disclaimer() {
-  return (
-    <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl px-5 py-4">
-      <p className="text-xs text-gray-500 leading-relaxed">
-        Les données affichées proviennent des bases de données publiques FDA (États-Unis), NIH et ANSM (France). Elles peuvent
-        différer des RCPs marocains officiels. MAIA DAWA n&apos;est pas responsable des décisions cliniques basées sur ces
-        informations. Consultez toujours le RCP marocain et le CAPM.
-      </p>
-    </div>
-  );
-}
+  const { product, presentation, substances, source } = view;
 
-/* ---------------- TAB 1 — Effets indésirables ---------------- */
-
-// Fréquence FAERS : catégoriser par nombre de signalements (approximatif)
-function faersFrequencyLabel(count: number, total: number): { label: string; color: string } {
-  const pct = total > 0 ? count / total : 0;
-  if (pct > 0.15) return { label: "Très fréquent", color: "bg-red-100 text-red-700" };
-  if (pct > 0.05) return { label: "Fréquent", color: "bg-orange-100 text-orange-700" };
-  if (pct > 0.01) return { label: "Peu fréquent", color: "bg-amber-100 text-amber-700" };
-  return { label: "Rare", color: "bg-gray-100 text-gray-500" };
-}
-
-function TabEffets({ label, events, dci }: { label: FdaLabel | null | undefined; events: AdverseEvent[]; dci: string }) {
-  // Source 1 : FAERS — termes MedDRA PT propres avec décompte (source fiable)
-  // Les termes FAERS sont déjà des MedDRA Preferred Terms valides, on les traduit directement.
-  const faersEffects = useMemo(() => {
-    return events.map((e) => ({
-      original: e.reaction,
-      fr: lookupMeddraFr(e.reaction),
-      count: e.count,
-    }));
-  }, [events]);
-
-  // Source 2 : parsing du texte RCP FDA (fallback si FAERS vide)
-  const rcpEffects = useMemo(() => extractEffectNames(label?.adverse_reactions), [label]);
-
-  // On affiche FAERS en priorité (termes MedDRA propres) ;
-  // si FAERS vide, on utilise le parsing RCP nettoyé.
-  const usesFaers = faersEffects.length >= 3;
-  const displayEffects = usesFaers ? faersEffects : rcpEffects.map((e) => ({ ...e, count: undefined }));
-
-  const totalFaers = useMemo(() => events.reduce((s, e) => s + e.count, 0), [events]);
-  const chartData = events.map((e, i) => ({ ...e, isTop3: i < 3 }));
+  // Badge fraîcheur source
+  const sourceLabel = source
+    ? `${source.source_name}${source.source_year ? ` (${source.source_year})` : ""}${source.source_freshness === "stale" ? " — données anciennes, à confirmer" : ""}`
+    : "—";
 
   return (
-    <div className="space-y-6">
-      {/* ── Section 1 : liste des effets ── */}
-      <Section
-        title="Effets indésirables connus"
-        subtitle={
-          usesFaers
-            ? "Source : FDA Adverse Event Reporting System (FAERS) — termes MedDRA officiels, traduits en français"
-            : "Source : texte RCP FDA — termes extraits et traduits via dictionnaire MedDRA français"
-        }
-      >
-        {displayEffects.length < 3 ? (
-          <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
-            <p className="text-sm text-gray-600">
-              Données d&apos;effets indésirables limitées pour cette molécule dans les sources disponibles.{" "}
-              <a href="https://dmp.sante.gov.ma" target="_blank" rel="noreferrer" className="text-petrol font-medium underline">
-                Consulter le RCP officiel →
-              </a>
-            </p>
-          </div>
-        ) : (
-          <ul className="space-y-1.5">
-            {displayEffects.map((e) => {
-              const severe = isSevere(e.original);
-              const freq = usesFaers && e.count !== undefined
-                ? faersFrequencyLabel(e.count, totalFaers)
-                : null;
-              // Nom à afficher : traduction française si dispo, sinon terme original
-              // (qui est un MedDRA PT valide donc toujours affichable)
-              const displayName = e.fr ?? capitalize(e.original);
+    <div className="space-y-4">
+      {/* Avertissement source ancienne */}
+      {source?.source_freshness === "stale" && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+          <span className="font-semibold">⏳ Source ancienne ({source.source_year}) :</span> Ce référentiel
+          est issu du fichier CNOPS publié sur data.gov.ma. Les prix et la disponibilité peuvent avoir changé
+          depuis {source.source_year}. Statut : <strong>auto_imported / needs_review</strong> — non validé médicalement.
+          <br /><span className="text-xs text-amber-600 mt-1 block">Ces données ne constituent pas une validation pharmaceutique ni médicale.</span>
+        </div>
+      )}
 
-              return (
-                <li
-                  key={e.original}
-                  className={`flex items-center justify-between gap-3 text-sm rounded-lg px-3 py-2 ${
-                    severe
-                      ? "bg-red-50 text-red-700 border border-red-100"
-                      : "bg-gray-50 text-gray-700"
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    {severe && <span className="shrink-0">⚠️</span>}
-                    <span>{displayName}</span>
-                  </span>
-                  {freq && (
-                    <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${freq.color}`}>
-                      {freq.label}
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
+      {/* Informations produit */}
+      <Section title="Fiche produit" subtitle={`Source : ${sourceLabel} · Pays : MA · Statut : ${product.validation_status}`}>
+        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+          <DataRow label="Marque" value={product.brand_name} />
+          <DataRow label="Pays d'enregistrement" value={product.country} />
+          <DataRow label="Type produit" value={PRODUCT_TYPE_LABELS[product.product_type]} />
+          <DataRow label="Statut réglementaire" value={product.regulatory_status} />
+          <DataRow label="Labo" value={product.lab_name} />
+          <DataRow label="Référencement Maroc" value={product.morocco_reference_status} />
+          {product.source_primary_date && (
+            <DataRow label="Date source" value={new Date(product.source_primary_date).toLocaleDateString("fr-MA")} />
+          )}
+          {product.last_verified_at && (
+            <DataRow label="Dernière vérification" value={new Date(product.last_verified_at).toLocaleDateString("fr-MA")} />
+          )}
+        </dl>
       </Section>
 
-      {/* ── Section 2 : graphique FAERS ── */}
-      {chartData.length > 0 && (
-        <Section
-          title="Fréquence des signalements (FAERS mondial)"
-          subtitle="Nombre de cas rapportés dans la base FDA Adverse Event Reporting System — données non normalisées"
-        >
-          <div className="h-80 overflow-x-auto">
-            <div className="h-full min-w-[420px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} layout="vertical" margin={{ left: 24 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
-                  <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} stroke="#9ca3af" />
-                  <YAxis
-                    type="category"
-                    dataKey="reaction"
-                    tick={{ fontSize: 11 }}
-                    stroke="#9ca3af"
-                    width={170}
-                    tickFormatter={(v: string) => {
-                      // Traduire le libellé de l'axe Y en français si possible
-                      const fr = lookupMeddraFr(v);
-                      const label = fr ?? v;
-                      return label.length > 22 ? label.slice(0, 21) + "…" : label;
-                    }}
-                  />
-                  <Tooltip
-                    formatter={(v) => [String(v), "Signalements"]}
-                    labelFormatter={(v) => {
-                      const s = String(v);
-                      const fr = lookupMeddraFr(s);
-                      return fr ? `${fr} (${s})` : s;
-                    }}
-                  />
-                  <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                    {chartData.map((d) => (
-                      <Cell key={d.reaction} fill={d.isTop3 ? "#dc2626" : "#2563eb"} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <p className="text-[11px] text-gray-400 mt-2">
-            Rouge = 3 effets les plus fréquemment signalés · Bleu = autres effets documentés
-          </p>
+      {/* Substances actives */}
+      {substances.length > 0 && (
+        <Section title="Substances actives (DCI)">
+          <ul className="space-y-2">
+            {substances.map(({ substance, link }) => (
+              <li key={link.substance_id} className="flex items-center gap-3 text-sm bg-petrol/5 border border-petrol/10 rounded-lg px-3 py-2">
+                <span className="font-semibold text-petrol">{substance?.dci_fr ?? link.substance_id}</span>
+                {link.dosage && <span className="text-gray-500">{link.dosage} {link.unit}</span>}
+                <span className="text-xs text-gray-400 ml-auto">{link.role === "active_substance" ? "SA" : link.role}</span>
+              </li>
+            ))}
+          </ul>
         </Section>
       )}
 
-      {/* ── Section 3 : alertes ── */}
-      <Section title="Alertes de sécurité actives">
-        <div className="bg-petrol/5 border border-petrol/20 rounded-xl px-4 py-3 flex items-center gap-3">
-          <span className="text-petrol text-lg">✅</span>
-          <p className="text-sm text-petrol">
-            Aucune alerte de sécurité active recensée pour {dci} — Dernière vérification :{" "}
-            {new Date("2026-06-07").toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}
-          </p>
-        </div>
-      </Section>
-    </div>
-  );
-}
+      {/* Présentation / Conditionnement */}
+      {presentation && (
+        <Section title="Présentation & Prix" subtitle="Données CNOPS — à confirmer localement">
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+            {presentation.pharmaceutical_form && <DataRow label="Forme" value={presentation.pharmaceutical_form} />}
+            {presentation.route && <DataRow label="Voie" value={presentation.route} />}
+            {presentation.strength && <DataRow label="Dosage" value={`${presentation.strength} ${presentation.unit ?? ""}`} />}
+            {presentation.packaging && <DataRow label="Conditionnement" value={presentation.packaging} />}
+            {presentation.ppv != null && <DataRow label="PPV (MAD)" value={`${presentation.ppv} MAD`} />}
+            {presentation.hospital_price != null && <DataRow label="Prix hôpital" value={`${presentation.hospital_price} MAD`} />}
+            {presentation.reimbursement_status && <DataRow label="Remboursement" value={presentation.reimbursement_status} />}
+            {presentation.prescription_conditions && <DataRow label="Conditions prescription" value={presentation.prescription_conditions} />}
+          </dl>
+        </Section>
+      )}
 
-/* ---------------- Composants UI réutilisables -------------------------------- */
-
-function ExtractionBadge({ source }: { source: string }) {
-  if (source === "llm") return (
-    <span className="inline-flex items-center gap-1 text-[10px] text-petrol bg-petrol/5 border border-petrol/10 px-2 py-0.5 rounded-full font-semibold">
-      ✦ Extrait par IA · données structurées
-    </span>
-  );
-  if (source === "cache") return (
-    <span className="inline-flex items-center gap-1 text-[10px] text-gray-400 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-full">
-      Cache · données structurées
-    </span>
-  );
-  if (source === "fallback") return (
-    <span className="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full">
-      ⚙ Extraction partielle — configurez ANTHROPIC_API_KEY pour activer l&apos;IA
-    </span>
-  );
-  return null;
-}
-
-function LoadingSkeleton({ lines = 4 }: { lines?: number }) {
-  return (
-    <div className="space-y-2 animate-pulse">
-      {Array.from({ length: lines }).map((_, i) => (
-        <div key={i} className={`h-8 bg-gray-100 rounded-lg ${i % 3 === 2 ? "w-3/4" : "w-full"}`} />
-      ))}
-      <p className="text-xs text-gray-400 pt-1">⏳ Extraction en cours…</p>
-    </div>
-  );
-}
-
-/* ---------------- TAB 2 — Indications & Posologie (données structurées) ------ */
-
-function TabIndications({ label, dci }: { label: FdaLabel | null | undefined; dci: string }) {
-  const risk = pregnancyRisk(label?.pregnancy);
-  const style = PREGNANCY_STYLES[risk];
-
-  // ── Indications ──
-  const [indications, setIndications] = useState<ExtractedIndication[] | null>(null);
-  const [indicSource, setIndicSource] = useState<string>("");
-  const [indicLoading, setIndicLoading] = useState(false);
-
-  // ── Posologie ──
-  const [dosages, setDosages] = useState<ExtractedDosage[] | null>(null);
-  const [doseSource, setDoseSource] = useState<string>("");
-  const [doseLoading, setDoseLoading] = useState(false);
-
-  useEffect(() => {
-    if (!label?.indications_and_usage) return;
-    setIndicLoading(true);
-    extractDrugSection<ExtractedIndication>(dci, "indications", label.indications_and_usage)
-      .then((r) => { setIndications(r.items); setIndicSource(r.source); })
-      .finally(() => setIndicLoading(false));
-  }, [dci, label?.indications_and_usage]);
-
-  useEffect(() => {
-    if (!label?.dosage_and_administration) return;
-    setDoseLoading(true);
-    extractDrugSection<ExtractedDosage>(dci, "posologie", label.dosage_and_administration)
-      .then((r) => { setDosages(r.items); setDoseSource(r.source); })
-      .finally(() => setDoseLoading(false));
-  }, [dci, label?.dosage_and_administration]);
-
-  return (
-    <div className="space-y-6">
-
-      {/* Indications */}
-      <Section title="Indications thérapeutiques">
-        {indicLoading ? <LoadingSkeleton lines={3} /> :
-          !label?.indications_and_usage ? (
-            <p className="text-sm text-gray-400">Donnée non disponible — consultez le RCP marocain officiel.</p>
-          ) : indications && indications.length > 0 ? (
-            <>
-              <ul className="space-y-2 mb-3">
-                {indications.map((ind) => (
-                  <li key={ind} className="flex items-start gap-2.5 text-sm text-gray-700 bg-petrol/5 border border-petrol/10 rounded-lg px-3 py-2">
-                    <span className="text-petrol/60 font-bold mt-0.5 shrink-0">›</span>
-                    <span>{ind}</span>
-                  </li>
-                ))}
-              </ul>
-              <ExtractionBadge source={indicSource} />
-            </>
-          ) : (
-            <p className="text-sm text-gray-400">Extraction non disponible — consultez le RCP marocain officiel.</p>
-          )
-        }
-      </Section>
-
-      {/* Posologie */}
-      <Section title="Posologie">
-        {doseLoading ? <LoadingSkeleton lines={3} /> :
-          !label?.dosage_and_administration ? (
-            <p className="text-sm text-gray-400">Donnée non disponible — consultez le RCP marocain officiel.</p>
-          ) : dosages && dosages.length > 0 ? (
-            <>
-              <div className="space-y-2 mb-3">
-                {dosages.map((d) => (
-                  <div key={d.population} className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[11px] font-bold text-petrol bg-petrol/5 border border-petrol/10 px-2 py-0.5 rounded-full">
-                        {d.population}
-                      </span>
-                      {d.voie && (
-                        <span className="text-[11px] text-gray-500 bg-white border border-gray-200 px-2 py-0.5 rounded-full">
-                          Voie {d.voie}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm font-semibold text-gray-900">{d.regimen}</p>
-                    {d.notes && <p className="text-xs text-gray-500 mt-0.5">{d.notes}</p>}
-                  </div>
-                ))}
-              </div>
-              <ExtractionBadge source={doseSource} />
-            </>
-          ) : (
-            <p className="text-sm text-gray-400">Extraction non disponible — consultez le RCP marocain officiel.</p>
-          )
-        }
-      </Section>
-
-      {/* Grossesse */}
-      <Section title="Grossesse et allaitement">
-        <div className={`inline-flex items-center gap-3 border rounded-xl px-4 py-2.5 ${style.color}`}>
-          <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${style.dot}`} />
-          <span className="text-sm font-semibold">{style.label}</span>
-        </div>
-        {!label?.pregnancy && (
-          <p className="text-xs text-gray-400 mt-2">Données grossesse non disponibles dans cette source FDA.</p>
-        )}
-      </Section>
-
-      <div className="bg-petrol/5 border border-petrol/10 rounded-xl px-4 py-3">
-        <p className="text-xs text-petrol leading-relaxed">
-          Données issues des sources FDA/EMA, normalisées par extraction IA. Consultez toujours le RCP marocain officiel et le CAPM pour les spécificités locales.
-        </p>
+      {/* Avertissement disponibilité */}
+      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+        <span className="font-semibold">⚠️ Disponibilité :</span> {DISCLAIMER}
       </div>
     </div>
   );
 }
 
-/* ---------------- TAB 3 — Interactions & Contre-indications (structurées) ---- */
-
-const SEVERITY_STYLES: Record<string, { badge: string; row: string; icon: string }> = {
-  "contre-indiquée": { badge: "bg-red-600 text-white", row: "bg-red-50 border-red-200", icon: "🚫" },
-  "majeure":         { badge: "bg-red-100 text-red-700", row: "bg-red-50/50 border-red-100", icon: "⚠️" },
-  "modérée":         { badge: "bg-amber-100 text-amber-700", row: "bg-amber-50/40 border-amber-100", icon: "⚡" },
-  "mineure":         { badge: "bg-gray-100 text-gray-600", row: "bg-gray-50 border-gray-100", icon: "ℹ️" },
-};
-
-function TabInteractions({ label, dci }: { label: FdaLabel | null | undefined; dci: string }) {
-  // ── Interactions ──
-  const [interactions, setInteractions] = useState<ExtractedInteraction[] | null>(null);
-  const [interSource, setInterSource] = useState<string>("");
-  const [interLoading, setInterLoading] = useState(false);
-
-  // ── Contre-indications ──
-  const [contraindications, setContraindications] = useState<ExtractedContraindication[] | null>(null);
-  const [ciSource, setCiSource] = useState<string>("");
-  const [ciLoading, setCiLoading] = useState(false);
-
-  useEffect(() => {
-    if (!label?.drug_interactions) return;
-    setInterLoading(true);
-    extractDrugSection<ExtractedInteraction>(dci, "interactions", label.drug_interactions)
-      .then((r) => { setInteractions(r.items); setInterSource(r.source); })
-      .finally(() => setInterLoading(false));
-  }, [dci, label?.drug_interactions]);
-
-  useEffect(() => {
-    if (!label?.contraindications) return;
-    setCiLoading(true);
-    extractDrugSection<ExtractedContraindication>(dci, "contraindications", label.contraindications)
-      .then((r) => { setContraindications(r.items); setCiSource(r.source); })
-      .finally(() => setCiLoading(false));
-  }, [dci, label?.contraindications]);
-
+function DataRow({ label, value }: { label: string; value: string | null | undefined }) {
+  if (!value) return null;
   return (
-    <div className="space-y-6">
-
-      {/* Contre-indications */}
-      <Section title="Contre-indications">
-        {ciLoading ? <LoadingSkeleton lines={3} /> :
-          !label?.contraindications ? (
-            <p className="text-sm text-gray-400">Donnée non disponible — consultez le RCP marocain officiel ou le CAPM.</p>
-          ) : contraindications && contraindications.length > 0 ? (
-            <>
-              <ul className="space-y-2 mb-3">
-                {contraindications.map((ci) => (
-                  <li key={ci.ci} className="flex items-start gap-2.5 text-sm text-red-800 bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
-                    <span className="text-red-500 mt-0.5 shrink-0 font-bold">✕</span>
-                    <span>{ci.ci}</span>
-                  </li>
-                ))}
-              </ul>
-              <ExtractionBadge source={ciSource} />
-            </>
-          ) : (
-            <div className="flex items-center gap-2 text-sm text-petrol bg-petrol/5 border border-petrol/10 rounded-lg px-3 py-2.5">
-              <span>✅</span>
-              <span>Aucune contre-indication absolue identifiée dans cette source.</span>
-            </div>
-          )
-        }
-      </Section>
-
-      {/* Interactions */}
-      <Section title="Interactions médicamenteuses">
-        {interLoading ? <LoadingSkeleton lines={4} /> :
-          !label?.drug_interactions ? (
-            <p className="text-sm text-gray-400">Donnée non disponible — consultez le RCP marocain officiel ou le CAPM.</p>
-          ) : interactions && interactions.length > 0 ? (
-            <>
-              {/* Tri par sévérité */}
-              {(["contre-indiquée", "majeure", "modérée", "mineure"] as const).map((sev) => {
-                const group = interactions.filter((x) => x.severite === sev);
-                if (group.length === 0) return null;
-                const s = SEVERITY_STYLES[sev] ?? SEVERITY_STYLES["mineure"];
-                return (
-                  <div key={sev} className="mb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span>{s.icon}</span>
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${s.badge}`}>
-                        {sev.charAt(0).toUpperCase() + sev.slice(1)}
-                      </span>
-                      <span className="text-[11px] text-gray-400">{group.length} interaction{group.length > 1 ? "s" : ""}</span>
-                    </div>
-                    <div className="space-y-2">
-                      {group.map((inter) => (
-                        <div key={inter.medicament} className={`border rounded-xl px-4 py-3 ${s.row}`}>
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <p className="text-sm font-semibold text-gray-900">
-                              {inter.medicament}
-                              {inter.classe && <span className="ml-1.5 text-[11px] font-normal text-gray-500">({inter.classe})</span>}
-                            </p>
-                          </div>
-                          {inter.mecanisme && (
-                            <p className="text-xs text-gray-500 mb-1">Mécanisme : {inter.mecanisme}</p>
-                          )}
-                          <p className="text-sm text-gray-700">{inter.consequence}</p>
-                          {inter.conduite && (
-                            <p className="text-xs font-semibold text-gray-600 mt-1.5 flex items-center gap-1">
-                              <span className="text-petrol">→</span> {inter.conduite}
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-              <ExtractionBadge source={interSource} />
-            </>
-          ) : (
-            <div className="flex items-center gap-2 text-sm text-petrol bg-petrol/5 border border-petrol/10 rounded-lg px-3 py-2.5">
-              <span>✅</span>
-              <span>Aucune interaction cliniquement significative identifiée dans cette source.</span>
-            </div>
-          )
-        }
-      </Section>
+    <div className="flex gap-2">
+      <dt className="text-gray-400 shrink-0 w-36">{label}</dt>
+      <dd className="text-gray-800 font-medium">{value}</dd>
     </div>
   );
 }
 
-/* ---------------- TAB 4 — Données terrain MAIA DAWA ---------------- */
+// ── TAB 2 — Enrichissement clinique (BDPM France) ─────────────────────────────
+
+function TabClinique({ bdpm, dci }: { bdpm: BdpmDrug | null | undefined; dci: string }) {
+  const matchStatus = bdpm?.match?.status;
+  const matchConfidence = bdpm?.match?.confidence;
+
+  // Seul "accepted" + confidence != "none" autorise l'affichage
+  const isReliable =
+    bdpm != null &&
+    matchStatus === "accepted" &&
+    matchConfidence !== "none";
+
+  const isRejected = bdpm != null && matchStatus === "rejected";
+  const isNeedsReview = bdpm != null && matchStatus === "needs_review";
+
+  return (
+    <div className="space-y-4">
+      {/* Avertissement source */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800">
+        <span className="font-semibold">ℹ️ Enrichissement clinique (France) :</span> Les données ci-dessous
+        proviennent de la BDPM (ANSM — France). Elles servent d&apos;enrichissement scientifique uniquement.
+        Elles n&apos;attestent pas de la disponibilité au Maroc ni de la conformité avec le RCP marocain.
+        Consultez toujours le DMP (sante.gov.ma) et le CAPM pour les spécificités locales.
+      </div>
+
+      {bdpm === undefined && (
+        <div className="text-center py-8 text-gray-400 text-sm animate-pulse">Chargement BDPM…</div>
+      )}
+
+      {/* Aucun résultat BDPM */}
+      {bdpm === null && (
+        <BdpmNoData dci={dci} reason="Aucun candidat BDPM trouvé pour ce médicament." />
+      )}
+
+      {/* Match rejeté par le moteur de matching */}
+      {isRejected && (
+        <BdpmNoData
+          dci={dci}
+          reason={`Aucun enrichissement BDPM fiable trouvé pour ${dci}.`}
+          detail={bdpm.match?.reason}
+          rejectionCode={bdpm.match?.rejection_code}
+        />
+      )}
+
+      {/* Match candidat non affiché (needs_review) */}
+      {isNeedsReview && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+          <span className="font-semibold">⚠️ Enrichissement candidat non affiché :</span> Un candidat BDPM a
+          été trouvé mais le score de correspondance est insuffisant pour garantir qu&apos;il s&apos;agit
+          du même médicament (score {bdpm.match?.score ?? 0}/100 — seuil haute confiance : 75).
+          <br />
+          <span className="text-xs mt-1 block text-amber-700">Raison : {bdpm.match?.reason}</span>
+          <BdpmExternalLinks className="mt-3" />
+        </div>
+      )}
+
+      {/* Données BDPM fiables */}
+      {isReliable && bdpm && (
+        <>
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2 text-xs text-emerald-700 flex items-center gap-2">
+            <span>✓</span>
+            <span>
+              Match BDPM fiable — {bdpm.match.reason} · Données enrichissement France uniquement
+            </span>
+          </div>
+
+          <Section title="Données BDPM (ANSM — France)" subtitle="Enrichissement clinique · source étrangère · ne vaut pas confirmation de disponibilité au Maroc">
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+              {bdpm.denomination && <DataRow label="Dénomination" value={bdpm.denomination} />}
+              {bdpm.forme && <DataRow label="Forme" value={bdpm.forme} />}
+              {bdpm.voies?.[0] && <DataRow label="Voie(s)" value={bdpm.voies.join(", ")} />}
+              {bdpm.statut && <DataRow label="Statut AMM (FR)" value={bdpm.statut} />}
+              {bdpm.presentation?.tauxRemboursement && (
+                <DataRow label="Remboursement SS (FR)" value={bdpm.presentation.tauxRemboursement} />
+              )}
+              {bdpm.conditions && bdpm.conditions.length > 0 && (
+                <DataRow label="Conditions prescription (FR)" value={bdpm.conditions.join(", ")} />
+              )}
+            </dl>
+          </Section>
+
+          {bdpm.substances && bdpm.substances.length > 0 && (
+            <Section title="Composition (BDPM France)">
+              <ul className="space-y-1.5">
+                {bdpm.substances.map((s) => (
+                  <li key={s} className="text-sm bg-petrol/5 border border-petrol/10 rounded-lg px-3 py-2 text-gray-700">{s}</li>
+                ))}
+              </ul>
+            </Section>
+          )}
+
+          {bdpm.generiques && bdpm.generiques.length > 0 && (
+            <Section title="Génériques référencés (France)" subtitle="Liste BDPM France — les génériques marocains peuvent différer">
+              <ul className="space-y-1.5">
+                {bdpm.generiques.map((g) => (
+                  <li key={g} className="text-sm text-gray-600 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">{g}</li>
+                ))}
+              </ul>
+            </Section>
+          )}
+
+          <Section title="Données cliniques complètes">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-sm text-gray-600 space-y-2">
+              <p>
+                Les données cliniques complètes (indications, posologie, contre-indications, interactions,
+                effets indésirables) doivent être consultées dans le RCP marocain officiel.
+              </p>
+              <BdpmExternalLinks className="mt-2" />
+            </div>
+          </Section>
+        </>
+      )}
+    </div>
+  );
+}
+
+const REJECTION_LABELS: Record<string, string> = {
+  composition_mismatch: "Composition incompatible",
+  route_mismatch: "Voie d'administration incompatible",
+  form_mismatch: "Forme pharmaceutique incompatible",
+};
+
+function BdpmNoData({
+  dci,
+  reason,
+  detail,
+  rejectionCode,
+}: {
+  dci: string;
+  reason: string;
+  detail?: string;
+  rejectionCode?: string;
+}) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      <p className="text-gray-700 font-medium text-sm">{reason}</p>
+      {rejectionCode && (
+        <span className="inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">
+          {REJECTION_LABELS[rejectionCode] ?? rejectionCode}
+        </span>
+      )}
+      {detail && <p className="text-gray-400 text-xs mt-2">{detail}</p>}
+      <p className="text-gray-400 text-xs mt-3">
+        Pour {dci}, consultez directement le RCP marocain officiel :
+      </p>
+      <BdpmExternalLinks className="mt-2" />
+    </div>
+  );
+}
+
+function BdpmExternalLinks({ className }: { className?: string }) {
+  return (
+    <div className={`flex flex-wrap gap-3 ${className ?? ""}`}>
+      <a href="https://dmp.sante.gov.ma" target="_blank" rel="noreferrer"
+        className="text-sm text-petrol font-medium border border-petrol/20 bg-petrol/5 px-4 py-2 rounded-lg hover:bg-petrol/10">
+        DMP Maroc (RCP officiel) →
+      </a>
+      <a href="https://capm.ma" target="_blank" rel="noreferrer"
+        className="text-sm text-gray-600 border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50">
+        CAPM →
+      </a>
+    </div>
+  );
+}
+
+// ── TAB 3 — Données terrain MAIA DAWA ─────────────────────────────────────────
 
 function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | undefined; dci: string; onDeclare: () => void }) {
-  // Chargement en cours
   if (terrain === undefined) {
     return (
       <Section title="Données terrain MAIA DAWA">
@@ -684,7 +574,6 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
     );
   }
 
-  // Aucune donnée (erreur réseau ou 0 déclaration)
   if (terrain === null || terrain.total === 0) {
     return (
       <Section title="Données terrain MAIA DAWA">
@@ -703,8 +592,7 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
           <span className="text-lg shrink-0">🔬</span>
           <p className="text-xs text-petrol leading-relaxed">
             <span className="font-semibold">Pourquoi ces données comptent :</span> 95% des effets indésirables
-            ne sont jamais signalés. Chaque déclaration MAIA DAWA contribue à la
-            pharmacovigilance nationale et permet de détecter des signaux que les essais cliniques n&apos;ont pas captés.
+            ne sont jamais signalés. Chaque déclaration MAIA DAWA contribue à la pharmacovigilance nationale.
           </p>
         </div>
       </Section>
@@ -715,7 +603,6 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
 
   return (
     <Section title="Données terrain MAIA DAWA">
-      {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
         <Stat label="Déclarations MAIA DAWA" value={String(total)} />
         <Stat label="Effets graves" value={`${graves} (${graves_pct}%)`} highlight={graves_pct >= 30} />
@@ -723,7 +610,6 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
         <Stat label="Dernier signalement" value={last_report_date ? new Date(last_report_date).toLocaleDateString("fr-MA", { month: "short", year: "numeric" }) : "—"} />
       </div>
 
-      {/* Top effets MedDRA */}
       {top_effets.length > 0 && (
         <>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Top effets rapportés localement</p>
@@ -738,7 +624,6 @@ function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | 
         </>
       )}
 
-      {/* Répartition par évolution */}
       {by_evolution.length > 0 && (
         <>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Évolution observée</p>
@@ -775,12 +660,14 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
   );
 }
 
-function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+function Disclaimer() {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5">
-      <h3 className="font-semibold text-gray-900 border-l-4 border-petrol pl-3 mb-1">{title}</h3>
-      {subtitle && <p className="text-xs text-gray-400 pl-3.5 mb-3">{subtitle}</p>}
-      <div className={subtitle ? "" : "mt-3"}>{children}</div>
+    <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl px-5 py-4">
+      <p className="text-xs text-gray-500 leading-relaxed">
+        {DISCLAIMER} Les données d&apos;enrichissement clinique proviennent de la BDPM (ANSM, France) — elles servent
+        à l&apos;enrichissement scientifique uniquement et ne remplacent pas le RCP marocain officiel.
+        Consultez le DMP (sante.gov.ma) et le CAPM pour les informations de référence locale.
+      </p>
     </div>
   );
 }

@@ -9,14 +9,12 @@ type Status = "loading" | "success" | "error" | "already";
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [status, setStatus] = useState<Status>("loading");
-  const [message, setMessage] = useState("");
+  const token = searchParams.get("token");
+  const [status, setStatus] = useState<Status>(() => token ? "loading" : "error");
+  const [message, setMessage] = useState(() => token ? "" : "Lien invalide — aucun token trouvé.");
 
   useEffect(() => {
-    const token = searchParams.get("token");
     if (!token) {
-      setStatus("error");
-      setMessage("Lien invalide — aucun token trouvé.");
       return;
     }
 
@@ -40,7 +38,7 @@ function VerifyEmailContent() {
         setStatus("error");
         setMessage("Erreur réseau — réessayez.");
       });
-  }, [searchParams, router]);
+  }, [token, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

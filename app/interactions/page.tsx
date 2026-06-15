@@ -2,10 +2,11 @@
 
 /**
  * /interactions — Vérificateur d'interactions médicamenteuses
- * Stratégie : appel OpenFDA drug label API → recherche dans la table locale si indisponible.
+ * Source : base locale MAIA DAWA (données ANSM/EMA publiques).
+ * Pas d'appel externe (OpenFDA retiré — source US non pertinente pour le Maroc).
  */
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -56,31 +57,12 @@ const NIVEAU_CONFIG: Record<NiveauInteraction, {
 
 // ─── Types résultat ───────────────────────────────────────────────────────────
 
-type ResultSource = "openfda" | "locale" | "none";
+type ResultSource = "locale" | "none";
 
 type CheckResult =
-  | { source: ResultSource; found: true; data: InteractionLocale; fdaText?: string }
+  | { source: ResultSource; found: true; data: InteractionLocale }
   | { source: ResultSource; found: false };
 
-// ─── Appel OpenFDA ────────────────────────────────────────────────────────────
-
-async function checkOpenFDA(drug1: string, drug2: string): Promise<{ found: boolean; text?: string }> {
-  try {
-    const q = encodeURIComponent(`"${drug1.toLowerCase()}"`);
-    const url = `https://api.fda.gov/drug/label.json?search=openfda.generic_name:${q}&limit=1`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
-    if (!res.ok) return { found: false };
-    const json = await res.json();
-    const interactions: string[] = json.results?.[0]?.drug_interactions ?? [];
-    if (!interactions.length) return { found: false };
-    const text = interactions.join(" ").toLowerCase();
-    const d2 = drug2.toLowerCase().slice(0, 6); // préfixe 6 chars pour tolérance
-    const found = text.includes(d2);
-    return { found, text: found ? interactions[0].slice(0, 500) : undefined };
-  } catch {
-    return { found: false };
-  }
-}
 
 // ─── Composants ──────────────────────────────────────────────────────────────
 
@@ -155,17 +137,17 @@ function ResultCard({ result, drug1, drug2 }: { result: CheckResult; drug1: stri
           Aucune interaction répertoriée
         </p>
         <p className="text-sm text-emerald-700">
-          Cette combinaison ne figure pas dans notre base locale ni dans OpenFDA.
-          Cela ne garantit pas l'absence d'interaction — consultez le RCP et la pharmacologie clinique.
+          Cette combinaison ne figure pas dans la base MAIA DAWA.
+          Cela ne garantit pas l&apos;absence d&apos;interaction — consultez le RCP marocain officiel et un pharmacologue clinicien.
         </p>
         <p className="text-xs text-emerald-500 mt-2">
-          Source : {result.source === "openfda" ? "OpenFDA drug label + base locale MAIA DAWA" : "Base locale MAIA DAWA"}
+          Source : Base locale MAIA DAWA (données ANSM/EMA publiques)
         </p>
       </div>
     );
   }
 
-  const { data, fdaText } = result;
+  const { data } = result;
   const cfg = NIVEAU_CONFIG[data.niveau];
 
   return (
@@ -178,9 +160,7 @@ function ResultCard({ result, drug1, drug2 }: { result: CheckResult; drug1: stri
             <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${cfg.badge}`}>
               {cfg.label}
             </span>
-            <span className="text-xs text-gray-500">
-              Source : {result.source === "openfda" ? "OpenFDA" : "Base MAIA DAWA"}
-            </span>
+            <span className="text-xs text-gray-500">Source : Base MAIA DAWA</span>
           </div>
           <p className="font-bold text-gray-900 mt-1 text-sm">
             {data.dci1.charAt(0).toUpperCase() + data.dci1.slice(1)} ×{" "}
@@ -204,17 +184,6 @@ function ResultCard({ result, drug1, drug2 }: { result: CheckResult; drug1: stri
           <p className="text-sm font-semibold">{data.conduite}</p>
         </div>
 
-        {/* Texte OpenFDA brut si disponible */}
-        {fdaText && (
-          <details className="text-xs text-gray-500">
-            <summary className="cursor-pointer font-semibold text-gray-600 hover:text-gray-800">
-              Voir le texte source OpenFDA →
-            </summary>
-            <blockquote className="mt-2 border-l-2 border-gray-200 pl-3 italic text-gray-500">
-              {fdaText}…
-            </blockquote>
-          </details>
-        )}
 
         {/* CTA Déclarer — uniquement pour CI et majeur */}
         {(data.niveau === "CI" || data.niveau === "majeur") && (
@@ -249,8 +218,6 @@ function InteractionsContent() {
   const [drug2, setDrug2] = useState(() => searchParams.get("drug2") ?? "");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CheckResult | null>(null);
-  const [fdaStatus, setFdaStatus] = useState<"idle" | "ok" | "fallback">("idle");
-  const abortRef = useRef<AbortController | null>(null);
 
   // Auto-déclencher la vérification si les deux médicaments sont pré-remplis depuis l'URL
   useEffect(() => {
@@ -275,37 +242,12 @@ function InteractionsContent() {
     if (!drug1.trim() || !drug2.trim()) return;
     setLoading(true);
     setResult(null);
-    setFdaStatus("idle");
 
-    // 1. Essai OpenFDA
-    const fdaResult = await checkOpenFDA(drug1.trim(), drug2.trim());
-
-    if (fdaResult.found) {
-      // OpenFDA a trouvé une mention → chercher le détail dans la table locale pour enrichir
-      const local = searchLocalInteraction(drug1, drug2);
-      setFdaStatus("ok");
-      setResult({
-        source: "openfda",
-        found: true,
-        data: local ?? {
-          dci1: drug1.trim().toLowerCase(),
-          dci2: drug2.trim().toLowerCase(),
-          niveau: "modéré",
-          mecanisme: "Voir texte OpenFDA ci-dessous",
-          consequence: "Interaction détectée dans le RCP (résumé des caractéristiques du produit).",
-          conduite: "Consulter le pharmacologue ou le RCP complet.",
-        },
-        fdaText: fdaResult.text,
-      });
+    const local = searchLocalInteraction(drug1, drug2);
+    if (local) {
+      setResult({ source: "locale", found: true, data: local });
     } else {
-      // Fallback table locale
-      setFdaStatus("fallback");
-      const local = searchLocalInteraction(drug1, drug2);
-      if (local) {
-        setResult({ source: "locale", found: true, data: local });
-      } else {
-        setResult({ source: "locale", found: false });
-      }
+      setResult({ source: "locale", found: false });
     }
 
     setLoading(false);
@@ -333,7 +275,7 @@ function InteractionsContent() {
           </div>
         </div>
         <div className="text-xs text-gray-400">
-          Base : {INTERACTIONS_TABLE.length} paires · OpenFDA drug labels
+          Base MAIA DAWA · {INTERACTIONS_TABLE.length} paires cliniques
         </div>
       </header>
 
@@ -342,11 +284,11 @@ function InteractionsContent() {
         {/* Titre */}
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2" style={{ color: "#0F5B57" }}>
-            Vérificateur d'interactions médicamenteuses
+            Vérificateur d&apos;interactions médicamenteuses
           </h1>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
-            Entrez deux médicaments pour vérifier leur interaction. Données OpenFDA complétées par
-            une base locale de {INTERACTIONS_TABLE.length} paires critiques.
+            Entrez deux médicaments pour vérifier leur interaction.
+            Base locale MAIA DAWA : {INTERACTIONS_TABLE.length} paires cliniquement significatives.
           </p>
         </div>
 
@@ -391,18 +333,10 @@ function InteractionsContent() {
                 Vérification en cours…
               </>
             ) : (
-              "🔍 Vérifier l'interaction"
+              "🔍 Vérifier l’interaction"
             )}
           </button>
 
-          {/* Statut source */}
-          {fdaStatus !== "idle" && !loading && (
-            <p className="text-center text-xs text-gray-400 mt-2">
-              {fdaStatus === "ok"
-                ? "✦ OpenFDA consulté avec succès"
-                : "✦ OpenFDA indisponible — base locale utilisée"}
-            </p>
-          )}
         </div>
 
         {/* Résultat */}
@@ -413,10 +347,10 @@ function InteractionsContent() {
           <p className="font-semibold text-gray-700">⚕️ Avertissement</p>
           <p>
             Cet outil est une aide à la décision médicale, non un substitut au jugement clinique.
-            L'absence d'interaction dans cette base ne garantit pas l'innocuité de l'association.
-            En cas de doute, consultez un pharmacologue clinicien ou le centre antipoison.
+            L&apos;absence d&apos;interaction dans cette base ne garantit pas l&apos;innocuité de l&apos;association.
+            En cas de doute, consultez un pharmacologue clinicien, le RCP marocain officiel, ou le CAPM.
           </p>
-          <p>Sources : OpenFDA drug labels (FDA USA) · Base MAIA DAWA (données ANSM, VIDAL, Martindale)</p>
+          <p>Sources : Base MAIA DAWA — données issues de sources publiques officielles (ANSM, EMA, RCP). Aucun scraping de sources propriétaires.</p>
         </div>
 
         {/* Exemples rapides */}

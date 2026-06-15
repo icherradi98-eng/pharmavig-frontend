@@ -32,8 +32,10 @@ const SOURCE = {
   license: "Open Data Commons Open Database License (ODbL)",
   url_or_file_reference: "https://www.data.gov.ma/data/fr/dataset/referentiel-des-medicaments",
   update_date: "2021-12-13",
+  source_year: 2014,
+  source_freshness: "stale",  // données de 2014 — à rafraîchir dès publication d'une version plus récente sur data.gov.ma
   imported_at: new Date().toISOString(),
-  notes: "Données CNOPS 2014. Référencement marocain — ne vaut pas confirmation de disponibilité.",
+  notes: "Données CNOPS 2014 (mis en ligne data.gov.ma : 2021-12-13). Référencement marocain uniquement — ne vaut pas confirmation de disponibilité actuelle.",
 };
 
 // ── Parseur XLSX dépendance-zéro ─────────────────────────────────────────────

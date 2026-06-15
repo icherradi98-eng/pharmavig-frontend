@@ -101,17 +101,6 @@ export async function generateDeclarationPDF(
     y += 3;
   }
 
-  function tag(label: string, colorBg: readonly [number, number, number], colorTxt: readonly [number, number, number]) {
-    doc.setFontSize(7.5);
-    doc.setFont("helvetica", "bold");
-    const tw = doc.getTextWidth(label) + 4;
-    setFill(...colorBg);
-    doc.roundedRect(margin + 2, y - 4, tw, 5.5, 1, 1, "F");
-    setColor(...colorTxt);
-    doc.text(label, margin + 4, y);
-    y += 7;
-  }
-
   // ═══════════════════════════════════════════════════════════════════
   // PAGE 1 — EN-TÊTE
   // ═══════════════════════════════════════════════════════════════════
