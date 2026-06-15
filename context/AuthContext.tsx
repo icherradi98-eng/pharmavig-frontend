@@ -62,6 +62,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function logout() {
     api.logout(); // efface les cookies HttpOnly côté serveur
     localStorage.removeItem("user");
+    // Drafts médicaux — données patient non chiffrées, ne pas laisser sur poste partagé
+    localStorage.removeItem("pharmavig_medecin_draft");
+    localStorage.removeItem("pharmavig_patient_draft");
+    localStorage.removeItem("pharmavig_medecin_prefill");
     setUser(null);
     router.push("/login");
   }
