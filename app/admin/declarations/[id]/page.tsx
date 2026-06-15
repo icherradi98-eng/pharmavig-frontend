@@ -46,7 +46,7 @@ function Row({ label, value }: { label: string; value?: string | number | null }
 
 export default function AdminDeclarationDetail() {
   const { id } = useParams<{ id: string }>();
-  const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("admin_user") : null;
   const [report, setReport] = useState<AdminReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

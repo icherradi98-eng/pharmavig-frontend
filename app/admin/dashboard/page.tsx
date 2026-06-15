@@ -20,17 +20,17 @@ const SOURCE_LABELS: Record<string, string> = {
 
 function useAdminAuth() {
   const router = useRouter();
-  const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+  const user = typeof window !== "undefined" ? localStorage.getItem("admin_user") : null;
   useEffect(() => {
-    if (!token) router.push("/admin/login");
-  }, [token, router]);
-  return token;
+    if (!user) router.push("/admin/login");
+  }, [user, router]);
+  return user;
 }
 
 function AdminNav({ active }: { active: string }) {
   const router = useRouter();
   function logout() {
-    localStorage.removeItem("admin_token");
+    api.logout(); // efface les cookies HttpOnly côté serveur
     localStorage.removeItem("admin_user");
     router.push("/admin/login");
   }

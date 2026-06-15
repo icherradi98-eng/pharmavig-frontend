@@ -9,7 +9,7 @@
  *
  * Décode les codes GS1 DataMatrix (boîtes européennes/marocaines) et EAN-13.
  * Extrait : GTIN, lot, date d'expiration, numéro de série.
- * Recherche le nom commercial via OpenFDA (GTIN → NDC).
+ * Recherche du nom commercial : désactivée (OpenFDA = base US/FDA, non pertinente pour le Maroc).
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -31,9 +31,9 @@ export type ScannedData = {
   expiryDate?: string;
   /** Numéro de série (21) */
   serial?: string;
-  /** Nom commercial issu d'OpenFDA (si trouvé) */
+  /** Nom commercial (lookup désactivé — à relier à référentiel local futur) */
   nomCommercial?: string;
-  /** DCI issu d'OpenFDA */
+  /** DCI (lookup désactivé — à relier à référentiel local futur) */
   dci?: string;
 };
 
@@ -218,7 +218,7 @@ export default function ScanBoite({ onScanned, onClose }: ScanBoiteProps) {
     const gs1 = parseGS1(raw);
     const data: ScannedData = { raw, format, ...gs1 };
 
-    // Lookup OpenFDA si GTIN présent
+    // Lookup nom commercial désactivé (OpenFDA non pertinent pour le Maroc).
     if (gs1.gtin) {
       setLookingUp(true);
       const fda = await lookupByGTIN(gs1.gtin);

@@ -18,7 +18,6 @@ export default function AdminLogin() {
     try {
       const data = await api.adminLogin(email, password);
       if (data.user.role !== "admin") throw new Error("Accès réservé aux administrateurs");
-      localStorage.setItem("admin_token", data.access_token);
       localStorage.setItem("admin_user", JSON.stringify(data.user));
       router.push("/admin/dashboard");
     } catch (err: unknown) {

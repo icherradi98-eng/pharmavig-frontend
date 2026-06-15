@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { api, UserOut, AuthResponse } from "@/lib/api";
+import { api, UserOut, SessionResponse } from "@/lib/api";
 
 type AuthContextType = {
   user: UserOut | null;
@@ -27,8 +27,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Écoute l'événement déclenché par lib/api.ts quand le refresh token est invalide
   useEffect(() => {
     function handleExpired() {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
       localStorage.removeItem("user");
       setUser(null);
       setSessionExpired(true);
@@ -38,9 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("pharmavig:session-expired", handleExpired);
   }, [router]);
 
-  function saveSession(res: AuthResponse) {
-    localStorage.setItem("access_token", res.access_token);
-    localStorage.setItem("refresh_token", res.refresh_token);
+  function saveSession(res: SessionResponse) {
     localStorage.setItem("user", JSON.stringify(res.user));
     setUser(res.user);
   }
@@ -64,8 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   function logout() {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    api.logout(); // efface les cookies HttpOnly côté serveur
     localStorage.removeItem("user");
     setUser(null);
     router.push("/login");

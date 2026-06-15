@@ -2,35 +2,27 @@ const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 // ── Refresh token ──────────────────────────────────────────────────────────────
 // On garde une promesse en cours pour éviter les rafales simultanées de refresh
-let _refreshPromise: Promise<string | null> | null = null;
+let _refreshPromise: Promise<boolean> | null = null;
 
-async function tryRefreshToken(): Promise<string | null> {
+async function tryRefreshToken(): Promise<boolean> {
   if (_refreshPromise) return _refreshPromise;
 
   _refreshPromise = (async () => {
     try {
-      const refreshToken = localStorage.getItem("refresh_token");
-      if (!refreshToken) return null;
-
       const res = await fetch(`${BASE}/auth/refresh`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh_token: refreshToken }),
+        credentials: "include",
       });
 
       if (!res.ok) {
-        // Refresh token expiré ou invalide → nettoyer la session
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        // Cookie refresh_token expiré ou invalide → nettoyer l'état local
         localStorage.removeItem("user");
-        return null;
+        return false;
       }
 
-      const data = await res.json();
-      localStorage.setItem("access_token", data.access_token);
-      return data.access_token as string;
+      return true;
     } catch {
-      return null;
+      return false;
     } finally {
       _refreshPromise = null;
     }
@@ -41,21 +33,19 @@ async function tryRefreshToken(): Promise<string | null> {
 
 // ── Requête avec retry automatique après refresh ────────────────────────────────
 async function request<T>(path: string, options: RequestInit = {}, _retry = true): Promise<T> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-
   const res = await fetch(`${BASE}${path}`, {
     ...options,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
 
-  // Token expiré → on tente un refresh puis on rejoue la requête une fois
+  // Cookie access_token expiré → on tente un refresh puis on rejoue la requête une fois
   if (res.status === 401 && _retry) {
-    const newToken = await tryRefreshToken();
-    if (newToken) {
+    const ok = await tryRefreshToken();
+    if (ok) {
       return request<T>(path, options, false); // _retry=false pour éviter boucle infinie
     }
     // Refresh échoué → on dispatch un event pour que AuthContext déconnecte proprement
@@ -71,17 +61,14 @@ async function request<T>(path: string, options: RequestInit = {}, _retry = true
   return res.json();
 }
 
-// L'espace admin utilise son propre token (`admin_token`, distinct du token
-// utilisateur classique `access_token`) — on a donc besoin d'un wrapper de
-// requête dédié qui injecte le bon header d'autorisation.
+// L'espace admin utilise le même cookie que l'espace médecin/patient —
+// les tokens sont dans des cookies HttpOnly, pas besoin d'un header dédié.
 async function adminRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
-
   const res = await fetch(`${BASE}${path}`, {
     ...options,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
@@ -122,22 +109,23 @@ export async function fetchTerrain(dci: string): Promise<TerrainOut | null> {
 export const api = {
   // Auth
   register: (data: Record<string, unknown>) =>
-    request<AuthResponse>("/auth/register", { method: "POST", body: JSON.stringify(data) }),
+    request<SessionResponse>("/auth/register", { method: "POST", body: JSON.stringify(data) }),
 
   login: (email: string, password: string) =>
-    request<AuthResponse>("/auth/login", {
+    request<SessionResponse>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }),
 
-  // Connexion admin : passe par le même endpoint /auth/login (et donc la même
-  // base d'URL centralisée) ; la vérification du rôle "admin" et le stockage
-  // dans `admin_token`/`admin_user` restent gérés côté page de connexion admin.
+  // Connexion admin : même endpoint /auth/login — le cookie HttpOnly est posé par le backend.
   adminLogin: (email: string, password: string) =>
-    request<AuthResponse>("/auth/login", {
+    request<SessionResponse>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }),
+
+  logout: () =>
+    fetch(`${BASE}/auth/logout`, { method: "POST", credentials: "include" }).catch(() => null),
 
   changePassword: (currentPassword: string, newPassword: string) =>
     request<void>("/auth/change-password", {
@@ -221,10 +209,15 @@ export type UserOut = {
   specialite?: string;
 };
 
+/** @deprecated — tokens maintenant dans cookies HttpOnly. Utiliser SessionResponse. */
 export type AuthResponse = {
   access_token: string;
   refresh_token: string;
   token_type: string;
+  user: UserOut;
+};
+
+export type SessionResponse = {
   user: UserOut;
 };
 

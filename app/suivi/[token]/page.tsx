@@ -137,6 +137,18 @@ export default function SuiviPatient() {
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+    const MAX_BYTES = 2 * 1024 * 1024; // 2 MB
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      alert("Format non autorisé. Utilisez une photo JPEG, PNG ou WebP.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > MAX_BYTES) {
+      alert("La photo est trop volumineuse (maximum 2 Mo).");
+      e.target.value = "";
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => setPhoto(reader.result as string);
     reader.readAsDataURL(file);

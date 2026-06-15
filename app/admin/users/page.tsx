@@ -11,7 +11,7 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export default function AdminUsers() {
-  const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("admin_user") : null;
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterRole, setFilterRole] = useState("");

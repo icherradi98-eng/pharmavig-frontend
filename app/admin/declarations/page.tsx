@@ -19,7 +19,7 @@ const SOURCE_LABELS: Record<string, string> = {
 };
 
 export default function AdminDeclarations() {
-  const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("admin_user") : null;
   const [reports, setReports] = useState<AdminReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
