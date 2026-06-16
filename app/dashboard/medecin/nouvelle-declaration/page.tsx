@@ -77,6 +77,8 @@ export default function FormulaireMedecin() {
   const [scanOpen, setScanOpen] = useState(false);
   const [begaudInitial, setBegaudInitial] = useState<Record<string, string> | undefined>(undefined);
   const [pvNumber, setPvNumber] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false); // confirmation avant envoi
+  const [submitting, setSubmitting] = useState(false);
   const [draftRestored, setDraftRestored] = useState(() => draft !== null);
   const [prefilled, setPrefilled] = useState(() => prefill !== null);
   const [triedNext, setTriedNext] = useState(false); // affiche les erreurs inline seulement après tentative
@@ -139,8 +141,17 @@ export default function FormulaireMedecin() {
     }));
   }
 
+  // Ouvre la confirmation finale (le bouton de la section 6 est déjà gardé : consentement + champs requis)
+  function requestSubmit() {
+    if (!form.consentement) return;
+    setSubmitError("");
+    setConfirmOpen(true);
+  }
+
   async function handleSubmit() {
     if (!form.consentement) return;
+    setConfirmOpen(false);
+    setSubmitting(true);
     setSubmitError("");
     try {
       const submitFn = user ? api.createReport : api.createAnonymousReport;
@@ -198,6 +209,8 @@ export default function FormulaireMedecin() {
       setSubmitted(true);
     } catch (err: unknown) {
       setSubmitError(err instanceof Error ? err.message : "Erreur lors de l'envoi");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -252,6 +265,21 @@ export default function FormulaireMedecin() {
               </div>
             </div>
           )}
+
+          {/* Résumé de la déclaration soumise */}
+          <div className="border border-gray-100 rounded-xl overflow-hidden mb-4">
+            <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-100">
+              <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Résumé de votre déclaration</p>
+            </div>
+            <div className="px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div><p className="text-xs text-gray-400">Médicament suspect</p><p className="font-medium text-gray-800">{form.medicamentDCI || form.medicamentNomCommercial || "—"}</p></div>
+              <div><p className="text-xs text-gray-400">Effet observé</p><p className="font-medium text-gray-800">{form.eiMeddraTerm || "—"}</p></div>
+              <div><p className="text-xs text-gray-400">Patient</p><p className="font-medium text-gray-800">{form.patientAge ? `${form.patientAge} ans` : "—"}{form.patientSexe ? `, ${form.patientSexe}` : ""}</p></div>
+              <div><p className="text-xs text-gray-400">Gravité</p><p className={`font-medium ${isSerieux ? "text-red-600" : "text-gray-800"}`}>{isSerieux ? "⚡ Sérieux" : "Non sérieux"}</p></div>
+              <div><p className="text-xs text-gray-400">Imputabilité</p><p className="font-medium text-gray-800">{imputScore ? `I${imputScore.Iscore}` : form.imputConclusion || "—"}</p></div>
+              <div><p className="text-xs text-gray-400">Concomitants</p><p className="font-medium text-gray-800">{form.medicamentsConcomitants.length} déclaré(s)</p></div>
+            </div>
+          </div>
 
           {/* Que se passe-t-il maintenant */}
           <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
@@ -452,7 +480,7 @@ export default function FormulaireMedecin() {
 
         {/* ── Section 6 : Finalisation ── */}
         {step === 6 && (
-          <Section6Finalisation form={form} set={set} isSerieux={isSerieux} isFatal={isFatal} delaiLegal={delaiLegal} champsManquants={champsManquants} submitError={submitError} imputScore={imputScore} uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} dragOver={dragOver} setDragOver={setDragOver} onSubmit={handleSubmit} />
+          <Section6Finalisation form={form} set={set} isSerieux={isSerieux} isFatal={isFatal} delaiLegal={delaiLegal} champsManquants={champsManquants} submitError={submitError} imputScore={imputScore} uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} dragOver={dragOver} setDragOver={setDragOver} onSubmit={requestSubmit} />
         )}
 
 
@@ -530,6 +558,37 @@ export default function FormulaireMedecin() {
             }
           }}
         />
+      )}
+
+      {/* ── Confirmation avant envoi ── */}
+      {confirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setConfirmOpen(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 pt-5 pb-3 border-b border-gray-100">
+              <h3 className="text-base font-bold text-gray-900">Confirmer l&apos;envoi de la déclaration</h3>
+              <p className="text-xs text-gray-500 mt-0.5">Vérifiez ces informations avant transmission. Cette action enregistre la déclaration.</p>
+            </div>
+            <div className="px-6 py-4 space-y-2 text-sm">
+              <div className="flex justify-between gap-3"><span className="text-gray-500">Médicament suspect</span><span className="font-medium text-gray-900 text-right">{form.medicamentDCI || form.medicamentNomCommercial || "—"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-gray-500">Effet observé</span><span className="font-medium text-gray-900 text-right">{form.eiMeddraTerm || "—"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-gray-500">Gravité</span><span className={`font-semibold text-right ${isSerieux ? "text-red-600" : "text-gray-700"}`}>{isSerieux ? "⚡ Sérieux" : "Non sérieux"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-gray-500">Imputabilité</span><span className="font-medium text-gray-900 text-right">{imputScore ? `I${imputScore.Iscore}` : form.imputConclusion || "Non renseignée"}</span></div>
+              {delaiLegal && (
+                <div className={`rounded-lg px-3 py-2 mt-2 text-xs ${isFatal ? "bg-red-100 text-red-800" : "bg-amber-50 text-amber-800 border border-amber-200"}`}>
+                  ⚡ Cas {isFatal ? "fatal / pronostic vital" : "sérieux"} — délai réglementaire de transmission : <strong>{delaiLegal} jours</strong>.
+                </div>
+              )}
+            </div>
+            <div className="px-6 pb-5 pt-2 flex gap-3">
+              <button onClick={() => setConfirmOpen(false)} className="flex-1 py-2.5 rounded-xl border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                ← Revenir
+              </button>
+              <button onClick={handleSubmit} disabled={submitting} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 transition-colors">
+                {submitting ? "Envoi…" : "Confirmer l'envoi"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
