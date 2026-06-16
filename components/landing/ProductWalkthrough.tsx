@@ -21,7 +21,7 @@ const MODULES: {
   {
     id: "ord", idx: "03 / 04", url: "maiadawa.ma/ordonnance", name: "Ordonnancier",
     desc: "DCI en autocomplete, posologies structurées, contrôle d'interactions, export PDF A4. Les données patient restent sur votre appareil.",
-    meta: ["PDF A4", "100% local · loi 09-08"],
+    meta: ["PDF A4", "100% local · sur votre appareil"],
   },
   {
     id: "suivi", idx: "04 / 04", url: "maiadawa.ma/suivi", name: "Suivi patient",

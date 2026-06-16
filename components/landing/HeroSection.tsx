@@ -123,7 +123,7 @@ export function HeroSection() {
           <div className="flex-1">
             <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-5 bg-white" style={{ border: `1px solid ${C.creamDark}` }}>
               <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: C.mint }} />
-              <span className="text-xs font-medium" style={{ color: "#4a5568" }}>Plateforme en service · Maroc 🇲🇦</span>
+              <span className="text-xs font-medium" style={{ color: "#4a5568" }}>Aperçu MVP · Maroc 🇲🇦</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-black leading-[1.08] tracking-tight mb-4" style={{ color: C.night }}>
               Déclarez un effet indésirable<br />
@@ -139,12 +139,18 @@ export function HeroSection() {
               <Link href="/register" className="px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 bg-white transition-colors" style={{ border: `1px solid ${C.creamDark}`, color: C.night }}>
                 Créer un compte gratuit
               </Link>
+              <Link href="/demo" className="px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 bg-white transition-colors" style={{ border: `1px solid ${C.creamDark}`, color: C.petrol }}>
+                ▶ Tester avec des données fictives
+              </Link>
             </div>
             <div className="flex flex-wrap gap-4 text-xs" style={{ color: "#8a9ab0" }}>
-              {["Gratuit pour les médecins", "Données stockées localement", "Conforme loi 09-08"].map(t => (
+              {["Gratuit pour les médecins", "Données stockées localement", "Aligné CIOMS · Bégaud"].map(t => (
                 <span key={t} className="flex items-center gap-1.5"><IconCheck />{t}</span>
               ))}
             </div>
+            <p className="text-[11px] mt-3 max-w-lg" style={{ color: "#8a9ab0" }}>
+              Statut : MVP. Pas encore destiné à un usage avec de vraies données patient sans validation préalable. Mise en conformité loi 09-08 (CNDP) en cours.
+            </p>
           </div>
 
           <div className="hidden lg:flex flex-col gap-3 shrink-0 pb-1">

@@ -15,8 +15,8 @@ export function ConformiteSection() {
               { label: "MedDRA", desc: "Terminologie internationale" },
               { label: "ICH E2B(R3)", desc: "Transmission des données" },
               { label: "CIOMS", desc: "Format de déclaration" },
-              { label: "Loi 17-04", desc: "Pharmacovigilance Maroc" },
-              { label: "Loi 09-08 / CNDP", desc: "Protection des données" },
+              { label: "Loi 17-04", desc: "Cadre pharmacovigilance Maroc" },
+              { label: "Loi 09-08 / CNDP", desc: "Mise en conformité en cours" },
             ].map((c) => (
               <div key={c.label} className="flex items-center gap-2.5 rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
                 <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(15,91,87,0.4)", color: C.gold }}><IconShield /></div>
