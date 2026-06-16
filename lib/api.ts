@@ -73,6 +73,11 @@ async function adminRequest<T>(path: string, options: RequestInit = {}): Promise
     },
   });
 
+  if (res.status === 401) {
+    window.dispatchEvent(new Event("pharmavig:session-expired"));
+    throw new Error("Session expirée");
+  }
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "Erreur serveur" }));
     throw new Error(err.detail || "Erreur inconnue");

@@ -66,6 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("pharmavig_medecin_draft");
     localStorage.removeItem("pharmavig_patient_draft");
     localStorage.removeItem("pharmavig_medecin_prefill");
+    localStorage.removeItem("pharmavig_ordo_historique");
+    localStorage.removeItem("pharmavig_ordo_patients_recents");
     setUser(null);
     router.push("/login");
   }

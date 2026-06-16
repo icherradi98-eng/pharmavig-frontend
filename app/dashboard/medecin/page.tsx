@@ -325,7 +325,7 @@ export default function MedecinVueEnsemble() {
                         )}
                         <BenchmarkRow label="Délai moyen de déclaration après EIM" you="7 jours" national={`${NATIONAL_BENCHMARK.delaiMoyenJours} jours`} />
                       </div>
-                      <p className="text-xs text-gray-400 mt-4">Comparaisons basées sur données anonymisées agrégées</p>
+                      <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-4">⚠️ Données illustratives — référentiel national indisponible. Ces valeurs ne reflètent pas de statistiques réelles de la communauté MAIA DAWA.</p>
                     </>
                   )}
                 </SectionCard>

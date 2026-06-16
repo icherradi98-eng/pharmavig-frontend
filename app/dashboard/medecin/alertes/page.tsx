@@ -179,6 +179,12 @@ export default function AlertesSecurite() {
 
       <div className="px-5 md:px-8 py-6 space-y-5">
 
+        {/* Avertissement données d'exemple */}
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+          <span className="mt-0.5 shrink-0">⚠️</span>
+          <span>Données d&apos;exemple — non connecté au flux CAPM/EMA. Ces alertes sont illustratives et ne constituent pas une veille réglementaire en temps réel.</span>
+        </div>
+
         {/* Filtres */}
         <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
           <div className="flex flex-wrap items-center gap-3">
