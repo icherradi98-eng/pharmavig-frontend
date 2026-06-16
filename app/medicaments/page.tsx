@@ -164,7 +164,10 @@ export default function MedicamentsSearch() {
                   ) : loading ? (
                     <div className="px-4 py-3 text-sm" style={{ color: "#8a9ab0" }}>Recherche en cours…</div>
                   ) : suggestions.length === 0 ? (
-                    <div className="px-4 py-3 text-sm" style={{ color: "#8a9ab0" }}>Aucun résultat — Entrée pour chercher « {query} »</div>
+                    <button onMouseDown={() => goTo(query.trim())} className="w-full text-left px-4 py-3 hover:bg-[#F7F3EE] transition-colors">
+                      <p className="text-sm font-medium" style={{ color: C.night }}>« {query} » n&apos;est pas dans le référentiel Maroc</p>
+                      <p className="text-xs mt-0.5" style={{ color: "#8a9ab0" }}>Ouvrir la fiche pour consulter l&apos;enrichissement clinique — disponibilité au Maroc à confirmer.</p>
+                    </button>
                   ) : (
                     suggestions.map((s, i) => {
                       const st = safetyOf(s.dci); const flag = st ? SAFETY_FLAG[st] : null;
