@@ -129,7 +129,7 @@ export function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
                       </div>
                     )}
                     <span className="inline-block mt-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
-                      Source Maroc — à confirmer
+                      CNOPS 2014 — à confirmer
                     </span>
                   </button>
                 </li>
