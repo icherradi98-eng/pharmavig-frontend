@@ -12,220 +12,14 @@ import { useRouter } from "next/navigation";
 import MedecinLayout, { PageHeader, SectionCard } from "@/components/medecin/MedecinLayout";
 import { useAuth } from "@/context/AuthContext";
 import { api, type PrescriptionOut, type CheckInOut } from "@/lib/api";
-import { MEDDRA_TERMS } from "@/lib/meddraTerms";
-import ImputabiliteBegaud, { type ImputScore } from "../nouvelle-declaration/ImputabiliteBegaud";
-
-// ─── S5.1 : symptôme → SOC MedDRA via la base des 250 termes ────────────────
-// Remplace le mappage figé de 20 entrées par une recherche dans meddraTerms.ts
-
-function symptomToSoc(symptom: string): string {
-  if (!symptom) return "";
-  const q = symptom.toLowerCase().trim();
-  // 1. Correspondance exacte sur le Preferred Term
-  const exact = MEDDRA_TERMS.find((t) => t.pt.toLowerCase() === q);
-  if (exact) return exact.soc;
-  // 2. Le terme MedDRA est contenu dans le symptôme patient (ex. "Maux de tête" → "Céphalées")
-  const contained = MEDDRA_TERMS.find((t) => q.includes(t.pt.toLowerCase()));
-  if (contained) return contained.soc;
-  // 3. Le symptôme patient est contenu dans le terme MedDRA
-  const partial = MEDDRA_TERMS.find((t) => t.pt.toLowerCase().includes(q));
-  if (partial) return partial.soc;
-  return "";
-}
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatDate(d?: string) {
-  if (!d) return "—";
-  return new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
-}
-
-function daysSince(dateStr: string): number {
-  return Math.round((Date.now() - new Date(dateStr).getTime()) / 86_400_000);
-}
-
-function daysUntil(dateStr: string): number {
-  return Math.round((new Date(dateStr).getTime() - Date.now()) / 86_400_000);
-}
-
-// ─── Calcul du statut patient depuis ses check-ins ───────────────────────────
-
-type PatientStatus = "alerte" | "en_attente" | "repondu" | "termine";
-
-function getPatientStatus(
-  rx: PrescriptionOut,
-  checkins: CheckInOut[]
-): PatientStatus {
-  if (!rx.monitoring_active || rx.monitoring_ended) return "termine";
-  const hasAlert = checkins.some(
-    (c) => c.status === "repondu" && (c.severity === "urgent" || c.has_symptoms)
-  );
-  if (hasAlert) return "alerte";
-  const hasPending = checkins.some((c) => c.status === "pending" || c.status === "rappel_envoye");
-  if (hasPending) return "en_attente";
-  const hasReplied = checkins.some((c) => c.status === "repondu");
-  if (hasReplied) return "repondu";
-  return "en_attente";
-}
-
-// ─── Config visuelle par statut ───────────────────────────────────────────────
-
-const STATUS_CONFIG: Record<PatientStatus, {
-  label: string;
-  badge: string;
-  row: string;
-  icon: string;
-  sort: number;
-}> = {
-  alerte:     { label: "Alerte",      badge: "bg-red-100 text-red-700 border border-red-300",     row: "border-l-4 border-l-red-400",    icon: "🔴", sort: 0 },
-  en_attente: { label: "En attente",  badge: "bg-amber-100 text-amber-700 border border-amber-300", row: "border-l-4 border-l-amber-400",  icon: "🟡", sort: 1 },
-  repondu:    { label: "Répondu",     badge: "bg-petrol/10 text-petrol border border-petrol/30", row: "border-l-4 border-l-petrol/40", icon: "🟢", sort: 2 },
-  termine:    { label: "Terminé",     badge: "bg-gray-100 text-gray-500 border border-gray-200",   row: "border-l-4 border-l-gray-200",   icon: "⚪", sort: 3 },
-};
-
-// ─── Composant ligne patient ──────────────────────────────────────────────────
-
-function PatientRow({
-  rx,
-  checkins,
-  status,
-  onBegaud,
-}: {
-  rx: PrescriptionOut;
-  checkins: CheckInOut[];
-  status: PatientStatus;
-  onBegaud: () => void;
-}) {
-  const cfg = STATUS_CONFIG[status];
-
-  const lastReplied = [...checkins]
-    .filter((c) => c.status === "repondu" && c.responded_at)
-    .sort((a, b) => new Date(b.responded_at!).getTime() - new Date(a.responded_at!).getTime())[0];
-
-  const nextPending = [...checkins]
-    .filter((c) => c.status === "pending" || c.status === "rappel_envoye")
-    .sort((a, b) => new Date(a.scheduled_date).getTime() - new Date(b.scheduled_date).getTime())[0];
-
-  const alertCheckins = checkins.filter(
-    (c) => c.status === "repondu" && (c.severity === "urgent" || c.has_symptoms)
-  );
-
-  const daysSinceStart = daysSince(rx.date_debut);
-
-  return (
-    <div className={`bg-white rounded-xl overflow-hidden ${cfg.row} shadow-sm hover:shadow-md transition-shadow`}>
-      <div className="px-5 py-4 flex items-center gap-4">
-
-        {/* Avatar initiales */}
-        <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 text-white"
-          style={{ background: status === "alerte" ? "#ef4444" : status === "en_attente" ? "#f59e0b" : status === "repondu" ? "#2FA88F" : "#9ca3af" }}>
-          {rx.patient_initiales?.slice(0, 2).toUpperCase() ?? "??"}
-        </div>
-
-        {/* Infos patient */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap mb-0.5">
-            <span className="font-semibold text-gray-900 text-sm">{rx.patient_initiales}</span>
-            {rx.patient_age && <span className="text-xs text-gray-400">{rx.patient_age} ans</span>}
-            {rx.patient_sexe && <span className="text-xs text-gray-400">· {rx.patient_sexe}</span>}
-            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${cfg.badge}`}>
-              {cfg.icon} {cfg.label}
-            </span>
-            {alertCheckins.length > 0 && (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-600 text-white">
-                ⚠️ {alertCheckins.length} signal{alertCheckins.length > 1 ? "s" : ""}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
-            <span className="font-medium text-gray-700">{rx.drug_dci}{rx.drug_dose ? ` ${rx.drug_dose}` : ""}</span>
-            <span>·</span>
-            <span>Début {formatDate(rx.date_debut)} ({daysSinceStart} j)</span>
-            {nextPending && (
-              <>
-                <span>·</span>
-                <span className="text-amber-600 font-medium">
-                  Prochain check-in J+{nextPending.day_offset} ({
-                    daysUntil(nextPending.scheduled_date) >= 0
-                      ? `dans ${daysUntil(nextPending.scheduled_date)} j`
-                      : `en retard de ${Math.abs(daysUntil(nextPending.scheduled_date))} j`
-                  })
-                </span>
-              </>
-            )}
-            {lastReplied && !nextPending && (
-              <>
-                <span>·</span>
-                <span className="text-petrol">Dernière réponse {formatDate(lastReplied.responded_at)}</span>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Lien vers questionnaire patient (via token public) */}
-          {nextPending && (
-            <a
-              href={`/suivi/${rx.access_token}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-50 transition-colors"
-            >
-              📋 Questionnaire
-            </a>
-          )}
-          {/* Imputabilité Bégaud — accessible depuis chaque fiche patient */}
-          <button
-            onClick={onBegaud}
-            className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-violet-300 text-violet-700 hover:bg-violet-50 transition-colors"
-            title="Calculer l'imputabilité Bégaud pour ce patient"
-          >
-            🔬 Bégaud
-          </button>
-          {/* Lien vers détail prescription */}
-          <Link
-            href={`/prescriptions/${rx.id}`}
-            className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            Voir fiche →
-          </Link>
-          {/* Déclarer si alerte */}
-          {status === "alerte" && (
-            <Link
-              href="/dashboard/medecin/nouvelle-declaration"
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition-colors"
-              style={{ background: "#0F5B57" }}
-            >
-              Déclarer ⚡
-            </Link>
-          )}
-        </div>
-      </div>
-
-      {/* Ligne de symptômes si alerte */}
-      {alertCheckins.length > 0 && (
-        <div className="bg-red-50 border-t border-red-100 px-5 py-2.5">
-          <p className="text-xs text-red-700">
-            <span className="font-semibold">Symptômes signalés :</span>{" "}
-            {alertCheckins
-              .flatMap((c) => c.symptoms ?? [])
-              .filter(Boolean)
-              .join(", ") || "Voir détail"}
-            {alertCheckins.some((c) => c.stopped_treatment) && (
-              <span className="ml-2 font-bold">· Traitement arrêté</span>
-            )}
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Page principale ──────────────────────────────────────────────────────────
-
-type SortKey = "urgence" | "date" | "nom";
-type FilterKey = "tous" | "alerte" | "en_attente" | "repondu" | "termine";
+import { type ImputScore } from "../nouvelle-declaration/ImputabiliteBegaud";
+import {
+  symptomToSoc, getPatientStatus, STATUS_CONFIG,
+  type SortKey, type FilterKey,
+} from "./_components/helpers";
+import { PatientRow } from "./_components/PatientRow";
+import { SignalsList } from "./_components/SignalsList";
+import { BegaudModal } from "./_components/BegaudModal";
 
 export default function SuiviActifPage() {
   const { user } = useAuth();
@@ -298,6 +92,26 @@ export default function SuiviActifPage() {
     router.push("/dashboard/medecin/nouvelle-declaration");
   }
 
+  // Pré-remplit le formulaire de déclaration depuis le score Bégaud calculé
+  function declareFromBegaud(rx: PrescriptionOut, score: ImputScore) {
+    const prefill = {
+      medicamentDCI: rx.drug_dci ?? "",
+      medicamentIndication: rx.indication ?? "",
+      medicamentDateDebut: rx.date_debut ?? "",
+      patientAge: rx.patient_age ?? "",
+      patientSexe: rx.patient_sexe ?? "",
+      imputChronologie: String(score.Cscore),
+      imputConclusion: `I${score.Iscore}${score.isGrave ? "B" : "b"}`,
+    };
+    try { sessionStorage.setItem("pharmavig_prefill_declaration", JSON.stringify(prefill)); } catch {}
+    setBegaudRx(null);
+    router.push("/dashboard/medecin/nouvelle-declaration");
+  }
+
+  function markSignalSeen(sigId: string) {
+    api.markCheckinSeen(sigId).then(() => setSignals((prev) => prev.filter((x) => x.id !== sigId)));
+  }
+
   // Enrichir chaque prescription avec son statut calculé
   const patients = useMemo(() => {
     return prescriptions.map((rx) => ({
@@ -351,70 +165,13 @@ export default function SuiviActifPage() {
       />
 
       {/* ── Signaux actifs (anciennement dans /surveillance) ── */}
-      {signals.length > 0 && (
-        <div className="mb-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <h2 className="text-sm font-bold text-gray-800">
-              {signals.length} signal{signals.length > 1 ? "s" : ""} patient{signals.length > 1 ? "s" : ""} en attente
-            </h2>
-          </div>
-          <div className="space-y-2">
-            {signals.map((sig) => {
-              // Retrouver la prescription parente
-              const rx = prescriptions.find((p) =>
-                (checkinMap[p.id] ?? []).some((c) => c.id === sig.id)
-              );
-              const urgent = sig.severity === "urgent";
-              return (
-                <div key={sig.id}
-                  className={`border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${urgent ? "border-red-300 bg-red-50" : "border-amber-200 bg-amber-50"}`}>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      {urgent && (
-                        <span className="text-[10px] font-bold uppercase bg-red-600 text-white px-2 py-0.5 rounded-full">
-                          Urgent
-                        </span>
-                      )}
-                      <span className="font-semibold text-gray-900 text-sm">
-                        {rx ? `${rx.patient_initiales} — ${rx.drug_dci}` : "Patient"}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        J{sig.day_offset} · {sig.responded_at ? new Date(sig.responded_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }) : "—"}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-700">
-                      {(sig.symptoms && sig.symptoms.length) ? sig.symptoms.join(", ") : (sig.symptoms_other || "Symptômes signalés")}
-                    </p>
-                    {sig.stopped_treatment && (
-                      <p className="text-xs text-red-600 font-semibold mt-1">
-                        ⚠️ Traitement arrêté{sig.stop_reason ? ` — ${sig.stop_reason}` : ""}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => api.markCheckinSeen(sig.id).then(() => setSignals((prev) => prev.filter((x) => x.id !== sig.id)))}
-                      className="text-xs text-gray-500 hover:text-gray-700 underline whitespace-nowrap"
-                    >
-                      Marquer vu
-                    </button>
-                    {rx && (
-                      <button
-                        onClick={() => declareFromSignal(rx, sig)}
-                        className="text-xs font-semibold px-3 py-2 rounded-lg text-white whitespace-nowrap transition-colors"
-                        style={{ background: "#0F5B57" }}
-                      >
-                        Évaluer et déclarer ⚡
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <SignalsList
+        signals={signals}
+        prescriptions={prescriptions}
+        checkinMap={checkinMap}
+        onMarkSeen={markSignalSeen}
+        onDeclare={declareFromSignal}
+      />
 
       {/* ── Cartes KPI ── */}
       <div className="grid grid-cols-4 gap-3 mb-6">
@@ -552,78 +309,13 @@ export default function SuiviActifPage() {
 
       {/* ── S5.2 : Modal Bégaud ── */}
       {begaudRx && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(15,91,87,0.25)", backdropFilter: "blur(4px)" }}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            {/* En-tête modal */}
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
-              <div>
-                <p className="font-bold text-gray-900 text-sm">
-                  🔬 Imputabilité Bégaud — {begaudRx.patient_initiales}
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  {begaudRx.drug_dci}{begaudRx.drug_dose ? ` ${begaudRx.drug_dose}` : ""}
-                  {begaudRx.indication ? ` · ${begaudRx.indication}` : ""}
-                </p>
-              </div>
-              <button
-                onClick={() => setBegaudRx(null)}
-                className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
-                aria-label="Fermer"
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Corps : calculateur Bégaud */}
-            <div className="px-6 py-4">
-              <ImputabiliteBegaud
-                onScoreChange={(score) => setBegaudScore(score)}
-              />
-            </div>
-
-            {/* Pied : score + CTA */}
-            {begaudScore && (
-              <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4 flex items-center justify-between gap-4 rounded-b-2xl">
-                <div className="flex gap-3">
-                  {(["Cscore", "Sscore", "Iscore"] as const).map((k) => (
-                    <div key={k} className="text-center bg-violet-50 border border-violet-100 rounded-xl px-3 py-2">
-                      <div className="text-lg font-bold text-violet-700">
-                        {k === "Iscore" ? `I${begaudScore[k]}` : begaudScore[k]}
-                      </div>
-                      <div className="text-[10px] text-gray-400 uppercase">{k.replace("score", "")}</div>
-                    </div>
-                  ))}
-                  {begaudScore.isGrave && (
-                    <div className="text-center bg-red-50 border border-red-200 rounded-xl px-3 py-2">
-                      <div className="text-lg font-bold text-red-600">G</div>
-                      <div className="text-[10px] text-gray-400 uppercase">Grave</div>
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={() => {
-                    const prefill = {
-                      medicamentDCI: begaudRx.drug_dci ?? "",
-                      medicamentIndication: begaudRx.indication ?? "",
-                      medicamentDateDebut: begaudRx.date_debut ?? "",
-                      patientAge: begaudRx.patient_age ?? "",
-                      patientSexe: begaudRx.patient_sexe ?? "",
-                      imputChronologie: String(begaudScore.Cscore),
-                      imputConclusion: `I${begaudScore.Iscore}${begaudScore.isGrave ? "B" : "b"}`,
-                    };
-                    try { sessionStorage.setItem("pharmavig_prefill_declaration", JSON.stringify(prefill)); } catch {}
-                    setBegaudRx(null);
-                    router.push("/dashboard/medecin/nouvelle-declaration");
-                  }}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-bold transition-colors"
-                  style={{ background: "#0F5B57" }}
-                >
-                  ⚡ Déclarer avec ce score
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+        <BegaudModal
+          rx={begaudRx}
+          score={begaudScore}
+          onScoreChange={setBegaudScore}
+          onClose={() => setBegaudRx(null)}
+          onDeclare={(score) => declareFromBegaud(begaudRx, score)}
+        />
       )}
     </MedecinLayout>
   );
