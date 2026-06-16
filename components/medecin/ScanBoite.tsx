@@ -199,8 +199,7 @@ export default function ScanBoite({ onScanned, onClose }: ScanBoiteProps) {
       if (!videoRef.current) return;
       reader.decodeFromVideoElement(videoRef.current, async (res) => {
         if (res) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (reader as any).reset?.();
+          (reader as { reset?: () => void }).reset?.();
           await handleRaw(res.getText(), res.getBarcodeFormat().toString());
         }
       });

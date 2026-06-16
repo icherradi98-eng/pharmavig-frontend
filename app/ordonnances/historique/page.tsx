@@ -33,6 +33,7 @@ export default function HistoriqueOrdonnances() {
   const router = useRouter();
   const [history, setHistory] = useState<SavedOrdonnance[]>(() => readHistory());
   const [search, setSearch] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return history;
@@ -45,9 +46,9 @@ export default function HistoriqueOrdonnances() {
   }, [history, search]);
 
   function handleDelete(id: string) {
-    if (!confirm("Supprimer cette ordonnance de l'historique ?")) return;
     deleteFromHistory(id);
     setHistory(readHistory());
+    setConfirmDeleteId(null);
   }
 
   // Renouveler : on reprend tout (même patient, mêmes médicaments) — juste la date est rafraîchie côté formulaire.
@@ -174,9 +175,20 @@ export default function HistoriqueOrdonnances() {
                           <button onClick={() => handleSignalerEIM(o)} className="text-amber-600 hover:text-amber-700 font-medium underline">
                             ⚠️ Signaler un EIM
                           </button>
-                          <button onClick={() => handleDelete(o.id)} className="text-red-400 hover:text-red-600 underline">
-                            Supprimer
-                          </button>
+                          {confirmDeleteId === o.id ? (
+                            <span className="inline-flex items-center gap-2">
+                              <button onClick={() => handleDelete(o.id)} className="text-red-600 font-semibold underline">
+                                Confirmer
+                              </button>
+                              <button onClick={() => setConfirmDeleteId(null)} className="text-gray-500 hover:text-gray-700 underline">
+                                Annuler
+                              </button>
+                            </span>
+                          ) : (
+                            <button onClick={() => setConfirmDeleteId(o.id)} className="text-red-400 hover:text-red-600 underline">
+                              Supprimer
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

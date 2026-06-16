@@ -50,10 +50,12 @@ export default function DeclarationDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfError, setPdfError] = useState(false);
 
   async function downloadPdf() {
     if (!report) return;
     setPdfLoading(true);
+    setPdfError(false);
     try {
       const { generateDeclarationPDF } = await import("@/lib/generateDeclarationPDF");
       const raw = (report.raw_data as Record<string, unknown>) ?? {};
@@ -72,7 +74,7 @@ export default function DeclarationDetail() {
         declarantVille:         String(raw.declarantVille ?? ""),
       });
     } catch {
-      alert("Impossible de générer le PDF. Réessayez.");
+      setPdfError(true);
     } finally {
       setPdfLoading(false);
     }
@@ -155,6 +157,11 @@ export default function DeclarationDetail() {
             )}
           </button>
         </div>
+        {pdfError && (
+          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mt-3">
+            Impossible de générer le PDF. Réessayez.
+          </p>
+        )}
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-8 space-y-4">

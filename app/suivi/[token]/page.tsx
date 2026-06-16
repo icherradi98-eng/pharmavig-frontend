@@ -21,6 +21,7 @@ export default function SuiviPatient() {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [otherText, setOtherText] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [nextInDays, setNextInDays] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -42,15 +43,16 @@ export default function SuiviPatient() {
     const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
     const MAX_BYTES = 2 * 1024 * 1024;
     if (!ALLOWED_TYPES.includes(file.type)) {
-      alert("Format non autorisé. Utilisez une photo JPEG, PNG ou WebP.");
+      setPhotoError(t.photoFormatError);
       e.target.value = "";
       return;
     }
     if (file.size > MAX_BYTES) {
-      alert("La photo est trop volumineuse (maximum 2 Mo).");
+      setPhotoError(t.photoSizeError);
       e.target.value = "";
       return;
     }
+    setPhotoError(null);
     const reader = new FileReader();
     reader.onload = () => setPhoto(reader.result as string);
     reader.readAsDataURL(file);
@@ -193,6 +195,9 @@ export default function SuiviPatient() {
               <BigButton color="gray" onClick={() => fileInputRef.current?.click()}>{t.takePhoto}</BigButton>
             )}
             <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handlePhotoChange} className="hidden" />
+            {photoError && (
+              <p className="text-sm text-center text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">{photoError}</p>
+            )}
             <BigButton color="emerald" onClick={submitYes} disabled={submitting}>{t.confirm}</BigButton>
             {!photo && <button onClick={submitYes} disabled={submitting} className="w-full text-sm text-gray-400">{t.skip}</button>}
           </div>
