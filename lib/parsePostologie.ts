@@ -22,7 +22,7 @@ export type ParsedPostologie = {
 
 const UNITE_PATTERNS: [RegExp, string][] = [
   [/\bmg\/kg\b/i,         "mg/kg"],
-  [/\bmg\/m[²2]\b/i,      "mg/m²"],
+  [/\bmg\/m[²2](?!\w)/i,  "mg/m²"],
   [/\bµg\/kg\b/i,         "µg/kg"],
   [/\bmcg\/kg\b/i,        "µg/kg"],
   [/\bµg\b/i,             "µg"],

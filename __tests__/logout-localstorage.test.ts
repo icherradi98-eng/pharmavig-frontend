@@ -2,7 +2,7 @@
  * Vérifie que la déconnexion purge les clés ordonnancier du localStorage.
  * Teste la logique de purge isolément, sans monter tout le AuthContext.
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 
 const ORDO_KEYS = [
   "pharmavig_ordo_historique",

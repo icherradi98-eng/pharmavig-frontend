@@ -29,4 +29,10 @@ describe("parsePostologie — cas critiques ordonnancier", () => {
     expect(r!.unite).toBe("mg/kg");
     expect(r!.frequence).toBe("1×/jour");
   });
+
+  it("parse mg/m² suivi d'un espace (protocole onco)", () => {
+    const r = parsePostologie("175 mg/m² J1-J21");
+    expect(r).not.toBeNull();
+    expect(r!.unite).toBe("mg/m²");
+  });
 });
