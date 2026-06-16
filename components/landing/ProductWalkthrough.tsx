@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { C } from "./constants";
-import { MaiaLogo } from "./MaiaLogo";
 
 type ModuleId = "decl" | "ref" | "ord" | "suivi";
 

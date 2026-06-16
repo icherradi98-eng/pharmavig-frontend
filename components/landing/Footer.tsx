@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { C } from "./constants";
 import { MaiaLogo } from "./MaiaLogo";
 
 export function Footer() {

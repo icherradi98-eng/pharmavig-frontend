@@ -110,7 +110,7 @@ function gs1DateToISO(gs1: string): string {
 // référencés et les noms retournés (brand_name FDA) peuvent différer des noms
 // commerciaux marocains, créant un risque d'erreur de déclaration.
 // À remplacer par une lookup BDPM/DMP marocain quand disponible.
-async function lookupByGTIN(_gtin: string): Promise<{ nomCommercial?: string; dci?: string }> {
+async function lookupByGTIN(_: string): Promise<{ nomCommercial?: string; dci?: string }> {
   return {};
 }
 

@@ -166,8 +166,6 @@ function matchCandidate(local, candidate) {
   if (!matchedOnBrand && !anyFound)
     return { status:"no_match", confidence:"none", reason:"Aucun match", score };
 
-  const scope = matchedOnBrand ? "product_level" : "substance_level";
-
   // Sécurité DCI1 CNOPS
   if (local.substance_completeness_status !== "complete" && bdpmSubs.length > local.substances.length) {
     return { status:"needs_review", confidence:"low", reason:`local_substance_context_incomplete — ${local.substances.length} SA locale(s), ${bdpmSubs.length} SA BDPM`, score, rejection_code: undefined };
@@ -251,7 +249,7 @@ async function fetchWithRetry(url, maxRetries = 4, baseDelay = 800) {
       }
       if (!res.ok) return null;
       return res;
-    } catch (e) {
+    } catch {
       if (attempt < maxRetries) {
         const delay = baseDelay * Math.pow(2, attempt);
         process.stdout.write(` [erreur réseau, retry ${attempt + 1}]`);

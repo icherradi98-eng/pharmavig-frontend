@@ -285,7 +285,7 @@ function Section({ title, subtitle, children }: { title: string; subtitle?: stri
 
 // ── TAB 1 — Référentiel Maroc ─────────────────────────────────────────────────
 
-function TabReferentiel({ view, dci }: { view: ProductView | null; dci: string }) {
+function TabReferentiel({ view, dci: _dci }: { view: ProductView | null; dci: string }) {
   if (!view) {
     return (
       <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">

@@ -296,7 +296,7 @@ export async function fetchAnsm(
     if (candidates.length === 0) return null;
 
     if (localContext) {
-      const { selectBestCandidate, noMatchResult } = await import("@/lib/referentiel/bdpmMatcher");
+      const { selectBestCandidate } = await import("@/lib/referentiel/bdpmMatcher");
 
       // Prépare les candidats avec substances extraites pour le matcher
       const enriched = candidates.map((r) => ({
@@ -316,7 +316,6 @@ export async function fetchAnsm(
     }
 
     // Sans contexte local : retourne le premier candidat actif/commercialisé avec status needs_review
-    const { noMatchResult } = await import("@/lib/referentiel/bdpmMatcher");
     const r =
       candidates.find(
         (d) =>
