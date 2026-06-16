@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { WelcomeModal } from "./WelcomeModal";
 
 // ── SVG Icons professionnels ──────────────────────────────────────────────────
 
@@ -136,6 +137,9 @@ export default function MedecinLayout({ children, unreadAlerts = 0 }: { children
 
   return (
     <div className="min-h-screen flex" style={{ background: "var(--md-cream)" }}>
+
+      {/* Modal de bienvenue — première visite uniquement (médecin connecté) */}
+      <WelcomeModal enabled={!!user && user.role === "medecin"} />
 
       {/* ── Sidebar desktop ─────────────────────────────────────────────── */}
       <aside className="hidden md:flex w-[240px] shrink-0 flex-col min-h-screen"
