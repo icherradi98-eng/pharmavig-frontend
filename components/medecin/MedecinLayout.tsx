@@ -280,6 +280,22 @@ export function SectionCard({ title, children, className = "", accent = false }:
   );
 }
 
+/**
+ * Badge « DÉMO » réutilisable — à placer près de toute donnée fictive/illustrative
+ * pour qu'aucune ne soit confondue avec une vraie donnée patient ou un vrai signal.
+ */
+export function DemoBadge({ label = "DÉMO" }: { label?: string }) {
+  return (
+    <span
+      className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0"
+      style={{ background: "rgba(212,175,55,0.18)", color: "#92700a", border: "1px solid rgba(212,175,55,0.4)" }}
+      title="Données de démonstration — non réelles"
+    >
+      <span aria-hidden>●</span> {label}
+    </span>
+  );
+}
+
 export function DemoBanner() {
   const [dismissed, setDismissed] = useState(() =>
     typeof window !== "undefined" && localStorage.getItem("pharmavig_demo_banner_dismissed") === "1"

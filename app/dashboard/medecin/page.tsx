@@ -7,7 +7,7 @@ import {
   PieChart, Pie, Cell,
 } from "recharts";
 import { useAuth } from "@/context/AuthContext";
-import MedecinLayout, { PageHeader, SectionCard, DemoBanner, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
+import MedecinLayout, { PageHeader, SectionCard, DemoBanner, DemoBadge, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
 import { NATIONAL_BENCHMARK } from "@/lib/mockMedecinData";
 import { api, type ReportStats } from "@/lib/api";
 
@@ -154,10 +154,7 @@ export default function MedecinVueEnsemble() {
                         <p className="text-sm font-semibold text-gray-800 group-hover:text-amber-700">
                           Explorer en mode démonstration
                         </p>
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                          style={{ background: "rgba(212,175,55,0.2)", color: "var(--md-gold)" }}>
-                          DEMO
-                        </span>
+                        <DemoBadge label="DEMO" />
                       </div>
                       <p className="text-xs text-gray-400 mt-0.5">
                         Cas clinique Paclitaxel pré-rempli — aucune donnée réelle soumise
@@ -318,6 +315,7 @@ export default function MedecinVueEnsemble() {
                     </div>
                   ) : (
                     <>
+                      <div className="flex justify-end mb-2"><DemoBadge label="Données démo" /></div>
                       <div className="space-y-3">
                         <BenchmarkRow label="Taux de déclarations graves" you={`${stats.graves_pct}%`} national={`${NATIONAL_BENCHMARK.tauxGravesPct}%`} />
                         {begaudAvg !== null && (

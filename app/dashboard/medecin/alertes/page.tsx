@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import MedecinLayout, { PageHeader } from "@/components/medecin/MedecinLayout";
+import MedecinLayout, { PageHeader, DemoBadge } from "@/components/medecin/MedecinLayout";
 import {
   ALERT_SOURCE_STYLES, ALERT_SEVERITY_STYLES,
   type MockAlertSource, type MockAlertSeverity,
@@ -174,7 +174,8 @@ export default function AlertesSecurite() {
     <MedecinLayout unreadAlerts={unread}>
       <PageHeader
         title="Alertes sécurité"
-        subtitle="Veille réglementaire — EMA, ANSM, CAPM"
+        subtitle="Veille réglementaire — EMA, ANSM, CAPM (exemples illustratifs)"
+        action={<DemoBadge />}
       />
 
       <div className="px-5 md:px-8 py-6 space-y-5">
