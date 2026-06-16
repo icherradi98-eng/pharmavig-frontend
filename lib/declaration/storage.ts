@@ -1,23 +1,15 @@
 import type { FormData, MedicamentConcomitant } from "./types";
 import { DRAFT_KEY, PREFILL_KEY } from "./constants";
+import { readDraftTTL, saveDraftTTL, DRAFT_TTL } from "../draftStorage";
 
 export function readDraft(): { form: FormData; step: number } | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const saved = localStorage.getItem(DRAFT_KEY);
-    if (!saved) return null;
-    const { form: savedForm, step: savedStep } = JSON.parse(saved);
-    return { form: savedForm, step: savedStep || 1 };
-  } catch {
-    return null;
-  }
+  const saved = readDraftTTL<{ form: FormData; step: number }>(DRAFT_KEY, DRAFT_TTL.medecin);
+  if (!saved) return null;
+  return { form: saved.form, step: saved.step || 1 };
 }
 
 export function saveDraft(form: FormData, step: number): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, step }));
-  } catch {}
+  saveDraftTTL(DRAFT_KEY, { form, step });
 }
 
 export function clearDraft(): void {

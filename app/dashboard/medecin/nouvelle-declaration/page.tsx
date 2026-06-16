@@ -9,8 +9,8 @@ import { type ImputScore } from "./ImputabiliteBegaud";
 import { readProfile } from "@/lib/ordonnancier";
 import ScanBoite, { type ScannedData } from "@/components/medecin/ScanBoite";
 import type { FormData, MedicamentConcomitant } from "@/lib/declaration/types";
-import { DRAFT_KEY, INITIAL, SECTIONS } from "@/lib/declaration/constants";
-import { readDraft, readPrefill } from "@/lib/declaration/storage";
+import { INITIAL, SECTIONS } from "@/lib/declaration/constants";
+import { readDraft, saveDraft, clearDraft, readPrefill } from "@/lib/declaration/storage";
 import { sectionErrors } from "@/lib/declaration/validators";
 import { Section1Patient } from "./components/Section1Patient";
 import { Section2Medicament } from "./components/Section2Medicament";
@@ -91,9 +91,7 @@ export default function FormulaireMedecin() {
     if (submitted) return;
     if (saveTimeout.current) clearTimeout(saveTimeout.current);
     saveTimeout.current = setTimeout(() => {
-      try {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, step }));
-      } catch {}
+      saveDraft(form, step);
     }, 800);
     return () => { if (saveTimeout.current) clearTimeout(saveTimeout.current); };
   }, [form, step, submitted]);
@@ -196,7 +194,7 @@ export default function FormulaireMedecin() {
         ? `PV-MA-${new Date().getFullYear()}-${String(resp.id).slice(0, 8).toUpperCase()}`
         : `PV-MA-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`;
       setPvNumber(ref);
-      localStorage.removeItem(DRAFT_KEY);
+      clearDraft();
       setSubmitted(true);
     } catch (err: unknown) {
       setSubmitError(err instanceof Error ? err.message : "Erreur lors de l'envoi");
@@ -329,7 +327,7 @@ export default function FormulaireMedecin() {
               Retour au tableau de bord
             </Link>
             <button
-              onClick={() => { setForm(INITIAL); setStep(1); setSubmitted(false); setDraftRestored(false); localStorage.removeItem(DRAFT_KEY); }}
+              onClick={() => { setForm(INITIAL); setStep(1); setSubmitted(false); setDraftRestored(false); clearDraft(); }}
               className="w-full text-center text-xs text-gray-400 hover:text-gray-500 underline"
             >
               Faire une nouvelle déclaration
@@ -348,7 +346,7 @@ export default function FormulaireMedecin() {
         <div className="bg-amber-50 border-b border-amber-200 px-6 py-2.5 flex items-center justify-between text-sm text-amber-800">
           <span>📝 Brouillon restauré — vous avez repris là où vous vous étiez arrêté.</span>
           <button
-            onClick={() => { setForm(INITIAL); setStep(1); setDraftRestored(false); localStorage.removeItem(DRAFT_KEY); }}
+            onClick={() => { setForm(INITIAL); setStep(1); setDraftRestored(false); clearDraft(); }}
             className="text-xs text-amber-600 hover:text-amber-800 underline ml-4"
           >
             Recommencer à zéro

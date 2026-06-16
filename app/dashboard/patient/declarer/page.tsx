@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { type FormData, DRAFT_KEY, INITIAL, SECTIONS, REGIONS, CITY_TO_REGION, SYMPTOME_LABEL } from "./constants";
 import { detectGraviteKeywords, dureeToDays, sectionErrors } from "./helpers";
+import { readDraftTTL, saveDraftTTL, DRAFT_TTL } from "@/lib/draftStorage";
 import { Section1Vous } from "./components/Section1Vous";
 import { Section2Medicament } from "./components/Section2Medicament";
 import { Section3Evenement } from "./components/Section3Evenement";
@@ -16,19 +17,15 @@ import { Section6Finalisation } from "./components/Section6Finalisation";
 export default function FormulairePatient() {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<FormData>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(DRAFT_KEY);
-      if (saved) { try { return { ...INITIAL, ...JSON.parse(saved) }; } catch { /* ignore */ } }
-    }
-    return INITIAL;
-  });
+  // Brouillon patient : TTL 24 h, purgé automatiquement à expiration (voir lib/draftStorage).
+  const [initialDraft] = useState<Partial<FormData> | null>(() => readDraftTTL<Partial<FormData>>(DRAFT_KEY, DRAFT_TTL.patient));
+  const [form, setForm] = useState<FormData>(() => (initialDraft ? { ...INITIAL, ...initialDraft } : INITIAL));
   const [submitted, setSubmitted]     = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [reportRef, setReportRef]     = useState<string>("");
   const [geoLoading, setGeoLoading]   = useState(() => !form.region);
   const [triedNext, setTriedNext]     = useState(false);
-  const [draftRestored]               = useState(() => typeof window !== "undefined" && !!localStorage.getItem(DRAFT_KEY));
+  const [draftRestored]               = useState(() => initialDraft !== null);
   // ── #10 : toast feedback sauvegarde ─────────────────────────────────────
   const [savedToast, setSavedToast]   = useState(false);
   const firstSave                     = useRef(false);
@@ -61,7 +58,7 @@ export default function FormulairePatient() {
   useEffect(() => {
     if (submitted) return;
     const timeout = setTimeout(() => {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+      saveDraftTTL(DRAFT_KEY, form);
       if (!firstSave.current) {
         firstSave.current = true;
         setSavedToast(true);

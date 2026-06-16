@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { api, UserOut, SessionResponse } from "@/lib/api";
+import { clearAllDrafts } from "@/lib/draftStorage";
 
 type AuthContextType = {
   user: UserOut | null;
@@ -63,11 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     api.logout(); // efface les cookies HttpOnly côté serveur
     localStorage.removeItem("user");
     // Drafts médicaux — données patient non chiffrées, ne pas laisser sur poste partagé
-    localStorage.removeItem("pharmavig_medecin_draft");
-    localStorage.removeItem("pharmavig_patient_draft");
-    localStorage.removeItem("pharmavig_medecin_prefill");
-    localStorage.removeItem("pharmavig_ordo_historique");
-    localStorage.removeItem("pharmavig_ordo_patients_recents");
+    clearAllDrafts();
     setUser(null);
     router.push("/login");
   }

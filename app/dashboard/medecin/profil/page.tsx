@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import MedecinLayout, { PageHeader, SectionCard, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
 import { readProfile, saveProfile, type DoctorProfile } from "@/lib/ordonnancier";
+import { clearAllDrafts } from "@/lib/draftStorage";
 import { api } from "@/lib/api";
 
 const PREFS_KEY = "pharmavig_medecin_notif_prefs";
@@ -49,6 +50,7 @@ function Field({ label, value }: { label: string; value: string }) {
 export default function ProfilMedecin() {
   const { user, logout } = useAuth();
   const unread = useUnreadAlertsCount(0);
+  const [draftsCleared, setDraftsCleared] = useState(false);
 
   // Profil professionnel stocké en localStorage (même store que l'ordonnancier)
   const [localProfile, setLocalProfile] = useState<DoctorProfile>(() => readProfile());
@@ -490,10 +492,19 @@ export default function ProfilMedecin() {
             <button onClick={downloadData} className="text-sm font-medium text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50">
               ⬇️ Télécharger mes données
             </button>
+            <button
+              onClick={() => { clearAllDrafts(); setDraftsCleared(true); setTimeout(() => setDraftsCleared(false), 2500); }}
+              className="text-sm font-medium text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50"
+            >
+              🧹 Vider les brouillons
+            </button>
             <button onClick={() => setShowDeleteModal(true)} className="text-sm font-medium text-red-600 border border-red-200 px-4 py-2 rounded-lg hover:bg-red-50">
               Supprimer mon compte
             </button>
           </div>
+          {draftsCleared && (
+            <p className="text-xs text-emerald-600 mt-2">✓ Brouillons et données patient locales supprimés.</p>
+          )}
         </SectionCard>
 
         <button
