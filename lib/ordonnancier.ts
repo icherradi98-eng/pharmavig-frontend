@@ -275,56 +275,22 @@ export async function searchMedicaments(query: string): Promise<MedicamentSugges
   const q = query.trim();
   if (q.length < 2) return [];
   try {
-    const res = await fetch(`https://medicaments-api.giygas.dev/v1/medicaments?search=${encodeURIComponent(q)}`, {
-      signal: AbortSignal.timeout(5000),
+    const { searchProducts, getProductView } = await import("@/lib/referentiel/index");
+    const results = searchProducts(q, 10);
+    return results.map((r) => {
+      const view = getProductView(r.id);
+      const pres = view?.presentation;
+      const forme = pres?.pharmaceutical_form ?? undefined;
+      const dosages: string[] = [];
+      if (pres?.strength && pres?.unit) dosages.push(`${pres.strength} ${pres.unit}`);
+      else if (pres?.strength) dosages.push(pres.strength);
+      return {
+        nom: r.brand_name,
+        dci: r.dci !== "—" ? r.dci : undefined,
+        forme,
+        dosages: dosages.length ? dosages : undefined,
+      };
     });
-    if (!res.ok) return [];
-    const data = await res.json();
-    // Forme réelle de l'API medicaments-api.giygas.dev (catalogue ANSM/CIS) :
-    // un tableau d'objets { elementPharmaceutique, formePharmaceutique, composition: [{ denominationSubstance, dosage, natureComposant }], ... }
-    // — pas de champs "nom"/"dci"/"dosages" directs, il faut les reconstruire.
-    const list: unknown[] = Array.isArray(data) ? data : (data?.results || data?.data || []);
-    const qNorm = stripAccents(q);
-    const seen = new Set<string>();
-    const out: MedicamentSuggestion[] = [];
-    for (const item of list) {
-      if (!item || typeof item !== "object") continue;
-      const o = item as Record<string, unknown>;
-      const rawNom = (o.elementPharmaceutique || o.nom || o.denomination || o.libelle) as string | undefined;
-      if (!rawNom) continue;
-      // Le libellé brut inclut souvent le dosage et la forme (ex. "DOLIPRANE 500 mg, comprimé") — on garde le nom complet pour l'affichage.
-      const nom = String(rawNom).trim();
-      const forme = (o.formePharmaceutique || o.forme || o.form) as string | undefined;
-
-      let dci: string | undefined;
-      let dosages: string[] | undefined;
-      const composition = o.composition;
-      if (Array.isArray(composition)) {
-        const actifs = composition.filter((c) => {
-          const cc = c as Record<string, unknown>;
-          return !cc.natureComposant || cc.natureComposant === "SA"; // substance active
-        });
-        const noms = actifs
-          .map((c) => (c as Record<string, unknown>).denominationSubstance)
-          .filter((x): x is string => typeof x === "string");
-        if (noms.length) dci = noms.join(" + ");
-        const doses = actifs
-          .map((c) => (c as Record<string, unknown>).dosage)
-          .filter((x): x is string => typeof x === "string" && x.trim().length > 0);
-        if (doses.length) dosages = Array.from(new Set(doses));
-      }
-
-      const key = `${nom}|${dci || ""}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-
-      const matches = stripAccents(nom).includes(qNorm) || (dci && stripAccents(dci).includes(qNorm));
-      if (!matches) continue;
-
-      out.push({ nom, dci, forme, dosages });
-      if (out.length >= 10) break;
-    }
-    return out;
   } catch {
     return [];
   }

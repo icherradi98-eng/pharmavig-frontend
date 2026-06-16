@@ -105,11 +105,13 @@ export function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
             <ul className="absolute z-10 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl max-h-64 overflow-y-auto">
               {searching && (
                 <li className="px-4 py-3 text-xs text-gray-400 flex items-center gap-2">
-                  <span className="animate-spin">⏳</span> Recherche dans la base ANSM...
+                  <span className="animate-spin">⏳</span> Recherche dans le référentiel Maroc...
                 </li>
               )}
               {!searching && suggestions.length === 0 && (
-                <li className="px-4 py-3 text-xs text-gray-400">Aucun résultat — saisie manuelle possible ci-dessous.</li>
+                <li className="px-4 py-3 text-xs text-gray-500">
+                  Aucun médicament trouvé dans le référentiel Maroc — ajout manuel possible ci-dessous.
+                </li>
               )}
               {!searching && suggestions.map((s, i) => (
                 <li key={i} className="border-b border-gray-50 last:border-0">
@@ -126,6 +128,9 @@ export function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
                         ))}
                       </div>
                     )}
+                    <span className="inline-block mt-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                      Source Maroc — à confirmer
+                    </span>
                   </button>
                 </li>
               ))}
