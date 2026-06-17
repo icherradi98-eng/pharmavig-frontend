@@ -37,55 +37,55 @@ export default function ProfilPatient() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-cream">
+      <header className="bg-white border-b border-cream-dark px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/dashboard/patient" className="text-gray-400 hover:text-gray-600 text-sm">← Retour</Link>
-          <span className="font-semibold text-gray-900">Mon profil</span>
+          <span className="font-semibold text-night">Mon profil</span>
         </div>
         <button onClick={logout} className="text-sm text-gray-400 hover:text-gray-600">Déconnexion</button>
       </header>
 
       <main className="max-w-lg mx-auto px-6 py-8 space-y-5">
         {/* Identité */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center gap-4">
-          <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-xl font-bold">
+        <div className="bg-white border border-cream-dark rounded-2xl p-6 flex items-center gap-4">
+          <div className="w-14 h-14 bg-petrol rounded-2xl flex items-center justify-center text-white text-xl font-bold">
             {user.prenom?.[0]?.toUpperCase() ?? "P"}
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">{user.prenom} {user.nom}</h1>
+            <h1 className="text-lg font-bold text-night">{user.prenom} {user.nom}</h1>
             <p className="text-sm text-gray-500">{user.email}</p>
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Patient</span>
+            <span className="text-xs bg-petrol/10 text-petrol px-2 py-0.5 rounded-full font-medium">Patient</span>
           </div>
         </div>
 
         {/* Confidentialité */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-5">
+        <div className="bg-white border border-cream-dark rounded-2xl p-5">
           <div className="flex items-start gap-3">
             <span className="text-lg">🔒</span>
             <div>
-              <p className="text-sm font-medium text-gray-800 mb-1">Confidentialité</p>
-              <p className="text-sm text-gray-500">Vos déclarations sont anonymisées — aucun nom ne figure dans les rapports anonymisés, conformément à la loi 09-08.</p>
+              <p className="text-sm font-medium text-night mb-1">Confidentialité</p>
+              <p className="text-sm text-gray-500">Vos déclarations sont anonymisées — aucun nom ne figure dans les rapports. Mise en conformité loi 09-08 (CNDP) en cours.</p>
             </div>
           </div>
         </div>
 
         {/* Changer mot de passe */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-3">
-          <h2 className="font-semibold text-gray-800">Changer mon mot de passe</h2>
+        <div className="bg-white border border-cream-dark rounded-2xl p-5 space-y-3">
+          <h2 className="font-semibold text-night">Changer mon mot de passe</h2>
           <input type="password" placeholder="Mot de passe actuel" value={pwdForm.current}
             onChange={(e) => setPwdForm({ ...pwdForm, current: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
           <input type="password" placeholder="Nouveau mot de passe" value={pwdForm.next}
             onChange={(e) => setPwdForm({ ...pwdForm, next: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <input type="password" placeholder="Confirmer" value={pwdForm.confirm}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
+          <input type="password" placeholder="Confirmer le nouveau mot de passe" value={pwdForm.confirm}
             onChange={(e) => setPwdForm({ ...pwdForm, confirm: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol" />
           {pwdError && <p className="text-xs text-red-600">⚠️ {pwdError}</p>}
-          {pwdSuccess && <p className="text-xs text-emerald-600">✓ Mot de passe mis à jour.</p>}
+          {pwdSuccess && <p className="text-xs text-petrol">✓ Mot de passe mis à jour.</p>}
           <button onClick={handleChangePassword} disabled={pwdLoading}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-60">
+            className="bg-petrol hover:bg-petrol-dark text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-60">
             {pwdLoading ? "Mise à jour…" : "Mettre à jour"}
           </button>
         </div>

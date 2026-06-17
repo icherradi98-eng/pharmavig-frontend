@@ -144,7 +144,7 @@ export default function FormulairePatient() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-10">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 max-w-lg w-full">
 
           {/* Titre */}
@@ -228,7 +228,7 @@ export default function FormulairePatient() {
   const hasErrs  = stepErrs.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream">
       {/* ── Toast sauvegarde (#10) ── */}
       {savedToast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-800 text-white text-xs px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-fade-in">
