@@ -112,7 +112,30 @@ export default function MesDeclarations() {
         </div>
 
         {loading && (
-          <div className="text-center py-16 text-gray-400 text-sm">Chargement...</div>
+          <div className="animate-pulse space-y-3">
+            {/* Filters skeleton */}
+            <div className="bg-white border border-gray-200 rounded-xl p-4 flex gap-3">
+              <div className="h-9 bg-gray-200 rounded-lg flex-1" />
+              <div className="h-9 bg-gray-100 rounded-lg w-28" />
+              <div className="h-9 bg-gray-100 rounded-lg w-28" />
+            </div>
+            {/* Table skeleton */}
+            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="px-5 py-3 border-b border-gray-100">
+                <div className="h-3 bg-gray-200 rounded w-32" />
+              </div>
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center gap-4 px-5 py-4 border-b border-gray-50 last:border-0">
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3.5 bg-gray-200 rounded w-48" />
+                    <div className="h-2.5 bg-gray-100 rounded w-64" />
+                  </div>
+                  <div className="h-5 bg-gray-200 rounded-full w-20 shrink-0" />
+                  <div className="h-4 bg-gray-100 rounded w-6 shrink-0" />
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {!loading && error && (

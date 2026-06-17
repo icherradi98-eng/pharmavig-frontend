@@ -41,8 +41,16 @@ export default function MesDeclarationsPatient() {
         </div>
 
         {loading && (
-          <div className="text-center py-16 text-gray-400 text-sm">
-            Récupération de vos déclarations…
+          <div className="animate-pulse flex flex-col gap-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white border border-cream-dark rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="h-3.5 bg-gray-200 rounded w-40" />
+                  <div className="h-4 bg-gray-200 rounded-full w-16" />
+                </div>
+                <div className="h-2.5 bg-gray-100 rounded w-28" />
+              </div>
+            ))}
           </div>
         )}
 

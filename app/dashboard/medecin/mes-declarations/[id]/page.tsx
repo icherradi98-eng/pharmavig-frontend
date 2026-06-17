@@ -98,8 +98,28 @@ export default function DeclarationDetail() {
   }, [id, user]);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center text-gray-400 text-sm" style={{ background: "#F7F3EE" }}>
-      Chargement...
+    <div className="min-h-screen animate-pulse" style={{ background: "#F7F3EE" }}>
+      {/* Header skeleton */}
+      <div className="bg-white border-b border-gray-100 px-5 py-3 flex items-center gap-4">
+        <div className="h-4 bg-gray-200 rounded w-24" />
+        <div className="h-4 bg-gray-200 rounded w-48" />
+      </div>
+      <div className="max-w-3xl mx-auto px-5 py-8 space-y-4">
+        {/* Title */}
+        <div className="h-7 bg-gray-200 rounded w-64 mb-6" />
+        {/* Sections */}
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 space-y-3">
+            <div className="h-4 bg-gray-200 rounded w-40" />
+            {[...Array(3)].map((_, j) => (
+              <div key={j} className="flex gap-3">
+                <div className="h-3 bg-gray-100 rounded w-36 shrink-0" />
+                <div className="h-3 bg-gray-200 rounded flex-1" />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 
