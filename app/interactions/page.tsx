@@ -131,16 +131,16 @@ function ResultCard({ result, drug1, drug2 }: { result: CheckResult; drug1: stri
 
   if (!result.found) {
     return (
-      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center">
+      <div className="rounded-2xl p-6 text-center" style={{ background: "rgba(15,91,87,0.06)", border: "1px solid rgba(15,91,87,0.2)" }}>
         <div className="text-4xl mb-3">✅</div>
-        <p className="font-semibold text-emerald-800 text-base mb-1">
+        <p className="font-semibold text-base mb-1" style={{ color: "#0F5B57" }}>
           Aucune interaction répertoriée
         </p>
-        <p className="text-sm text-emerald-700">
+        <p className="text-sm" style={{ color: "#0F5B57" }}>
           Cette combinaison ne figure pas dans la base MAIA DAWA.
           Cela ne garantit pas l&apos;absence d&apos;interaction — consultez le RCP marocain officiel et un pharmacologue clinicien.
         </p>
-        <p className="text-xs text-emerald-500 mt-2">
+        <p className="text-xs mt-2" style={{ color: "rgba(15,91,87,0.6)" }}>
           Source : Base locale MAIA DAWA (données ANSM/EMA publiques)
         </p>
       </div>

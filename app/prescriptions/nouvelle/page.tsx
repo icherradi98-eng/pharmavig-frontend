@@ -37,7 +37,7 @@ function Field({ label, children, hint }: { label: string; children: React.React
   );
 }
 
-const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500";
+const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]";
 
 // Pré-remplissage depuis l'ordonnancier ("Activer le suivi" sur une ordonnance générée) — lu une seule fois.
 const RX_PREFILL_KEY = "pharmavig_ordo_to_suivi";
@@ -191,7 +191,7 @@ export default function NouvellePrescription() {
         </div>
 
         {rxPrefill && (
-          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm rounded-lg px-4 py-3 mb-5">
+          <div className="text-sm rounded-lg px-4 py-3 mb-5" style={{ background: "rgba(15,91,87,0.06)", border: "1px solid rgba(15,91,87,0.2)", color: "#0F5B57" }}>
             📄 Champs pré-remplis depuis votre ordonnance. Vérifiez les informations puis activez le suivi.
           </div>
         )}
@@ -246,7 +246,7 @@ export default function NouvellePrescription() {
                       <button
                         type="button"
                         onMouseDown={() => { setDci(s.dci); setShowSuggestions(false); }}
-                        className="w-full text-left px-3 py-2 text-sm hover:bg-emerald-50 flex items-center justify-between"
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-[rgba(15,91,87,0.05)] flex items-center justify-between"
                       >
                         <span className="font-medium text-gray-800">{s.dci}</span>
                         {s.brand && <span className="text-xs text-gray-400">{s.brand}</span>}
@@ -283,7 +283,8 @@ export default function NouvellePrescription() {
               <button
                 type="button"
                 onClick={() => setMonitoringOn((v) => !v)}
-                className={`relative w-12 h-7 rounded-full transition-colors ${monitoringOn ? "bg-emerald-600" : "bg-gray-300"}`}
+                className={`relative w-12 h-7 rounded-full transition-colors ${monitoringOn ? "" : "bg-gray-300"}`}
+                style={monitoringOn ? { background: "#0F5B57" } : undefined}
                 aria-pressed={monitoringOn}
               >
                 <span className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${monitoringOn ? "translate-x-5" : ""}`} />
@@ -304,7 +305,8 @@ export default function NouvellePrescription() {
                         type="button"
                         key={p.val}
                         onClick={() => setProtocolType(p.val)}
-                        className={`text-left border rounded-xl px-3 py-2.5 transition-colors ${protocolType === p.val ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}
+                        className={`text-left border rounded-xl px-3 py-2.5 transition-colors ${protocolType === p.val ? "border-[#0F5B57]" : "border-gray-200 hover:border-gray-300"}`}
+                        style={protocolType === p.val ? { background: "rgba(15,91,87,0.06)" } : undefined}
                       >
                         <div className="text-sm font-semibold text-gray-900">{p.label}</div>
                         <div className="text-xs text-gray-500 mt-0.5">{p.desc}</div>
@@ -328,7 +330,8 @@ export default function NouvellePrescription() {
                           type="button"
                           key={d}
                           onClick={() => toggleCustomDay(d)}
-                          className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${customDays.includes(d) ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-gray-600 border-gray-300 hover:border-emerald-400"}`}
+                          className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${customDays.includes(d) ? "text-white border-transparent" : "bg-white text-gray-600 border-gray-300 hover:border-[#0F5B57]"}`}
+                          style={customDays.includes(d) ? { background: "#0F5B57" } : undefined}
                         >
                           J+{d}
                         </button>
@@ -349,7 +352,8 @@ export default function NouvellePrescription() {
                         type="button"
                         key={m.val}
                         onClick={() => setContactMethod(m.val)}
-                        className={`text-sm font-medium px-3 py-1.5 rounded-lg border transition-colors ${contactMethod === m.val ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-gray-600 border-gray-300 hover:border-emerald-400"}`}
+                        className={`text-sm font-medium px-3 py-1.5 rounded-lg border transition-colors ${contactMethod === m.val ? "text-white border-transparent" : "bg-white text-gray-600 border-gray-300 hover:border-[#0F5B57]"}`}
+                        style={contactMethod === m.val ? { background: "#0F5B57" } : undefined}
                       >
                         {m.label}
                       </button>
@@ -378,7 +382,8 @@ export default function NouvellePrescription() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50"
+            className="w-full hover:opacity-90 text-white py-3 rounded-xl text-sm font-semibold transition-opacity disabled:opacity-50"
+            style={{ background: "#0F5B57" }}
           >
             {submitting ? "Création..." : "Créer la prescription" + (monitoringOn ? " et activer le suivi" : "")}
           </button>
@@ -420,8 +425,8 @@ function PrescriptionSuccess({ prescription, doctorName }: { prescription: Presc
 
         <div id="prescription-pdf" className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-            <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-black text-sm">PV</span>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#0F5B57" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9"/><path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
             <div>
               <div className="font-bold text-gray-900">MAIA DAWA</div>
@@ -463,7 +468,8 @@ function PrescriptionSuccess({ prescription, doctorName }: { prescription: Presc
           </button>
           <button
             onClick={() => router.push("/dashboard/medecin/surveillance")}
-            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors"
+            className="flex-1 hover:opacity-90 text-white py-2.5 rounded-lg text-sm font-semibold transition-opacity"
+            style={{ background: "#0F5B57" }}
           >
             Voir la surveillance active →
           </button>

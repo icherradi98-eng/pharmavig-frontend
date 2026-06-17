@@ -158,7 +158,8 @@ export default function SuiviPatient() {
                       key={c.fr}
                       type="button"
                       onClick={() => toggleSymptom(c.fr)}
-                      className={`text-sm font-medium px-3.5 py-2 rounded-full border transition-colors ${selectedSymptoms.includes(c.fr) ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-gray-700 border-gray-300"}`}
+                      className={`text-sm font-medium px-3.5 py-2 rounded-full border transition-colors ${selectedSymptoms.includes(c.fr) ? "text-white border-transparent" : "bg-white text-gray-700 border-gray-300"}`}
+                      style={selectedSymptoms.includes(c.fr) ? { background: "#0F5B57" } : undefined}
                     >
                       {c[lang]}
                     </button>
@@ -189,7 +190,7 @@ export default function SuiviPatient() {
               <div className="text-center space-y-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={photo} alt="aperçu" className="mx-auto max-h-64 rounded-xl border border-gray-200" />
-                <button onClick={() => { setPhoto(null); fileInputRef.current?.click(); }} className="text-sm text-emerald-700 font-medium">{t.retake}</button>
+                <button onClick={() => { setPhoto(null); fileInputRef.current?.click(); }} className="text-sm font-medium" style={{ color: "#0F5B57" }}>{t.retake}</button>
               </div>
             ) : (
               <BigButton color="gray" onClick={() => fileInputRef.current?.click()}>{t.takePhoto}</BigButton>

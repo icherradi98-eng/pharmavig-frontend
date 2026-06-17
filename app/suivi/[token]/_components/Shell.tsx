@@ -8,11 +8,11 @@ export function Shell({ lang, setLang, dir, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col" dir={dir}>
+    <div className="min-h-screen flex flex-col" dir={dir} style={{ background: "#F7F3EE" }}>
       <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-black text-xs">PV</span>
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#0F5B57" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9"/><path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
           <span className="font-semibold text-gray-900 text-sm">MAIA DAWA</span>
         </div>
@@ -28,7 +28,7 @@ export function Shell({ lang, setLang, dir, children }: {
 
 export function CenterScreen({ dir, children }: { dir: string; children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir={dir}>
+    <div className="min-h-screen flex items-center justify-center" dir={dir} style={{ background: "#F7F3EE" }}>
       {children}
     </div>
   );

@@ -93,7 +93,7 @@ export default function AdminDeclarationDetail() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 mb-3">{error || "Introuvable"}</p>
-          <Link href="/admin/declarations" className="text-[#7ed3cf00 hover:underline text-sm">← Retour</Link>
+          <Link href="/admin/declarations" className="text-[#7ed3cf] hover:underline text-sm">← Retour</Link>
         </div>
       </main>
     </div>
