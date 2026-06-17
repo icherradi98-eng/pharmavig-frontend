@@ -104,7 +104,7 @@ export default function HistoriqueOrdonnances() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-cream py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
           <div>
@@ -112,7 +112,7 @@ export default function HistoriqueOrdonnances() {
             <p className="text-sm text-gray-500 mt-0.5">{history.length} ordonnance{history.length > 1 ? "s" : ""} — stockées uniquement sur cet appareil.</p>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/ordonnances/nouvelle" className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
+            <Link href="/ordonnances/nouvelle" className="bg-petrol hover:bg-petrol-dark text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
               + Nouvelle ordonnance
             </Link>
             <button onClick={exportCsv} disabled={filtered.length === 0} className="border border-gray-300 text-gray-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-40">
@@ -123,7 +123,7 @@ export default function HistoriqueOrdonnances() {
 
         <div className="mb-4">
           <input
-            className="w-full md:w-80 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full md:w-80 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol"
             placeholder="Rechercher par patient, médicament, n° d'ordonnance..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -166,7 +166,7 @@ export default function HistoriqueOrdonnances() {
                       <td className="py-3 px-4 text-gray-600 max-w-xs">{medsSummary(o)}</td>
                       <td className="py-3 px-4">
                         <div className="flex flex-col items-end gap-1.5 text-xs">
-                          <button onClick={() => handleRenew(o)} className="text-emerald-600 hover:text-emerald-700 font-medium underline">
+                          <button onClick={() => handleRenew(o)} className="text-petrol hover:text-petrol-dark font-medium underline">
                             ↻ Renouveler
                           </button>
                           <button onClick={() => handleDuplicate(o)} className="text-gray-500 hover:text-gray-700 underline">

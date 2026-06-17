@@ -128,7 +128,7 @@ export function MedicamentCard({ med, index, canRemove, onChange, onRemove }: {
                         ))}
                       </div>
                     )}
-                    <span className="inline-block mt-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                    <span className="inline-block mt-1 text-[10px] font-medium text-petrol bg-petrol/5 border border-petrol/20 px-1.5 py-0.5 rounded-full">
                       CNOPS 2014 — à confirmer
                     </span>
                   </button>
