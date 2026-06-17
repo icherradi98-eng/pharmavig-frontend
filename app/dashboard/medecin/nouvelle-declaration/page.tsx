@@ -89,6 +89,8 @@ export default function FormulaireMedecin() {
   const [dragOver, setDragOver] = useState(false);
   const savedConcomitants = useRef<MedicamentConcomitant[]>([]); // préserve la liste lors du toggle aucunConcomitant
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [savedIndicator, setSavedIndicator] = useState(false);
+  const savedIndicatorTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-save avec debounce 800ms après chaque changement
   useEffect(() => {
@@ -96,6 +98,9 @@ export default function FormulaireMedecin() {
     if (saveTimeout.current) clearTimeout(saveTimeout.current);
     saveTimeout.current = setTimeout(() => {
       saveDraft(form, step);
+      setSavedIndicator(true);
+      if (savedIndicatorTimeout.current) clearTimeout(savedIndicatorTimeout.current);
+      savedIndicatorTimeout.current = setTimeout(() => setSavedIndicator(false), 2500);
     }, 800);
     return () => { if (saveTimeout.current) clearTimeout(saveTimeout.current); };
   }, [form, step, submitted]);
@@ -245,7 +250,7 @@ export default function FormulaireMedecin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream">
       {/* Bannière brouillon restauré */}
       {draftRestored && (
         <div className="bg-amber-50 border-b border-amber-200 px-6 py-2.5 flex items-center justify-between text-sm text-amber-800">
@@ -286,6 +291,9 @@ export default function FormulaireMedecin() {
             <span className="text-xs bg-red-100 text-red-600 font-semibold px-2 py-1 rounded-full">⚡ Sérieux</span>
           )}
           <span className="text-xs text-gray-400 font-medium">{Math.round((step / SECTIONS.length) * 100)}%</span>
+          <span className={`text-xs font-medium transition-all duration-300 ${savedIndicator ? "opacity-100 text-[#0F5B57]" : "opacity-0"}`}>
+            ✓ Sauvegardé
+          </span>
         </div>
       </header>
 
