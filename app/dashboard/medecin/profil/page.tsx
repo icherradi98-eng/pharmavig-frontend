@@ -31,7 +31,8 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   return (
     <button
       onClick={() => onChange(!checked)}
-      className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${checked ? "bg-emerald-600" : "bg-gray-300"}`}
+      className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${checked ? "" : "bg-gray-300"}`}
+      style={checked ? { background: "#0F5B57" } : {}}
     >
       <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all ${checked ? "left-[22px]" : "left-0.5"}`} />
     </button>
@@ -184,7 +185,7 @@ export default function ProfilMedecin() {
         {/* Identité */}
         <SectionCard>
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shrink-0">
+            <div className="w-16 h-16 bg-[#0F5B57] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shrink-0">
               {initiales}
             </div>
             <div>
@@ -193,7 +194,7 @@ export default function ProfilMedecin() {
                 {displaySpecialite || "Spécialité non renseignée"}
                 {displayEtablissement ? ` · ${displayEtablissement}` : ""}
               </p>
-              <span className="inline-block mt-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Médecin</span>
+              <span className="inline-block mt-1 text-xs text-[#0F5B57] px-2 py-0.5 rounded-full font-medium" style={{ background: "rgba(15,91,87,0.08)" }}>Médecin</span>
             </div>
           </div>
         </SectionCard>
@@ -215,11 +216,11 @@ export default function ProfilMedecin() {
               <div className="mt-4 flex items-center gap-4">
                 <button
                   onClick={startEdit}
-                  className="text-sm font-medium text-emerald-700 hover:underline"
+                  className="text-sm font-medium text-[#0F5B57] hover:underline"
                 >
                   Modifier mes informations
                 </button>
-                {profileSaved && <span className="text-xs text-emerald-600">✓ Enregistré</span>}
+                {profileSaved && <span className="text-xs text-[#0F5B57]">✓ Enregistré</span>}
               </div>
               <p className="mt-3 text-xs text-gray-400">
                 Ces informations sont stockées uniquement sur cet appareil (localStorage). MAIA DAWA ne conserve pas vos données professionnelles.
@@ -251,7 +252,7 @@ export default function ProfilMedecin() {
                     value={editForm.specialite}
                     onChange={(e) => setEditForm({ ...editForm, specialite: e.target.value })}
                     placeholder="ex. Oncologie médicale"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
                   />
                 </div>
                 <div>
@@ -260,7 +261,7 @@ export default function ProfilMedecin() {
                     value={editForm.numOrdre}
                     onChange={(e) => setEditForm({ ...editForm, numOrdre: e.target.value })}
                     placeholder="ex. CNOM-12458"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
                   />
                 </div>
                 <div>
@@ -269,7 +270,7 @@ export default function ProfilMedecin() {
                     value={editForm.etablissement}
                     onChange={(e) => setEditForm({ ...editForm, etablissement: e.target.value })}
                     placeholder="ex. CHU Mohammed VI"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
                   />
                 </div>
                 <div>
@@ -278,7 +279,7 @@ export default function ProfilMedecin() {
                     value={editForm.ville}
                     onChange={(e) => setEditForm({ ...editForm, ville: e.target.value })}
                     placeholder="ex. Rabat"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
                   />
                 </div>
                 <div>
@@ -287,7 +288,7 @@ export default function ProfilMedecin() {
                     value={editForm.telephone}
                     onChange={(e) => setEditForm({ ...editForm, telephone: e.target.value })}
                     placeholder="ex. +212 6 00 00 00 00"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
                   />
                 </div>
                 <div>
@@ -305,7 +306,7 @@ export default function ProfilMedecin() {
               <div className="flex gap-3">
                 <button
                   onClick={saveEdit}
-                  className="bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+                  className="bg-[#0F5B57] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-[#0a3f3c] transition-colors"
                 >
                   Enregistrer
                 </button>
@@ -361,7 +362,7 @@ export default function ProfilMedecin() {
                 <option value="toutes">Toutes les alertes</option>
               </select>
             </div>
-            {prefsSaved && <p className="text-xs text-emerald-600">✓ Préférences enregistrées</p>}
+            {prefsSaved && <p className="text-xs text-[#0F5B57]">✓ Préférences enregistrées</p>}
           </div>
         </SectionCard>
 
@@ -370,20 +371,20 @@ export default function ProfilMedecin() {
           <div className="grid sm:grid-cols-3 gap-3">
             <input type="password" placeholder="Mot de passe actuel" value={pwdForm.current}
               onChange={(e) => setPwdForm({ ...pwdForm, current: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]" />
             <input type="password" placeholder="Nouveau mot de passe" value={pwdForm.next}
               onChange={(e) => setPwdForm({ ...pwdForm, next: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]" />
             <input type="password" placeholder="Confirmer" value={pwdForm.confirm}
               onChange={(e) => setPwdForm({ ...pwdForm, confirm: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]" />
           </div>
           {pwdError && <p className="mt-2 text-xs text-red-600">⚠️ {pwdError}</p>}
-          {pwdSuccess && <p className="mt-2 text-xs text-emerald-600">✓ Mot de passe mis à jour avec succès.</p>}
+          {pwdSuccess && <p className="mt-2 text-xs text-[#0F5B57]">✓ Mot de passe mis à jour avec succès.</p>}
           <button
             onClick={handleChangePassword}
             disabled={pwdLoading}
-            className="mt-3 bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-60"
+            className="mt-3 bg-[#0F5B57] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-[#0a3f3c] transition-colors disabled:opacity-60"
           >
             {pwdLoading ? "Mise à jour…" : "Mettre à jour le mot de passe"}
           </button>
@@ -418,7 +419,7 @@ export default function ProfilMedecin() {
                   <p className="text-xs text-gray-400">Aucune signature</p>
                 </div>
               )}
-              <label className="cursor-pointer text-xs font-medium text-emerald-700 hover:underline">
+              <label className="cursor-pointer text-xs font-medium text-[#0F5B57] hover:underline">
                 {localProfile.signatureDataUrl ? "Remplacer" : "Importer une image"}
                 <input
                   type="file"
@@ -460,7 +461,7 @@ export default function ProfilMedecin() {
                   <p className="text-xs text-gray-400">Aucun cachet</p>
                 </div>
               )}
-              <label className="cursor-pointer text-xs font-medium text-emerald-700 hover:underline">
+              <label className="cursor-pointer text-xs font-medium text-[#0F5B57] hover:underline">
                 {localProfile.cachetDataUrl ? "Remplacer" : "Importer une image"}
                 <input
                   type="file"
@@ -503,7 +504,7 @@ export default function ProfilMedecin() {
             </button>
           </div>
           {draftsCleared && (
-            <p className="text-xs text-emerald-600 mt-2">✓ Brouillons et données patient locales supprimés.</p>
+            <p className="text-xs text-[#0F5B57] mt-2">✓ Brouillons et données patient locales supprimés.</p>
           )}
         </SectionCard>
 

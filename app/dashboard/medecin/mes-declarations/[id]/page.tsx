@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   brouillon:     { label: "Brouillon",        color: "bg-gray-100 text-gray-600" },
   soumis:        { label: "Soumis",   color: "bg-blue-100 text-blue-700" },
-  transmis_capm: { label: "Transmis", color: "bg-emerald-100 text-emerald-700" },
+  transmis_capm: { label: "Transmis", color: "bg-[rgba(15,91,87,0.1)] text-[#0F5B57]" },
   traite:        { label: "Traité",           color: "bg-violet-100 text-violet-700" },
 };
 
@@ -98,16 +98,16 @@ export default function DeclarationDetail() {
   }, [id, user]);
 
   if (loading) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-400 text-sm">
+    <div className="min-h-screen flex items-center justify-center text-gray-400 text-sm" style={{ background: "#F7F3EE" }}>
       Chargement...
     </div>
   );
 
   if (error || !report) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#F7F3EE" }}>
       <div className="text-center">
         <p className="text-red-600 font-medium mb-3">{error || "Déclaration introuvable"}</p>
-        <Link href="/dashboard/medecin/mes-declarations" className="text-sm text-emerald-600 hover:underline">
+        <Link href="/dashboard/medecin/mes-declarations" className="text-sm text-[#0F5B57] hover:underline">
           ← Retour à mes déclarations
         </Link>
       </div>
@@ -121,7 +121,7 @@ export default function DeclarationDetail() {
   const gravitesCochees = GRAVITE_LABELS.filter((g) => report[g.key as keyof ReportDetail]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: "#F7F3EE" }}>
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
@@ -143,7 +143,7 @@ export default function DeclarationDetail() {
           <button
             onClick={downloadPdf}
             disabled={pdfLoading}
-            className="flex items-center gap-1.5 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 text-sm font-semibold bg-[#0F5B57] hover:bg-[#0a3f3c] text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {pdfLoading ? (
               <>
@@ -168,11 +168,11 @@ export default function DeclarationDetail() {
 
         {/* Référence */}
         {report.capm_reference && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 flex items-center gap-3">
-            <span className="text-emerald-600 text-lg">✅</span>
+          <div className="rounded-xl px-5 py-3 flex items-center gap-3" style={{ background: "rgba(15,91,87,0.07)", border: "1px solid rgba(15,91,87,0.2)" }}>
+            <span className="text-lg">✅</span>
             <div>
-              <p className="text-sm font-semibold text-emerald-800">Référence</p>
-              <p className="text-xs font-mono text-emerald-700">{report.capm_reference}</p>
+              <p className="text-sm font-semibold" style={{ color: "#0F5B57" }}>Référence</p>
+              <p className="text-xs font-mono" style={{ color: "#0F5B57" }}>{report.capm_reference}</p>
             </div>
           </div>
         )}
@@ -305,8 +305,8 @@ export default function DeclarationDetail() {
           {begaudScore && (
             <div className="flex gap-3 mt-1">
               {(["Cscore", "Sscore", "Iscore"] as const).map((k) => (
-                <div key={k} className="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 text-center">
-                  <div className="text-lg font-bold text-emerald-700">
+                <div key={k} className="rounded-lg px-3 py-2 text-center" style={{ background: "rgba(15,91,87,0.07)", border: "1px solid rgba(15,91,87,0.15)" }}>
+                  <div className="text-lg font-bold" style={{ color: "#0F5B57" }}>
                     {k === "Iscore" ? `I${begaudScore[k]}` : begaudScore[k]}
                   </div>
                   <div className="text-xs text-gray-500">{k.replace("score", "")}</div>
