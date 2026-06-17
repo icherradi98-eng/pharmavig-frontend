@@ -228,6 +228,26 @@ export default function DemoPage() {
           </p>
         </div>
 
+        {/* ── Parcours guidé : ce que vous allez voir ── */}
+        <div className="bg-white border border-gray-200 rounded-2xl px-5 py-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Ce que vous allez voir</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { n: "1", t: "Cas clinique structuré", d: "Patient, médicament suspect, concomitants, effet — au format pharmacovigilance." },
+              { n: "2", t: "Imputabilité automatique", d: "Score de Bégaud (C/S/B) calculé et conclusion I3." },
+              { n: "3", t: "Déclaration CIOMS + PDF", d: "Génération prête à transmettre, en quelques secondes." },
+            ].map((s) => (
+              <div key={s.n} className="flex gap-3">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 text-white" style={{ background: "#0F5B57" }}>{s.n}</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{s.t}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{s.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* ── Résumé visuel du cas ── */}
         <div className="grid grid-cols-3 gap-4">
           {[
@@ -416,6 +436,12 @@ export default function DemoPage() {
               >
                 Créer mon compte pour déclarer en conditions réelles →
               </Link>
+              <Link
+                href="/medicaments"
+                className="w-full text-center px-6 py-3 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                🔍 Explorer le référentiel médicament Morocco-first
+              </Link>
               <button
                 onClick={() => setSubmitted(false)}
                 className="text-xs text-gray-400 hover:text-gray-600 underline"
@@ -429,10 +455,11 @@ export default function DemoPage() {
         {/* ── CTA bas de page ── */}
         <div className="text-center py-6 border-t border-gray-200">
           <p className="text-sm text-gray-500 mb-3">
-            MAIA DAWA — Pharmacovigilance Intelligence · Conçu pour le Maroc · Format CIOMS · loi 09-08
+            MAIA DAWA — Pharmacovigilance Intelligence · Conçu pour le Maroc · Format CIOMS · MVP démo (données fictives)
           </p>
-          <div className="flex justify-center gap-4 text-sm">
+          <div className="flex justify-center flex-wrap gap-4 text-sm">
             <Link href="/" className="text-gray-400 hover:text-gray-600 underline">Accueil</Link>
+            <Link href="/medicaments" className="text-gray-400 hover:text-gray-600 underline">Référentiel médicament</Link>
             <Link href="/contact" className="text-gray-400 hover:text-gray-600 underline">Contact</Link>
             <Link href="/register" className="font-semibold underline" style={{ color: "#0F5B57" }}>Créer un compte</Link>
           </div>
