@@ -14,6 +14,13 @@ const STATUS_COLORS: Record<string, string> = {
   brouillon: "bg-gray-700 text-gray-400",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  soumis: "Soumis",
+  transmis_capm: "Transmis CAPM",
+  traite: "Traité",
+  brouillon: "Brouillon",
+};
+
 const SOURCE_LABELS: Record<string, string> = {
   medecin: "Médecin", patient: "Patient", pharmacien: "Pharmacien", invite: "Invité",
 };
@@ -157,7 +164,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${st}`}>
-                  {r.status}
+                  {STATUS_LABELS[r.status] ?? r.status}
                 </span>
                 <span className="text-gray-600 text-sm">→</span>
               </Link>
