@@ -93,7 +93,7 @@ export default function AdminDeclarationDetail() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 mb-3">{error || "Introuvable"}</p>
-          <Link href="/admin/declarations" className="text-emerald-400 hover:underline text-sm">← Retour</Link>
+          <Link href="/admin/declarations" className="text-[#7ed3cf00 hover:underline text-sm">← Retour</Link>
         </div>
       </main>
     </div>
@@ -184,7 +184,7 @@ export default function AdminDeclarationDetail() {
             <Section title="⚠️ Effet indésirable">
               {Boolean(raw.eiMeddraTerm) && (
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs bg-emerald-900/50 text-emerald-400 border border-emerald-800 font-semibold px-2 py-0.5 rounded-full">PT MedDRA</span>
+                  <span className="text-xs bg-[rgba(15,91,87,0.3)] text-[#7ed3cf] border border-[rgba(15,91,87,0.5)] font-semibold px-2 py-0.5 rounded-full">PT MedDRA</span>
                   <span className="text-gray-200 font-medium text-sm">{String(raw.eiMeddraTerm)}</span>
                   {raw.eiMeddraCode && <span className="text-gray-500 font-mono text-xs">#{String(raw.eiMeddraCode)}</span>}
                   {raw.eiMeddraSoc && <span className="text-gray-500 text-xs">· {String(raw.eiMeddraSoc)}</span>}
@@ -246,7 +246,7 @@ export default function AdminDeclarationDetail() {
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
                 >
                   {STATUTS.map((s) => (
                     <option key={s.val} value={s.val}>{s.label}</option>
@@ -260,20 +260,21 @@ export default function AdminDeclarationDetail() {
                   value={capmRef}
                   onChange={(e) => setCapmRef(e.target.value)}
                   placeholder="Ex : REF-2026-00123"
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0F5B57] font-mono"
                 />
               </div>
 
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+                className="w-full hover:bg-[#0a3f3c] text-white py-2.5 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+                style={{ background: "#0F5B57" }}
               >
                 {saving ? "Enregistrement..." : "Enregistrer"}
               </button>
 
               {saved && (
-                <p className="text-xs text-emerald-400 text-center">✅ Modifications enregistrées</p>
+                <p className="text-xs text-[#7ed3cf] text-center">✅ Modifications enregistrées</p>
               )}
             </div>
 

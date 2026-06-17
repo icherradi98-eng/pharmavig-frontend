@@ -9,7 +9,7 @@ type Stats = AdminStats;
 
 const STATUS_COLORS: Record<string, string> = {
   soumis: "bg-blue-900/40 text-blue-300",
-  transmis_capm: "bg-emerald-900/40 text-emerald-300",
+  transmis_capm: "bg-[rgba(15,91,87,0.3)] text-[#7ed3cf]",
   traite: "bg-violet-900/40 text-violet-300",
   brouillon: "bg-gray-700 text-gray-400",
 };
@@ -46,7 +46,7 @@ function AdminNav({ active }: { active: string }) {
     <aside className="w-56 bg-gray-900 border-r border-gray-800 flex flex-col min-h-screen">
       <div className="px-5 py-5 border-b border-gray-800">
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 bg-emerald-500 rounded-lg flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#0F5B57" }}>
             <span className="text-white font-black text-xs">PV</span>
           </div>
           <span className="text-white font-bold text-sm">MAIA DAWA</span>
@@ -60,7 +60,8 @@ function AdminNav({ active }: { active: string }) {
           { href: "/admin/users", label: "Utilisateurs", icon: "👥" },
         ].map((item) => (
           <Link key={item.href} href={item.href}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${active === item.label ? "bg-emerald-600 text-white font-medium" : "text-gray-400 hover:text-white hover:bg-gray-800"}`}>
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${active === item.label ? "text-white font-medium" : "text-gray-400 hover:text-white hover:bg-gray-800"}`}
+            style={active === item.label ? { background: "#0F5B57" } : undefined}>
             <span>{item.icon}</span> {item.label}
           </Link>
         ))}
@@ -105,7 +106,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-4 gap-4 mb-8">
           {[
             { label: "Total déclarations", value: stats?.total, color: "text-white" },
-            { label: "Ce mois-ci", value: stats?.this_month, color: "text-emerald-400" },
+            { label: "Ce mois-ci", value: stats?.this_month, color: "text-[#7ed3cf]" },
             { label: "Effets sérieux", value: stats?.serieux, color: "text-red-400" },
             { label: "Taux sérieux", value: stats ? `${stats.serieux_pct}%` : null, color: "text-amber-400" },
           ].map((kpi) => (
@@ -125,7 +126,7 @@ export default function AdminDashboard() {
             <div className="flex gap-6">
               {Object.entries(stats.by_source).map(([source, count]) => (
                 <div key={source} className="text-center">
-                  <div className="text-2xl font-bold text-emerald-400">{count}</div>
+                  <div className="text-2xl font-bold text-[#7ed3cf]">{count}</div>
                   <div className="text-gray-400 text-xs mt-1">{SOURCE_LABELS[source] || source}</div>
                 </div>
               ))}
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
         <div className="bg-gray-900 border border-gray-800 rounded-xl">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
             <h2 className="text-white font-semibold text-sm">Déclarations récentes</h2>
-            <Link href="/admin/declarations" className="text-xs text-emerald-400 hover:underline">
+            <Link href="/admin/declarations" className="text-xs text-[#7ed3cf] hover:underline">
               Voir tout →
             </Link>
           </div>

@@ -20,15 +20,18 @@ export default function AboutPage() {
       {/* Navbar */}
       <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-sm">
-            <span className="text-white font-black text-sm tracking-tight">PV</span>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm" style={{ background: "#0F5B57" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9"/>
+              <path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </div>
           <Link href="/" className="font-bold text-gray-900 text-lg tracking-tight">MAIA DAWA</Link>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="/about" className="text-emerald-600 font-semibold text-sm">À propos</Link>
+          <Link href="/about" className="text-sm font-semibold" style={{ color: "#0F5B57" }}>À propos</Link>
           <Link href="/login" className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">Connexion</Link>
-          <Link href="/declarer" className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+          <Link href="/declarer" className="text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm" style={{ background: "#0F5B57" }}>
             Faire une déclaration
           </Link>
         </div>
@@ -37,12 +40,12 @@ export default function AboutPage() {
       <main className="flex-1">
 
         {/* Hero */}
-        <section className="w-full px-8 py-20 text-center" style={{background: "linear-gradient(135deg, #f0fdf4 0%, #eff6ff 50%, #f0fdf4 100%)"}}>
+        <section className="w-full px-8 py-20 text-center" style={{ background: "linear-gradient(135deg, #F7F3EE 0%, #fff 50%, #F7F3EE 100%)" }}>
           <div className="max-w-3xl mx-auto">
-            <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full mb-6 uppercase tracking-wide">À propos de MAIA DAWA</span>
+            <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-6 uppercase tracking-wide" style={{ background: "rgba(15,91,87,0.08)", color: "#0F5B57" }}>À propos de MAIA DAWA</span>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-5">
               La pharmacovigilance sauve des vies.<br />
-              <span className="text-emerald-600">Encore faut-il la pratiquer.</span>
+              <span style={{ color: "#0F5B57" }}>Encore faut-il la pratiquer.</span>
             </h1>
             <p className="text-gray-600 text-base leading-relaxed max-w-2xl mx-auto">
               MAIA DAWA est la première plateforme digitale de pharmacovigilance au Maroc, conçue pour transformer la déclaration des effets indésirables médicamenteux en un acte simple, accessible et systématique.
@@ -129,10 +132,10 @@ export default function AboutPage() {
                   texte: "Chaque déclaration est structurée au format CIOMS et selon la méthode de Bégaud, prête pour le système national de pharmacovigilance — sans ressaisie manuelle.",
                 },
               ].map((item) => (
-                <div key={item.titre} className="flex gap-4 items-start border-l-4 border-emerald-500 pl-5 py-2">
+                <div key={item.titre} className="flex gap-4 items-start border-l-4 border-[#0F5B57] pl-5 py-2">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-emerald-600 font-bold text-base">→</span>
+                      <span className="font-bold text-base" style={{ color: "#0F5B57" }}>→</span>
                       <h3 className="font-bold text-gray-900">{item.titre}</h3>
                     </div>
                     <p className="text-gray-500 text-sm leading-relaxed">{item.texte}</p>
@@ -156,7 +159,7 @@ export default function AboutPage() {
 
             {/* Timeline */}
             <div className="relative">
-              <div className="absolute top-4 left-0 right-0 h-0.5 bg-emerald-200 hidden md:block" />
+              <div className="absolute top-4 left-0 right-0 h-0.5 hidden md:block" style={{ background: "rgba(15,91,87,0.2)" }} />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
                   { year: "2024", label: "Conception", active: false },
@@ -165,10 +168,11 @@ export default function AboutPage() {
                   { year: "2027+", label: "Afrique subsaharienne", active: false },
                 ].map((t) => (
                   <div key={t.year} className="flex flex-col items-center text-center relative">
-                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 mb-3 ${t.active ? "bg-emerald-600 border-emerald-600" : "bg-white border-emerald-300"}`}>
+                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 mb-3`}
+                      style={t.active ? { background: "#0F5B57", borderColor: "#0F5B57" } : { background: "#fff", borderColor: "rgba(15,91,87,0.3)" }}>
                       {t.active && <div className="w-3 h-3 bg-white rounded-full" />}
                     </div>
-                    <div className={`text-sm font-bold mb-1 ${t.active ? "text-emerald-600" : "text-gray-700"}`}>{t.year}</div>
+                    <div className={`text-sm font-bold mb-1`} style={{ color: t.active ? "#0F5B57" : "#374151" }}>{t.year}</div>
                     <div className="text-xs text-gray-500">{t.label}</div>
                   </div>
                 ))}
@@ -186,7 +190,7 @@ export default function AboutPage() {
                 {
                   icon: "🔒",
                   title: "Loi 09-08",
-                  text: "MAIA DAWA est conforme à la loi marocaine 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel.",
+                  text: "MAIA DAWA s'appuie sur le cadre de la loi marocaine 09-08 relative à la protection des données personnelles. Mise en conformité en cours.",
                 },
                 {
                   icon: "🛡️",
@@ -195,8 +199,8 @@ export default function AboutPage() {
                 },
                 {
                   icon: "📋",
-                  title: "Anonymat garanti",
-                  text: "La déclaration anonyme est possible pour tous les profils. Dans ce cas, aucune donnée permettant l'identification de l'utilisateur n'est enregistrée.",
+                  title: "Anonymisation des données",
+                  text: "La déclaration sans compte est possible. Les données cliniques déclarées sont dissociées de l'identité de l'utilisateur dans nos bases.",
                 },
               ].map((p) => (
                 <div key={p.title} className="bg-blue-50 border border-blue-100 rounded-2xl p-6">
@@ -226,15 +230,15 @@ export default function AboutPage() {
         </section>
 
         {/* Section 7 — CTA */}
-        <section className="w-full px-8 py-16 text-center" style={{background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)"}}>
+        <section className="w-full px-8 py-16 text-center" style={{ background: "linear-gradient(135deg, #0F5B57 0%, #1F2D3D 100%)" }}>
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Rejoignez le mouvement</h2>
-            <p className="text-green-100 text-base mb-8 leading-relaxed">
-              Chaque professionnel de santé qui déclare un effet indésirable contribue à un système de santé plus sûr pour tous. Rejoignez les milliers de soignants qui font confiance à MAIA DAWA.
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Contribuez à la pharmacovigilance</h2>
+            <p className="text-white/70 text-base mb-8 leading-relaxed">
+              Chaque déclaration d&apos;effet indésirable contribue à un système de santé plus sûr. Rejoignez les professionnels de santé qui utilisent MAIA DAWA.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/declarer"
-                className="inline-block bg-white text-green-700 font-semibold px-8 py-3 rounded-full shadow-md hover:bg-green-50 transition-colors">
+                className="inline-block bg-white font-semibold px-8 py-3 rounded-full shadow-md transition-colors" style={{ color: "#0F5B57" }}>
                 Faire une déclaration →
               </Link>
               <Link href="mailto:contact@maiadawa.ma"
@@ -252,8 +256,11 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-black text-xs">PV</span>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#0F5B57" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9"/>
+                    <path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </div>
                 <span className="text-white font-bold text-base">MAIA DAWA</span>
               </div>

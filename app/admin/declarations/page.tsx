@@ -9,7 +9,7 @@ type AdminReport = AdminReportOut;
 
 const STATUS_COLORS: Record<string, string> = {
   soumis: "bg-blue-900/40 text-blue-300 border-blue-800",
-  transmis_capm: "bg-emerald-900/40 text-emerald-300 border-emerald-800",
+  transmis_capm: "bg-[rgba(15,91,87,0.3)] text-[#7ed3cf] border-[rgba(15,91,87,0.5)]",
   traite: "bg-violet-900/40 text-violet-300 border-violet-800",
   brouillon: "bg-gray-800 text-gray-400 border-gray-700",
 };
@@ -69,9 +69,9 @@ export default function AdminDeclarations() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher par médicament..."
-              className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
             />
-            <button type="submit" className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            <button type="submit" className="hover:bg-[#0a3f3c] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" style={{ background: "#0F5B57" }}>
               Chercher
             </button>
           </form>
@@ -81,7 +81,7 @@ export default function AdminDeclarations() {
             { value: filterStatus, setter: setFilterStatus, placeholder: "Tous les statuts", options: [["soumis", "Soumis"], ["transmis_capm", "Transmis"], ["traite", "Traité"]] },
           ].map((f, i) => (
             <select key={i} value={f.value} onChange={(e) => f.setter(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0F5B57]">
               <option value="">{f.placeholder}</option>
               {f.options.map(([val, label]) => <option key={val} value={val}>{label}</option>)}
             </select>
@@ -116,7 +116,7 @@ export default function AdminDeclarations() {
                       <span className="text-xs bg-red-900/50 text-red-400 font-bold px-1.5 py-0.5 rounded-full">⚡ Sérieux</span>
                     )}
                     {r.capm_reference && (
-                      <span className="text-xs font-mono text-emerald-400 bg-emerald-900/30 px-1.5 py-0.5 rounded">
+                      <span className="text-xs font-mono text-[#7ed3cf] bg-emerald-900/30 px-1.5 py-0.5 rounded">
                         {r.capm_reference}
                       </span>
                     )}

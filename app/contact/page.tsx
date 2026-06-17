@@ -218,7 +218,7 @@ function PartnerForm({ type, cta, color }: { type: PartnerType; cta: string; col
         {cta} →
       </button>
       <p className="text-center text-[10px]" style={{ color: "#8a9ab0" }}>
-        Réponse garantie sous 24h ouvrées · Données protégées (loi 09-08)
+        Réponse sous 24h ouvrées · Données protégées (loi 09-08)
       </p>
     </form>
   );
@@ -398,7 +398,7 @@ export default function ContactPage() {
                 )}
                 {activePartner === "institution" && (
                   <div className="space-y-2.5">
-                    {["Conforme aux standards ICH E2B R3 et au format CIOMS", "API disponible pour intégration aux systèmes existants", "Données agrégées anonymisées pour la surveillance nationale", "Cadre de confidentialité conforme à la loi 09-08 (CNDP)", "Réunion de présentation à votre direction"].map(item => (
+                    {["Conforme aux standards ICH E2B R3 et au format CIOMS", "API disponible pour intégration aux systèmes existants", "Données agrégées anonymisées pour la surveillance nationale", "Cadre de confidentialité aligné sur la loi 09-08 (validation CNDP en cours)", "Réunion de présentation à votre direction"].map(item => (
                       <div key={item} className="flex items-center gap-2.5 bg-white rounded-xl px-3 py-2" style={{ border: `1px solid rgba(212,175,55,0.15)` }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinecap="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg>
                         <span className="text-xs" style={{ color: C.night }}>{item}</span>
@@ -408,7 +408,7 @@ export default function ContactPage() {
                 )}
                 {activePartner === "pharma" && (
                   <div className="space-y-2.5">
-                    {["Dashboard safety Maroc en temps réel", "Rapports PSUR automatisés (ICH E2B R3)", "Détection de signaux terrain sur votre portefeuille", "Données anonymisées sur la population marocaine", "NDA disponible — données 100% confidentielles"].map(item => (
+                    {["Dashboard safety Maroc en temps réel", "Rapports PSUR automatisés (ICH E2B R3)", "Détection de signaux terrain sur votre portefeuille", "Données anonymisées sur la population marocaine", "NDA disponible — données strictement confidentielles"].map(item => (
                       <div key={item} className="flex items-center gap-2.5 bg-white rounded-xl px-3 py-2" style={{ border: `1px solid rgba(124,58,237,0.08)` }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2.5" strokeLinecap="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg>
                         <span className="text-xs" style={{ color: C.night }}>{item}</span>
@@ -541,7 +541,7 @@ export default function ContactPage() {
                 Écrire à notre équipe
               </a>
               <p className="text-center text-[10px]" style={{ color: "rgba(255,255,255,0.2)" }}>
-                Réponse garantie sous 24h ouvrées
+                Réponse sous 24h ouvrées
               </p>
             </div>
           </div>

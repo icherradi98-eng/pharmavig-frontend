@@ -31,7 +31,7 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ background: "#0F5B57" }}>
             <span className="text-white font-black text-sm">PV</span>
           </div>
           <div>
@@ -58,7 +58,7 @@ export default function AdminLogin() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder-gray-500"
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#0F5B57] placeholder-gray-500"
                 placeholder="admin@maiadawa.ma"
               />
             </div>
@@ -69,14 +69,15 @@ export default function AdminLogin() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
                 placeholder="••••••••"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-lg text-sm font-semibold transition-colors mt-1 disabled:opacity-50"
+              className="w-full hover:bg-[#0a3f3c] text-white py-3 rounded-lg text-sm font-semibold transition-colors mt-1 disabled:opacity-50"
+              style={{ background: "#0F5B57" }}
             >
               {loading ? "Connexion..." : "Accéder au tableau de bord →"}
             </button>

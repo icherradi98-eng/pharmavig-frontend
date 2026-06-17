@@ -5,7 +5,7 @@ import { AdminNav } from "../dashboard/page";
 import { api, type AdminUser } from "@/lib/api";
 
 const ROLE_COLORS: Record<string, string> = {
-  medecin: "bg-emerald-900/40 text-emerald-300",
+  medecin: "bg-[rgba(15,91,87,0.3)] text-[#7ed3cf]",
   patient: "bg-blue-900/40 text-blue-300",
   pharmacien: "bg-orange-900/40 text-orange-300",
 };
@@ -39,7 +39,8 @@ export default function AdminUsers() {
         <div className="flex gap-3 mb-6">
           {[["", "Tous"], ["medecin", "Médecins"], ["patient", "Patients"], ["pharmacien", "Pharmaciens"]].map(([val, label]) => (
             <button key={val} onClick={() => setFilterRole(val)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filterRole === val ? "bg-emerald-600 text-white" : "bg-gray-800 text-gray-400 hover:text-white"}`}>
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filterRole === val ? "text-white" : "bg-gray-800 text-gray-400 hover:text-white"}`}
+              style={filterRole === val ? { background: "#0F5B57" } : undefined}>
               {label}
             </button>
           ))}
@@ -67,7 +68,7 @@ export default function AdminUsers() {
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-emerald-400 font-bold text-lg">{u.declaration_count}</div>
+                  <div className="text-[#7ed3cf] font-bold text-lg">{u.declaration_count}</div>
                   <div className="text-gray-600 text-xs">déclarations</div>
                 </div>
                 <div className="text-xs text-gray-600 shrink-0 w-24 text-right">
