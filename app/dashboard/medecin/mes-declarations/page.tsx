@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import MedecinLayout, { PageHeader, useUnreadAlertsCount } from "@/components/medecin/MedecinLayout";
 import { api, type ReportOut } from "@/lib/api";
+import { readDraftTTL, DRAFT_TTL } from "@/lib/draftStorage";
+import { DRAFT_KEY } from "@/lib/declaration/constants";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   brouillon:     { label: "Brouillon",        color: "bg-gray-100 text-gray-600" },
@@ -33,6 +35,8 @@ export default function MesDeclarations() {
   const [sortBy, setSortBy] = useState<"date" | "gravite" | "drug">("date");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ReportOut | null>(null);
+  // Brouillon de déclaration en cours (localStorage, TTL 7 j) — surface une reprise rapide.
+  const [hasDraft] = useState(() => readDraftTTL<unknown>(DRAFT_KEY, DRAFT_TTL.medecin) !== null);
 
   const filtered = useMemo(() => {
     let list = declarations.filter((d) => {
@@ -64,6 +68,15 @@ export default function MesDeclarations() {
       <PageHeader title="Mes déclarations" subtitle={`${declarations.length} déclaration${declarations.length > 1 ? "s" : ""} soumise${declarations.length > 1 ? "s" : ""} au total`} />
 
       <div className="px-5 md:px-8 py-6 space-y-5">
+        {hasDraft && (
+          <Link
+            href="/dashboard/medecin/nouvelle-declaration"
+            className="flex items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 hover:bg-amber-100/70 transition-colors"
+          >
+            <span className="text-sm text-amber-800">📝 Vous avez une déclaration en brouillon non terminée.</span>
+            <span className="text-xs font-semibold text-amber-700 shrink-0">Reprendre →</span>
+          </Link>
+        )}
         <div className="flex items-center justify-end">
           <Link href="/dashboard/medecin/nouvelle-declaration"
             className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
