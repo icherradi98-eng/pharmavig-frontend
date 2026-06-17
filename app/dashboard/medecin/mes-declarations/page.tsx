@@ -10,7 +10,7 @@ import { DRAFT_KEY } from "@/lib/declaration/constants";
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   brouillon:     { label: "Brouillon",        color: "bg-gray-100 text-gray-600" },
   soumis:        { label: "Soumis",           color: "bg-blue-100 text-blue-700" },
-  transmis_capm: { label: "Transmis",    color: "bg-emerald-100 text-emerald-700" },
+  transmis_capm: { label: "Transmis",    color: "bg-[rgba(15,91,87,0.1)] text-[#0F5B57]" },
   traite:        { label: "Traité",           color: "bg-violet-100 text-violet-700" },
 };
 
@@ -106,7 +106,7 @@ export default function MesDeclarations() {
         )}
         <div className="flex items-center justify-end">
           <Link href="/dashboard/medecin/nouvelle-declaration"
-            className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
+            className="text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors" style={{ background: "#0F5B57" }}>
             + Nouvelle déclaration
           </Link>
         </div>
@@ -127,7 +127,7 @@ export default function MesDeclarations() {
             <div className="text-4xl mb-3">📋</div>
             <p className="text-gray-500 font-medium">Vous n&apos;avez pas encore soumis de déclaration</p>
             <Link href="/dashboard/medecin/nouvelle-declaration"
-              className="inline-block mt-4 bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700">
+              className="inline-block mt-4 text-white px-5 py-2 rounded-lg text-sm font-semibold" style={{ background: "#0F5B57" }}>
               Faire une déclaration →
             </Link>
           </div>
@@ -139,7 +139,7 @@ export default function MesDeclarations() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Rechercher un médicament ou une référence..."
-                className="flex-1 min-w-48 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="flex-1 min-w-48 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
               />
               <select value={graviteFilter} onChange={(e) => setGraviteFilter(e.target.value as "" | "grave" | "non_grave")}
                 className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-600">
@@ -194,7 +194,7 @@ export default function MesDeclarations() {
                         <td className="px-4 py-3 text-gray-600">{date}</td>
                         <td className="px-4 py-3 font-medium text-gray-900">{d.drug_dci || d.drug_nom_commercial || "—"}</td>
                         <td className="px-4 py-3">
-                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${d.gravite_serieux ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${d.gravite_serieux ? "bg-red-100 text-red-700" : "bg-[rgba(15,91,87,0.08)] text-[#0F5B57]"}`}>
                             {d.gravite_serieux ? "Grave" : "Non grave"}
                           </span>
                         </td>
@@ -203,7 +203,7 @@ export default function MesDeclarations() {
                           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${st.color}`}>{st.label}</span>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <Link href={`/dashboard/medecin/mes-declarations/${d.id}`} onClick={(e) => e.stopPropagation()} className="text-gray-400 hover:text-emerald-600 px-1.5" title="Voir le détail">👁️</Link>
+                          <Link href={`/dashboard/medecin/mes-declarations/${d.id}`} onClick={(e) => e.stopPropagation()} className="text-gray-400 hover:text-[#0F5B57] px-1.5" title="Voir le détail">👁️</Link>
                         </td>
                       </tr>
                     );
@@ -221,7 +221,7 @@ export default function MesDeclarations() {
                   <button key={d.id} onClick={() => setSelected(d)} className="text-left bg-white border border-gray-200 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-semibold text-gray-900">{d.drug_dci || d.drug_nom_commercial || "—"}</span>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${d.gravite_serieux ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${d.gravite_serieux ? "bg-red-100 text-red-700" : "bg-[rgba(15,91,87,0.08)] text-[#0F5B57]"}`}>
                         {d.gravite_serieux ? "Grave" : "Non grave"}
                       </span>
                     </div>
@@ -274,7 +274,7 @@ function DeclarationModal({ declaration, onClose }: { declaration: ReportOut; on
         <div className="px-6 py-5 space-y-4 text-sm">
           <ModalRow label="Date de déclaration" value={date} />
           <ModalRow label="Gravité" value={
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${declaration.gravite_serieux ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${declaration.gravite_serieux ? "bg-red-100 text-red-700" : "bg-[rgba(15,91,87,0.08)] text-[#0F5B57]"}`}>
               {declaration.gravite_serieux ? "Grave (critères ICH E2A)" : "Non grave"}
             </span>
           } />
@@ -286,7 +286,7 @@ function DeclarationModal({ declaration, onClose }: { declaration: ReportOut; on
         </div>
         <div className="border-t border-gray-100 px-6 py-4 flex flex-wrap gap-2">
           <Link href={`/dashboard/medecin/mes-declarations/${declaration.id}`}
-            className="text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg">
+            className="text-sm font-medium text-white px-3 py-1.5 rounded-lg" style={{ background: "#0F5B57" }}>
             Voir le détail complet
           </Link>
         </div>

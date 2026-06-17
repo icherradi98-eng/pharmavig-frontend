@@ -93,7 +93,7 @@ export default function MedecinVueEnsemble() {
               <Link href="/dashboard/medecin/mes-declarations" className="block group">
                 <SectionCard className="hover:shadow-md transition-shadow cursor-pointer group-hover:border-teal-200">
                   <p className="text-xs text-gray-500 mb-1">Ce mois-ci</p>
-                  <p className="text-3xl font-bold text-emerald-600">{stats.this_month}</p>
+                  <p className="text-3xl font-bold text-[#0F5B57]">{stats.this_month}</p>
                   <p className="text-xs text-gray-400 mt-1">{new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}</p>
                 </SectionCard>
               </Link>
@@ -126,12 +126,12 @@ export default function MedecinVueEnsemble() {
             {stats.total === 0 ? (
               <div className="space-y-4">
                 {/* Bannière de bienvenue */}
-                <div className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-6 text-white">
-                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-200 mb-2">Bienvenue sur MAIA DAWA</p>
+                <div className="bg-gradient-to-br from-[#0F5B57] to-[#1F2D3D] rounded-2xl p-6 text-white">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] mb-2">Bienvenue sur MAIA DAWA</p>
                   <h2 className="text-xl font-bold mb-1">
                     Bonjour Dr. {user?.prenom || user?.nom || ""} 👋
                   </h2>
-                  <p className="text-emerald-100 text-sm leading-relaxed">
+                  <p className="text-white/80 text-sm leading-relaxed">
                     Votre espace de pharmacovigilance est prêt. Suivez ces 3 étapes pour commencer.
                   </p>
                 </div>
@@ -165,20 +165,20 @@ export default function MedecinVueEnsemble() {
 
                   {/* Étape 1 — Profil */}
                   <Link href="/dashboard/medecin/profil" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100 group">
-                    <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                      <span className="text-emerald-600 font-bold text-sm">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(15,91,87,0.1)" }}>
+                      <span className="text-[#0F5B57] font-bold text-sm">
                         {user?.specialite ? "✓" : "1"}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">
+                      <p className="text-sm font-semibold text-gray-800 group-hover:text-[#0F5B57]">
                         Compléter mon profil médecin
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">
                         Spécialité, N° Ordre, établissement — requis pour les déclarations officielles
                       </p>
                     </div>
-                    <span className={`text-lg shrink-0 ${user?.specialite ? "text-emerald-400" : "text-gray-300 group-hover:text-emerald-500"}`}>
+                    <span className={`text-lg shrink-0 ${user?.specialite ? "text-[#0F5B57]/60" : "text-gray-300 group-hover:text-[#0F5B57]"}`}>
                       {user?.specialite ? "✓" : "→"}
                     </span>
                   </Link>
@@ -189,14 +189,14 @@ export default function MedecinVueEnsemble() {
                       <span className="text-blue-600 font-bold text-sm">2</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">
+                      <p className="text-sm font-semibold text-gray-800 group-hover:text-[#0F5B57]">
                         Faire ma première déclaration
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">
                         Formulaire CIOMS avec score d&apos;imputabilité Bégaud — prêt à transmettre
                       </p>
                     </div>
-                    <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
+                    <span className="text-gray-300 group-hover:text-[#0F5B57] text-lg shrink-0">→</span>
                   </Link>
 
                   {/* Étape 3 — Alertes */}
@@ -206,7 +206,7 @@ export default function MedecinVueEnsemble() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">
+                        <p className="text-sm font-semibold text-gray-800 group-hover:text-[#0F5B57]">
                           Consulter les alertes de sécurité
                         </p>
                         {unread > 0 && (
@@ -219,7 +219,7 @@ export default function MedecinVueEnsemble() {
                         Veille réglementaire EMA, ANSM, CAPM — personnalisée pour vos molécules
                       </p>
                     </div>
-                    <span className="text-gray-300 group-hover:text-emerald-500 text-lg shrink-0">→</span>
+                    <span className="text-gray-300 group-hover:text-[#0F5B57] text-lg shrink-0">→</span>
                   </Link>
                 </div>
 
@@ -341,7 +341,7 @@ function BenchmarkRow({ label, you, national }: { label: string; you: string; na
     <div className="flex items-center justify-between text-sm border-b border-gray-100 last:border-0 pb-3 last:pb-0">
       <span className="text-gray-600">{label}</span>
       <div className="flex items-center gap-4">
-        <span className="font-semibold text-emerald-700">Vous : {you}</span>
+        <span className="font-semibold text-[#0F5B57]">Vous : {you}</span>
         <span className="text-gray-400">National : {national}</span>
       </div>
     </div>

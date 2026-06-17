@@ -91,11 +91,11 @@ export function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) =
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           placeholder="Tapez une DCI ou un nom commercial (ex. Opdivo, nivolumab, metformine...)"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
         />
         {enriching && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-[#0F5B57] border-t-transparent rounded-full animate-spin" />
           </div>
         )}
         {open && suggestions.length > 0 && (
@@ -105,7 +105,7 @@ export function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) =
                 key={i}
                 type="button"
                 onMouseDown={() => select(s)}
-                className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-emerald-50 text-left transition-colors"
+                className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-[rgba(15,91,87,0.05)] text-left transition-colors"
               >
                 <span className="text-sm font-medium text-gray-900">{s.dci}</span>
                 {s.brand && <span className="text-xs text-gray-400 ml-2 truncate max-w-[180px]">{s.brand}</span>}
@@ -116,13 +116,13 @@ export function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) =
       </div>
 
       {enriched && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-emerald-800">
+        <div className="rounded-xl px-4 py-3 flex flex-wrap gap-x-4 gap-y-1 text-xs" style={{ background: "rgba(15,91,87,0.06)", border: "1px solid rgba(15,91,87,0.2)", color: "#0F5B57" }}>
           <span>💊 <strong>DCI :</strong> {enriched.dci}</span>
           {enriched.nomCommercial && <span><strong>Marque :</strong> {enriched.nomCommercial}</span>}
           {enriched.voie && <span><strong>Voie :</strong> {enriched.voie}</span>}
           {enriched.forme && <span><strong>Forme :</strong> {enriched.forme}</span>}
           {enriched.laboratoire && <span><strong>Labo :</strong> {enriched.laboratoire}</span>}
-          <span className="text-emerald-600 ml-auto">✓ Champs pré-remplis depuis le référentiel</span>
+          <span className="text-[#0F5B57] ml-auto">✓ Champs pré-remplis depuis le référentiel</span>
         </div>
       )}
     </div>

@@ -24,7 +24,7 @@ export function SuccessScreen({ form, pvNumber, isSerieux, isFatal, delaiLegal, 
 
         {/* Titre */}
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(15,91,87,0.08)" }}>
             <span className="text-3xl">✅</span>
           </div>
           <h1 className="text-xl font-bold text-gray-900 mb-1">Déclaration enregistrée</h1>
@@ -33,21 +33,21 @@ export function SuccessScreen({ form, pvNumber, isSerieux, isFatal, delaiLegal, 
 
         {/* Numéro de référence */}
         {pvNumber && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 text-center mb-4">
-            <p className="text-xs text-emerald-600 font-medium mb-1">Référence de déclaration</p>
+          <div className="rounded-xl px-5 py-3 text-center mb-4" style={{ background: "rgba(15,91,87,0.06)", border: "1px solid rgba(15,91,87,0.2)" }}>
+            <p className="text-xs text-[#0F5B57] font-medium mb-1">Référence de déclaration</p>
             <div className="flex items-center justify-center gap-2">
-              <p className="text-lg font-mono font-bold text-emerald-800">{pvNumber}</p>
+              <p className="text-lg font-mono font-bold text-[#0F5B57]">{pvNumber}</p>
               <button
                 onClick={async () => {
                   try { await navigator.clipboard.writeText(pvNumber); setRefCopied(true); setTimeout(() => setRefCopied(false), 2000); } catch {}
                 }}
-                className="text-xs font-semibold text-emerald-700 border border-emerald-300 rounded-md px-2 py-1 hover:bg-emerald-100 transition-colors"
+                className="text-xs font-semibold text-[#0F5B57] border border-[rgba(15,91,87,0.3)] rounded-md px-2 py-1 hover:bg-[rgba(15,91,87,0.08)] transition-colors"
                 title="Copier la référence"
               >
                 {refCopied ? "✓ Copié" : "Copier"}
               </button>
             </div>
-            <p className="text-xs text-emerald-600 mt-1">Conservez cette référence pour le suivi</p>
+            <p className="text-xs text-[#0F5B57] mt-1">Conservez cette référence pour le suivi</p>
           </div>
         )}
 
@@ -146,7 +146,7 @@ export function SuccessScreen({ form, pvNumber, isSerieux, isFatal, delaiLegal, 
           )}
           <Link
             href="/dashboard/medecin/mes-declarations"
-            className="w-full text-center bg-emerald-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors"
+            className="w-full text-center text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors" style={{ background: "#0F5B57" }}
           >
             Voir mes déclarations →
           </Link>

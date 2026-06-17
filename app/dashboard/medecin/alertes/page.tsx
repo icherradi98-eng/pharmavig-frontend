@@ -192,13 +192,15 @@ export default function AlertesSecurite() {
             <div className="flex bg-gray-100 rounded-full p-1">
               <button
                 onClick={() => setOnlyMine(true)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${onlyMine ? "bg-emerald-600 text-white" : "text-gray-600"}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${onlyMine ? "text-white" : "text-gray-600"}`}
+                style={onlyMine ? { background: "#0F5B57" } : undefined}
               >
                 Mes molécules
               </button>
               <button
                 onClick={() => setOnlyMine(false)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${!onlyMine ? "bg-emerald-600 text-white" : "text-gray-600"}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${!onlyMine ? "text-white" : "text-gray-600"}`}
+                style={!onlyMine ? { background: "#0F5B57" } : undefined}
               >
                 Toutes les alertes
               </button>
@@ -207,7 +209,7 @@ export default function AlertesSecurite() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher une molécule..."
-              className="flex-1 min-w-40 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="flex-1 min-w-40 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -244,13 +246,13 @@ export default function AlertesSecurite() {
                 <div
                   key={a.id}
                   onMouseEnter={() => markAsRead(a.id)}
-                  className={`bg-white border border-gray-200 border-l-4 ${sevStyle.border} rounded-xl p-5 ${isRead ? "" : "ring-1 ring-emerald-100"}`}
+                  className={`bg-white border border-gray-200 border-l-4 ${sevStyle.border} rounded-xl p-5 ${isRead ? "" : "ring-1 ring-[rgba(15,91,87,0.15)]"}`}
                 >
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${ALERT_SOURCE_STYLES[a.source]}`}>{a.source}</span>
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${sevStyle.chip}`}>{sevStyle.label}</span>
                     {concerned && (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-[#0F5B57]" style={{ background: "rgba(15,91,87,0.1)" }}>
                         Votre molécule
                       </span>
                     )}
@@ -261,12 +263,13 @@ export default function AlertesSecurite() {
                   <p className="text-sm text-gray-600 leading-relaxed mb-3">{a.summary}</p>
                   <div className="flex flex-wrap items-center gap-4">
                     <a href={a.officialUrl} target="_blank" rel="noreferrer"
-                      className="text-sm font-medium text-emerald-700 hover:underline">
+                      className="text-sm font-medium text-[#0F5B57] hover:underline">
                       Voir le document officiel →
                     </a>
                     <button
                       onClick={() => declareSimilar(a.molecules[0], a.meddraSoc)}
-                      className="text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg transition-colors"
+                      className="text-sm font-medium text-white hover:bg-[#0a3f3c] px-3 py-1.5 rounded-lg transition-colors"
+                      style={{ background: "#0F5B57" }}
                     >
                       Déclarer un cas similaire →
                     </button>

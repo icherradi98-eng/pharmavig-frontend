@@ -86,7 +86,7 @@ export default function MesMolecules() {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && query.trim()) { addMolecule(query.trim()); } }}
               placeholder="Rechercher ou saisir une DCI (ex. pembrolizumab, nivolumab...)"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
             />
             {suggestions.length > 0 && (
               <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
@@ -96,11 +96,11 @@ export default function MesMolecules() {
                     <button
                       key={m}
                       onClick={() => addMolecule(m)}
-                      className="w-full text-left px-3 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center justify-between gap-2"
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-[rgba(15,91,87,0.05)] hover:text-[#0F5B57] transition-colors flex items-center justify-between gap-2"
                     >
                       <span className={isFree ? "text-gray-900 font-medium" : "text-gray-700"}>{m}</span>
                       {isFree && (
-                        <span className="text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded shrink-0">
+                        <span className="text-xs text-[#0F5B57] px-1.5 py-0.5 rounded shrink-0 border" style={{ background: "rgba(15,91,87,0.06)", borderColor: "rgba(15,91,87,0.2)" }}>
                           + Ajouter
                         </span>
                       )}
@@ -119,13 +119,14 @@ export default function MesMolecules() {
                 <div key={m} className="relative">
                   <button
                     onClick={() => setOpenPopover(open ? null : m)}
-                    className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium pl-3 pr-2 py-1.5 rounded-full hover:bg-emerald-100 transition-colors"
+                    className="flex items-center gap-2 text-[#0F5B57] text-sm font-medium pl-3 pr-2 py-1.5 rounded-full hover:bg-[rgba(15,91,87,0.1)] transition-colors border"
+                    style={{ background: "rgba(15,91,87,0.06)", borderColor: "rgba(15,91,87,0.2)" }}
                   >
                     {m}
                     <span
                       role="button"
                       onClick={(e) => { e.stopPropagation(); removeMolecule(m); }}
-                      className="text-emerald-400 hover:text-red-500 font-bold px-1"
+                      className="text-[#0F5B57]/50 hover:text-red-500 font-bold px-1"
                     >
                       ✕
                     </span>
@@ -136,7 +137,7 @@ export default function MesMolecules() {
                       <p className="text-gray-400 text-xs mb-3">
                         Aucune alerte active pour cette molécule.
                       </p>
-                      <Link href="/dashboard/medecin/alertes" className="text-emerald-700 font-medium hover:underline text-xs">
+                      <Link href="/dashboard/medecin/alertes" className="text-[#0F5B57] font-medium hover:underline text-xs">
                         Voir toutes les alertes →
                       </Link>
                     </div>
@@ -171,7 +172,7 @@ export default function MesMolecules() {
                   {m}
                   <button
                     onClick={() => addMolecule(m)}
-                    className="text-xs font-semibold bg-white border border-gray-300 text-emerald-700 px-2 py-0.5 rounded-full hover:bg-emerald-50 transition-colors"
+                    className="text-xs font-semibold bg-white border border-gray-300 text-[#0F5B57] px-2 py-0.5 rounded-full hover:bg-[rgba(15,91,87,0.06)] transition-colors"
                   >
                     + Ajouter
                   </button>

@@ -25,7 +25,7 @@ export function Input({ value, onChange, placeholder, type = "text", disabled }:
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       disabled={disabled}
-      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 disabled:text-gray-400"
+      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57] disabled:bg-gray-100 disabled:text-gray-400"
     />
   );
 }
@@ -37,7 +37,7 @@ export function Select({ value, onChange, options, placeholder }: {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57] bg-white"
     >
       {placeholder && <option value="">{placeholder}</option>}
       {options.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -54,7 +54,7 @@ export function Textarea({ value, onChange, placeholder, rows = 3 }: {
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+      className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57] resize-none"
     />
   );
 }
@@ -67,8 +67,8 @@ export function RadioGroup({ options, value, onChange }: {
   return (
     <div className="flex flex-col gap-2">
       {options.map((o) => (
-        <label key={o.val} className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all ${value === o.val ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
-          <input type="radio" className="accent-emerald-600 mt-0.5" checked={value === o.val} onChange={() => onChange(o.val)} />
+        <label key={o.val} className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all ${value === o.val ? "border-[#0F5B57] bg-[rgba(15,91,87,0.05)]" : "border-gray-200 hover:border-gray-300"}`}>
+          <input type="radio" className="accent-[#0F5B57] mt-0.5" checked={value === o.val} onChange={() => onChange(o.val)} />
           <div>
             <div className="text-sm font-medium text-gray-800">{o.label}</div>
             {o.desc && <div className="text-xs text-gray-500 mt-0.5">{o.desc}</div>}
@@ -83,8 +83,8 @@ export function CheckRow({ label, checked, onChange, desc }: {
   label: string; checked: boolean; onChange: () => void; desc?: string;
 }) {
   return (
-    <label className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all ${checked ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
-      <input type="checkbox" className="accent-emerald-600 mt-0.5" checked={checked} onChange={onChange} />
+    <label className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all ${checked ? "border-[#0F5B57] bg-[rgba(15,91,87,0.05)]" : "border-gray-200 hover:border-gray-300"}`}>
+      <input type="checkbox" className="accent-[#0F5B57] mt-0.5" checked={checked} onChange={onChange} />
       <div>
         <div className="text-sm font-medium text-gray-800">{label}</div>
         {desc && <div className="text-xs text-gray-500">{desc}</div>}

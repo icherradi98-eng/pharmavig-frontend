@@ -138,7 +138,7 @@ function QuestionBlock({ questionId, label, hint, expertCode, children, answered
     >
       <div className={`rounded-2xl border p-5 transition-all ${answered ? "bg-gray-50 border-gray-100 opacity-80" : "bg-white border-blue-200 shadow-sm"}`}>
         <div className="flex items-start gap-3 mb-4">
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 transition-all ${answered ? "bg-emerald-100 text-emerald-700" : "bg-blue-900 text-blue-100"}`}>
+          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 transition-all ${answered ? "text-[#0F5B57]" : "bg-blue-900 text-blue-100"}`} style={answered ? { background: "rgba(15,91,87,0.1)" } : undefined}>
             {answered ? "✓" : "·"}
           </div>
           <div className="flex-1">
@@ -217,7 +217,7 @@ function LiveScore({ score, complete, expertMode }: { score: ImputScore; complet
             <span className="font-semibold">{expertMode ? C_LABELS[score.Cscore] : ["Exclu", "Douteux", "Compatible", "Très compatible"][score.Cscore]}</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div className={`h-2 rounded-full transition-all duration-500 ${score.Cscore === 0 ? "bg-red-400" : score.Cscore === 1 ? "bg-amber-400" : score.Cscore === 2 ? "bg-blue-400" : "bg-emerald-500"}`} style={{ width: `${cPct}%` }} />
+            <div className={`h-2 rounded-full transition-all duration-500 ${score.Cscore === 0 ? "bg-red-400" : score.Cscore === 1 ? "bg-amber-400" : score.Cscore === 2 ? "bg-blue-400" : "bg-[#0F5B57]"}`} style={{ width: `${cPct}%` }} />
           </div>
         </div>
         <div>
@@ -226,7 +226,7 @@ function LiveScore({ score, complete, expertMode }: { score: ImputScore; complet
             <span className="font-semibold">{expertMode ? S_LABELS[score.Sscore] : ["—", "Faible", "Possible", "Élevée"][score.Sscore]}</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div className={`h-2 rounded-full transition-all duration-500 ${score.Sscore === 1 ? "bg-amber-400" : score.Sscore === 2 ? "bg-blue-400" : "bg-emerald-500"}`} style={{ width: `${sPct}%` }} />
+            <div className={`h-2 rounded-full transition-all duration-500 ${score.Sscore === 1 ? "bg-amber-400" : score.Sscore === 2 ? "bg-blue-400" : "bg-[#0F5B57]"}`} style={{ width: `${sPct}%` }} />
           </div>
         </div>
         {expertMode && (
@@ -236,7 +236,7 @@ function LiveScore({ score, complete, expertMode }: { score: ImputScore; complet
               <span className="font-semibold">{B_LABELS[score.Bscore]}</span>
             </div>
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div className={`h-2 rounded-full transition-all duration-500 ${score.Bscore === "e1" ? "bg-red-400" : score.Bscore === "e2" ? "bg-amber-400" : "bg-emerald-500"}`}
+              <div className={`h-2 rounded-full transition-all duration-500 ${score.Bscore === "e1" ? "bg-red-400" : score.Bscore === "e2" ? "bg-amber-400" : "bg-[#0F5B57]"}`}
                 style={{ width: score.Bscore === "e1" ? "33%" : score.Bscore === "e2" ? "66%" : "100%" }} />
             </div>
           </div>
@@ -421,7 +421,7 @@ export default function ImputabiliteBegaud({
             ].map((o) => <OptionBtn key={o.v} label={o.label} sublabel={o.sub} selected={answers.c3 === o.v} onClick={() => setAnswer("c3", o.v)} />)}
           </div>
           {answers.c3 === "positif" && (
-            <p className="mt-2 text-xs text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg">
+            <p className="mt-2 text-xs text-[#0F5B5700 bg-[rgba(15,91,87,0.05)] px-3 py-1.5 rounded-lg">
               ✓ Rechallenge positif — poids chronologique maximal (C3). Iscore +1.
             </p>
           )}
