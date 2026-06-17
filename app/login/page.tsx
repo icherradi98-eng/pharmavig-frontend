@@ -90,6 +90,11 @@ function LoginForm() {
                 placeholder="••••••••"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
+              <div className="text-right mt-1.5">
+                <Link href="/forgot-password" className="text-xs text-emerald-600 hover:underline">
+                  Mot de passe oublié ?
+                </Link>
+              </div>
             </div>
 
             <button
@@ -115,7 +120,7 @@ function LoginForm() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          Conformément à la loi 09-08 sur la protection des données personnelles
+          Vos données sont traitées avec confidentialité — mise en conformité loi 09-08 (CNDP) en cours
         </p>
       </div>
     </div>
