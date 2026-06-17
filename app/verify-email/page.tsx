@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { AuthShell, C } from "@/components/auth/AuthShell";
 
 type Status = "loading" | "success" | "error" | "already";
 
@@ -14,96 +15,69 @@ function VerifyEmailContent() {
   const [message, setMessage] = useState(() => token ? "" : "Lien invalide — aucun token trouvé.");
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
-
+    if (!token) return;
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
     fetch(`${apiBase}/auth/verify-email?token=${encodeURIComponent(token)}`)
       .then(async (res) => {
         const data = await res.json();
-        if (!res.ok) {
-          setStatus("error");
-          setMessage(data.detail ?? "Lien invalide ou expiré.");
-        } else if (data.detail?.includes("déjà")) {
-          setStatus("already");
-          setMessage(data.detail);
-        } else {
-          setStatus("success");
-          setMessage(data.detail);
-          setTimeout(() => router.push("/login"), 3000);
-        }
+        if (!res.ok) { setStatus("error"); setMessage(data.detail ?? "Lien invalide ou expiré."); }
+        else if (data.detail?.includes("déjà")) { setStatus("already"); setMessage(data.detail); }
+        else { setStatus("success"); setMessage(data.detail); setTimeout(() => router.push("/login"), 3000); }
       })
-      .catch(() => {
-        setStatus("error");
-        setMessage("Erreur réseau — réessayez.");
-      });
+      .catch(() => { setStatus("error"); setMessage("Erreur réseau — réessayez."); });
   }, [token, router]);
 
+  const iconBg = status === "success" || status === "already"
+    ? "rgba(15,91,87,0.08)"
+    : status === "error" ? "#fde8e8" : "rgba(15,91,87,0.05)";
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+    <AuthShell>
+      <div className="text-center">
+        {/* Logo texte */}
         <div className="mb-6">
-          <span className="text-2xl font-black text-emerald-600">MAIA DAWA</span>
-          <p className="text-xs text-gray-400 mt-1">Pharmacovigilance · المملكة المغربية 🇲🇦</p>
+          <span className="text-xl font-black" style={{ color: C.petrol }}>MAIA </span>
+          <span className="text-xl font-black" style={{ color: C.gold }}>DAWA</span>
+          <p className="text-xs mt-0.5" style={{ color: "#8a9ab0" }}>Pharmacovigilance · المملكة المغربية 🇲🇦</p>
         </div>
 
         {status === "loading" && (
           <>
-            <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-500 text-sm">Vérification en cours…</p>
+            <div className="w-12 h-12 rounded-full border-4 border-t-transparent animate-spin mx-auto mb-4"
+              style={{ borderColor: `rgba(15,91,87,0.2)`, borderTopColor: C.petrol }} />
+            <p className="text-sm" style={{ color: "#6b7280" }}>Vérification en cours…</p>
           </>
         )}
 
-        {status === "success" && (
+        {status !== "loading" && (
           <>
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">✓</span>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              style={{ background: iconBg }}>
+              <span className="text-3xl">
+                {status === "success" ? "✓" : status === "already" ? "ℹ️" : "✕"}
+              </span>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Email vérifié !</h1>
-            <p className="text-gray-500 text-sm mb-6">{message}</p>
-            <p className="text-xs text-gray-400 mb-4">Redirection automatique dans 3 secondes…</p>
-            <Link href="/login" className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors">
-              Se connecter →
-            </Link>
-          </>
-        )}
-
-        {status === "already" && (
-          <>
-            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">ℹ️</span>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Déjà vérifié</h1>
-            <p className="text-gray-500 text-sm mb-6">{message}</p>
-            <Link href="/login" className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors">
-              Se connecter →
-            </Link>
-          </>
-        )}
-
-        {status === "error" && (
-          <>
-            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">✕</span>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Lien invalide</h1>
-            <p className="text-gray-500 text-sm mb-6">{message}</p>
-            <p className="text-xs text-gray-400 mb-4">Le lien a peut-être expiré ou déjà été utilisé.</p>
-            <Link href="/login" className="inline-block bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors">
-              Retour à la connexion
+            <h1 className="text-xl font-bold mb-2" style={{ color: C.night }}>
+              {status === "success" ? "Email vérifié !" : status === "already" ? "Déjà vérifié" : "Lien invalide"}
+            </h1>
+            <p className="text-sm mb-5" style={{ color: "#6b7280" }}>
+              {status === "success" ? <>{message}<br /><span className="text-xs" style={{ color: "#8a9ab0" }}>Redirection dans 3 secondes…</span></> : message}
+            </p>
+            {status === "error" && (
+              <p className="text-xs mb-4" style={{ color: "#8a9ab0" }}>Le lien a peut-être expiré ou déjà été utilisé.</p>
+            )}
+            <Link href="/login"
+              className="inline-block text-white font-semibold px-6 py-3 rounded-xl text-sm"
+              style={{ background: C.petrol }}>
+              {status === "error" ? "Retour à la connexion" : "Se connecter →"}
             </Link>
           </>
         )}
       </div>
-    </div>
+    </AuthShell>
   );
 }
 
 export default function VerifyEmailPage() {
-  return (
-    <Suspense>
-      <VerifyEmailContent />
-    </Suspense>
-  );
+  return <Suspense><VerifyEmailContent /></Suspense>;
 }
