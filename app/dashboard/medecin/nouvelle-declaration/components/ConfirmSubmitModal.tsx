@@ -40,7 +40,7 @@ export function ConfirmSubmitModal({ form, isSerieux, isFatal, delaiLegal, imput
           <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
             ← Revenir
           </button>
-          <button onClick={onConfirm} disabled={submitting} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 transition-colors">
+          <button onClick={onConfirm} disabled={submitting} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-60 transition-opacity" style={{ background: "#0F5B57" }}>
             {submitting ? "Envoi…" : "Confirmer l'envoi"}
           </button>
         </div>

@@ -72,7 +72,7 @@ export function Section5Imputabilite({ form, imputScore, begaudOpen, begaudIniti
                 <p className="font-semibold text-gray-900 text-sm">Questionnaire Bégaud</p>
                 <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Optionnel</span>
                 {imputScore && (
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full text-[#0F5B57]" style={{ background: "rgba(15,91,87,0.1)" }}>
                     ✅ Score I{imputScore.Iscore} enregistré
                   </span>
                 )}

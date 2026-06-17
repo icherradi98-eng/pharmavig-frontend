@@ -41,10 +41,10 @@ export function Section1Patient({ form, set, anneeNaissance, setAnneeNaissance }
                   set("patientAge", "");
                 }
               }}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 pr-20"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57] pr-20"
             />
             {form.patientAge && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#0F5B57] font-semibold px-2 py-0.5 rounded-md" style={{ background: "rgba(15,91,87,0.08)", border: "1px solid rgba(15,91,87,0.2)" }}>
                 {form.patientAge} ans
               </span>
             )}

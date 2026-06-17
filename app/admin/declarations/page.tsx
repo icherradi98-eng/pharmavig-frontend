@@ -116,7 +116,7 @@ export default function AdminDeclarations() {
                       <span className="text-xs bg-red-900/50 text-red-400 font-bold px-1.5 py-0.5 rounded-full">⚡ Sérieux</span>
                     )}
                     {r.capm_reference && (
-                      <span className="text-xs font-mono text-[#7ed3cf] bg-emerald-900/30 px-1.5 py-0.5 rounded">
+                      <span className="text-xs font-mono text-[#7ed3cf] bg-[rgba(15,91,87,0.3)] px-1.5 py-0.5 rounded">
                         {r.capm_reference}
                       </span>
                     )}

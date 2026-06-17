@@ -32,10 +32,10 @@ export default function MedecinLayout({ children }: { children: React.ReactNode 
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
-            <span className="text-white font-black text-xs">PV</span>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#0F5B57" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9"/><path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <div className="w-5 h-5 border-2 border-emerald-300 border-t-emerald-600 rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-[rgba(15,91,87,0.3)] border-t-[#0F5B57] rounded-full animate-spin" />
         </div>
       </div>
     );

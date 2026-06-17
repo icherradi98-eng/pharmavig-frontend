@@ -261,11 +261,11 @@ export default function FormulaireMedecin() {
 
       {/* Bannière pré-remplissage depuis le suivi actif */}
       {prefilled && (
-        <div className="bg-emerald-50 border-b border-emerald-200 px-6 py-2.5 flex items-center justify-between text-sm text-emerald-800">
+        <div className="border-b px-6 py-2.5 flex items-center justify-between text-sm" style={{ background: "rgba(15,91,87,0.06)", borderColor: "rgba(15,91,87,0.2)", color: "#0F5B57" }}>
           <span>🛰️ Formulaire pré-rempli depuis le suivi patient actif. Vérifiez et complétez les informations cliniques avant soumission.</span>
           <button
             onClick={() => setPrefilled(false)}
-            className="text-xs text-emerald-600 hover:text-emerald-800 underline ml-4"
+            className="text-xs underline ml-4 opacity-80 hover:opacity-100"
           >
             Compris
           </button>
@@ -291,7 +291,7 @@ export default function FormulaireMedecin() {
 
       {/* Barre de progression */}
       <div className="h-1 bg-gray-200">
-        <div className="h-1 bg-emerald-500 transition-all duration-300" style={{ width: `${(step / SECTIONS.length) * 100}%` }} />
+        <div className="h-1 bg-[#0F5B57] transition-all duration-300" style={{ width: `${(step / SECTIONS.length) * 100}%` }} />
       </div>
 
       {/* Onglets */}
@@ -301,7 +301,8 @@ export default function FormulaireMedecin() {
             <button
               key={s.id}
               onClick={() => { if (s.id < step) { setTriedNext(false); setStep(s.id); } }}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${step === s.id ? "bg-emerald-600 text-white" : s.id < step ? "bg-emerald-100 text-emerald-700 cursor-pointer" : "text-gray-400 cursor-default"}`}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${step === s.id ? "text-white" : s.id < step ? "text-[#0F5B57] cursor-pointer" : "text-gray-400 cursor-default"}`}
+              style={step === s.id ? { background: "#0F5B57" } : s.id < step ? { background: "rgba(15,91,87,0.1)" } : undefined}
             >
               {s.icon} {s.label}
             </button>
@@ -316,7 +317,7 @@ export default function FormulaireMedecin() {
         {form.declarantNom && (
           <div className="mb-4 bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center justify-between text-sm">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ background: "#0F5B57" }}>
                 {form.declarantPrenom?.[0]?.toUpperCase() ?? "D"}
               </div>
               <span className="text-gray-700">
@@ -324,7 +325,7 @@ export default function FormulaireMedecin() {
                 {form.declarantSpecialite && <span className="text-gray-400"> · {form.declarantSpecialite}</span>}
               </span>
             </div>
-            <Link href="/dashboard/medecin/profil" className="text-xs text-gray-400 hover:text-emerald-600 underline underline-offset-2">
+            <Link href="/dashboard/medecin/profil" className="text-xs text-gray-400 hover:text-[#0F5B57] underline underline-offset-2">
               Modifier mon profil
             </Link>
           </div>
@@ -408,8 +409,9 @@ export default function FormulaireMedecin() {
                     className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                       triedNext && hasErrs
                         ? "bg-red-100 text-red-700 border border-red-300 cursor-not-allowed"
-                        : "bg-emerald-600 text-white hover:bg-emerald-700"
+                        : "text-white hover:opacity-90"
                     }`}
+                    style={!(triedNext && hasErrs) ? { background: "#0F5B57" } : undefined}
                   >
                     Suivant →
                   </button>

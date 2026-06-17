@@ -100,7 +100,7 @@ export default function AdminUtilisateurs() {
                         {new Date(u.created_at).toLocaleDateString("fr-MA")}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`w-2 h-2 rounded-full inline-block ${u.is_active ? "bg-emerald-400" : "bg-gray-300"}`} />
+                        <span className={`w-2 h-2 rounded-full inline-block ${u.is_active ? "bg-[#7ed3cf]" : "bg-gray-300"}`} />
                       </td>
                     </tr>
                   ))}

@@ -36,7 +36,7 @@ export function MedDRASearch({ value, code, soc, onChange }: {
         onFocus={() => setOpen(true)}
         onBlur={handleBlur}
         placeholder="Ex : Nausées, Urticaire, Insuffisance rénale aiguë..."
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57]"
       />
       {open && filtered.length > 0 && (
         <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
@@ -45,7 +45,7 @@ export function MedDRASearch({ value, code, soc, onChange }: {
               key={t.code}
               type="button"
               onMouseDown={() => select(t)}
-              className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-emerald-50 text-left transition-colors"
+              className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-[rgba(15,91,87,0.05)] text-left transition-colors"
             >
               <div>
                 <span className="text-sm font-medium text-gray-900">{t.pt}</span>
@@ -58,7 +58,7 @@ export function MedDRASearch({ value, code, soc, onChange }: {
       )}
       {code && (
         <div className="mt-1.5 flex items-center gap-2">
-          <span className="text-xs bg-emerald-100 text-emerald-700 font-semibold px-2 py-0.5 rounded-full">PT MedDRA</span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-[#0F5B57]" style={{ background: "rgba(15,91,87,0.1)" }}>PT MedDRA</span>
           <span className="text-xs text-gray-500">{soc}</span>
           <span className="text-xs font-mono text-gray-400">#{code}</span>
         </div>

@@ -70,13 +70,13 @@ export function Section3Concomitants({ form, addConcomitant, toggleAucunConcomit
               </div>
               <div>
                 <FieldLabel label="Unité" />
-                <select value={m.posologieUnite} onChange={(e) => updateConcomitant(m.id, "posologieUnite", e.target.value)} className="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                <select value={m.posologieUnite} onChange={(e) => updateConcomitant(m.id, "posologieUnite", e.target.value)} className="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57] bg-white">
                   {["mg", "g", "µg", "mL", "UI", "mg/kg", "%", "autre"].map((u) => <option key={u} value={u}>{u}</option>)}
                 </select>
               </div>
               <div>
                 <FieldLabel label="Fréquence" />
-                <select value={m.posologieFrequence} onChange={(e) => updateConcomitant(m.id, "posologieFrequence", e.target.value)} className="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                <select value={m.posologieFrequence} onChange={(e) => updateConcomitant(m.id, "posologieFrequence", e.target.value)} className="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B57] bg-white">
                   {["1×/jour", "2×/jour", "3×/jour", "4×/jour", "1×/semaine", "si besoin", "autre"].map((f) => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
@@ -99,7 +99,7 @@ export function Section3Concomitants({ form, addConcomitant, toggleAucunConcomit
         </div>
       ))}
 
-      <button onClick={addConcomitant} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-emerald-300 hover:border-emerald-500 text-emerald-600 hover:text-emerald-700 rounded-xl py-3 text-sm font-medium transition-all">
+      <button onClick={addConcomitant} className="w-full flex items-center justify-center gap-2 border-2 border-dashed rounded-xl py-3 text-sm font-medium transition-all text-[#0F5B57] hover:border-[#0F5B57]" style={{ borderColor: "rgba(15,91,87,0.3)" }}>
         + Ajouter un médicament concomitant
       </button>
 

@@ -101,7 +101,8 @@ export function Section2Medicament({ form, set, onScanOpen }: Props) {
           if (!parsed) return null;
           const hasAll = parsed.dose && parsed.unite && parsed.frequence;
           return (
-            <div className={`flex items-center gap-2 flex-wrap text-xs px-3 py-2 rounded-lg border ${hasAll ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-gray-50 border-gray-200 text-gray-600"}`}>
+            <div className={`flex items-center gap-2 flex-wrap text-xs px-3 py-2 rounded-lg border ${hasAll ? "text-[#0F5B57]" : "bg-gray-50 border-gray-200 text-gray-600"}`}
+              style={hasAll ? { background: "rgba(15,91,87,0.06)", borderColor: "rgba(15,91,87,0.2)" } : undefined}>
               <span className="font-semibold">{hasAll ? "✅ Parsé :" : "⚙️ Détecté :"}</span>
               {parsed.dose && <span className="px-2 py-0.5 rounded-full bg-white border border-gray-300 font-mono">{parsed.dose}</span>}
               {parsed.unite && <span className="px-2 py-0.5 rounded-full bg-white border border-gray-300 font-mono">{parsed.unite}</span>}
