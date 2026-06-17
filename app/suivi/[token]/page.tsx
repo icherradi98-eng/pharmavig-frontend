@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { api, type CheckinPublicOut } from "@/lib/api";
+import { friendlyError } from "@/lib/friendlyError";
 import { type Lang, type Step, SYMPTOM_GROUPS, STOP_REASONS, T } from "./_constants";
 import { Shell, CenterScreen } from "./_components/Shell";
 import { BigButton } from "./_components/BigButton";
@@ -65,7 +66,7 @@ export default function SuiviPatient() {
       setNextInDays(res.next_checkin_in_days ?? null);
       setStep("done-no");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur");
+      setError(friendlyError(e instanceof Error ? e.message : undefined));
     } finally {
       setSubmitting(false);
     }
@@ -77,7 +78,7 @@ export default function SuiviPatient() {
       await api.submitCheckin(token, { has_symptoms: false, stopped_treatment: true, stop_reason: reasonFr });
       setStep("done-stop");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur");
+      setError(friendlyError(e instanceof Error ? e.message : undefined));
     } finally {
       setSubmitting(false);
     }
@@ -94,7 +95,7 @@ export default function SuiviPatient() {
       });
       setStep("done");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur");
+      setError(friendlyError(e instanceof Error ? e.message : undefined));
     } finally {
       setSubmitting(false);
     }

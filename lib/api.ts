@@ -1,3 +1,5 @@
+import { friendlyError } from "./friendlyError";
+
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 // ── Refresh token ──────────────────────────────────────────────────────────────
@@ -33,14 +35,19 @@ async function tryRefreshToken(): Promise<boolean> {
 
 // ── Requête avec retry automatique après refresh ────────────────────────────────
 async function request<T>(path: string, options: RequestInit = {}, _retry = true): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    ...options,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}${path}`, {
+      ...options,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
+  } catch (networkErr) {
+    throw new Error(friendlyError((networkErr as Error)?.message));
+  }
 
   // Cookie access_token expiré → on tente un refresh puis on rejoue la requête une fois
   if (res.status === 401 && _retry) {
@@ -55,7 +62,7 @@ async function request<T>(path: string, options: RequestInit = {}, _retry = true
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "Erreur serveur" }));
-    throw new Error(err.detail || "Erreur inconnue");
+    throw new Error(friendlyError(err.detail || "Erreur inconnue"));
   }
 
   return res.json();
@@ -80,7 +87,7 @@ async function adminRequest<T>(path: string, options: RequestInit = {}): Promise
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "Erreur serveur" }));
-    throw new Error(err.detail || "Erreur inconnue");
+    throw new Error(friendlyError(err.detail || "Erreur inconnue"));
   }
 
   return res.json();
