@@ -5,6 +5,31 @@ import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
+const C = {
+  petrol: "#0F5B57", petrolDark: "#0a3f3c", gold: "#D4AF37",
+  night: "#1F2D3D", cream: "#F7F3EE", creamDark: "#ede8e2",
+};
+
+const inputCls = "w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 transition-colors";
+const inputStyle = { borderColor: C.creamDark, ["--tw-ring-color" as string]: C.petrol };
+
+function MaiaLogo() {
+  return (
+    <div className="flex items-center gap-2.5">
+      <div className="w-9 h-9 rounded-[10px] flex items-center justify-center" style={{ background: C.petrol }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9" />
+          <path d="M9 12l2 2 4-4" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <span className="font-black text-lg tracking-tight">
+        <span style={{ color: C.petrol }}>MAIA</span>{" "}
+        <span style={{ color: C.gold }}>DAWA</span>
+      </span>
+    </div>
+  );
+}
+
 function LoginForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -23,7 +48,6 @@ function LoginForm() {
     setLoading(true);
     try {
       await login(email, password);
-      // Si un redirect est demandé (ex. depuis /declarer), on l'applique après login
       if (redirect) router.push(redirect);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erreur de connexion");
@@ -33,104 +57,93 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm">PV</span>
-            </div>
-            <span className="font-bold text-gray-900 text-xl">MAIA DAWA</span>
-          </Link>
+    <div className="min-h-screen flex flex-col" style={{ background: C.cream }}>
+
+      {/* Navbar minimale */}
+      <nav className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(247,243,238,0.93)", borderBottom: `1px solid ${C.creamDark}` }}>
+        <div className="max-w-sm mx-auto px-6 flex items-center justify-between py-3">
+          <Link href="/"><MaiaLogo /></Link>
         </div>
+      </nav>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-          <h1 className="text-xl font-bold text-gray-900 mb-1">Connexion</h1>
-          <p className="text-gray-500 text-sm mb-6">Accédez à votre espace déclaration</p>
+      <main className="flex-1 flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-sm">
 
-          {sessionExpired && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 text-sm text-amber-800 mb-4">
-              🔒 Votre session a expiré. Veuillez vous reconnecter.
-            </div>
-          )}
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-700 mb-4">
-              ⚠️ {error}
-              {error.toLowerCase().includes("vérifié") && (
-                <p className="mt-2 text-xs text-red-600">
-                  Vous n&apos;avez pas reçu l&apos;email ?{" "}
-                  <Link href="/resend-verification" className="underline font-medium">
-                    Renvoyer le lien
-                  </Link>
-                </p>
-              )}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="votre@email.com"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-              <div className="text-right mt-1.5">
-                <Link href="/forgot-password" className="text-xs text-emerald-600 hover:underline">
-                  Mot de passe oublié ?
-                </Link>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg text-sm font-semibold transition-colors mt-1 disabled:opacity-60"
-            >
-              {loading ? "Connexion en cours..." : "Se connecter"}
-            </button>
-          </form>
-
-          <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col gap-3 items-center">
-            <p className="text-sm text-gray-500">
-              Pas encore de compte ?{" "}
-              <Link href={role ? `/register?role=${role}` : "/register"} className="text-emerald-600 font-medium hover:underline">
-                S&apos;inscrire
-              </Link>
-            </p>
-            <Link href="/dashboard/invite" className="text-sm text-gray-400 hover:text-gray-600 underline underline-offset-2">
-              Continuer sans compte (invité)
-            </Link>
+          <div className="mb-6">
+            <h1 className="text-2xl font-black tracking-tight" style={{ color: C.night }}>Connexion</h1>
+            <p className="text-sm mt-1" style={{ color: "#6b7280" }}>Accédez à votre espace déclaration</p>
           </div>
-        </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          Vos données sont traitées avec confidentialité — mise en conformité loi 09-08 (CNDP) en cours
-        </p>
-      </div>
+          <div className="bg-white rounded-2xl shadow-sm p-8" style={{ border: `1px solid ${C.creamDark}` }}>
+
+            {sessionExpired && (
+              <div className="rounded-xl px-4 py-2.5 text-sm mb-4" style={{ background: "rgba(212,175,55,0.08)", border: `1px solid rgba(212,175,55,0.25)`, color: "#92700a" }}>
+                🔒 Votre session a expiré. Veuillez vous reconnecter.
+              </div>
+            )}
+
+            {error && (
+              <div className="rounded-xl px-4 py-2.5 text-sm mb-4" style={{ background: "#fde8e8", border: "1px solid #fecaca", color: "#C0392B" }}>
+                ⚠️ {error}
+                {error.toLowerCase().includes("vérifié") && (
+                  <p className="mt-2 text-xs" style={{ color: "#C0392B" }}>
+                    Vous n&apos;avez pas reçu l&apos;email ?{" "}
+                    <Link href="/resend-verification" className="underline font-medium">Renvoyer le lien</Link>
+                  </p>
+                )}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: C.night }}>Email</label>
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                  placeholder="votre@email.com" className={inputCls} style={inputStyle} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: C.night }}>Mot de passe</label>
+                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••" className={inputCls} style={inputStyle} />
+                <div className="text-right mt-1.5">
+                  <Link href="/forgot-password" className="text-xs font-medium" style={{ color: C.petrol }}>
+                    Mot de passe oublié ?
+                  </Link>
+                </div>
+              </div>
+
+              <button type="submit" disabled={loading}
+                className="w-full py-3 rounded-xl text-sm font-bold text-white transition-colors mt-1 disabled:opacity-60"
+                style={{ background: C.petrol }}
+                onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = C.petrolDark; }}
+                onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = C.petrol; }}
+              >
+                {loading ? "Connexion…" : "Se connecter"}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-6 flex flex-col gap-3 items-center" style={{ borderTop: `1px solid ${C.creamDark}` }}>
+              <p className="text-sm" style={{ color: "#6b7280" }}>
+                Pas encore de compte ?{" "}
+                <Link href={role ? `/register?role=${role}` : "/register"}
+                  className="font-semibold underline" style={{ color: C.petrol }}>
+                  S&apos;inscrire gratuitement
+                </Link>
+              </p>
+              <Link href="/dashboard/invite" className="text-sm underline underline-offset-2" style={{ color: "#8a9ab0" }}>
+                Continuer sans compte →
+              </Link>
+            </div>
+          </div>
+
+          <p className="text-center text-[11px] mt-4" style={{ color: "#8a9ab0" }}>
+            Vos données sont traitées avec confidentialité — mise en conformité loi 09-08 (CNDP) en cours
+          </p>
+        </div>
+      </main>
     </div>
   );
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
-  );
+  return <Suspense><LoginForm /></Suspense>;
 }
