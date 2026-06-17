@@ -12,7 +12,8 @@ import type { FormData, MedicamentConcomitant } from "@/lib/declaration/types";
 import { INITIAL, SECTIONS } from "@/lib/declaration/constants";
 import { readDraft, saveDraft, clearDraft, readPrefill } from "@/lib/declaration/storage";
 import { sectionErrors } from "@/lib/declaration/validators";
-import { useModalClose } from "@/lib/useModalClose";
+import { SuccessScreen } from "./components/SuccessScreen";
+import { ConfirmSubmitModal } from "./components/ConfirmSubmitModal";
 import { Section1Patient } from "./components/Section1Patient";
 import { Section2Medicament } from "./components/Section2Medicament";
 import { Section3Concomitants } from "./components/Section3Concomitants";
@@ -88,8 +89,6 @@ export default function FormulaireMedecin() {
   const [dragOver, setDragOver] = useState(false);
   const savedConcomitants = useRef<MedicamentConcomitant[]>([]); // préserve la liste lors du toggle aucunConcomitant
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const confirmRef = useModalClose(() => setConfirmOpen(false), confirmOpen);
-  const [refCopied, setRefCopied] = useState(false);
 
   // Auto-save avec debounce 800ms après chaque changement
   useEffect(() => {
@@ -233,151 +232,15 @@ export default function FormulaireMedecin() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 max-w-lg w-full">
-
-          {/* Titre */}
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">✅</span>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-1">Déclaration enregistrée</h1>
-            <p className="text-gray-500 text-sm">Votre déclaration a bien été enregistrée.</p>
-          </div>
-
-          {/* Numéro de référence */}
-          {pvNumber && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 text-center mb-4">
-              <p className="text-xs text-emerald-600 font-medium mb-1">Référence de déclaration</p>
-              <div className="flex items-center justify-center gap-2">
-                <p className="text-lg font-mono font-bold text-emerald-800">{pvNumber}</p>
-                <button
-                  onClick={async () => {
-                    try { await navigator.clipboard.writeText(pvNumber); setRefCopied(true); setTimeout(() => setRefCopied(false), 2000); } catch {}
-                  }}
-                  className="text-xs font-semibold text-emerald-700 border border-emerald-300 rounded-md px-2 py-1 hover:bg-emerald-100 transition-colors"
-                  title="Copier la référence"
-                >
-                  {refCopied ? "✓ Copié" : "Copier"}
-                </button>
-              </div>
-              <p className="text-xs text-emerald-600 mt-1">Conservez cette référence pour le suivi</p>
-            </div>
-          )}
-
-          {/* Alerte si sérieux */}
-          {isSerieux && (
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4 flex items-start gap-2">
-              <span className="text-base">⚡</span>
-              <div>
-                <p className="text-sm font-bold text-red-700">Déclaration sérieuse</p>
-                <p className="text-xs text-red-600">
-                  {isFatal
-                    ? "Cas fatal ou mettant en jeu le pronostic vital — délai réglementaire de notification : 7 jours."
-                    : "Traitement prioritaire — délai réglementaire de notification : 15 jours."}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Résumé de la déclaration soumise */}
-          <div className="border border-gray-100 rounded-xl overflow-hidden mb-4">
-            <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-100">
-              <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Résumé de votre déclaration</p>
-            </div>
-            <div className="px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-              <div><p className="text-xs text-gray-400">Médicament suspect</p><p className="font-medium text-gray-800">{form.medicamentDCI || form.medicamentNomCommercial || "—"}</p></div>
-              <div><p className="text-xs text-gray-400">Effet observé</p><p className="font-medium text-gray-800">{form.eiMeddraTerm || "—"}</p></div>
-              <div><p className="text-xs text-gray-400">Patient</p><p className="font-medium text-gray-800">{form.patientAge ? `${form.patientAge} ans` : "—"}{form.patientSexe ? `, ${form.patientSexe}` : ""}</p></div>
-              <div><p className="text-xs text-gray-400">Gravité</p><p className={`font-medium ${isSerieux ? "text-red-600" : "text-gray-800"}`}>{isSerieux ? "⚡ Sérieux" : "Non sérieux"}</p></div>
-              <div><p className="text-xs text-gray-400">Imputabilité</p><p className="font-medium text-gray-800">{imputScore ? `I${imputScore.Iscore}` : form.imputConclusion || "—"}</p></div>
-              <div><p className="text-xs text-gray-400">Concomitants</p><p className="font-medium text-gray-800">{form.medicamentsConcomitants.length} déclaré(s)</p></div>
-            </div>
-          </div>
-
-          {/* Que se passe-t-il maintenant */}
-          <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
-            <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-100">
-              <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Que se passe-t-il maintenant ?</p>
-            </div>
-            <div className="divide-y divide-gray-100">
-              <div className="flex items-start gap-3 px-4 py-3">
-                <span className="text-base mt-0.5">📧</span>
-                <div>
-                  <p className="text-sm font-medium text-gray-800">Accusé de réception par email</p>
-                  <p className="text-xs text-gray-500">Un email de confirmation vous a été envoyé avec le numéro de référence.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 px-4 py-3">
-                <span className="text-base mt-0.5">🔬</span>
-                <div>
-                  <p className="text-sm font-medium text-gray-800">Analyse pharmacovigilance</p>
-                  <p className="text-xs text-gray-500">
-                    Votre déclaration sera analysée par les services de pharmacovigilance.{" "}
-                    {delaiLegal ? `Délai réglementaire : ${delaiLegal} jours.` : "Délai habituel : 30 jours."}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 px-4 py-3">
-                <span className="text-base mt-0.5">📄</span>
-                <div>
-                  <p className="text-sm font-medium text-gray-800">PDF CIOMS disponible</p>
-                  <p className="text-xs text-gray-500">Téléchargez le formulaire CIOMS complet depuis &quot;Mes déclarations&quot;.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 px-4 py-3">
-                <span className="text-base mt-0.5">📊</span>
-                <div>
-                  <p className="text-sm font-medium text-gray-800">Suivi du statut</p>
-                  <p className="text-xs text-gray-500">Consultez l&apos;évolution de votre déclaration dans &quot;Mes déclarations&quot;.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col gap-2">
-            {/* Télécharger le PDF */}
-            {pvNumber && (
-              <button
-                onClick={async () => {
-                  const { generateDeclarationPDF } = await import("@/lib/generateDeclarationPDF");
-                  await generateDeclarationPDF(form as unknown as Record<string, unknown>, {
-                    pvNumber,
-                    declarantNom:         form.declarantNom,
-                    declarantPrenom:      form.declarantPrenom,
-                    declarantSpecialite:  form.declarantSpecialite,
-                    declarantEmail:       form.declarantEmail,
-                    declarantTel:         form.declarantTel,
-                    declarantNumOrdre:    form.declarantNumOrdre,
-                    declarantEtablissement: form.declarantEtablissement,
-                    declarantVille:       form.declarantVille,
-                  });
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-teal-700 hover:bg-teal-800 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors"
-              >
-                📄 Télécharger PDF de ma déclaration
-              </button>
-            )}
-            <Link
-              href="/dashboard/medecin/mes-declarations"
-              className="w-full text-center bg-emerald-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors"
-            >
-              Voir mes déclarations →
-            </Link>
-            <Link href="/dashboard/medecin" className="w-full text-center text-sm text-gray-500 hover:text-gray-700 underline py-2">
-              Retour au tableau de bord
-            </Link>
-            <button
-              onClick={() => { setForm(INITIAL); setStep(1); setSubmitted(false); setDraftRestored(false); clearDraft(); }}
-              className="w-full text-center text-xs text-gray-400 hover:text-gray-500 underline"
-            >
-              Faire une nouvelle déclaration
-            </button>
-          </div>
-
-        </div>
-      </div>
+      <SuccessScreen
+        form={form}
+        pvNumber={pvNumber}
+        isSerieux={isSerieux}
+        isFatal={isFatal}
+        delaiLegal={delaiLegal}
+        imputScore={imputScore}
+        onNewDeclaration={() => { setForm(INITIAL); setStep(1); setSubmitted(false); setDraftRestored(false); clearDraft(); }}
+      />
     );
   }
 
@@ -576,33 +439,16 @@ export default function FormulaireMedecin() {
 
       {/* ── Confirmation avant envoi ── */}
       {confirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setConfirmOpen(false)}>
-          <div ref={confirmRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Confirmer l'envoi de la déclaration" className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden outline-none" onClick={(e) => e.stopPropagation()}>
-            <div className="px-6 pt-5 pb-3 border-b border-gray-100">
-              <h3 className="text-base font-bold text-gray-900">Confirmer l&apos;envoi de la déclaration</h3>
-              <p className="text-xs text-gray-500 mt-0.5">Vérifiez ces informations avant transmission. Cette action enregistre la déclaration.</p>
-            </div>
-            <div className="px-6 py-4 space-y-2 text-sm">
-              <div className="flex justify-between gap-3"><span className="text-gray-500">Médicament suspect</span><span className="font-medium text-gray-900 text-right">{form.medicamentDCI || form.medicamentNomCommercial || "—"}</span></div>
-              <div className="flex justify-between gap-3"><span className="text-gray-500">Effet observé</span><span className="font-medium text-gray-900 text-right">{form.eiMeddraTerm || "—"}</span></div>
-              <div className="flex justify-between gap-3"><span className="text-gray-500">Gravité</span><span className={`font-semibold text-right ${isSerieux ? "text-red-600" : "text-gray-700"}`}>{isSerieux ? "⚡ Sérieux" : "Non sérieux"}</span></div>
-              <div className="flex justify-between gap-3"><span className="text-gray-500">Imputabilité</span><span className="font-medium text-gray-900 text-right">{imputScore ? `I${imputScore.Iscore}` : form.imputConclusion || "Non renseignée"}</span></div>
-              {delaiLegal && (
-                <div className={`rounded-lg px-3 py-2 mt-2 text-xs ${isFatal ? "bg-red-100 text-red-800" : "bg-amber-50 text-amber-800 border border-amber-200"}`}>
-                  ⚡ Cas {isFatal ? "fatal / pronostic vital" : "sérieux"} — délai réglementaire de transmission : <strong>{delaiLegal} jours</strong>.
-                </div>
-              )}
-            </div>
-            <div className="px-6 pb-5 pt-2 flex gap-3">
-              <button onClick={() => setConfirmOpen(false)} className="flex-1 py-2.5 rounded-xl border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
-                ← Revenir
-              </button>
-              <button onClick={handleSubmit} disabled={submitting} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 transition-colors">
-                {submitting ? "Envoi…" : "Confirmer l'envoi"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmSubmitModal
+          form={form}
+          isSerieux={isSerieux}
+          isFatal={isFatal}
+          delaiLegal={delaiLegal}
+          imputScore={imputScore}
+          submitting={submitting}
+          onCancel={() => setConfirmOpen(false)}
+          onConfirm={handleSubmit}
+        />
       )}
     </div>
   );
