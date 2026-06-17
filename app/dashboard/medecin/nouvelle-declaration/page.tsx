@@ -12,6 +12,7 @@ import type { FormData, MedicamentConcomitant } from "@/lib/declaration/types";
 import { INITIAL, SECTIONS } from "@/lib/declaration/constants";
 import { readDraft, saveDraft, clearDraft, readPrefill } from "@/lib/declaration/storage";
 import { sectionErrors } from "@/lib/declaration/validators";
+import { useModalClose } from "@/lib/useModalClose";
 import { Section1Patient } from "./components/Section1Patient";
 import { Section2Medicament } from "./components/Section2Medicament";
 import { Section3Concomitants } from "./components/Section3Concomitants";
@@ -87,6 +88,7 @@ export default function FormulaireMedecin() {
   const [dragOver, setDragOver] = useState(false);
   const savedConcomitants = useRef<MedicamentConcomitant[]>([]); // préserve la liste lors du toggle aucunConcomitant
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const confirmRef = useModalClose(() => setConfirmOpen(false), confirmOpen);
 
   // Auto-save avec debounce 800ms après chaque changement
   useEffect(() => {
@@ -563,7 +565,7 @@ export default function FormulaireMedecin() {
       {/* ── Confirmation avant envoi ── */}
       {confirmOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setConfirmOpen(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
+          <div ref={confirmRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Confirmer l'envoi de la déclaration" className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden outline-none" onClick={(e) => e.stopPropagation()}>
             <div className="px-6 pt-5 pb-3 border-b border-gray-100">
               <h3 className="text-base font-bold text-gray-900">Confirmer l&apos;envoi de la déclaration</h3>
               <p className="text-xs text-gray-500 mt-0.5">Vérifiez ces informations avant transmission. Cette action enregistre la déclaration.</p>

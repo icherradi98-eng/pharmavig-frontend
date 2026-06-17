@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useModalClose } from "@/lib/useModalClose";
 
 const WELCOME_KEY = "pharmavig_medecin_welcome_seen";
 
@@ -38,6 +39,8 @@ export function WelcomeModal({ enabled }: { enabled: boolean }) {
     setOpen(false);
   }
 
+  const dialogRef = useModalClose(close, open);
+
   if (!open) return null;
 
   return (
@@ -47,7 +50,12 @@ export function WelcomeModal({ enabled }: { enabled: boolean }) {
       onClick={close}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+        ref={dialogRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Bienvenue sur MAIA DAWA"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 pt-6 pb-4 text-center" style={{ background: "linear-gradient(135deg, var(--md-petrol), #0b3f3c)" }}>

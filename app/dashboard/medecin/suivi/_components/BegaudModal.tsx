@@ -1,5 +1,6 @@
 import { type PrescriptionOut } from "@/lib/api";
 import ImputabiliteBegaud, { type ImputScore } from "../../nouvelle-declaration/ImputabiliteBegaud";
+import { useModalClose } from "@/lib/useModalClose";
 
 export function BegaudModal({
   rx,
@@ -14,9 +15,10 @@ export function BegaudModal({
   onClose: () => void;
   onDeclare: (score: ImputScore) => void;
 }) {
+  const dialogRef = useModalClose(onClose);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(15,91,87,0.25)", backdropFilter: "blur(4px)" }}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Calcul d'imputabilité Bégaud" className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto outline-none">
         {/* En-tête modal */}
         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
           <div>
