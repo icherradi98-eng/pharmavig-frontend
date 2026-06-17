@@ -79,12 +79,12 @@ function FormField({ label, type = "text", placeholder, required = false }: { la
         {label}{required && <span className="ml-0.5" style={{ color: "#C0392B" }}>*</span>}
       </label>
       {type === "textarea" ? (
-        <textarea rows={3} placeholder={placeholder} className="w-full rounded-xl px-3 py-2.5 text-sm resize-none transition-all outline-none"
+        <textarea name={label} required={required} rows={3} placeholder={placeholder} className="w-full rounded-xl px-3 py-2.5 text-sm resize-none transition-all outline-none"
           style={{ border: `1px solid ${C.creamDark}`, background: C.cream, color: C.night }}
           onFocus={e => (e.currentTarget.style.border = `1px solid ${C.petrol}`)}
           onBlur={e => (e.currentTarget.style.border = `1px solid ${C.creamDark}`)} />
       ) : (
-        <input type={type} placeholder={placeholder} className="w-full rounded-xl px-3 py-2.5 text-sm transition-all outline-none"
+        <input name={label} required={required} type={type} placeholder={placeholder} className="w-full rounded-xl px-3 py-2.5 text-sm transition-all outline-none"
           style={{ border: `1px solid ${C.creamDark}`, background: C.cream, color: C.night }}
           onFocus={e => (e.currentTarget.style.border = `1px solid ${C.petrol}`)}
           onBlur={e => (e.currentTarget.style.border = `1px solid ${C.creamDark}`)} />
@@ -99,7 +99,7 @@ function FormSelect({ label, options, required = false }: { label: string; optio
       <label className="block text-xs font-semibold mb-1.5" style={{ color: C.night }}>
         {label}{required && <span className="ml-0.5" style={{ color: "#C0392B" }}>*</span>}
       </label>
-      <select className="w-full rounded-xl px-3 py-2.5 text-sm transition-all outline-none appearance-none"
+      <select name={label} required={required} className="w-full rounded-xl px-3 py-2.5 text-sm transition-all outline-none appearance-none"
         style={{ border: `1px solid ${C.creamDark}`, background: C.cream, color: C.night }}
         onFocus={e => (e.currentTarget.style.border = `1px solid ${C.petrol}`)}
         onBlur={e => (e.currentTarget.style.border = `1px solid ${C.creamDark}`)}>
@@ -124,15 +124,26 @@ function PartnerForm({ type, cta, color }: { type: PartnerType; cta: string; col
         <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ background: "rgba(15,91,87,0.1)" }}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.petrol} strokeWidth="2.5" strokeLinecap="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg>
         </div>
-        <h4 className="font-bold text-base mb-1" style={{ color: C.night }}>Message envoyé !</h4>
-        <p className="text-sm" style={{ color: "#6b7280" }}>Notre équipe vous contacte dans les 24h.</p>
-        <button onClick={() => setSent(false)} className="mt-4 text-xs underline" style={{ color: C.petrol }}>Envoyer un autre message</button>
+        <h4 className="font-bold text-base mb-1" style={{ color: C.night }}>Votre messagerie s&apos;ouvre…</h4>
+        <p className="text-sm" style={{ color: "#6b7280" }}>
+          Finalisez l&apos;envoi depuis votre client mail. Si rien ne s&apos;ouvre, écrivez-nous à{" "}
+          <a href="mailto:contact@maiadawa.ma" className="underline" style={{ color: C.petrol }}>contact@maiadawa.ma</a>.
+        </p>
+        <button onClick={() => setSent(false)} className="mt-4 text-xs underline" style={{ color: C.petrol }}>Remplir un autre message</button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={e => { e.preventDefault(); setSent(true); }} className="space-y-3">
+    <form onSubmit={e => {
+      e.preventDefault();
+      const fd = new FormData(e.currentTarget);
+      const lines: string[] = [];
+      fd.forEach((v, k) => { if (String(v).trim()) lines.push(`${k}: ${v}`); });
+      const subject = `Contact MAIA DAWA — ${type}`;
+      window.location.href = `mailto:contact@maiadawa.ma?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+      setSent(true);
+    }} className="space-y-3">
       {type === "medecin" && (
         <>
           <div className="grid grid-cols-2 gap-3">
@@ -445,11 +456,11 @@ export default function ContactPage() {
                   },
                   {
                     icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.petrol} strokeWidth="1.8" strokeLinecap="round"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>,
-                    label: "Téléphone", value: "+212 (à venir)", href: "#", copy: false,
+                    label: "Téléphone", value: "Bientôt disponible", href: "", copy: false,
                   },
                   {
                     icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.petrol} strokeWidth="1.8" strokeLinecap="round"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
-                    label: "Adresse", value: "Rabat, Maroc", href: "#", copy: false,
+                    label: "Adresse", value: "Rabat, Maroc", href: "", copy: false,
                   },
                 ].map((c) => (
                   <div key={c.label} className="flex items-center gap-4 p-4 rounded-2xl bg-white" style={{ border: `1px solid rgba(15,91,87,0.1)` }}>
@@ -458,10 +469,14 @@ export default function ContactPage() {
                     </div>
                     <div className="flex-1">
                       <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{ color: "#8a9ab0" }}>{c.label}</p>
-                      <a href={c.href} className="text-sm font-semibold transition-colors" style={{ color: C.night }}
-                        onMouseEnter={e => (e.currentTarget.style.color = C.petrol)} onMouseLeave={e => (e.currentTarget.style.color = C.night)}>
-                        {c.value}
-                      </a>
+                      {c.href ? (
+                        <a href={c.href} className="text-sm font-semibold transition-colors" style={{ color: C.night }}
+                          onMouseEnter={e => (e.currentTarget.style.color = C.petrol)} onMouseLeave={e => (e.currentTarget.style.color = C.night)}>
+                          {c.value}
+                        </a>
+                      ) : (
+                        <span className="text-sm font-semibold" style={{ color: C.night }}>{c.value}</span>
+                      )}
                     </div>
                     {c.copy && (
                       <button className="text-xs px-2.5 py-1 rounded-lg font-semibold transition-colors" style={{ background: "rgba(15,91,87,0.08)", color: C.petrol }}

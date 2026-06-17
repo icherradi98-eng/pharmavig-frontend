@@ -89,7 +89,7 @@ export function Section6Finalisation({
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-sm font-medium text-gray-800">Documents joints</label>
-          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">✦ Extraction IA — à venir</span>
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">✦ Pièces jointes — analyse IA à venir</span>
         </div>
         <p className="text-xs text-gray-500 mb-2">Ordonnance, résultats biologiques, imagerie, courrier de sortie.</p>
         <label
@@ -120,7 +120,7 @@ export function Section6Finalisation({
                   <p className="text-xs font-medium text-gray-800 truncate">{f.name}</p>
                   <p className="text-[10px] text-gray-400">{(f.size / 1024).toFixed(0)} Ko</p>
                 </div>
-                <span className="text-[10px] bg-violet-100 text-violet-700 font-semibold px-1.5 py-0.5 rounded shrink-0">IA prête</span>
+                <span className="text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-1.5 py-0.5 rounded shrink-0">Joint ✓</span>
                 <button type="button" onClick={() => { setUploadedFiles(prev => prev.filter((_, j) => j !== i)); if (uploadedFiles.length <= 1) set("documents", false); }} className="text-gray-400 hover:text-red-500 transition-colors shrink-0">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
