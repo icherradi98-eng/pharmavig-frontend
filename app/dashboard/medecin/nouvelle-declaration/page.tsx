@@ -89,6 +89,7 @@ export default function FormulaireMedecin() {
   const savedConcomitants = useRef<MedicamentConcomitant[]>([]); // préserve la liste lors du toggle aucunConcomitant
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const confirmRef = useModalClose(() => setConfirmOpen(false), confirmOpen);
+  const [refCopied, setRefCopied] = useState(false);
 
   // Auto-save avec debounce 800ms après chaque changement
   useEffect(() => {
@@ -248,7 +249,18 @@ export default function FormulaireMedecin() {
           {pvNumber && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 text-center mb-4">
               <p className="text-xs text-emerald-600 font-medium mb-1">Référence de déclaration</p>
-              <p className="text-lg font-mono font-bold text-emerald-800">{pvNumber}</p>
+              <div className="flex items-center justify-center gap-2">
+                <p className="text-lg font-mono font-bold text-emerald-800">{pvNumber}</p>
+                <button
+                  onClick={async () => {
+                    try { await navigator.clipboard.writeText(pvNumber); setRefCopied(true); setTimeout(() => setRefCopied(false), 2000); } catch {}
+                  }}
+                  className="text-xs font-semibold text-emerald-700 border border-emerald-300 rounded-md px-2 py-1 hover:bg-emerald-100 transition-colors"
+                  title="Copier la référence"
+                >
+                  {refCopied ? "✓ Copié" : "Copier"}
+                </button>
+              </div>
               <p className="text-xs text-emerald-600 mt-1">Conservez cette référence pour le suivi</p>
             </div>
           )}
