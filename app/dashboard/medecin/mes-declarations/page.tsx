@@ -44,7 +44,8 @@ export default function MesDeclarations() {
         const q = search.toLowerCase();
         const dci = (d.drug_dci || "").toLowerCase();
         const nom = (d.drug_nom_commercial || "").toLowerCase();
-        if (!dci.includes(q) && !nom.includes(q)) return false;
+        const ref = (d.capm_reference || "").toLowerCase();
+        if (!dci.includes(q) && !nom.includes(q) && !ref.includes(q)) return false;
       }
       if (graviteFilter === "grave" && !d.gravite_serieux) return false;
       if (graviteFilter === "non_grave" && d.gravite_serieux) return false;
@@ -62,6 +63,32 @@ export default function MesDeclarations() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  function refOf(d: ReportOut): string {
+    return d.capm_reference || `PV-MA-${new Date(d.created_at).getFullYear()}-${String(d.id).slice(0, 8).toUpperCase()}`;
+  }
+
+  // Export CSV de l'historique filtré (données du médecin uniquement, déjà affichées).
+  function exportCsv() {
+    const esc = (v: string) => `"${String(v).replace(/"/g, '""')}"`;
+    const header = ["Référence", "Date", "Médicament", "Imputabilité", "Gravité", "Statut"];
+    const rows = filtered.map((d) => [
+      refOf(d),
+      new Date(d.created_at).toLocaleDateString("fr-FR"),
+      d.drug_dci || d.drug_nom_commercial || "",
+      d.imput_conclusion || "",
+      d.gravite_serieux ? "Grave" : "Non grave",
+      STATUS_LABELS[d.status]?.label || d.status,
+    ].map((c) => esc(c)).join(","));
+    const csv = "﻿" + [header.map(esc).join(","), ...rows].join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `mes-declarations-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <MedecinLayout unreadAlerts={unread}>
@@ -111,7 +138,7 @@ export default function MesDeclarations() {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Rechercher un médicament..."
+                placeholder="Rechercher un médicament ou une référence..."
                 className="flex-1 min-w-48 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
               <select value={graviteFilter} onChange={(e) => setGraviteFilter(e.target.value as "" | "grave" | "non_grave")}
@@ -133,6 +160,14 @@ export default function MesDeclarations() {
                 <option value="gravite">Trier par gravité</option>
                 <option value="drug">Trier par médicament</option>
               </select>
+              <button
+                onClick={exportCsv}
+                disabled={filtered.length === 0}
+                className="ml-auto flex items-center gap-1.5 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                title="Exporter la liste filtrée en CSV"
+              >
+                ⬇️ Exporter CSV
+              </button>
             </div>
 
             {/* Table desktop */}
