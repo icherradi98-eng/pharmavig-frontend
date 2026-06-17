@@ -9,7 +9,7 @@ export function ConformiteSection() {
         <div>
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold }}>Standards</p>
           <h2 className="text-2xl font-bold text-white mb-5">Construit sur les exigences de la pharmacovigilance</h2>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {[
               { label: "Méthode de Bégaud", desc: "Imputabilité officielle" },
               { label: "MedDRA", desc: "Terminologie internationale" },
@@ -31,7 +31,7 @@ export function ConformiteSection() {
           <p className="text-sm leading-relaxed mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
             Connecter professionnels de santé, patients et autorités sanitaires pour améliorer la détection précoce des risques médicamenteux.
           </p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[{ val: "Maroc", sub: "Phase 1 · 2026" }, { val: "Afrique", sub: "Francophone · 2027" }, { val: "MENA", sub: "Expansion · 2028" }].map(s => (
               <div key={s.val} className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
                 <p className="font-bold text-sm text-white">{s.val}</p>

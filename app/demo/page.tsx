@@ -249,7 +249,7 @@ export default function DemoPage() {
         </div>
 
         {/* ── Résumé visuel du cas ── */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { icon: "💊", label: "Médicament", value: "PACLITAXEL", sub: "Cancer du sein HER2+" },
             { icon: "⚠️", label: "Effet indésirable", value: "Éruption grade 3", sub: "CTCAE v5 · MedDRA #10037868" },
@@ -266,7 +266,7 @@ export default function DemoPage() {
 
         {/* ── Formulaire pré-rempli (lecture + édition simulée) ── */}
         <Card title="1. Déclarant" icon="👨‍⚕️">
-          <div className="grid grid-cols-2 gap-x-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
             <InfoRow label="Nom & Prénom" value={`Dr ${DEMO_FORM.declarantPrenom} ${DEMO_FORM.declarantNom}`} />
             <InfoRow label="Spécialité" value={DEMO_FORM.declarantSpecialite} />
             <InfoRow label="N° d'ordre" value={DEMO_FORM.declarantNumOrdre} />
@@ -277,7 +277,7 @@ export default function DemoPage() {
         </Card>
 
         <Card title="2. Patient" icon="🧑">
-          <div className="grid grid-cols-2 gap-x-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
             <InfoRow label="Âge" value={`${DEMO_FORM.patientAge} ans`} />
             <InfoRow label="Sexe" value={DEMO_FORM.patientSexe} />
             <InfoRow label="Poids / Taille" value={`${DEMO_FORM.patientPoids} kg / ${DEMO_FORM.patientTaille} cm`} />
@@ -288,7 +288,7 @@ export default function DemoPage() {
         </Card>
 
         <Card title="3. Médicament suspect" icon="💊">
-          <div className="grid grid-cols-2 gap-x-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
             <InfoRow label="DCI" value={DEMO_FORM.medicamentDCI} />
             <InfoRow label="Nom commercial" value={DEMO_FORM.medicamentNomCommercial} />
             <InfoRow label="Forme / Voie" value={`${DEMO_FORM.medicamentForme} / ${DEMO_FORM.medicamentVoie}`} />
@@ -308,7 +308,7 @@ export default function DemoPage() {
                   <span className="font-semibold text-sm text-gray-900">{i + 1}. {c.nom}</span>
                   {c.suspectSecondaire && <Badge color="bg-red-100 text-red-700">Suspect secondaire</Badge>}
                 </div>
-                <div className="grid grid-cols-2 gap-x-8 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 text-sm">
                   <InfoRow label="Posologie" value={`${c.posologieDose} ${c.posologieUnite} — ${c.posologieFrequence}`} />
                   <InfoRow label="Indication" value={c.indication} />
                 </div>
@@ -318,7 +318,7 @@ export default function DemoPage() {
         </Card>
 
         <Card title="5. Effet indésirable médicamenteux" icon="⚠️">
-          <div className="grid grid-cols-2 gap-x-8 mb-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 mb-3">
             <InfoRow label="Terme MedDRA" value={`${DEMO_FORM.eiMeddraTerm} (code #${DEMO_FORM.eiMeddraCode})`} />
             <InfoRow label="Date de début" value={DEMO_FORM.eiDateDebut} />
             <InfoRow label="Évolution" value={DEMO_FORM.eiEvolution} />
@@ -327,7 +327,7 @@ export default function DemoPage() {
             {DEMO_FORM.eiDescription}
           </div>
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Gravité</p>
-          <div className="grid grid-cols-2 gap-x-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
             <GraviteCheck label="Décès" checked={DEMO_FORM.graviteDeces} />
             <GraviteCheck label="Mise en danger de vie immédiate" checked={DEMO_FORM.graviteVieDanger} />
             <GraviteCheck label="Hospitalisation" checked={DEMO_FORM.graviteHospitalisation} />
@@ -339,7 +339,7 @@ export default function DemoPage() {
         </Card>
 
         <Card title="6. Imputabilité médicamenteuse — Méthode Bégaud" icon="🔬">
-          <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             {[
               { label: "Chronologie (C)", value: DEMO_FORM.imputChronologie, color: "bg-blue-50 text-blue-700" },
               { label: "Sémiologie (S)", value: DEMO_FORM.imputSemiologie, color: "bg-violet-50 text-violet-700" },
