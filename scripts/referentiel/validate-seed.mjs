@@ -134,6 +134,48 @@ export function validateSeed(data) {
   return { errors, warnings, passed, stats };
 }
 
+/**
+ * Valide le fichier de priorisation pilote contre le seed.
+ * @returns {{ errors: string[], warnings: string[], passed: string[], stats: { pilot_entries: number, high_priority: number, high_risk: number } }}
+ */
+export function validatePilotPriority(pilotData, seedData) {
+  const errors = [];
+  const warnings = [];
+  const passed = [];
+  const entries = pilotData?.substances ?? [];
+  const seedIds = new Set((seedData?.substances ?? []).map((s) => s.id));
+  const VALID_PRIORITY = new Set(["high", "medium", "low"]);
+
+  const check = (label, bad, fmt) => {
+    if (bad.length === 0) passed.push(label);
+    else errors.push(`${label} — ${bad.length} cas : ${bad.slice(0, 8).map(fmt).join(", ")}${bad.length > 8 ? ", …" : ""}`);
+  };
+
+  check("DCI prioritaire inexistante dans substances[]", entries.filter((e) => !seedIds.has(e.substance_id)), (e) => e.substance_id);
+  check("Entrée sans priority_level valide", entries.filter((e) => !VALID_PRIORITY.has(e.priority_level)), (e) => e.substance_id);
+  check("Entrée sans therapeutic_area", entries.filter((e) => !e.therapeutic_area || !e.therapeutic_area.trim()), (e) => e.substance_id);
+  check("Entrée sans therapeutic_class", entries.filter((e) => !e.therapeutic_class || !e.therapeutic_class.trim()), (e) => e.substance_id);
+  check("Entrée sans dci_fr", entries.filter((e) => !e.dci_fr || !e.dci_fr.trim()), (e) => e.substance_id);
+  check("substance_id dupliqué dans le pilote", findDuplicateKeys(entries.map((e) => e.substance_id)), (id) => id);
+
+  const stats = {
+    pilot_entries: entries.length,
+    high_priority: entries.filter((e) => e.priority_level === "high").length,
+    high_risk: entries.filter((e) => e.is_high_risk_drug).length,
+  };
+  return { errors, warnings, passed, stats };
+}
+
+function findDuplicateKeys(keys) {
+  const seen = new Set();
+  const dups = new Set();
+  for (const k of keys) {
+    if (seen.has(k)) dups.add(k);
+    seen.add(k);
+  }
+  return [...dups];
+}
+
 function findDuplicateIds(items) {
   const seen = new Set();
   const dups = new Set();
@@ -189,8 +231,28 @@ export function formatReport({ errors, warnings, passed, stats }) {
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
 if (isMain) {
   const seedPath = new URL("../../lib/referentiel/seed.ma.json", import.meta.url);
-  const data = JSON.parse(readFileSync(seedPath, "utf8"));
-  const result = validateSeed(data);
-  console.log(formatReport(result));
-  process.exit(result.errors.length ? 1 : 0);
+  const pilotPath = new URL("../../lib/referentiel/pilot-priority-substances.json", import.meta.url);
+  const seed = JSON.parse(readFileSync(seedPath, "utf8"));
+  const pilot = JSON.parse(readFileSync(pilotPath, "utf8"));
+
+  const seedResult = validateSeed(seed);
+  console.log(formatReport(seedResult));
+
+  const pilotResult = validatePilotPriority(pilot, seed);
+  console.log("");
+  console.log("═══ Validation de la priorisation pilote ═══");
+  console.log(`Entrées: ${pilotResult.stats.pilot_entries} · Haute priorité: ${pilotResult.stats.high_priority} · Haut risque: ${pilotResult.stats.high_risk}`);
+  console.log(`✅ Checks passés (${pilotResult.passed.length})`);
+  for (const p of pilotResult.passed) console.log(`   ✓ ${p}`);
+  if (pilotResult.errors.length) {
+    console.log(`❌ Erreurs bloquantes (${pilotResult.errors.length})`);
+    for (const e of pilotResult.errors) console.log(`   ❌ ${e}`);
+  } else {
+    console.log("❌ Aucune erreur bloquante");
+  }
+
+  const totalErrors = seedResult.errors.length + pilotResult.errors.length;
+  console.log("");
+  console.log(totalErrors ? "RÉSULTAT GLOBAL : ÉCHEC ❌" : "RÉSULTAT GLOBAL : OK ✅");
+  process.exit(totalErrors ? 1 : 0);
 }

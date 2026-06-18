@@ -342,3 +342,33 @@ export interface ClinicalDataset {
   monographs: ClinicalMonograph[];
   interactions: DrugInteraction[];
 }
+
+// ── Priorisation pilote (classification SANS contenu clinique détaillé) ───────
+
+export type PriorityLevel = "high" | "medium" | "low";
+
+/**
+ * Entrée de priorisation d'une DCI pour le pilote médecin.
+ * Couche légère : classification + priorité, PAS de monographie complète.
+ * Migration-ready : future table `pilot_priority_substances` (ou colonnes
+ * priority_* sur substances).
+ */
+export interface PilotPrioritySubstance {
+  substance_id: string;          // FK → substances.id
+  dci_fr: string;
+  priority_level: PriorityLevel;
+  therapeutic_area: string;
+  therapeutic_class: string;
+  is_high_risk_drug: boolean;
+  why_priority: string;
+  suggested_monograph_status: EditorialStatus;  // "draft" à ce stade
+  needs_pharmacist_review: boolean;
+  needs_physician_review: boolean;
+}
+
+export interface PilotPriorityDataset {
+  version: string;
+  generated_at: string;
+  note?: string;
+  substances: PilotPrioritySubstance[];
+}

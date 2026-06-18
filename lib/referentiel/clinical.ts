@@ -8,13 +8,15 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import clinicalRaw from "./monographs.ma.json";
+import pilotRaw from "./pilot-priority-substances.json";
 import type {
   ClinicalDataset, ClinicalMonograph, DrugInteraction, EditorialStatus,
-  MedicinalProduct,
+  MedicinalProduct, PilotPriorityDataset, PilotPrioritySubstance,
 } from "./types";
 import { referentielData } from "./index";
 
 const clinical = clinicalRaw as unknown as ClinicalDataset;
+const pilot = pilotRaw as unknown as PilotPriorityDataset;
 
 const norm = (s: string) =>
   (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
@@ -186,13 +188,51 @@ export function listTherapeuticClasses(): string[] {
   return [...set].sort((a, b) => a.localeCompare(b));
 }
 
+// ── Priorisation pilote ──────────────────────────────────────────────────────
+
+const pilotBySubstanceId = new Map(pilot.substances.map((p) => [p.substance_id, p]));
+
+/** Toutes les DCI prioritaires du pilote (triées high → medium → low). */
+export function getPilotPrioritySubstances(): PilotPrioritySubstance[] {
+  const rank: Record<string, number> = { high: 0, medium: 1, low: 2 };
+  return [...pilot.substances].sort(
+    (a, b) => (rank[a.priority_level] ?? 9) - (rank[b.priority_level] ?? 9)
+  );
+}
+
+/** DCI marquées à haut risque. */
+export function getHighRiskSubstances(): PilotPrioritySubstance[] {
+  return pilot.substances.filter((p) => p.is_high_risk_drug);
+}
+
+/** Regroupe les DCI prioritaires par aire thérapeutique. */
+export function getSubstancesByTherapeuticArea(): Record<string, PilotPrioritySubstance[]> {
+  const out: Record<string, PilotPrioritySubstance[]> = {};
+  for (const p of pilot.substances) {
+    (out[p.therapeutic_area] ??= []).push(p);
+  }
+  return out;
+}
+
+/** Priorisation d'une substance donnée (ou null). */
+export function getPilotPriority(substanceId: string): PilotPrioritySubstance | null {
+  return pilotBySubstanceId.get(substanceId) ?? null;
+}
+
+/** DCI prioritaires n'ayant pas encore de monographie (à enrichir). */
+export function getSubstancesToEnrich(): PilotPrioritySubstance[] {
+  return getPilotPrioritySubstances().filter((p) => !monoBySubstanceId.has(p.substance_id));
+}
+
 // ── Stats module ─────────────────────────────────────────────────────────────
 
 export const clinicalStats = {
   monographs: clinical.monographs.length,
   published: clinical.monographs.filter((m) => m.status === "published").length,
   interactions: clinical.interactions.length,
+  pilotPriority: pilot.substances.length,
+  highRisk: pilot.substances.filter((p) => p.is_high_risk_drug).length,
   version: clinical.version,
 };
 
-export { clinical as clinicalData };
+export { clinical as clinicalData, pilot as pilotPriorityData };
