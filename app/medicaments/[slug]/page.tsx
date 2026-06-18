@@ -4,13 +4,15 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  fetchAnsm, unslugify,
+  fetchAnsm, unslugify, slugify,
   type BdpmDrug,
   type LocalProductContext,
 } from "@/lib/drugApi";
 import { fetchTerrain, type TerrainOut } from "@/lib/api";
 import { getProductView, searchProducts, type ProductView } from "@/lib/referentiel/index";
+import { listAlternativesByProductId, getMonographByDci } from "@/lib/referentiel/clinical";
 import { normalizeSubstanceName } from "@/lib/referentiel/bdpmMatcher";
+import { EditorialBadge } from "@/app/referentiel/_components/badges";
 import { TABS, PRODUCT_TYPE_LABELS, type TabId } from "./_constants";
 import {
   SourceLabel, ClinicalSourceLabel, Badge, AvailBadge, ValidBadge, SkeletonHeader,
@@ -85,6 +87,14 @@ function DrugProfileContent({ slug }: { slug: string }) {
     .map((s) => s.substance?.dci_fr)
     .filter(Boolean) as string[] | undefined;
 
+  // Couche clinique : monographie DCI + alternatives marocaines (même substance)
+  const monograph = useMemo(() => getMonographByDci(name), [name]);
+  const alternatives = useMemo(
+    () => (productView?.product ? listAlternativesByProductId(productView.product.id) : []),
+    [productView]
+  );
+  const monoDciSlug = slugify(substanceNames?.[0] ?? dci);
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 md:px-10 py-4 flex items-center justify-between">
@@ -146,6 +156,57 @@ function DrugProfileContent({ slug }: { slug: string }) {
                 Déclarer un cas avec ce médicament →
               </button>
             </div>
+
+            {/* Monographie clinique DCI */}
+            <Link
+              href={`/referentiel/dci/${monoDciSlug}`}
+              className="block bg-white border border-gray-200 rounded-2xl p-5 mb-4 hover:border-petrol/40 transition-colors"
+            >
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-gold mb-0.5">Monographie clinique</p>
+                  {monograph ? (
+                    <p className="text-sm text-gray-700">
+                      Indications, posologie, contre-indications, interactions…
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      En cours de construction — disponibilité/prix au Maroc uniquement pour l&apos;instant.
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {monograph && <EditorialBadge status={monograph.status} />}
+                  <span className="text-sm font-semibold text-petrol">Ouvrir →</span>
+                </div>
+              </div>
+              {monograph?.is_demo && (
+                <p className="text-[11px] text-gold mt-2">⚠️ Donnée de démonstration — non validée médicalement.</p>
+              )}
+            </Link>
+
+            {/* Alternatives au Maroc (même DCI) */}
+            {alternatives.length > 0 && (
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-4">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-gold mb-2">
+                  Alternatives au Maroc · même substance
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {alternatives.slice(0, 12).map((alt) => (
+                    <Link
+                      key={alt.product.id}
+                      href={`/medicaments/${slugify(alt.dci.split(" / ")[0] || alt.product.brand_name)}`}
+                      className="text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 hover:border-petrol/40 hover:text-petrol transition-colors"
+                    >
+                      {alt.product.brand_name}
+                    </Link>
+                  ))}
+                </div>
+                {alternatives.length > 12 && (
+                  <p className="text-xs text-gray-400 mt-2">+ {alternatives.length - 12} autre{alternatives.length - 12 > 1 ? "s" : ""}</p>
+                )}
+              </div>
+            )}
 
             {/* Tabs */}
             <div className="flex gap-1 overflow-x-auto border-b border-gray-200 mb-6">

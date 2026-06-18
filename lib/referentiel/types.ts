@@ -238,3 +238,107 @@ export interface ReferentielDataset {
   presentations: Presentation[];
   product_substances: ProductSubstance[];
 }
+
+// ═════════════════════════════════════════════════════════════════════════════
+// COUCHE CLINIQUE — Monographies par DCI (future table `clinical_monographs`)
+//
+// Séparée des données marché (CNOPS) : une monographie = contenu d'aide au bon
+// usage rattaché à UNE substance active (DCI). Plusieurs spécialités marocaines
+// pointant vers la même DCI partagent la même monographie.
+//
+// Migration-ready : chaque champ correspond 1:1 à une future colonne Postgres.
+// Aucun contenu n'est affiché comme « validé » tant que status !== "published".
+// ═════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Circuit éditorial d'une monographie clinique.
+ * draft → AI_generated → physician_reviewed → pharmacist_reviewed → published
+ * Seul "published" peut être présenté comme référence validée.
+ */
+export type EditorialStatus =
+  | "draft"
+  | "AI_generated"
+  | "physician_reviewed"
+  | "pharmacist_reviewed"
+  | "published";
+
+/** Une entrée du journal de versions d'une monographie. */
+export interface MonographChange {
+  version: string;
+  date: string;                    // ISO
+  author: string | null;
+  summary: string;
+}
+
+/**
+ * Monographie clinique d'une DCI (future table `clinical_monographs`).
+ * Tous les champs cliniques sont nullable : remplissage progressif.
+ */
+export interface ClinicalMonograph {
+  id: string;
+  substance_id: string;            // FK → substances.id (1 monographie par DCI)
+  dci: string;                     // dénormalisé pour affichage/recherche
+  therapeutic_class: string | null;
+  atc_code: string | null;
+
+  // ── Contenu clinique (nullable, construit progressivement) ──
+  indications: string | null;
+  posology_adult: string | null;
+  renal_adjustment: string | null;
+  hepatic_adjustment: string | null;
+  contraindications: string | null;
+  precautions: string | null;
+  adverse_effects_common: string | null;
+  adverse_effects_serious: string | null;
+  key_interactions: string | null;
+  pregnancy_lactation: string | null;
+  monitoring: string | null;
+  patient_advice: string | null;
+
+  // ── Qualité / circuit éditorial ──
+  status: EditorialStatus;
+  /** true = donnée de démonstration, JAMAIS validée médicalement. */
+  is_demo: boolean;
+  version: string;
+  source_name: string | null;
+  source_url: string | null;
+  source_date: string | null;      // ISO
+  reviewed_by: string | null;
+  reviewed_at: string | null;      // ISO
+  last_verified_at: string | null; // ISO
+  change_log: MonographChange[];
+
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Règle d'interaction entre deux DCI (future table `drug_interactions`).
+ * Distincte de `InteractionRule` (héritage enrichissement étranger) :
+ * celle-ci porte le circuit éditorial interne MAIA DAWA.
+ */
+export interface DrugInteraction {
+  id: string;
+  substance_a_id: string;          // FK → substances.id
+  substance_b_id: string;          // FK → substances.id
+  substance_a_label: string;       // dénormalisé
+  substance_b_label: string;       // dénormalisé
+  severity: "contraindicated" | "major" | "moderate" | "minor" | "unknown";
+  mechanism: string | null;
+  recommendation: string | null;
+  status: EditorialStatus;
+  is_demo: boolean;
+  source_name: string | null;
+  source_url: string | null;
+  version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Forme du fichier JSON clinique versionné (futures tables cliniques). */
+export interface ClinicalDataset {
+  version: string;
+  generated_at: string;
+  monographs: ClinicalMonograph[];
+  interactions: DrugInteraction[];
+}

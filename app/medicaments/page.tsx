@@ -112,7 +112,10 @@ export default function MedicamentsSearch() {
       <nav className="sticky top-0 z-50 backdrop-blur-md" style={{ background: "rgba(247,243,238,0.93)", borderBottom: `1px solid ${C.creamDark}` }}>
         <div className="max-w-5xl mx-auto px-6 flex items-center justify-between py-3">
           <Link href="/"><MaiaLogo /></Link>
-          <Link href="/login" className="text-[13px]" style={{ color: "#6b7280" }}>Espace professionnel →</Link>
+          <div className="flex items-center gap-4">
+            <Link href="/referentiel" className="text-[13px] font-medium" style={{ color: C.petrol }}>Parcourir le référentiel</Link>
+            <Link href="/login" className="text-[13px]" style={{ color: "#6b7280" }}>Espace professionnel →</Link>
+          </div>
         </div>
       </nav>
 

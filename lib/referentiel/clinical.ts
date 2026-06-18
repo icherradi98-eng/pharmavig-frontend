@@ -1,0 +1,198 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Couche service — Référentiel clinique MAIA DAWA (monographies par DCI).
+//
+// Sépare la donnée marché (CNOPS, dans index.ts) de la donnée clinique
+// (monographies + interactions, ici). Toute la logique de recherche / résolution
+// DCI / alternatives / interactions / statut éditorial vit ici, jamais dans les
+// composants — pour migrer vers une API Postgres sans réécrire l'UI.
+// ─────────────────────────────────────────────────────────────────────────────
+
+import clinicalRaw from "./monographs.ma.json";
+import type {
+  ClinicalDataset, ClinicalMonograph, DrugInteraction, EditorialStatus,
+  MedicinalProduct,
+} from "./types";
+import { referentielData } from "./index";
+
+const clinical = clinicalRaw as unknown as ClinicalDataset;
+
+const norm = (s: string) =>
+  (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+// ── Index en mémoire ─────────────────────────────────────────────────────────
+
+const monoBySubstanceId = new Map(clinical.monographs.map((m) => [m.substance_id, m]));
+const monoByNormalizedDci = new Map(clinical.monographs.map((m) => [norm(m.dci), m]));
+
+// substance_id → liste de product_id (depuis la couche marché)
+const productsBySubstanceId = new Map<string, string[]>();
+for (const link of referentielData.product_substances) {
+  if (!productsBySubstanceId.has(link.substance_id)) productsBySubstanceId.set(link.substance_id, []);
+  productsBySubstanceId.get(link.substance_id)!.push(link.product_id);
+}
+const productById = new Map(referentielData.medicinal_products.map((p) => [p.id, p]));
+const substanceById = new Map(referentielData.substances.map((s) => [s.id, s]));
+const substanceByNormalizedDci = new Map(
+  referentielData.substances.map((s) => [norm(s.dci_fr), s])
+);
+
+// ── Statut éditorial : métadonnées d'affichage ───────────────────────────────
+
+export type EditorialStatusMeta = {
+  label: string;
+  /** true si la fiche peut être présentée comme référence validée. */
+  isValidated: boolean;
+  tone: "neutral" | "info" | "warning" | "success";
+};
+
+const STATUS_META: Record<EditorialStatus, EditorialStatusMeta> = {
+  draft:               { label: "Brouillon",            isValidated: false, tone: "neutral" },
+  AI_generated:        { label: "Généré par IA",        isValidated: false, tone: "warning" },
+  physician_reviewed:  { label: "Revu par un médecin",  isValidated: false, tone: "info" },
+  pharmacist_reviewed: { label: "Revu par un pharmacien", isValidated: false, tone: "info" },
+  published:           { label: "Validé · publié",      isValidated: true,  tone: "success" },
+};
+
+export function editorialStatusMeta(status: EditorialStatus): EditorialStatusMeta {
+  return STATUS_META[status] ?? STATUS_META.draft;
+}
+
+// ── Résolution monographie ───────────────────────────────────────────────────
+
+export function getMonographBySubstanceId(substanceId: string): ClinicalMonograph | null {
+  return monoBySubstanceId.get(substanceId) ?? null;
+}
+
+/** Résout une monographie depuis un nom de DCI (accent-insensible). */
+export function getMonographByDci(dci: string): ClinicalMonograph | null {
+  const direct = monoByNormalizedDci.get(norm(dci));
+  if (direct) return direct;
+  // Fallback : retrouver la substance puis sa monographie
+  const sub = substanceByNormalizedDci.get(norm(dci));
+  return sub ? getMonographBySubstanceId(sub.id) : null;
+}
+
+// ── Alternatives au Maroc (spécialités partageant la même DCI) ────────────────
+
+export type AlternativeProduct = {
+  product: MedicinalProduct;
+  dci: string;
+};
+
+/**
+ * Liste les autres spécialités marocaines ayant la même substance active,
+ * en excluant le produit courant. Triées princeps d'abord, puis alphabétique.
+ */
+export function listAlternativesByProductId(productId: string): AlternativeProduct[] {
+  const links = referentielData.product_substances.filter((l) => l.product_id === productId);
+  const substanceIds = links.map((l) => l.substance_id);
+  if (substanceIds.length === 0) return [];
+
+  const seen = new Set<string>();
+  const out: AlternativeProduct[] = [];
+  for (const subId of substanceIds) {
+    const dci = substanceById.get(subId)?.dci_fr ?? "—";
+    for (const pid of productsBySubstanceId.get(subId) ?? []) {
+      if (pid === productId || seen.has(pid)) continue;
+      const product = productById.get(pid);
+      if (!product) continue;
+      seen.add(pid);
+      out.push({ product, dci });
+    }
+  }
+  const typeRank: Record<string, number> = { princeps: 0, generic: 1, biosimilar: 2, hybrid: 3, unknown: 4 };
+  return out.sort((a, b) => {
+    const r = (typeRank[a.product.product_type] ?? 9) - (typeRank[b.product.product_type] ?? 9);
+    return r !== 0 ? r : a.product.brand_name.localeCompare(b.product.brand_name);
+  });
+}
+
+// ── Interactions ─────────────────────────────────────────────────────────────
+
+export function getInteractionsForSubstanceId(substanceId: string): DrugInteraction[] {
+  return clinical.interactions.filter(
+    (i) => i.substance_a_id === substanceId || i.substance_b_id === substanceId
+  );
+}
+
+// ── Recherche / navigation du module Référentiel ─────────────────────────────
+
+export type ReferentielEntry = {
+  product_id: string;
+  brand_name: string;
+  dci: string;
+  substance_id: string | null;
+  therapeutic_class: string | null;
+  product_type: MedicinalProduct["product_type"];
+  availability_status: MedicinalProduct["availability_status"];
+  has_monograph: boolean;
+  monograph_status: EditorialStatus | null;
+};
+
+function buildEntry(p: MedicinalProduct): ReferentielEntry {
+  const links = referentielData.product_substances.filter((l) => l.product_id === p.id);
+  const firstSub = links[0] ? substanceById.get(links[0].substance_id) : undefined;
+  const dci = links.map((l) => substanceById.get(l.substance_id)?.dci_fr).filter(Boolean).join(" / ") || "—";
+  const mono = firstSub ? getMonographBySubstanceId(firstSub.id) : null;
+  return {
+    product_id: p.id,
+    brand_name: p.brand_name,
+    dci,
+    substance_id: firstSub?.id ?? null,
+    therapeutic_class: mono?.therapeutic_class ?? firstSub?.therapeutic_class ?? null,
+    product_type: p.product_type,
+    availability_status: p.availability_status,
+    has_monograph: !!mono,
+    monograph_status: mono?.status ?? null,
+  };
+}
+
+export type ReferentielSearchOptions = {
+  query?: string;
+  therapeuticClass?: string | null;
+  onlyWithMonograph?: boolean;
+  limit?: number;
+};
+
+/** Recherche unifiée marque OU DCI + filtres (classe, présence de monographie). */
+export function searchReferentiel(opts: ReferentielSearchOptions = {}): ReferentielEntry[] {
+  const { query = "", therapeuticClass = null, onlyWithMonograph = false, limit = 60 } = opts;
+  const q = norm(query);
+  const out: ReferentielEntry[] = [];
+
+  for (const p of referentielData.medicinal_products) {
+    const entry = buildEntry(p);
+    if (q.length >= 2) {
+      const hay = norm(entry.brand_name + " " + entry.dci);
+      if (!hay.includes(q)) continue;
+    }
+    if (therapeuticClass && entry.therapeutic_class !== therapeuticClass) continue;
+    if (onlyWithMonograph && !entry.has_monograph) continue;
+    out.push(entry);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+/** Classes thérapeutiques connues (depuis les monographies — non vide uniquement). */
+export function listTherapeuticClasses(): string[] {
+  const set = new Set<string>();
+  for (const m of clinical.monographs) {
+    if (m.therapeutic_class) set.add(m.therapeutic_class);
+  }
+  for (const s of referentielData.substances) {
+    if (s.therapeutic_class) set.add(s.therapeutic_class);
+  }
+  return [...set].sort((a, b) => a.localeCompare(b));
+}
+
+// ── Stats module ─────────────────────────────────────────────────────────────
+
+export const clinicalStats = {
+  monographs: clinical.monographs.length,
+  published: clinical.monographs.filter((m) => m.status === "published").length,
+  interactions: clinical.interactions.length,
+  version: clinical.version,
+};
+
+export { clinical as clinicalData };
