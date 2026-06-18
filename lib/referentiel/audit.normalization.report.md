@@ -72,26 +72,14 @@ Toutes les présentations sans `route` dont la forme contient « BUVABLE » (POU
 
 ## 4. Cas nécessitant une validation manuelle (`manual_review_needed`)
 
-### 4.1 Doublons produits probables (13) — NE PAS supprimer sans contrôle
-Même marque **et** même dosage/forme/packaging, deux `id` distincts (codes CNOPS différents). Possibles double-listings d'import à fusionner, OU deux conditionnements réels.
+### 4.1 Doublons produits probables (27 paires) — NE PAS supprimer sans contrôle
+Même marque **et** même dosage **et** même forme **et** même packaging, deux `id` distincts (codes CNOPS consécutifs). Probables double-listings d'import à fusionner, OU deux conditionnements réels.
 
-| Marque | IDs |
-|---|---|
-| MICROPAKINE LP 100 MG | `ma-micropakine-lp-100-mg-100-78`, `…-79` |
-| TOTAPEN | `ma-totapen-1-123`, `ma-totapen-1-983` |
-| CO-OLMETEC | `ma-co-olmetec-20-12-5-204`, `…-205` |
-| AVANDAMET | `ma-avandamet-1-500-298`, `…-299` |
-| LEVEMIR PENF | `ma-levemir-penf-100-367`, `…-368` |
-| PAXIL CR 12.5 MG | `ma-paxil-cr-12-5-mg-12-5-562`, `…-563` |
-| ACUPAN | `ma-acupan-20-645`, `ma-acupan-20-2532` |
-| EXFORGE 5 MG/80 MG | `ma-exforge-5-mg-80-mg-5-80-761`, `…-762` |
-| EFFEXOR LP 75 MG | `ma-effexor-lp-75-mg-75-945`, `…-946` |
-| ERYACNE | `ma-eryacne-4-1045`, `ma-eryacne-4-1046` |
-| COLCHICINE | `ma-colchicine-1-1408`, `ma-colchicine-1-1409` |
-| MICARDIS | `ma-micardis-40-2038`, `ma-micardis-40-2039` |
-| MYANTALGIC | `ma-myantalgic-37-50-325-2131`, `…-2132` |
+> **Note méthodologique :** le premier audit en annonçait 13 (marques dont *toutes* les variantes étaient identiques — sous-comptage). Le validateur (`npm run validate:referentiel`) groupe par **signature complète** marque+dosage+forme+packaging et trouve **27 paires** exactes — chiffre de référence. La liste complète et à jour est produite par la commande de validation.
 
-> ⚠️ 71 autres « doublons de marque » sont en réalité des **variantes de dosage légitimes** (ex. même marque en 50 mg et 100 mg) — **pas** des doublons.
+Principaux exemples : CRESTOR 5, XARELTO 10, PLAVIX 75, TAHOR 80, GLIVEC 100, MICARDIS 40, RISPERDAL 2, EXFORGE 5/80, STALEVO 50/12.5/200, CO-OLMETEC, AVANDAMET, TOTAPEN, COLCHICINE, SEROPLEX 10, AMAREL 4, NAPROSYNE 500, OFLOCET 200, ZYLORIC 300, LAROXYL 50, ACUPAN, ERYACNE, EFFEXOR LP 75, PAXIL CR 12.5, LEVEMIR PENF, MICROPAKINE LP 100, MYANTALGIC, ELOXATINE 5 mg/ml.
+
+> ⚠️ Les autres « doublons de marque » sont en réalité des **variantes de dosage légitimes** (ex. même marque en 50 mg et 100 mg) — **pas** des doublons, donc non listés ici.
 
 ### 4.2 Voie ambiguë (1)
 - **IMIZINE 10 % — PÂTE DENTAIRE** : usage local bucco-dentaire, route non auto-remplie (à trancher : ORALE vs BUCCOGINGIVALE).
@@ -108,7 +96,7 @@ Même marque **et** même dosage/forme/packaging, deux `id` distincts (codes CNO
 |---|---|---|
 | **P0** | Réparer les 25 substances FK cassées | ✅ Fait |
 | **P0** | Déduire la voie ORALE des formes buvables | ✅ Fait |
-| **P1** | Trancher les 13 doublons produits (fusion ou conservation) | ⏳ Manuel |
+| **P1** | Trancher les 27 paires de doublons produits (fusion ou conservation) | ⏳ Manuel |
 | **P1** | Renseigner `therapeutic_class` des 20-30 DCI du pilote | ⏳ Manuel |
 | **P2** | Voie d'IMIZINE (pâte dentaire) | ⏳ Manuel |
 | **P2** | Compléter `dci_en` et synonymes pour la recherche | ⏳ Plus tard |

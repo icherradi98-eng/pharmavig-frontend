@@ -10,7 +10,8 @@
     "build:local": "PATH=\"$HOME/.nvm/versions/node/$(node --version 2>/dev/null | tr -d v)/bin:$PATH\" next build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "validate:referentiel": "node scripts/referentiel/validate-seed.mjs"
   },
   "dependencies": {
     "@zxing/browser": "^0.2.0",
