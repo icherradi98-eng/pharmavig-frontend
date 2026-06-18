@@ -18,6 +18,7 @@ export function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) =
   const [open, setOpen] = useState(false);
   const [enriching, setEnriching] = useState(false);
   const [enriched, setEnriched] = useState<DrugEnrichment | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const search = useCallback((q: string) => {
@@ -27,6 +28,7 @@ export function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) =
       const res = await autocomplete(q);
       setSuggestions(res);
       setOpen(res.length > 0);
+      setNotFound(res.length === 0);
     }, 300);
   }, []);
 
@@ -87,7 +89,7 @@ export function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) =
         <input
           type="text"
           value={query}
-          onChange={(e) => { setQuery(e.target.value); search(e.target.value); setEnriched(null); }}
+          onChange={(e) => { setQuery(e.target.value); search(e.target.value); setEnriched(null); setNotFound(false); }}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           placeholder="Tapez une DCI ou un nom commercial (ex. Opdivo, nivolumab, metformine...)"
@@ -114,6 +116,16 @@ export function MedicamentSearch({ onSelect }: { onSelect: (e: DrugEnrichment) =
           </div>
         )}
       </div>
+
+      {notFound && !open && (
+        <div className="rounded-lg px-3 py-2.5 text-xs flex items-start gap-2" style={{ background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.25)" }}>
+          <span className="shrink-0">💡</span>
+          <span style={{ color: "#7a5c00" }}>
+            Médicament non trouvé dans notre base (~350 médicaments disponibles, base en expansion).
+            Vous pouvez saisir la DCI manuellement dans les champs ci-dessous.
+          </span>
+        </div>
+      )}
 
       {enriched && (
         <div className="rounded-xl px-4 py-3 flex flex-wrap gap-x-4 gap-y-1 text-xs" style={{ background: "rgba(15,91,87,0.06)", border: "1px solid rgba(15,91,87,0.2)", color: "#0F5B57" }}>

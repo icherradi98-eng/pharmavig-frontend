@@ -206,24 +206,47 @@ export default function SuiviPatient() {
         )}
 
         {step === "done" && (
-          <div className="text-center px-2 py-10">
-            <div className="text-4xl mb-3">✅</div>
-            <p className="text-gray-700 whitespace-pre-line font-medium">{t.final}</p>
+          <div className="text-center px-4 py-10">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(15,91,87,0.1)" }}>
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="#0F5B57" fillOpacity="0.15"/>
+                <path d="M9 12l2 2 4-4" stroke="#0F5B57" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <p className="text-gray-800 font-semibold text-base whitespace-pre-line">{t.final}</p>
+            <p className="text-gray-400 text-sm mt-2 leading-relaxed">
+              Votre médecin a été informé automatiquement.<br/>Merci pour votre réponse.
+            </p>
           </div>
         )}
 
         {step === "done-no" && (
-          <div className="text-center px-2 py-10">
-            <div className="text-4xl mb-3">🙏</div>
-            <p className="text-gray-700 whitespace-pre-line font-medium">{t.thanksNo}</p>
-            {nextInDays != null && <p className="text-gray-400 text-sm mt-2">{t.nextIn(nextInDays)}</p>}
+          <div className="text-center px-4 py-10">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(15,91,87,0.1)" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0F5B57" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+              </svg>
+            </div>
+            <p className="text-gray-800 font-semibold text-base whitespace-pre-line">{t.thanksNo}</p>
+            {nextInDays != null && (
+              <div className="mt-4 inline-block px-4 py-2 rounded-xl text-sm" style={{ background: "rgba(15,91,87,0.06)", color: "#0F5B57" }}>
+                {t.nextIn(nextInDays)}
+              </div>
+            )}
           </div>
         )}
 
         {step === "done-stop" && (
-          <div className="text-center px-2 py-10">
-            <div className="text-4xl mb-3">🙏</div>
-            <p className="text-gray-700 whitespace-pre-line font-medium">{t.thanksNo}</p>
+          <div className="text-center px-4 py-10">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(212,175,55,0.12)" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <p className="text-gray-800 font-semibold text-base whitespace-pre-line">{t.thanksNo}</p>
+            <p className="text-gray-400 text-sm mt-2 leading-relaxed">
+              Votre médecin a été informé de l&apos;arrêt du traitement.
+            </p>
           </div>
         )}
       </div>

@@ -22,6 +22,12 @@ export function Shell({ lang, setLang, dir, children }: {
         </div>
       </div>
       <div className="flex-1 max-w-md w-full mx-auto">{children}</div>
+      <div className="max-w-md w-full mx-auto px-6 pb-5">
+        <p className="text-[11px] text-gray-400 text-center leading-relaxed">
+          🔒 Ce lien est personnel et temporaire — aucun compte patient n&apos;est créé.<br/>
+          Vos réponses sont transmises uniquement à votre médecin.
+        </p>
+      </div>
     </div>
   );
 }

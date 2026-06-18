@@ -164,6 +164,18 @@ export default function SuiviActifPage() {
         }
       />
 
+      {/* Bandeau confidentialité données patient */}
+      <div className="mx-5 md:mx-8 mt-4 mb-2 rounded-xl px-4 py-3 flex items-start gap-3"
+        style={{ background: "rgba(15,91,87,0.05)", border: "1px solid rgba(15,91,87,0.15)" }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="shrink-0 mt-0.5">
+          <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="#0F5B57" fillOpacity="0.2"/>
+          <path d="M9 12l2 2 4-4" stroke="#0F5B57" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <p className="text-xs leading-relaxed" style={{ color: "#0a3f3c" }}>
+          <strong>Données patients protégées</strong> — MAIA DAWA utilise des liens temporaires. Aucun profil patient complet n&apos;est stocké. Les réponses au suivi arrivent directement dans votre tableau de bord.
+        </p>
+      </div>
+
       {/* ── Signaux actifs (anciennement dans /surveillance) ── */}
       <SignalsList
         signals={signals}

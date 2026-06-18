@@ -14,13 +14,18 @@ const STEPS = [
   },
   {
     icon: "🔍",
-    title: "Rechercher un médicament",
-    desc: "Référentiel Morocco-first : disponibilité, prix CNOPS, enrichissement clinique séparé.",
+    title: "Référentiel médicament marocain",
+    desc: "Base Morocco-first (CNOPS) · ~350 médicaments disponibles, en expansion vers 14 000.",
   },
   {
     icon: "📤",
-    title: "Suivre & transmettre",
-    desc: "Suivi de tolérance patient, historique de vos déclarations, export PDF prêt à envoyer au CAPM.",
+    title: "Suivi de tolérance",
+    desc: "Liens temporaires envoyés à vos patients — aucun profil patient stocké sur MAIA DAWA.",
+  },
+  {
+    icon: "🔒",
+    title: "Données protégées",
+    desc: "Les réponses patients arrivent directement dans votre tableau de bord. Aucune donnée sensible n'est conservée sans votre accord.",
   },
 ];
 
