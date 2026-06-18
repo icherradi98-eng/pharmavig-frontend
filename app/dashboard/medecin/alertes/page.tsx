@@ -313,19 +313,29 @@ function EmptyState({ hasFilters }: { hasFilters: boolean }) {
   if (hasFilters) {
     return (
       <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
-        <span className="text-3xl">🔍</span>
-        <p className="text-gray-700 font-medium mt-3">Aucune alerte ne correspond à vos filtres.</p>
-        <p className="text-gray-400 text-sm mt-1">Essayez d&apos;élargir votre recherche.</p>
+        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </div>
+        <p className="text-gray-700 font-semibold">Aucun résultat</p>
+        <p className="text-gray-400 text-sm mt-1">Aucune alerte ne correspond à vos filtres.<br/>Essayez d&apos;élargir votre recherche.</p>
       </div>
     );
   }
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
-      <span className="text-3xl">✅</span>
-      <p className="text-gray-700 font-medium mt-3">Aucune alerte active pour le moment.</p>
-      <p className="text-gray-400 text-sm mt-1">
-        Dernière vérification : aujourd&apos;hui à {timeLabel}
+      <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: "rgba(15,91,87,0.08)" }}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="#0F5B57" fillOpacity="0.15"/>
+          <path d="M9 12l2 2 4-4" stroke="#0F5B57" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+      <p className="text-gray-800 font-semibold">Aucune alerte active</p>
+      <p className="text-gray-400 text-sm mt-1 leading-relaxed">
+        Vos patients ne présentent pas de signal inhabituel.<br/>
+        <span className="text-xs">Vérifié à {timeLabel}</span>
       </p>
     </div>
   );

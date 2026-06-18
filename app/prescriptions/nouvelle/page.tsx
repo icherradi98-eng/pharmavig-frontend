@@ -173,7 +173,7 @@ export default function NouvellePrescription() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream">
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/dashboard/medecin" className="text-gray-400 hover:text-gray-600 text-sm">← Retour</Link>
@@ -411,7 +411,7 @@ function PrescriptionSuccess({ prescription, doctorName }: { prescription: Presc
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(checkinUrl)}`;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-10">
       <div className="max-w-lg w-full">
         <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center mb-5">
           <div className="text-4xl mb-3">✅</div>

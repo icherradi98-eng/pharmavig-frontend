@@ -86,7 +86,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
     .filter(Boolean) as string[] | undefined;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-cream flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 md:px-10 py-4 flex items-center justify-between">
         <Link href="/medicaments" className="font-bold text-lg text-petrol">MAIA DAWA — Médicaments</Link>
         <Link href="/medicaments" className="text-sm font-medium text-gray-600 hover:text-petrol">← Nouvelle recherche</Link>

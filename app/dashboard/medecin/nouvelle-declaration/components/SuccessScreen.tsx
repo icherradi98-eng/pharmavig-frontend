@@ -19,7 +19,7 @@ export function SuccessScreen({ form, pvNumber, isSerieux, isFatal, delaiLegal, 
   const [refCopied, setRefCopied] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 max-w-lg w-full">
 
         {/* Titre */}
