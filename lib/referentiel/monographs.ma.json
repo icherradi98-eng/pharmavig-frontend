@@ -22,16 +22,32 @@
       "patient_advice": "• Respecter strictement la dose et l'intervalle entre les prises (≥ 4 h).\n• Ne pas prendre en même temps un autre médicament contenant du paracétamol (rhume, grippe, douleurs) — vérifier la composition.\n• Limiter/éviter l'alcool.\n• Consulter si la fièvre dépasse 3 jours ou la douleur 5 jours, ou en cas de douleur abdominale, nausées ou jaunisse.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.1.0", "date": "2026-06-18", "author": null, "summary": "Création — brouillon démo non validé" },
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Première vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, statut AI_generated en attente de relecture médecin." }
+        {
+          "version": "0.1.0",
+          "date": "2026-06-18",
+          "author": null,
+          "summary": "Création — brouillon démo non validé"
+        },
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Première vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, statut AI_generated en attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -56,16 +72,32 @@
       "patient_advice": "• Prendre au cours d'un repas, à la dose la plus faible et le moins longtemps possible.\n• Arrêter et consulter en cas de douleur gastrique intense, de selles noires, de vomissements sanglants, d'œdème ou d'éruption.\n• Ne pas associer à un autre anti-inflammatoire ou à l'aspirine sans avis.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.1.0", "date": "2026-06-18", "author": null, "summary": "Création — brouillon démo non validé" },
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin." }
+        {
+          "version": "0.1.0",
+          "date": "2026-06-18",
+          "author": null,
+          "summary": "Création — brouillon démo non validé"
+        },
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -90,16 +122,32 @@
       "patient_advice": "• Respecter les horaires et la durée complète prescrite, même si amélioration rapide (résistances).\n• Signaler immédiatement éruption, gonflement du visage, gêne respiratoire (allergie) ou diarrhée importante.\n• Un traitement antibiotique ne traite pas les infections virales (rhume, grippe).",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.1.0", "date": "2026-06-18", "author": null, "summary": "Création — brouillon démo non validé" },
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin." }
+        {
+          "version": "0.1.0",
+          "date": "2026-06-18",
+          "author": null,
+          "summary": "Création — brouillon démo non validé"
+        },
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -124,16 +172,32 @@
       "patient_advice": "• Prendre au cours ou à la fin des repas pour limiter les troubles digestifs.\n• Signaler rapidement crampes, douleurs musculaires, fatigue intense, difficulté à respirer (signes d'acidose lactique).\n• Prévenir tout soignant d'un examen avec produit de contraste. Limiter l'alcool.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.1.0", "date": "2026-06-18", "author": null, "summary": "Création — brouillon démo non validé" },
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin." }
+        {
+          "version": "0.1.0",
+          "date": "2026-06-18",
+          "author": null,
+          "summary": "Création — brouillon démo non validé"
+        },
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -158,16 +222,32 @@
       "patient_advice": "• Prendre le matin avant le repas (gélule entière, ne pas croquer).\n• Ne pas prolonger sans avis médical ; signaler tout amaigrissement, difficulté à avaler ou sang dans les selles.\n• Signaler crampes, palpitations (hypomagnésémie) en cas d'usage prolongé.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.1.0", "date": "2026-06-18", "author": null, "summary": "Création — brouillon démo non validé" },
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin." }
+        {
+          "version": "0.1.0",
+          "date": "2026-06-18",
+          "author": null,
+          "summary": "Création — brouillon démo non validé"
+        },
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -192,15 +272,26 @@
       "patient_advice": "• Prendre le méthotrexate UNE SEULE FOIS PAR SEMAINE, le même jour — ne JAMAIS le prendre tous les jours.\n• Prendre l'acide folique comme prescrit (pas le même jour).\n• Consulter d'urgence en cas de fièvre, aphtes, saignements, toux ou essoufflement.\n• Éviter l'alcool et l'automédication par anti-inflammatoires. Contraception impérative.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -225,15 +316,26 @@
       "patient_advice": "• Prendre à heure fixe le soir ; ne jamais rattraper une dose par une double dose.\n• Faire les contrôles d'INR prescrits ; garder un carnet.\n• Signaler tout saignement, selles noires, urines rouges, maux de tête inhabituels.\n• Prévenir tout soignant de la prise d'AVK ; éviter l'automédication (AINS, aspirine) ; alimentation régulière.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -258,15 +360,26 @@
       "patient_advice": "• Prendre les doses de 15/20 mg au cours d'un repas, à heure régulière ; ne pas arrêter de votre propre initiative.\n• Signaler tout saignement anormal, selles noires, fatigue intense.\n• Prévenir tout soignant/dentiste de la prise d'anticoagulant ; éviter AINS et aspirine sans avis.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -291,15 +404,26 @@
       "patient_advice": "• Prendre 75 mg/jour à heure fixe ; ne JAMAIS arrêter sans avis cardiologique, surtout après un stent.\n• Signaler tout saignement prolongé, selles noires, ecchymoses inhabituelles.\n• Prévenir tout soignant/dentiste avant un geste ; éviter l'automédication par AINS.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -324,15 +448,26 @@
       "patient_advice": "• Prendre à heure régulière, tous les jours.\n• Les gonflements de chevilles sont fréquents : en parler au médecin plutôt que d'arrêter seul.\n• Se relever doucement (vertiges possibles). Éviter le jus de pamplemousse en grande quantité.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -357,15 +492,26 @@
       "patient_advice": "• Une toux sèche persistante peut survenir : en parler au médecin (changement de classe possible).\n• Consulter en urgence en cas de gonflement du visage, des lèvres ou de la langue, ou de difficulté à respirer.\n• Éviter les AINS et les sels de régime riches en potassium sans avis. Prévenir en cas de projet de grossesse.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -390,15 +536,26 @@
       "patient_advice": "• Prendre le matin ; ne JAMAIS arrêter brutalement un traitement prolongé sans avis.\n• Limiter sel et sucres rapides ; signaler fièvre, douleurs abdominales, troubles de l'humeur ou de la vue.\n• Garder une carte mentionnant la corticothérapie ; éviter les AINS sans avis.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -423,15 +580,26 @@
       "patient_advice": "• Ne jamais arrêter brutalement (risque de crises).\n• Femme en âge de procréer : contraception efficace indispensable ; prévenir immédiatement en cas de désir ou de suspicion de grossesse.\n• Consulter rapidement en cas de douleurs abdominales intenses, vomissements, jaunisse, somnolence inhabituelle ou ecchymoses.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (haut risque, tératogène). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (haut risque, tératogène). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -456,15 +624,26 @@
       "patient_advice": "• Respecter SCRUPULEUSEMENT la dose : ne jamais l'augmenter même si la douleur persiste (risque vital).\n• Arrêter et consulter dès l'apparition de diarrhée, nausées ou vomissements.\n• Signaler tout autre médicament (notamment antibiotiques macrolides, antifongiques) ; éviter le pamplemousse.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (haut risque, marge étroite). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (haut risque, marge étroite). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -489,15 +668,26 @@
       "patient_advice": "• Prendre la dose exacte prescrite, à heure fixe ; ne pas doubler en cas d'oubli.\n• Consulter rapidement en cas de nausées, perte d'appétit, troubles de la vision (halos/couleurs), pouls lent ou irrégulier.\n• Signaler tout nouveau médicament ; faire les contrôles sanguins prescrits.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (haut risque, marge étroite). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (haut risque, marge étroite). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -522,15 +712,26 @@
       "patient_advice": "• Signaler toute douleur, sensibilité ou faiblesse musculaire inexpliquée, surtout avec fièvre/malaise.\n• Éviter le jus de pamplemousse en grande quantité. Prévenir en cas de projet de grossesse.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -555,15 +756,26 @@
       "patient_advice": "• Prendre au cours des repas, le moins longtemps possible.\n• Arrêter et consulter en cas de douleur thoracique, essoufflement, douleur gastrique intense ou selles noires.\n• Ne pas associer à un autre AINS/aspirine sans avis.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -588,15 +800,26 @@
       "patient_advice": "• Ne jamais donner d'aspirine à un enfant/adolescent fébrile sans avis (syndrome de Reye).\n• Signaler tout saignement, selles noires.\n• Ne pas associer à un autre AINS ; prévenir tout soignant/dentiste de la prise (surtout en prévention CV).",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -621,15 +844,26 @@
       "patient_advice": "• Arrêter et consulter en cas de douleur/gonflement d'un tendon (notamment talon), de palpitations, de troubles neuropsychiques ou de fourmillements.\n• Prendre à distance (≥ 2 h) du fer, calcium, antiacides et laitages. Éviter l'exposition solaire intense.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -654,15 +888,26 @@
       "patient_advice": "• Respecter la durée du schéma court prescrit.\n• Signaler palpitations, malaise, jaunisse, ou diarrhée sévère/persistante.\n• Un antibiotique ne traite pas les infections virales.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -687,15 +932,26 @@
       "patient_advice": "• Prendre au petit-déjeuner ; ne pas sauter de repas.\n• Reconnaître l'hypoglycémie (sueurs, tremblements, faim, malaise) et resucrer ; avoir du sucre sur soi.\n• Limiter l'alcool ; signaler tout autre médicament.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -720,15 +976,26 @@
       "patient_advice": "• Prendre le matin ; signaler crampes, faiblesse musculaire, vertiges ou palpitations (troubles ioniques).\n• Protection solaire (photosensibilité, risque cutané) ; surveiller une éventuelle lésion cutanée nouvelle.\n• Éviter l'automédication par AINS.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -753,15 +1020,26 @@
       "patient_advice": "• Prendre le matin pour limiter les levers nocturnes.\n• Signaler crampes, faiblesse, vertiges importants, prise/perte de poids rapide.\n• Éviter l'automédication par AINS ; respecter les contrôles sanguins.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -786,15 +1064,26 @@
       "patient_advice": "• Prendre le matin avant le repas ; ne pas prolonger sans avis.\n• Signaler amaigrissement, difficulté à avaler, sang dans les selles, ou crampes/palpitations (usage prolongé).",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -819,15 +1108,26 @@
       "patient_advice": "• Prendre le matin ; ne jamais arrêter brutalement un traitement prolongé.\n• Limiter sel et sucres rapides ; signaler fièvre, douleurs abdominales, troubles de l'humeur ou de la vue ; garder une carte de corticothérapie.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -852,15 +1152,26 @@
       "patient_advice": "• Respecter la dose et la durée ; ne pas associer à l'alcool ou aux somnifères sans avis.\n• Attention à la conduite (somnolence/vertiges).\n• Signaler agitation, confusion, fièvre/sueurs (syndrome sérotoninergique), ou difficulté à respirer.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (opioïde, vigilance dépendance). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (opioïde, vigilance dépendance). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -885,15 +1196,26 @@
       "patient_advice": "• Effet sur plusieurs jours à semaines ; ne pas arrêter brutalement.\n• Attention à la conduite (somnolence) ; se relever doucement (hypotension).\n• Signaler palpitations, rétention d'urine, idées noires, ou agitation/fièvre inhabituelles.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -918,15 +1240,26 @@
       "patient_advice": "• L'effet met 2 à 4 semaines ; ne pas arrêter brutalement (sevrage).\n• Signaler idées noires, agitation, palpitations, ou confusion/fièvre (syndrome sérotoninergique).\n• Prudence avec les AINS et l'alcool.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail. En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -951,15 +1284,26 @@
       "patient_advice": "• Traitement court ; ne jamais arrêter brutalement (sevrage) ni augmenter seul la dose.\n• Pas d'alcool ; attention à la conduite et aux chutes.\n• Signaler une somnolence excessive ou des réactions inhabituelles (agitation).",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (benzodiazépine, vigilance dépendance). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (benzodiazépine, vigilance dépendance). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -984,15 +1328,26 @@
       "patient_advice": "• Respecter la durée prescrite ; prendre en début de repas pour limiter les troubles digestifs.\n• Signaler une jaunisse, des urines foncées, une éruption ou une diarrhée importante.",
       "status": "AI_generated",
       "is_demo": false,
-      "version": "0.2.0-draft",
-      "source_name": "Rédaction interne MAIA DAWA d'après RCP et références publiques — à valider (médecin puis pharmacien)",
-      "source_url": null,
+      "version": "0.2.1-draft",
+      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
       "reviewed_at": null,
       "last_verified_at": null,
       "change_log": [
-        { "version": "0.2.0-draft", "date": "2026-06-18", "author": "rédaction IA (MAIA DAWA)", "summary": "Création — vraie monographie de travail (toujours en association). En attente de relecture médecin." }
+        {
+          "version": "0.2.0-draft",
+          "date": "2026-06-18",
+          "author": "rédaction IA (MAIA DAWA)",
+          "summary": "Création — vraie monographie de travail (toujours en association). En attente de relecture médecin."
+        },
+        {
+          "version": "0.2.1-draft",
+          "date": "2026-06-18",
+          "author": "MAIA DAWA",
+          "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
+        }
       ],
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
