@@ -15,7 +15,7 @@ function MaiaLogo() {
         </svg>
       </div>
       <span className="font-black text-[15px] tracking-tight">
-        <span style={{ color: C.petrol }}>MAIA</span>{" "}
+        <span style={{ color: C.petrol }}>MAI</span>{" "}
         <span style={{ color: C.gold }}>DAWA</span>
       </span>
     </div>
@@ -108,7 +108,7 @@ export default function InviteDashboard() {
         </div>
 
         <p className="text-xs mt-6 text-center" style={{ color: "#8a9ab0" }}>
-          Déclaration anonyme dans les deux cas · Données transmises au réseau MAIA DAWA
+          Déclaration anonyme dans les deux cas · Données transmises au réseau MAI DAWA
         </p>
       </main>
     </div>

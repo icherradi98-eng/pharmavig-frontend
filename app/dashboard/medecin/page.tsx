@@ -154,7 +154,7 @@ export default function MedecinVueEnsemble() {
               <div className="space-y-4">
                 {/* Bannière de bienvenue */}
                 <div className="bg-gradient-to-br from-[#0F5B57] to-[#1F2D3D] rounded-2xl p-6 text-white">
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] mb-2">Bienvenue sur MAIA DAWA</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] mb-2">Bienvenue sur MAI DAWA</p>
                   <h2 className="text-xl font-bold mb-1">
                     Bonjour Dr. {user?.prenom || user?.nom || ""} 👋
                   </h2>
@@ -334,7 +334,7 @@ export default function MedecinVueEnsemble() {
                   </SectionCard>
                 )}
 
-                <SectionCard title="Vous vs la communauté MAIA DAWA">
+                <SectionCard title="Vous vs la communauté MAI DAWA">
                   {stats.total < 5 ? (
                     <div className="text-center py-8">
                       <p className="text-gray-400 text-sm">📊 Disponible après 5 déclarations</p>
@@ -350,7 +350,7 @@ export default function MedecinVueEnsemble() {
                         )}
                         <BenchmarkRow label="Délai moyen de déclaration après EIM" you="7 jours" national={`${NATIONAL_BENCHMARK.delaiMoyenJours} jours`} />
                       </div>
-                      <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-4">⚠️ Données illustratives — référentiel national indisponible. Ces valeurs ne reflètent pas de statistiques réelles de la communauté MAIA DAWA.</p>
+                      <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-4">⚠️ Données illustratives — référentiel national indisponible. Ces valeurs ne reflètent pas de statistiques réelles de la communauté MAI DAWA.</p>
                     </>
                   )}
                 </SectionCard>

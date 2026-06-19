@@ -14,7 +14,7 @@ export function Shell({ lang, setLang, dir, children }: {
           <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#0F5B57" }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9"/><path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span className="font-semibold text-gray-900 text-sm">MAIA DAWA</span>
+          <span className="font-semibold text-gray-900 text-sm">MAI DAWA</span>
         </div>
         <div className="flex bg-gray-100 rounded-full p-0.5 text-xs font-medium">
           <button onClick={() => setLang("fr")} className={`px-3 py-1 rounded-full transition-colors ${lang === "fr" ? "bg-white shadow text-gray-900" : "text-gray-500"}`}>Français</button>

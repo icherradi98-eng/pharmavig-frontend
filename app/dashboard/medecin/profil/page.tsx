@@ -223,7 +223,7 @@ export default function ProfilMedecin() {
                 {profileSaved && <span className="text-xs text-[#0F5B57]">✓ Enregistré</span>}
               </div>
               <p className="mt-3 text-xs text-gray-400">
-                Ces informations sont stockées uniquement sur cet appareil (localStorage). MAIA DAWA ne conserve pas vos données professionnelles.
+                Ces informations sont stockées uniquement sur cet appareil (localStorage). MAI DAWA ne conserve pas vos données professionnelles.
               </p>
             </>
           ) : (

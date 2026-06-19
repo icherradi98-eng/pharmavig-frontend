@@ -27,7 +27,7 @@ function MaiaLogo({ dark = false }: { dark?: boolean }) {
       </div>
       <div>
         <div className="flex items-baseline gap-1">
-          <span style={{ color: dark ? "#fff" : C.petrol, fontWeight: 900, fontSize: 16, letterSpacing: "-0.3px" }}>MAIA</span>
+          <span style={{ color: dark ? "#fff" : C.petrol, fontWeight: 900, fontSize: 16, letterSpacing: "-0.3px" }}>MAI</span>
           <span style={{ color: C.gold, fontWeight: 900, fontSize: 16, letterSpacing: "-0.3px" }}>DAWA</span>
         </div>
         <p style={{ color: dark ? "rgba(255,255,255,0.35)" : "#8a9ab0", fontSize: 8, letterSpacing: "0.8px", textTransform: "uppercase", marginTop: -2 }}>
@@ -46,12 +46,12 @@ const PARTNERS: { id: PartnerType; label: string; icon: React.ReactNode; color: 
   {
     id: "medecin", label: "Médecin", color: C.petrol, bg: "rgba(15,91,87,0.07)",
     icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-    title: "Tester MAIA DAWA", desc: "Rejoignez notre programme pilote et découvrez comment MAIA DAWA simplifie la déclaration, le suivi patient et la pharmacovigilance au quotidien.", cta: "Rejoindre le programme pilote",
+    title: "Tester MAI DAWA", desc: "Rejoignez notre programme pilote et découvrez comment MAI DAWA simplifie la déclaration, le suivi patient et la pharmacovigilance au quotidien.", cta: "Rejoindre le programme pilote",
   },
   {
     id: "clinique", label: "Clinique / Hôpital", color: C.mint, bg: "rgba(47,168,143,0.08)",
     icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>,
-    title: "Organiser une démonstration", desc: "Nous venons présenter MAIA DAWA à votre équipe. Formation incluse, déploiement rapide, compatible avec vos processus existants.", cta: "Planifier une démo",
+    title: "Organiser une démonstration", desc: "Nous venons présenter MAI DAWA à votre équipe. Formation incluse, déploiement rapide, compatible avec vos processus existants.", cta: "Planifier une démo",
   },
   {
     id: "institution", label: "Institution publique", color: C.gold, bg: "rgba(212,175,55,0.08)",
@@ -140,7 +140,7 @@ function PartnerForm({ type, cta, color }: { type: PartnerType; cta: string; col
       const fd = new FormData(e.currentTarget);
       const lines: string[] = [];
       fd.forEach((v, k) => { if (String(v).trim()) lines.push(`${k}: ${v}`); });
-      const subject = `Contact MAIA DAWA — ${type}`;
+      const subject = `Contact MAI DAWA — ${type}`;
       window.location.href = `mailto:contact@maiadawa.ma?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
       setSent(true);
     }} className="space-y-3">
@@ -207,7 +207,7 @@ function PartnerForm({ type, cta, color }: { type: PartnerType; cta: string; col
             <FormField label="Email" type="email" placeholder="contact@org.com" required />
           </div>
           <FormSelect label="Type de partenariat" options={PARTENARIAT_TYPES} required />
-          <FormField label="Décrivez votre projet" type="textarea" placeholder="Comment envisagez-vous une collaboration avec MAIA DAWA ?" required />
+          <FormField label="Décrivez votre projet" type="textarea" placeholder="Comment envisagez-vous une collaboration avec MAI DAWA ?" required />
         </>
       )}
 
@@ -227,9 +227,9 @@ function PartnerForm({ type, cta, color }: { type: PartnerType; cta: string; col
 // ── FAQ ───────────────────────────────────────────────────────────────────────
 
 const FAQ_ITEMS = [
-  { q: "Comment tester MAIA DAWA ?", a: "Sélectionnez le profil 'Médecin' dans la section Partenariats, remplissez le formulaire et notre équipe vous contacte sous 24h pour organiser un accès pilote personnalisé." },
+  { q: "Comment tester MAI DAWA ?", a: "Sélectionnez le profil 'Médecin' dans la section Partenariats, remplissez le formulaire et notre équipe vous contacte sous 24h pour organiser un accès pilote personnalisé." },
   { q: "Qui peut rejoindre le programme pilote ?", a: "Tout médecin exerçant au Maroc, quelle que soit sa spécialité. Nous recrutons en priorité des oncologues, cardiologues et médecins généralistes pour la phase pilote 2026." },
-  { q: "MAIA DAWA est-il disponible dans tout le Maroc ?", a: "La plateforme est accessible depuis n'importe quel navigateur, partout au Maroc. Nous proposons des formations en présentiel à Casablanca, Rabat et Fès — et en visioconférence pour les autres villes." },
+  { q: "MAI DAWA est-il disponible dans tout le Maroc ?", a: "La plateforme est accessible depuis n'importe quel navigateur, partout au Maroc. Nous proposons des formations en présentiel à Casablanca, Rabat et Fès — et en visioconférence pour les autres villes." },
   { q: "Comment organiser une démonstration pour mon établissement ?", a: "Remplissez le formulaire 'Clinique / Hôpital'. Notre équipe vous propose un créneau de démonstration (30 min) adapté à votre calendrier, en présentiel ou en visio." },
   { q: "Comment devenir partenaire institutionnel ?", a: "Institutions publiques, universités, agences réglementaires — nous sommes ouverts à tout type de collaboration. Contactez-nous via le formulaire 'Institution Publique' avec une description de votre projet." },
 ];
@@ -527,7 +527,7 @@ export default function ContactPage() {
                 au Maroc et en Afrique.
               </h2>
               <p className="text-sm leading-relaxed max-w-lg" style={{ color: "rgba(255,255,255,0.45)" }}>
-                MAIA DAWA est une initiative portée par des professionnels de santé, pour les professionnels de santé. Chaque partenariat renforce la sécurité médicamenteuse pour des millions de patients.
+                MAI DAWA est une initiative portée par des professionnels de santé, pour les professionnels de santé. Chaque partenariat renforce la sécurité médicamenteuse pour des millions de patients.
               </p>
             </div>
 
@@ -553,7 +553,7 @@ export default function ContactPage() {
       <footer className="px-6 md:px-12 py-5" style={{ background: "#111827", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <MaiaLogo dark />
-          <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.2)" }}>© 2025–2026 MAIA DAWA · Pharmacovigilance Intelligence for Safer Medicines</p>
+          <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.2)" }}>© 2025–2026 MAI DAWA · Pharmacovigilance Intelligence for Safer Medicines</p>
           <div className="flex gap-4">
             {[["Accueil", "/"], ["Référentiel", "/medicaments"], ["Confidentialité", "/confidentialite"]].map(([label, href]) => (
               <Link key={label} href={href} className="text-[11px] transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</Link>

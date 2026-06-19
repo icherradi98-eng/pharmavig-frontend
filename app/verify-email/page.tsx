@@ -36,7 +36,7 @@ function VerifyEmailContent() {
       <div className="text-center">
         {/* Logo texte */}
         <div className="mb-6">
-          <span className="text-xl font-black" style={{ color: C.petrol }}>MAIA </span>
+          <span className="text-xl font-black" style={{ color: C.petrol }}>MAI </span>
           <span className="text-xl font-black" style={{ color: C.gold }}>DAWA</span>
           <p className="text-xs mt-0.5" style={{ color: "#8a9ab0" }}>Pharmacovigilance · المملكة المغربية 🇲🇦</p>
         </div>

@@ -101,7 +101,7 @@ export function useUnreadAlertsCount(totalAlerts: number) {
   return unread;
 }
 
-// ── Logo MAIA DAWA ────────────────────────────────────────────────────────────
+// ── Logo MAI DAWA ────────────────────────────────────────────────────────────
 
 function MaiaLogo({ collapsed = false }: { collapsed?: boolean }) {
   return (
@@ -116,7 +116,7 @@ function MaiaLogo({ collapsed = false }: { collapsed?: boolean }) {
       {!collapsed && (
         <div>
           <div className="flex items-baseline gap-1">
-            <span style={{ color: "var(--md-petrol)", fontWeight: 900, fontSize: 15, letterSpacing: "-0.3px" }}>MAIA</span>
+            <span style={{ color: "var(--md-petrol)", fontWeight: 900, fontSize: 15, letterSpacing: "-0.3px" }}>MAI</span>
             <span style={{ color: "var(--md-gold)", fontWeight: 900, fontSize: 15, letterSpacing: "-0.3px" }}>DAWA</span>
           </div>
           <p style={{ color: "var(--md-text-muted)", fontSize: 9, letterSpacing: "0.5px", textTransform: "uppercase", marginTop: -1 }}>

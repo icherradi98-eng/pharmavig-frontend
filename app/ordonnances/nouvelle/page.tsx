@@ -445,7 +445,7 @@ export default function NouvelleOrdonnance() {
                 {interactionResult === "interaction" && (
                   <div className="bg-amber-50 border border-amber-300 rounded-lg px-3 py-2 text-sm text-amber-800">
                     ⚠️ Interaction potentielle détectée entre <strong>{interactionPair[0]}</strong> et <strong>{interactionPair[1]}</strong>. Vérifiez avant de prescrire.
-                    <p className="text-xs text-amber-600 mt-1">Cette vérification est indicative (base locale MAIA DAWA). Le prescripteur reste seul responsable.</p>
+                    <p className="text-xs text-amber-600 mt-1">Cette vérification est indicative (base locale MAI DAWA). Le prescripteur reste seul responsable.</p>
                   </div>
                 )}
                 {interactionResult === "aucune" && (
@@ -460,7 +460,7 @@ export default function NouvelleOrdonnance() {
             )}
           </div>
 
-          {/* ── Suivi MAIA DAWA — bloc star (la proposition de valeur) ── */}
+          {/* ── Suivi MAI DAWA — bloc star (la proposition de valeur) ── */}
           <SuiviCard
             suiviActif={suiviActif}
             setSuiviActif={setSuiviActif}
@@ -479,7 +479,7 @@ export default function NouvelleOrdonnance() {
           />
 
           <p className="text-xs text-center px-4" style={{ color: "var(--md-text-muted)" }}>
-            Vos ordonnances sont stockées uniquement sur cet appareil. MAIA DAWA ne conserve aucune donnée patient.
+            Vos ordonnances sont stockées uniquement sur cet appareil. MAI DAWA ne conserve aucune donnée patient.
           </p>
         </div>
       </div>

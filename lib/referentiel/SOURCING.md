@@ -1,4 +1,4 @@
-# Politique de sourcing — Référentiel clinique MAIA DAWA
+# Politique de sourcing — Référentiel clinique MAI DAWA
 
 Objectif : enrichir les monographies à partir des **mêmes sources primaires** que les
 bases commerciales (type Vidal), **sans jamais copier** une base propriétaire.

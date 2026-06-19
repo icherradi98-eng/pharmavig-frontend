@@ -172,7 +172,7 @@ export default function SuiviActifPage() {
           <path d="M9 12l2 2 4-4" stroke="#0F5B57" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
         <p className="text-xs leading-relaxed" style={{ color: "#0a3f3c" }}>
-          <strong>Données patients protégées</strong> — MAIA DAWA utilise des liens temporaires. Aucun profil patient complet n&apos;est stocké. Les réponses au suivi arrivent directement dans votre tableau de bord.
+          <strong>Données patients protégées</strong> — MAI DAWA utilise des liens temporaires. Aucun profil patient complet n&apos;est stocké. Les réponses au suivi arrivent directement dans votre tableau de bord.
         </p>
       </div>
 

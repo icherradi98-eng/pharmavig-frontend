@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Couche service — Référentiel clinique MAIA DAWA (monographies par DCI).
+// Couche service — Référentiel clinique MAI DAWA (monographies par DCI).
 //
 // Sépare la donnée marché (CNOPS, dans index.ts) de la donnée clinique
 // (monographies + interactions, ici). Toute la logique de recherche / résolution

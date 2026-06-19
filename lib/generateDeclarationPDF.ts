@@ -29,7 +29,7 @@ export async function generateDeclarationPDF(
   const contentW = W - margin * 2;
   let y = 0;
 
-  // ─── Couleurs MAIA DAWA ────────────────────────────────────────────
+  // ─── Couleurs MAI DAWA ────────────────────────────────────────────
   const PETROL   = [15, 91, 87]   as const;   // #0F5B57
   const GOLD     = [212, 175, 55] as const;   // #D4AF37
   const NIGHT    = [31, 45, 61]   as const;   // #1F2D3D
@@ -111,7 +111,7 @@ export async function generateDeclarationPDF(
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
   setColor(...PETROL);
-  doc.text("MAIA DAWA", margin, y);
+  doc.text("MAI DAWA", margin, y);
 
   doc.setFontSize(8);
   doc.setFont("helvetica", "normal");
@@ -342,7 +342,7 @@ export async function generateDeclarationPDF(
     doc.setFont("helvetica", "normal");
     setColor(200, 230, 228);
     doc.text(
-      `MAIA DAWA — Déclaration ${meta.pvNumber} — Confidentiel`,
+      `MAI DAWA — Déclaration ${meta.pvNumber} — Confidentiel`,
       margin, 295
     );
     doc.text(`Page ${i} / ${totalPages}`, W - margin, 295, { align: "right" });
@@ -353,6 +353,6 @@ export async function generateDeclarationPDF(
   }
 
   // ─── Téléchargement ────────────────────────────────────────────────
-  const filename = `MAIA_DAWA_${meta.isDemo ? "DEMO_" : ""}${meta.pvNumber}.pdf`;
+  const filename = `MAI_DAWA_${meta.isDemo ? "DEMO_" : ""}${meta.pvNumber}.pdf`;
   doc.save(filename);
 }

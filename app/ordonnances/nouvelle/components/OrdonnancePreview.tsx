@@ -75,7 +75,7 @@ export function OrdonnancePreview({ ordonnance, doctorName, specialite, profile,
   }
 
   function handleWhatsApp() {
-    const msg = `Votre ordonnance du ${dateLabel} (${ordonnance.numero}) — générée via MAIA DAWA. Merci de la présenter à votre pharmacien.`;
+    const msg = `Votre ordonnance du ${dateLabel} (${ordonnance.numero}) — générée via MAI DAWA. Merci de la présenter à votre pharmacien.`;
     window.open(buildWhatsAppLink(msg), "_blank");
   }
 
@@ -106,7 +106,7 @@ export function OrdonnancePreview({ ordonnance, doctorName, specialite, profile,
             <div className="w-6 h-6 bg-petrol rounded-md flex items-center justify-center">
               <span className="text-white font-black text-[9px]">PV</span>
             </div>
-            MAIA DAWA
+            MAI DAWA
           </div>
 
           <div className="flex items-start justify-between border-b border-gray-200 pb-4">
@@ -183,7 +183,7 @@ export function OrdonnancePreview({ ordonnance, doctorName, specialite, profile,
           </div>
 
           <div className="text-center text-xs text-gray-400 pt-2 border-t border-gray-100">
-            Validité de l&apos;ordonnance : {validiteLabel} · Généré via MAIA DAWA
+            Validité de l&apos;ordonnance : {validiteLabel} · Généré via MAI DAWA
           </div>
         </div>
 
@@ -281,7 +281,7 @@ export function OrdonnancePreview({ ordonnance, doctorName, specialite, profile,
         </div>
 
         <p className="text-xs text-gray-400 text-center mt-5">
-          🔒 Vos ordonnances sont stockées uniquement sur cet appareil. MAIA DAWA ne conserve aucune donnée patient.
+          🔒 Vos ordonnances sont stockées uniquement sur cet appareil. MAI DAWA ne conserve aucune donnée patient.
         </p>
 
         <style jsx global>{`

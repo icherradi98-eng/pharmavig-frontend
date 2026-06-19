@@ -49,7 +49,7 @@ export type ExtractResponse<T> = {
 // ── Extraction structurée via backend ────────────────────────────────────────
 
 /**
- * Envoie le texte brut d'une section RCP au backend MAIA DAWA.
+ * Envoie le texte brut d'une section RCP au backend MAI DAWA.
  * Le backend appelle Gemini et retourne des données structurées en JSON.
  * Résultat mis en cache localStorage 24h pour éviter les appels redondants.
  */

@@ -68,7 +68,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
   }, [name, productView]);
 
   useEffect(() => {
-    document.title = `${dci} — Référentiel médicament Maroc | MAIA DAWA`;
+    document.title = `${dci} — Référentiel médicament Maroc | MAI DAWA`;
   }, [dci]);
 
   function declareWithDrug() {
@@ -98,7 +98,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 md:px-10 py-4 flex items-center justify-between">
-        <Link href="/medicaments" className="font-bold text-lg text-petrol">MAIA DAWA — Médicaments</Link>
+        <Link href="/medicaments" className="font-bold text-lg text-petrol">MAI DAWA — Médicaments</Link>
         <Link href="/medicaments" className="text-sm font-medium text-gray-600 hover:text-petrol">← Nouvelle recherche</Link>
       </header>
 

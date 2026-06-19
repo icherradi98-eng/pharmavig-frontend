@@ -26,7 +26,7 @@ export default function AboutPage() {
               <path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <Link href="/" className="font-bold text-gray-900 text-lg tracking-tight">MAIA DAWA</Link>
+          <Link href="/" className="font-bold text-gray-900 text-lg tracking-tight">MAI DAWA</Link>
         </div>
         <div className="flex items-center gap-6">
           <Link href="/about" className="text-sm font-semibold" style={{ color: "#0F5B57" }}>À propos</Link>
@@ -42,13 +42,13 @@ export default function AboutPage() {
         {/* Hero */}
         <section className="w-full px-8 py-20 text-center" style={{ background: "linear-gradient(135deg, #F7F3EE 0%, #fff 50%, #F7F3EE 100%)" }}>
           <div className="max-w-3xl mx-auto">
-            <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-6 uppercase tracking-wide" style={{ background: "rgba(15,91,87,0.08)", color: "#0F5B57" }}>À propos de MAIA DAWA</span>
+            <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-6 uppercase tracking-wide" style={{ background: "rgba(15,91,87,0.08)", color: "#0F5B57" }}>À propos de MAI DAWA</span>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-5">
               La pharmacovigilance sauve des vies.<br />
               <span style={{ color: "#0F5B57" }}>Encore faut-il la pratiquer.</span>
             </h1>
             <p className="text-gray-600 text-base leading-relaxed max-w-2xl mx-auto">
-              MAIA DAWA est la première plateforme digitale de pharmacovigilance au Maroc, conçue pour transformer la déclaration des effets indésirables médicamenteux en un acte simple, accessible et systématique.
+              MAI DAWA est la première plateforme digitale de pharmacovigilance au Maroc, conçue pour transformer la déclaration des effets indésirables médicamenteux en un acte simple, accessible et systématique.
             </p>
           </div>
         </section>
@@ -80,7 +80,7 @@ export default function AboutPage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Rendre la pharmacovigilance accessible à tous</h2>
             <p className="text-gray-600 mb-10 max-w-2xl">
-              MAIA DAWA a été développée pour lever les barrières structurelles à la déclaration des effets indésirables. Notre mission repose sur trois piliers fondamentaux :
+              MAI DAWA a été développée pour lever les barrières structurelles à la déclaration des effets indésirables. Notre mission repose sur trois piliers fondamentaux :
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
@@ -115,7 +115,7 @@ export default function AboutPage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Une solution construite avec et pour le terrain</h2>
             <p className="text-gray-600 mb-10 max-w-2xl">
-              MAIA DAWA n&apos;est pas un outil générique adapté au contexte marocain. C&apos;est une solution conçue depuis le terrain, par des professionnels de santé exerçant dans des centres hospitaliers universitaires marocains, au plus près des réalités cliniques locales.
+              MAI DAWA n&apos;est pas un outil générique adapté au contexte marocain. C&apos;est une solution conçue depuis le terrain, par des professionnels de santé exerçant dans des centres hospitaliers universitaires marocains, au plus près des réalités cliniques locales.
             </p>
             <div className="flex flex-col gap-5">
               {[
@@ -125,7 +125,7 @@ export default function AboutPage() {
                 },
                 {
                   titre: "Interface adaptée au contexte LMIC",
-                  texte: "Contrairement aux solutions européennes ou américaines, MAIA DAWA intègre les spécificités des systèmes de santé à ressources limitées : multilinguisme, accès mobile prioritaire, formulaires simplifiés pour les patients non médicaux.",
+                  texte: "Contrairement aux solutions européennes ou américaines, MAI DAWA intègre les spécificités des systèmes de santé à ressources limitées : multilinguisme, accès mobile prioritaire, formulaires simplifiés pour les patients non médicaux.",
                 },
                 {
                   titre: "Documentation au format CIOMS",
@@ -154,7 +154,7 @@ export default function AboutPage() {
               La sous-déclaration des EIM n&apos;est pas un problème marocain — c&apos;est un problème africain. Avec 54 pays, plus d&apos;1,4 milliard d&apos;habitants et des systèmes de santé en pleine structuration, l&apos;Afrique francophone représente le territoire où l&apos;impact d&apos;une pharmacovigilance digitale accessible serait le plus significatif.
             </p>
             <p className="text-gray-600 mb-12 max-w-3xl leading-relaxed">
-              MAIA DAWA est déployée au Maroc en phase pilote. Notre feuille de route prévoit une extension progressive aux pays d&apos;Afrique francophone — Tunisie, Sénégal, Côte d&apos;Ivoire, Cameroun — en adaptant les formulaires aux autorités nationales de chaque pays.
+              MAI DAWA est déployée au Maroc en phase pilote. Notre feuille de route prévoit une extension progressive aux pays d&apos;Afrique francophone — Tunisie, Sénégal, Côte d&apos;Ivoire, Cameroun — en adaptant les formulaires aux autorités nationales de chaque pays.
             </p>
 
             {/* Timeline */}
@@ -190,12 +190,12 @@ export default function AboutPage() {
                 {
                   icon: "🔒",
                   title: "Loi 09-08",
-                  text: "MAIA DAWA s'appuie sur le cadre de la loi marocaine 09-08 relative à la protection des données personnelles. Mise en conformité en cours.",
+                  text: "MAI DAWA s'appuie sur le cadre de la loi marocaine 09-08 relative à la protection des données personnelles. Mise en conformité en cours.",
                 },
                 {
                   icon: "🛡️",
                   title: "Données médicales chiffrées",
-                  text: "Toutes les données de santé transmises via MAIA DAWA sont chiffrées en transit (TLS 1.3) et au repos. Aucune donnée n'est partagée avec des tiers à des fins commerciales.",
+                  text: "Toutes les données de santé transmises via MAI DAWA sont chiffrées en transit (TLS 1.3) et au repos. Aucune donnée n'est partagée avec des tiers à des fins commerciales.",
                 },
                 {
                   icon: "📋",
@@ -234,7 +234,7 @@ export default function AboutPage() {
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Contribuez à la pharmacovigilance</h2>
             <p className="text-white/70 text-base mb-8 leading-relaxed">
-              Chaque déclaration d&apos;effet indésirable contribue à un système de santé plus sûr. Rejoignez les professionnels de santé qui utilisent MAIA DAWA.
+              Chaque déclaration d&apos;effet indésirable contribue à un système de santé plus sûr. Rejoignez les professionnels de santé qui utilisent MAI DAWA.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/declarer"
@@ -262,7 +262,7 @@ export default function AboutPage() {
                     <path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <span className="text-white font-bold text-base">MAIA DAWA</span>
+                <span className="text-white font-bold text-base">MAI DAWA</span>
               </div>
               <p className="text-gray-400 text-sm mb-5 leading-relaxed">La pharmacovigilance digitale au Maroc.</p>
               <ul className="space-y-2 text-sm">
@@ -301,7 +301,7 @@ export default function AboutPage() {
         </div>
         <div className="border-t border-gray-800 px-8 py-5">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-gray-500">© 2025 MAIA DAWA. Tous droits réservés. · Maroc · Afrique francophone</p>
+            <p className="text-xs text-gray-500">© 2025 MAI DAWA. Tous droits réservés. · Maroc · Afrique francophone</p>
             <div className="flex items-center gap-4">
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>

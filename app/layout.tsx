@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MAIA DAWA — Pharmacovigilance Intelligence",
+  title: "MAI DAWA — Pharmacovigilance Intelligence",
   description: "Plateforme de pharmacovigilance digitale au Maroc — Déclaration et suivi des effets indésirables médicamenteux",
 };
 

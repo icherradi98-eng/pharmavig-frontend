@@ -251,12 +251,12 @@ function BdpmNoData({
   );
 }
 
-// ── TAB 3 — Données terrain MAIA DAWA ─────────────────────────────────────────
+// ── TAB 3 — Données terrain MAI DAWA ─────────────────────────────────────────
 
 export function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | null | undefined; dci: string; onDeclare: () => void }) {
   if (terrain === undefined) {
     return (
-      <Section title="Données terrain MAIA DAWA">
+      <Section title="Données terrain MAI DAWA">
         <div className="text-center py-8">
           <div className="inline-block w-6 h-6 border-2 border-petrol border-t-transparent rounded-full animate-spin mb-3" />
           <p className="text-gray-400 text-sm">Chargement des données terrain…</p>
@@ -267,13 +267,13 @@ export function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | 
 
   if (terrain === null || terrain.total === 0) {
     return (
-      <Section title="Données terrain MAIA DAWA">
+      <Section title="Données terrain MAI DAWA">
         <div className="text-center py-8">
           <span className="text-3xl">📋</span>
           <p className="text-gray-700 font-medium mt-3">Aucun signal terrain pour {dci} pour l&apos;instant.</p>
           <p className="text-gray-400 text-sm mt-1 max-w-sm mx-auto">
             Les données terrain sont constituées par les déclarations d&apos;effets indésirables
-            soumises par les professionnels de santé marocains via MAIA DAWA.
+            soumises par les professionnels de santé marocains via MAI DAWA.
           </p>
           <button onClick={onDeclare} className="mt-5 inline-block bg-petrol hover:bg-petrol-dark text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
             Contribuer — Déclarer un cas →
@@ -283,7 +283,7 @@ export function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | 
           <span className="text-lg shrink-0">🔬</span>
           <p className="text-xs text-petrol leading-relaxed">
             <span className="font-semibold">Pourquoi ces données comptent :</span> 95% des effets indésirables
-            ne sont jamais signalés. Chaque déclaration MAIA DAWA contribue à la pharmacovigilance nationale.
+            ne sont jamais signalés. Chaque déclaration MAI DAWA contribue à la pharmacovigilance nationale.
           </p>
         </div>
       </Section>
@@ -293,9 +293,9 @@ export function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | 
   const { total, graves, graves_pct, begaud_avg, top_effets, by_evolution, last_report_date } = terrain;
 
   return (
-    <Section title="Données terrain MAIA DAWA">
+    <Section title="Données terrain MAI DAWA">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-        <Stat label="Déclarations MAIA DAWA" value={String(total)} />
+        <Stat label="Déclarations MAI DAWA" value={String(total)} />
         <Stat label="Effets graves" value={`${graves} (${graves_pct}%)`} highlight={graves_pct >= 30} />
         <Stat label="Score Bégaud moyen" value={begaud_avg !== null ? `I${begaud_avg.toFixed(1)}` : "N/A"} />
         <Stat label="Dernier signalement" value={last_report_date ? new Date(last_report_date).toLocaleDateString("fr-MA", { month: "short", year: "numeric" }) : "—"} />
@@ -331,7 +331,7 @@ export function TabTerrain({ terrain, dci, onDeclare }: { terrain: TerrainOut | 
       <div className="flex items-start gap-2 mt-2">
         <span className="text-sm shrink-0">ℹ️</span>
         <p className="text-xs text-gray-400">
-          Données agrégées et anonymisées issues des déclarations MAIA DAWA. Conformément à la loi 09-08 (CNDP), aucune donnée identifiante n&apos;est exposée.
+          Données agrégées et anonymisées issues des déclarations MAI DAWA. Conformément à la loi 09-08 (CNDP), aucune donnée identifiante n&apos;est exposée.
         </p>
       </div>
 

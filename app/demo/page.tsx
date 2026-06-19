@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * /demo — Mode démonstration MAIA DAWA
+ * /demo — Mode démonstration MAI DAWA
  * Cas clinique complet pré-rempli : chimiothérapie + éruption cutanée grade 3 + concomitant AINS.
  * Soumission simulée. PDF avec watermark DÉMONSTRATION.
  * Aucune authentification requise.
@@ -191,14 +191,14 @@ export default function DemoPage() {
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-4">
           <Link href="/" className="text-gray-400 hover:text-gray-600 text-sm">← Accueil</Link>
-          {/* Logo MAIA DAWA */}
+          {/* Logo MAI DAWA */}
           <div className="flex items-center gap-2">
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
               <path d="M14 2L4 7v7c0 5.5 4.3 10.7 10 12 5.7-1.3 10-6.5 10-12V7L14 2z" fill="#0F5B57"/>
               <path d="M9 14h10M14 9v10" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             <div>
-              <span className="font-bold text-sm" style={{ color: "#0F5B57" }}>MAIA DAWA</span>
+              <span className="font-bold text-sm" style={{ color: "#0F5B57" }}>MAI DAWA</span>
               <span className="ml-2 text-[10px] text-gray-400 uppercase tracking-widest">Démo</span>
             </div>
           </div>
@@ -224,7 +224,7 @@ export default function DemoPage() {
           </h1>
           <p className="text-gray-600 text-sm max-w-xl mx-auto">
             Chimiothérapie (Paclitaxel) + éruption cutanée grade 3 + concomitant AINS.
-            Explorez comment MAIA DAWA structure et soumet une déclaration complète en moins de 5 minutes.
+            Explorez comment MAI DAWA structure et soumet une déclaration complète en moins de 5 minutes.
           </p>
         </div>
 
@@ -455,7 +455,7 @@ export default function DemoPage() {
         {/* ── CTA bas de page ── */}
         <div className="text-center py-6 border-t border-gray-200">
           <p className="text-sm text-gray-500 mb-3">
-            MAIA DAWA — Pharmacovigilance Intelligence · Conçu pour le Maroc · Format CIOMS · MVP démo (données fictives)
+            MAI DAWA — Pharmacovigilance Intelligence · Conçu pour le Maroc · Format CIOMS · MVP démo (données fictives)
           </p>
           <div className="flex justify-center flex-wrap gap-4 text-sm">
             <Link href="/" className="text-gray-400 hover:text-gray-600 underline">Accueil</Link>

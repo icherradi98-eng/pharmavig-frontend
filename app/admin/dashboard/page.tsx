@@ -49,7 +49,7 @@ function AdminNav({ active }: { active: string }) {
           <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#0F5B57" }}>
             <span className="text-white font-black text-xs">PV</span>
           </div>
-          <span className="text-white font-bold text-sm">MAIA DAWA</span>
+          <span className="text-white font-bold text-sm">MAI DAWA</span>
         </div>
         <div className="text-xs text-gray-500">Administration</div>
       </div>
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
       <main className="flex-1 px-8 py-8 overflow-auto">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-white">Tableau de bord</h1>
-          <p className="text-gray-400 text-sm mt-1">Vue d&apos;ensemble — MAIA DAWA</p>
+          <p className="text-gray-400 text-sm mt-1">Vue d&apos;ensemble — MAI DAWA</p>
         </div>
 
         {/* KPIs */}

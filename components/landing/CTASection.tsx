@@ -7,10 +7,10 @@ import { IconArrow } from "./icons";
 
 const FAQ_ITEMS = [
   { q: "Mes données sont-elles confidentielles ?", a: "Les données cliniques que vous saisissez restent sur votre appareil, et vous gardez le contrôle de la transmission de vos déclarations. La mise en conformité avec la loi 09-08 (CNDP) est en cours." },
-  { q: "La plateforme suit-elle les standards de pharmacovigilance ?", a: "MAIA DAWA est développée selon les standards internationaux ICH E2B R3, le format CIOMS et la méthode d'imputabilité de Bégaud." },
-  { q: "L'ordonnancier stocke-t-il les données patient ?", a: "Non. Les ordonnances restent sur votre appareil uniquement (localStorage). MAIA DAWA ne conserve aucune donnée patient sur ses serveurs." },
+  { q: "La plateforme suit-elle les standards de pharmacovigilance ?", a: "MAI DAWA est développée selon les standards internationaux ICH E2B R3, le format CIOMS et la méthode d'imputabilité de Bégaud." },
+  { q: "L'ordonnancier stocke-t-il les données patient ?", a: "Non. Les ordonnances restent sur votre appareil uniquement (localStorage). MAI DAWA ne conserve aucune donnée patient sur ses serveurs." },
   { q: "Puis-je essayer sans risque ?", a: "Oui. Le mode démonstration utilise un cas clinique entièrement fictif — aucune donnée réelle n'est enregistrée. C'est le meilleur moyen de découvrir la plateforme." },
-  { q: "Peut-on utiliser MAIA DAWA sans être médecin ?", a: "Les patients peuvent signaler via un lien sécurisé envoyé par leur médecin. Les professionnels bénéficient d'un espace dédié avec toutes les fonctionnalités avancées." },
+  { q: "Peut-on utiliser MAI DAWA sans être médecin ?", a: "Les patients peuvent signaler via un lien sécurisé envoyé par leur médecin. Les professionnels bénéficient d'un espace dédié avec toutes les fonctionnalités avancées." },
 ];
 
 function FAQ() {

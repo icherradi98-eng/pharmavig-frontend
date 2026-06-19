@@ -1,5 +1,5 @@
 // Helpers pour le module "Ordonnancier" — tout est stocké en localStorage
-// (aucune donnée patient n'est envoyée à un serveur MAIA DAWA).
+// (aucune donnée patient n'est envoyée à un serveur MAI DAWA).
 
 export const KEYS = {
   profile: "pharmavig_ordo_profil",
@@ -296,7 +296,7 @@ export async function searchMedicaments(query: string): Promise<MedicamentSugges
   }
 }
 
-// ── Vérification d'interactions — base locale MAIA DAWA ──────────────────────
+// ── Vérification d'interactions — base locale MAI DAWA ──────────────────────
 
 export type InteractionResult = "interaction" | "aucune" | "indisponible";
 

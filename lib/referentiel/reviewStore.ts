@@ -108,7 +108,7 @@ export function exportReviews(): {
 /** Résumé lisible (markdown) d'une relecture exportée — à coller/transmettre. */
 export function reviewsToMarkdown(data: ReturnType<typeof exportReviews>, fieldLabels: Record<string, string>): string {
   const L: string[] = [];
-  L.push(`# Relecture monographies — MAIA DAWA`);
+  L.push(`# Relecture monographies — MAI DAWA`);
   L.push(`Exporté le ${new Date(data.exported_at).toLocaleString("fr-FR")}`);
   L.push(`${data.reviews.length} fiche(s) relue(s)`);
   L.push("");

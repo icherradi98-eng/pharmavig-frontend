@@ -1,7 +1,7 @@
 export const TABS = [
   { id: "referentiel", label: "Référentiel Maroc" },
   { id: "clinique", label: "Enrichissement clinique" },
-  { id: "terrain", label: "Données terrain MAIA DAWA" },
+  { id: "terrain", label: "Données terrain MAI DAWA" },
 ] as const;
 
 export type TabId = (typeof TABS)[number]["id"];

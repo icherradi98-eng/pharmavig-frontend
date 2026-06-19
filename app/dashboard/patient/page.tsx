@@ -20,7 +20,7 @@ function MaiaLogo() {
         </svg>
       </div>
       <span className="font-black text-[15px] tracking-tight">
-        <span style={{ color: C.petrol }}>MAIA</span>{" "}
+        <span style={{ color: C.petrol }}>MAI</span>{" "}
         <span style={{ color: C.gold }}>DAWA</span>
       </span>
     </div>

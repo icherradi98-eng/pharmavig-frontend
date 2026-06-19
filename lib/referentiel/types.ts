@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Référentiel médicament MAIA DAWA — modèle de données Morocco-first
+// Référentiel médicament MAI DAWA — modèle de données Morocco-first
 //
 // Principe : source Maroc d'abord (référencement/prix/remboursement) ; enrichissement
 // clinique secondaire via sources publiques étrangères (BDPM/ANSM/EMA), JAMAIS utilisées
@@ -315,7 +315,7 @@ export interface ClinicalMonograph {
 /**
  * Règle d'interaction entre deux DCI (future table `drug_interactions`).
  * Distincte de `InteractionRule` (héritage enrichissement étranger) :
- * celle-ci porte le circuit éditorial interne MAIA DAWA.
+ * celle-ci porte le circuit éditorial interne MAI DAWA.
  */
 export interface DrugInteraction {
   id: string;

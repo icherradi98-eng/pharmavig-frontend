@@ -20,7 +20,7 @@ const STEPS = [
   {
     icon: "📤",
     title: "Suivi de tolérance",
-    desc: "Liens temporaires envoyés à vos patients — aucun profil patient stocké sur MAIA DAWA.",
+    desc: "Liens temporaires envoyés à vos patients — aucun profil patient stocké sur MAI DAWA.",
   },
   {
     icon: "🔒",
@@ -59,12 +59,12 @@ export function WelcomeModal({ enabled }: { enabled: boolean }) {
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-label="Bienvenue sur MAIA DAWA"
+        aria-label="Bienvenue sur MAI DAWA"
         className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 pt-6 pb-4 text-center" style={{ background: "linear-gradient(135deg, var(--md-petrol), #0b3f3c)" }}>
-          <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "var(--md-gold)" }}>Bienvenue sur MAIA DAWA</p>
+          <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "var(--md-gold)" }}>Bienvenue sur MAI DAWA</p>
           <h2 className="text-lg font-bold text-white mt-1">Votre espace pharmacovigilance en 3 étapes</h2>
         </div>
 

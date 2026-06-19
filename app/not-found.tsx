@@ -9,7 +9,7 @@ export default function NotFound() {
             <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm" style={{ background: "#0F5B57" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9"/><path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
-            <span className="font-bold text-gray-900 text-xl">MAIA DAWA</span>
+            <span className="font-bold text-gray-900 text-xl">MAI DAWA</span>
           </Link>
         </div>
 

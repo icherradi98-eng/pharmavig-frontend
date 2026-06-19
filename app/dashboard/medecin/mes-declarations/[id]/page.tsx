@@ -254,7 +254,7 @@ export default function DeclarationDetail() {
                 🔍 Vérifier les interactions de {report.drug_dci}
               </p>
               <p className="text-xs text-teal-600">
-                Consultez toutes les interactions connues pour ce médicament dans la base MAIA DAWA.
+                Consultez toutes les interactions connues pour ce médicament dans la base MAI DAWA.
               </p>
             </div>
             <Link

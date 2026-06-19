@@ -1,4 +1,4 @@
-# Référentiel médicament MAIA DAWA — Morocco-first
+# Référentiel médicament MAI DAWA — Morocco-first
 
 Base médicament **construite à partir d'une source marocaine officielle** (CNOPS via
 data.gov.ma), enrichie ensuite par des sources cliniques publiques. Conçue pour la

@@ -288,7 +288,7 @@ export default function AlertesSecurite() {
               Veille automatique en cours de déploiement
             </p>
             <p className="text-sm text-blue-700 leading-relaxed">
-              Le système d&apos;alertes MAIA DAWA intégrera prochainement les flux réglementaires officiels (EMA, ANSM, CAPM).
+              Le système d&apos;alertes MAI DAWA intégrera prochainement les flux réglementaires officiels (EMA, ANSM, CAPM).
               Vous serez notifié automatiquement pour les molécules que vous prescrivez.
               En attendant, consultez directement{" "}
               <a href="https://capm.sante.gov.ma" target="_blank" rel="noreferrer"

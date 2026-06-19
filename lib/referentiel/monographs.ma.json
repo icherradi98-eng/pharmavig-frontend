@@ -23,7 +23,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -39,13 +39,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Première vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, statut AI_generated en attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -73,7 +73,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -89,13 +89,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -123,7 +123,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -139,13 +139,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -173,7 +173,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -189,13 +189,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -223,7 +223,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -239,13 +239,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Vraie monographie de travail : tous les champs renseignés, sourcés à valider. is_demo=false, en attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -273,7 +273,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -283,13 +283,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -317,7 +317,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -327,13 +327,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -361,7 +361,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -371,13 +371,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -405,7 +405,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -415,13 +415,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (haut risque). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -449,7 +449,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -459,13 +459,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -493,7 +493,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -503,13 +503,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -537,7 +537,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -547,13 +547,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -581,7 +581,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -591,13 +591,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (haut risque, tératogène). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -625,7 +625,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -635,13 +635,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (haut risque, marge étroite). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -669,7 +669,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -679,13 +679,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (haut risque, marge étroite). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -713,7 +713,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -723,13 +723,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -757,7 +757,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -767,13 +767,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -801,7 +801,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -811,13 +811,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -845,7 +845,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -855,13 +855,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -889,7 +889,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -899,13 +899,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -933,7 +933,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -943,13 +943,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -977,7 +977,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -987,13 +987,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -1021,7 +1021,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -1031,13 +1031,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -1065,7 +1065,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -1075,13 +1075,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -1109,7 +1109,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -1119,13 +1119,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -1153,7 +1153,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -1163,13 +1163,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (opioïde, vigilance dépendance). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -1197,7 +1197,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -1207,13 +1207,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -1241,7 +1241,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -1251,13 +1251,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail. En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -1285,7 +1285,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -1295,13 +1295,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (benzodiazépine, vigilance dépendance). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],
@@ -1329,7 +1329,7 @@
       "status": "AI_generated",
       "is_demo": false,
       "version": "0.2.1-draft",
-      "source_name": "Rédaction MAIA DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
+      "source_name": "Rédaction MAI DAWA d'après RCP / BDPM (ANSM) et références publiques (EMA, OMS) — à valider (médecin puis pharmacien)",
       "source_url": "https://base-donnees-publique.medicaments.gouv.fr/",
       "source_date": "2026-06-18",
       "reviewed_by": null,
@@ -1339,13 +1339,13 @@
         {
           "version": "0.2.0-draft",
           "date": "2026-06-18",
-          "author": "rédaction IA (MAIA DAWA)",
+          "author": "rédaction IA (MAI DAWA)",
           "summary": "Création — vraie monographie de travail (toujours en association). En attente de relecture médecin."
         },
         {
           "version": "0.2.1-draft",
           "date": "2026-06-18",
-          "author": "MAIA DAWA",
+          "author": "MAI DAWA",
           "summary": "Attribution de source : RCP/BDPM (ANSM) + EMA/OMS (sources publiques primaires, mêmes que Vidal). Aucune source propriétaire."
         }
       ],

@@ -30,7 +30,7 @@ export function Footer() {
       </div>
       <div className="px-6 md:px-12 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.18)" }}>© 2025–2026 MAIA DAWA · Maroc · Afrique francophone</p>
+          <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.18)" }}>© 2025–2026 MAI DAWA · Maroc · Afrique francophone</p>
           <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.18)" }}>Pharmacovigilance Intelligence for Safer Medicines</p>
         </div>
       </div>

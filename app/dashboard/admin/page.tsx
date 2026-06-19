@@ -112,7 +112,7 @@ export default function AdminDashboard() {
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: C.petrol }}>
               <span className="text-white text-sm font-bold">A</span>
             </div>
-            <span className="font-bold text-sm" style={{ color: C.night }}>Admin — MAIA DAWA</span>
+            <span className="font-bold text-sm" style={{ color: C.night }}>Admin — MAI DAWA</span>
           </div>
           <div className="flex items-center gap-4 text-sm">
             <Link href="/dashboard/admin/utilisateurs" className="font-medium" style={{ color: C.petrol }}>

@@ -9,7 +9,7 @@ import {
 } from "@/lib/drugApi";
 import { fetchTerrain, type TerrainOut } from "@/lib/api";
 
-// ── Identité MAIA DAWA ────────────────────────────────────────────────────────
+// ── Identité MAI DAWA ────────────────────────────────────────────────────────
 const C = {
   petrol: "#0F5B57", petrolDark: "#0a3f3c", gold: "#D4AF37", goldLight: "#f5e9a8",
   mint: "#2FA88F", night: "#1F2D3D", cream: "#F7F3EE", creamDark: "#ede8e2", red: "#C0392B",
@@ -59,7 +59,7 @@ function MaiaLogo() {
         </svg>
       </div>
       <span className="font-black text-[15px] tracking-tight">
-        <span style={{ color: C.petrol }}>MAIA</span> <span style={{ color: C.gold }}>DAWA</span>
+        <span style={{ color: C.petrol }}>MAI</span> <span style={{ color: C.gold }}>DAWA</span>
       </span>
     </div>
   );
@@ -217,7 +217,7 @@ export default function MedicamentsSearch() {
         <div className="max-w-5xl mx-auto px-6 py-12">
           <p className="text-xs font-bold uppercase tracking-widest mb-2.5" style={{ color: C.gold }}>Ce que contient chaque fiche</p>
           <h2 className="text-2xl font-bold mb-1" style={{ color: C.night }}>Une référence clinique complète, en un écran</h2>
-          <p className="text-sm mb-6 max-w-2xl" style={{ color: "#8a9ab0" }}>Tout ce dont vous avez besoin au quotidien — et la couche de sécurité MAIA DAWA en bonus.</p>
+          <p className="text-sm mb-6 max-w-2xl" style={{ color: "#8a9ab0" }}>Tout ce dont vous avez besoin au quotidien — et la couche de sécurité MAI DAWA en bonus.</p>
 
           <div className="rounded-2xl overflow-hidden bg-white" style={{ border: `1px solid ${C.creamDark}`, boxShadow: "0 16px 50px -28px rgba(15,91,87,0.4)" }}>
             <div className="px-6 py-4 flex items-start justify-between gap-4 flex-wrap" style={{ background: C.night }}>
@@ -260,7 +260,7 @@ export default function MedicamentsSearch() {
             </div>
 
             <div className="px-6 py-3 flex items-center gap-2.5 text-[12px]" style={{ background: C.cream, borderTop: `1px solid ${C.creamDark}`, color: "#4a5568" }}>
-              <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>+ MAIA DAWA</span>
+              <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(15,91,87,0.1)", color: C.petrol }}>+ MAI DAWA</span>
               Veille de sécurité, signaux marocains et recommandations de surveillance — plus bas dans la fiche.
             </div>
           </div>
@@ -269,7 +269,7 @@ export default function MedicamentsSearch() {
         {/* ── DIFFÉRENCIATEUR : veille de sécurité (secondaire) ── */}
         <div className="max-w-5xl mx-auto px-6 pb-12">
           <div className="rounded-3xl p-6 md:p-7" style={{ background: C.night }}>
-            <p className="text-xs font-bold uppercase tracking-widest mb-2.5" style={{ color: C.gold }}>La différence MAIA DAWA</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-2.5" style={{ color: C.gold }}>La différence MAI DAWA</p>
             <h2 className="text-xl font-bold text-white mb-1">Ce qu&apos;une base classique ne vous donne pas</h2>
             <p className="text-[13.5px] mb-5" style={{ color: "rgba(255,255,255,0.5)" }}>La veille réglementaire et les signaux du terrain marocain, intégrés à chaque fiche.</p>
 
@@ -285,7 +285,7 @@ export default function MedicamentsSearch() {
               {/* Signaux Maroc — données réelles */}
               <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
                 <p className="text-[10px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: "rgba(255,255,255,0.45)" }}>
-                  Signaux émergents · Maroc <span className="inline-flex items-center gap-1" style={{ color: C.mint }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: C.mint }} /> réseau MAIA DAWA</span>
+                  Signaux émergents · Maroc <span className="inline-flex items-center gap-1" style={{ color: C.mint }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: C.mint }} /> réseau MAI DAWA</span>
                 </p>
 
                 {signals === null ? (

@@ -14,7 +14,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     // En production, logger vers un service de monitoring si disponible
-    console.error("[MAIA DAWA] Erreur racine non capturée :", error);
+    console.error("[MAI DAWA] Erreur racine non capturée :", error);
   }, [error]);
 
   return (

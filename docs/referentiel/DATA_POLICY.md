@@ -1,4 +1,4 @@
-# Politique de données — Référentiel médicament MAIA DAWA
+# Politique de données — Référentiel médicament MAI DAWA
 
 ## 1. Ce qui est "Référentiel Maroc"
 
@@ -47,7 +47,7 @@ Les règles absolues :
 | BDPM (ANSM) | Enrichissement clinique uniquement | Jamais pour affirmer dispo MA |
 | RCP publics EMA / ANSM / HAS | Enrichissement clinique | Jamais pour affirmer dispo MA |
 | CAPM | Alertes pharmacovigilance MA | Source de référence pour les déclarations |
-| Données terrain MAIA DAWA | Pharmacovigilance locale | Données anonymisées, loi 09-08 |
+| Données terrain MAI DAWA | Pharmacovigilance locale | Données anonymisées, loi 09-08 |
 
 ### Interdites sans autorisation explicite
 - **Vidal** — propriétaire, aucun scraping, aucune copie de monographie

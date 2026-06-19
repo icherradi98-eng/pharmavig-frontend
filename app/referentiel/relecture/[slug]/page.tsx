@@ -62,7 +62,7 @@ export default function RelectureFiche() {
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 md:px-10 py-4 flex items-center justify-between">
-        <Link href="/referentiel/relecture" className="font-bold text-lg text-petrol">MAIA DAWA — Relecture</Link>
+        <Link href="/referentiel/relecture" className="font-bold text-lg text-petrol">MAI DAWA — Relecture</Link>
         <div className="flex items-center gap-3">
           <span className={`text-xs font-medium transition-opacity ${savedTick ? "opacity-100 text-[#1f8a73]" : "opacity-0"}`}>✓ Enregistré</span>
           <Link href={`/referentiel/dci/${slugify(mono.dci)}`} className="text-sm font-medium text-gray-600 hover:text-petrol">Voir la fiche →</Link>

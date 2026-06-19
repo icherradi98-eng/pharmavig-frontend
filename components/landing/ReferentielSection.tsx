@@ -59,7 +59,7 @@ function ReferentielWidget() {
           )}
         </div>
         <div className="p-4">
-          <p className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.25)" }}>Données terrain MAIA DAWA</p>
+          <p className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.25)" }}>Données terrain MAI DAWA</p>
           <div className="flex items-center gap-3 mb-3">
             <div className="text-3xl font-black text-white">{drug.cas}</div>
             <div><p className="text-[10px]" style={{ color: "rgba(255,255,255,0.4)" }}>cas signalés</p>{drug.signal && <p className="text-[9px] font-bold" style={{ color: C.gold }}>⚡ Signal émergent</p>}</div>

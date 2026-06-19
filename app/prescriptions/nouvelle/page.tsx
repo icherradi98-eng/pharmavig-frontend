@@ -429,7 +429,7 @@ function PrescriptionSuccess({ prescription, doctorName }: { prescription: Presc
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" fillOpacity="0.9"/><path d="M9 12l2 2 4-4" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
             <div>
-              <div className="font-bold text-gray-900">MAIA DAWA</div>
+              <div className="font-bold text-gray-900">MAI DAWA</div>
               <div className="text-xs text-gray-400">Ordonnance de suivi pharmacovigilance</div>
             </div>
           </div>

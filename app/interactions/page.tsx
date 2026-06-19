@@ -2,7 +2,7 @@
 
 /**
  * /interactions — Vérificateur d'interactions médicamenteuses
- * Source : base locale MAIA DAWA (données ANSM/EMA publiques).
+ * Source : base locale MAI DAWA (données ANSM/EMA publiques).
  * Pas d'appel externe (OpenFDA retiré — source US non pertinente pour le Maroc).
  */
 
@@ -137,11 +137,11 @@ function ResultCard({ result, drug1, drug2 }: { result: CheckResult; drug1: stri
           Aucune interaction répertoriée
         </p>
         <p className="text-sm" style={{ color: "#0F5B57" }}>
-          Cette combinaison ne figure pas dans la base MAIA DAWA.
+          Cette combinaison ne figure pas dans la base MAI DAWA.
           Cela ne garantit pas l&apos;absence d&apos;interaction — consultez le RCP marocain officiel et un pharmacologue clinicien.
         </p>
         <p className="text-xs mt-2" style={{ color: "rgba(15,91,87,0.6)" }}>
-          Source : Base locale MAIA DAWA (données ANSM/EMA publiques)
+          Source : Base locale MAI DAWA (données ANSM/EMA publiques)
         </p>
       </div>
     );
@@ -160,7 +160,7 @@ function ResultCard({ result, drug1, drug2 }: { result: CheckResult; drug1: stri
             <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${cfg.badge}`}>
               {cfg.label}
             </span>
-            <span className="text-xs text-gray-500">Source : Base MAIA DAWA</span>
+            <span className="text-xs text-gray-500">Source : Base MAI DAWA</span>
           </div>
           <p className="font-bold text-gray-900 mt-1 text-sm">
             {data.dci1.charAt(0).toUpperCase() + data.dci1.slice(1)} ×{" "}
@@ -271,11 +271,11 @@ function InteractionsContent() {
               <path d="M14 2L4 7v7c0 5.5 4.3 10.7 10 12 5.7-1.3 10-6.5 10-12V7L14 2z" fill="#0F5B57"/>
               <path d="M9 14h10M14 9v10" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-            <span className="font-bold text-sm" style={{ color: "#0F5B57" }}>MAIA DAWA</span>
+            <span className="font-bold text-sm" style={{ color: "#0F5B57" }}>MAI DAWA</span>
           </div>
         </div>
         <div className="text-xs text-gray-400">
-          Base MAIA DAWA · {INTERACTIONS_TABLE.length} paires cliniques
+          Base MAI DAWA · {INTERACTIONS_TABLE.length} paires cliniques
         </div>
       </header>
 
@@ -288,7 +288,7 @@ function InteractionsContent() {
           </h1>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
             Entrez deux médicaments pour vérifier leur interaction.
-            Base locale MAIA DAWA : {INTERACTIONS_TABLE.length} paires cliniquement significatives.
+            Base locale MAI DAWA : {INTERACTIONS_TABLE.length} paires cliniquement significatives.
           </p>
         </div>
 
@@ -350,7 +350,7 @@ function InteractionsContent() {
             L&apos;absence d&apos;interaction dans cette base ne garantit pas l&apos;innocuité de l&apos;association.
             En cas de doute, consultez un pharmacologue clinicien, le RCP marocain officiel, ou le CAPM.
           </p>
-          <p>Sources : Base MAIA DAWA — données issues de sources publiques officielles (ANSM, EMA, RCP). Aucun scraping de sources propriétaires.</p>
+          <p>Sources : Base MAI DAWA — données issues de sources publiques officielles (ANSM, EMA, RCP). Aucun scraping de sources propriétaires.</p>
         </div>
 
         {/* Exemples rapides */}
