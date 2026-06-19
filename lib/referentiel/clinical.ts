@@ -224,6 +224,78 @@ export function getSubstancesToEnrich(): PilotPrioritySubstance[] {
   return getPilotPrioritySubstances().filter((p) => !monoBySubstanceId.has(p.substance_id));
 }
 
+// ── Tableau de bord d'avancement ─────────────────────────────────────────────
+
+const CLINICAL_FIELDS: (keyof ClinicalMonograph)[] = [
+  "indications", "posology_adult", "renal_adjustment", "hepatic_adjustment",
+  "contraindications", "precautions", "adverse_effects_common", "adverse_effects_serious",
+  "key_interactions", "pregnancy_lactation", "monitoring", "patient_advice",
+];
+
+function isMonographComplete(m: ClinicalMonograph): boolean {
+  return CLINICAL_FIELDS.every((f) => {
+    const v = m[f];
+    return typeof v === "string" && v.trim().length > 0;
+  });
+}
+
+export type ReferentielProgress = {
+  monographs: { total: number; complete: number };
+  byStatus: { status: EditorialStatus; label: string; count: number }[];
+  pilot: { total: number; covered: number };
+  byPriority: { level: "high" | "medium" | "low"; total: number; covered: number }[];
+  byArea: { area: string; total: number; covered: number }[];
+};
+
+/** Agrège l'état d'avancement du référentiel clinique (pour le tableau de bord). */
+export function getReferentielProgress(): ReferentielProgress {
+  const monoSubIds = new Set(clinical.monographs.map((m) => m.substance_id));
+
+  const ALL_STATUSES: EditorialStatus[] = [
+    "draft", "AI_generated", "physician_reviewed", "pharmacist_reviewed", "published",
+  ];
+  const byStatus = ALL_STATUSES.map((status) => ({
+    status,
+    label: editorialStatusMeta(status).label,
+    count: clinical.monographs.filter((m) => m.status === status).length,
+  }));
+
+  const levels: ("high" | "medium" | "low")[] = ["high", "medium", "low"];
+  const byPriority = levels.map((level) => {
+    const entries = pilot.substances.filter((p) => p.priority_level === level);
+    return {
+      level,
+      total: entries.length,
+      covered: entries.filter((p) => monoSubIds.has(p.substance_id)).length,
+    };
+  });
+
+  const areaMap = new Map<string, { total: number; covered: number }>();
+  for (const p of pilot.substances) {
+    const a = areaMap.get(p.therapeutic_area) ?? { total: 0, covered: 0 };
+    a.total += 1;
+    if (monoSubIds.has(p.substance_id)) a.covered += 1;
+    areaMap.set(p.therapeutic_area, a);
+  }
+  const byArea = [...areaMap.entries()]
+    .map(([area, v]) => ({ area, ...v }))
+    .sort((a, b) => a.area.localeCompare(b.area));
+
+  return {
+    monographs: {
+      total: clinical.monographs.length,
+      complete: clinical.monographs.filter(isMonographComplete).length,
+    },
+    byStatus,
+    pilot: {
+      total: pilot.substances.length,
+      covered: pilot.substances.filter((p) => monoSubIds.has(p.substance_id)).length,
+    },
+    byPriority,
+    byArea,
+  };
+}
+
 // ── Stats module ─────────────────────────────────────────────────────────────
 
 export const clinicalStats = {

@@ -176,6 +176,70 @@ function findDuplicateKeys(keys) {
   return [...dups];
 }
 
+const MONOGRAPH_CLINICAL_FIELDS = [
+  "indications", "posology_adult", "renal_adjustment", "hepatic_adjustment",
+  "contraindications", "precautions", "adverse_effects_common", "adverse_effects_serious",
+  "key_interactions", "pregnancy_lactation", "monitoring", "patient_advice",
+];
+const VALID_EDITORIAL_STATUS = new Set([
+  "draft", "AI_generated", "physician_reviewed", "pharmacist_reviewed", "published",
+]);
+
+/**
+ * Valide les monographies cliniques contre le seed et le pilote.
+ * Règle de sécurité clé : une monographie "published" doit être complète,
+ * relue (reviewed_by) et non marquée démo.
+ * @returns {{ errors: string[], warnings: string[], passed: string[], stats: { monographs: number, published: number, complete: number, demo: number, pilot_coverage: number } }}
+ */
+export function validateMonographs(monoData, pilotData, seedData) {
+  const errors = [];
+  const warnings = [];
+  const passed = [];
+  const monographs = monoData?.monographs ?? [];
+  const seedIds = new Set((seedData?.substances ?? []).map((s) => s.id));
+  const pilotEntries = pilotData?.substances ?? [];
+
+  const check = (label, bad, fmt) => {
+    if (bad.length === 0) passed.push(label);
+    else errors.push(`${label} — ${bad.length} cas : ${bad.slice(0, 8).map(fmt).join(", ")}${bad.length > 8 ? ", …" : ""}`);
+  };
+
+  const isComplete = (m) => MONOGRAPH_CLINICAL_FIELDS.every((f) => m[f] && String(m[f]).trim());
+
+  // ── Checks BLOQUANTS ──
+  check("Monographie liée à une substance inexistante", monographs.filter((m) => !seedIds.has(m.substance_id)), (m) => m.id);
+  check("id de monographie dupliqué", findDuplicateKeys(monographs.map((m) => m.id)), (id) => id);
+  check("substance_id couvert par plusieurs monographies", findDuplicateKeys(monographs.map((m) => m.substance_id)), (id) => id);
+  check("Monographie sans dci", monographs.filter((m) => !m.dci || !m.dci.trim()), (m) => m.id);
+  check("Statut éditorial invalide", monographs.filter((m) => !VALID_EDITORIAL_STATUS.has(m.status)), (m) => `${m.id}(${m.status})`);
+  // Règles de publication (sécurité)
+  check("Monographie publiée mais incomplète", monographs.filter((m) => m.status === "published" && !isComplete(m)), (m) => m.id);
+  check("Monographie publiée mais non relue (reviewed_by vide)", monographs.filter((m) => m.status === "published" && !m.reviewed_by), (m) => m.id);
+  check("Monographie publiée encore marquée démo (is_demo)", monographs.filter((m) => m.status === "published" && m.is_demo === true), (m) => m.id);
+
+  // ── Warnings (non bloquants) ──
+  const incomplete = monographs.filter((m) => !isComplete(m));
+  if (incomplete.length) warnings.push(`Monographies avec champ(s) clinique(s) vide(s) : ${incomplete.length} (${incomplete.slice(0, 6).map((m) => m.id).join(", ")}${incomplete.length > 6 ? ", …" : ""})`);
+
+  const demo = monographs.filter((m) => m.is_demo === true);
+  if (demo.length) warnings.push(`Monographies encore marquées is_demo : ${demo.length} (à finaliser : ${demo.map((m) => m.id).join(", ")})`);
+
+  const monoSubIds = new Set(monographs.map((m) => m.substance_id));
+  const highMissing = pilotEntries.filter((p) => p.priority_level === "high" && !monoSubIds.has(p.substance_id));
+  if (highMissing.length) warnings.push(`DCI pilote HAUTE priorité sans monographie : ${highMissing.length} (${highMissing.map((p) => p.dci_fr).join(", ")})`);
+
+  const pilotCovered = pilotEntries.filter((p) => monoSubIds.has(p.substance_id)).length;
+
+  const stats = {
+    monographs: monographs.length,
+    published: monographs.filter((m) => m.status === "published").length,
+    complete: monographs.filter(isComplete).length,
+    demo: demo.length,
+    pilot_coverage: pilotCovered,
+  };
+  return { errors, warnings, passed, stats };
+}
+
 function findDuplicateIds(items) {
   const seen = new Set();
   const dups = new Set();
@@ -232,26 +296,47 @@ const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.arg
 if (isMain) {
   const seedPath = new URL("../../lib/referentiel/seed.ma.json", import.meta.url);
   const pilotPath = new URL("../../lib/referentiel/pilot-priority-substances.json", import.meta.url);
+  const monoPath = new URL("../../lib/referentiel/monographs.ma.json", import.meta.url);
   const seed = JSON.parse(readFileSync(seedPath, "utf8"));
   const pilot = JSON.parse(readFileSync(pilotPath, "utf8"));
+  const mono = JSON.parse(readFileSync(monoPath, "utf8"));
 
   const seedResult = validateSeed(seed);
   console.log(formatReport(seedResult));
 
-  const pilotResult = validatePilotPriority(pilot, seed);
-  console.log("");
-  console.log("═══ Validation de la priorisation pilote ═══");
-  console.log(`Entrées: ${pilotResult.stats.pilot_entries} · Haute priorité: ${pilotResult.stats.high_priority} · Haut risque: ${pilotResult.stats.high_risk}`);
-  console.log(`✅ Checks passés (${pilotResult.passed.length})`);
-  for (const p of pilotResult.passed) console.log(`   ✓ ${p}`);
-  if (pilotResult.errors.length) {
-    console.log(`❌ Erreurs bloquantes (${pilotResult.errors.length})`);
-    for (const e of pilotResult.errors) console.log(`   ❌ ${e}`);
-  } else {
-    console.log("❌ Aucune erreur bloquante");
-  }
+  const printBlock = (title, subtitle, res) => {
+    console.log("");
+    console.log(`═══ ${title} ═══`);
+    if (subtitle) console.log(subtitle);
+    console.log(`✅ Checks passés (${res.passed.length})`);
+    for (const p of res.passed) console.log(`   ✓ ${p}`);
+    if (res.warnings.length) {
+      console.log(`⚠️  Warnings (${res.warnings.length})`);
+      for (const w of res.warnings) console.log(`   ⚠️  ${w}`);
+    }
+    if (res.errors.length) {
+      console.log(`❌ Erreurs bloquantes (${res.errors.length})`);
+      for (const e of res.errors) console.log(`   ❌ ${e}`);
+    } else {
+      console.log("❌ Aucune erreur bloquante");
+    }
+  };
 
-  const totalErrors = seedResult.errors.length + pilotResult.errors.length;
+  const pilotResult = validatePilotPriority(pilot, seed);
+  printBlock(
+    "Validation de la priorisation pilote",
+    `Entrées: ${pilotResult.stats.pilot_entries} · Haute priorité: ${pilotResult.stats.high_priority} · Haut risque: ${pilotResult.stats.high_risk}`,
+    pilotResult
+  );
+
+  const monoResult = validateMonographs(mono, pilot, seed);
+  printBlock(
+    "Validation des monographies cliniques",
+    `Monographies: ${monoResult.stats.monographs} · Complètes: ${monoResult.stats.complete} · Publiées: ${monoResult.stats.published} · Couverture pilote: ${monoResult.stats.pilot_coverage}/${pilotResult.stats.pilot_entries}`,
+    monoResult
+  );
+
+  const totalErrors = seedResult.errors.length + pilotResult.errors.length + monoResult.errors.length;
   console.log("");
   console.log(totalErrors ? "RÉSULTAT GLOBAL : ÉCHEC ❌" : "RÉSULTAT GLOBAL : OK ✅");
   process.exit(totalErrors ? 1 : 0);

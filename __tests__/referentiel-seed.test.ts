@@ -5,12 +5,18 @@
  * à chaque modification ou futur import CNOPS.
  */
 import { describe, it, expect } from "vitest";
-import { validateSeed, validatePilotPriority } from "../scripts/referentiel/validate-seed.mjs";
+import { validateSeed, validatePilotPriority, validateMonographs } from "../scripts/referentiel/validate-seed.mjs";
 import seed from "@/lib/referentiel/seed.ma.json";
 import pilot from "@/lib/referentiel/pilot-priority-substances.json";
+import mono from "@/lib/referentiel/monographs.ma.json";
 
 const result = validateSeed(seed as unknown as Record<string, unknown>);
 const pilotResult = validatePilotPriority(
+  pilot as unknown as Record<string, unknown>,
+  seed as unknown as Record<string, unknown>
+);
+const monoResult = validateMonographs(
+  mono as unknown as Record<string, unknown>,
   pilot as unknown as Record<string, unknown>,
   seed as unknown as Record<string, unknown>
 );
@@ -56,5 +62,26 @@ describe("priorisation pilote — checks bloquants", () => {
 
   it("contient au moins quelques DCI à haut risque", () => {
     expect(pilotResult.stats.high_risk).toBeGreaterThan(0);
+  });
+});
+
+describe("monographies cliniques — garde-fou", () => {
+  it("ne contient AUCUNE erreur bloquante", () => {
+    expect(monoResult.errors, monoResult.errors.join("\n")).toEqual([]);
+  });
+
+  it("chaque monographie est liée à une substance existante (FK)", () => {
+    const fk = monoResult.errors.filter((e: string) => e.includes("substance inexistante"));
+    expect(fk).toEqual([]);
+  });
+
+  it("aucune monographie publiée incomplète, non relue ou marquée démo", () => {
+    const pubViolations = monoResult.errors.filter((e: string) => e.includes("publiée"));
+    expect(pubViolations).toEqual([]);
+  });
+
+  it("couvre les 30 DCI du pilote, toutes complètes (12/12 champs)", () => {
+    expect(monoResult.stats.pilot_coverage).toBe(pilotResult.stats.pilot_entries);
+    expect(monoResult.stats.complete).toBe(monoResult.stats.monographs);
   });
 });

@@ -68,7 +68,10 @@ export default function ReferentielBrowse() {
     <div className="min-h-screen bg-cream flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 md:px-10 py-4 flex items-center justify-between">
         <Link href="/medicaments" className="font-bold text-lg text-petrol">MAIA DAWA — Référentiel</Link>
-        <Link href="/medicaments" className="text-sm font-medium text-gray-600 hover:text-petrol">Recherche classique →</Link>
+        <div className="flex items-center gap-4">
+          <Link href="/referentiel/avancement" className="text-sm font-medium text-gray-600 hover:text-petrol">Avancement</Link>
+          <Link href="/medicaments" className="text-sm font-medium text-gray-600 hover:text-petrol">Recherche classique →</Link>
+        </div>
       </header>
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-5 md:px-8 py-8">
