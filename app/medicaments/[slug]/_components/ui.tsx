@@ -1,64 +1,4 @@
-import type { Source } from "@/lib/referentiel/types";
-import { AVAIL_LABELS, VALID_LABELS } from "../_constants";
-
-// ── Labels de source honnêtes (jamais "EMA" si la donnée ne vient pas de l'EMA) ──
-
-export function SourceLabel({ source }: { source: Source | undefined }) {
-  if (!source) {
-    return (
-      <span className="text-[11px] px-2.5 py-1 rounded-full bg-gray-50 text-gray-400 border border-gray-200">
-        Source clinique : non renseignée
-      </span>
-    );
-  }
-  if (source.country === "MA") {
-    const stale = source.source_freshness === "stale";
-    return (
-      <span className={`text-[11px] px-2.5 py-1 rounded-full border font-medium ${
-        stale
-          ? "bg-amber-50 text-amber-700 border-amber-200"
-          : "bg-blue-50 text-blue-700 border-blue-200"
-      }`}>
-        Source Maroc · {source.source_name.split("—")[0].trim()}
-        {stale && source.source_year ? ` (${source.source_year} — à rafraîchir)` : ""}
-      </span>
-    );
-  }
-  return (
-    <span className="text-[11px] px-2.5 py-1 rounded-full bg-gray-50 text-gray-500 border border-gray-200">
-      Référentiel local
-    </span>
-  );
-}
-
-export function ClinicalSourceLabel({ hasBdpm }: { hasBdpm: boolean }) {
-  if (!hasBdpm) {
-    return (
-      <span className="text-[11px] px-2.5 py-1 rounded-full bg-gray-50 text-gray-400 border border-gray-200">
-        Enrichissement clinique à venir
-      </span>
-    );
-  }
-  return (
-    <span className="text-[11px] px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
-      Enrichissement clinique : BDPM (France — non opposable au Maroc)
-    </span>
-  );
-}
-
-export function Badge({ children, color }: { children: React.ReactNode; color: string }) {
-  return <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${color}`}>{children}</span>;
-}
-
-export function AvailBadge({ status }: { status: string }) {
-  const cfg = AVAIL_LABELS[status] ?? AVAIL_LABELS["needs_review"];
-  return <span className={`text-[11px] font-semibold px-3 py-1 rounded-full ${cfg.color}`}>{cfg.label}</span>;
-}
-
-export function ValidBadge({ status }: { status: string }) {
-  const cfg = VALID_LABELS[status] ?? VALID_LABELS["needs_review"];
-  return <span className={`text-[10px] px-2.5 py-0.5 rounded-full ${cfg.color}`}>{cfg.label}</span>;
-}
+// Primitives d'affichage de la fiche médicament (réutilisables).
 
 export function SkeletonHeader() {
   return (
@@ -74,7 +14,7 @@ export function SkeletonHeader() {
 
 export function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-4">
+    <div className="bg-white border border-gray-200 rounded-2xl p-5">
       <h3 className="font-semibold text-gray-900 border-l-4 border-petrol pl-3 mb-1">{title}</h3>
       {subtitle && <p className="text-xs text-gray-400 pl-3.5 mb-3">{subtitle}</p>}
       <div className={subtitle ? "" : "mt-3"}>{children}</div>
