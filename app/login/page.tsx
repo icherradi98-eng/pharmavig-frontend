@@ -76,7 +76,7 @@ function LoginForm() {
 
           <div className="bg-white rounded-2xl shadow-sm p-8" style={{ border: `1px solid ${C.creamDark}` }}>
 
-            {sessionExpired && (
+            {sessionExpired && !error && (
               <div className="rounded-xl px-4 py-2.5 text-sm mb-4" style={{ background: "rgba(212,175,55,0.08)", border: `1px solid rgba(212,175,55,0.25)`, color: "#92700a" }}>
                 🔒 Votre session a expiré. Veuillez vous reconnecter.
               </div>

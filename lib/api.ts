@@ -49,8 +49,14 @@ async function request<T>(path: string, options: RequestInit = {}, _retry = true
     throw new Error(friendlyError((networkErr as Error)?.message));
   }
 
+  // Les endpoints d'authentification eux-mêmes ne doivent PAS passer par la logique
+  // de refresh : un 401 sur /auth/login = mauvais identifiants (et non session expirée),
+  // un 401 sur /auth/refresh = pas de session à rafraîchir. Sinon une erreur de mot de
+  // passe est masquée en « Session expirée ».
+  const isAuthEndpoint = path.startsWith("/auth/login") || path.startsWith("/auth/refresh");
+
   // Cookie access_token expiré → on tente un refresh puis on rejoue la requête une fois
-  if (res.status === 401 && _retry) {
+  if (res.status === 401 && _retry && !isAuthEndpoint) {
     const ok = await tryRefreshToken();
     if (ok) {
       return request<T>(path, options, false); // _retry=false pour éviter boucle infinie
