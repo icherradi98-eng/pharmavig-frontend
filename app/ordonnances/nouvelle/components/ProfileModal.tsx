@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { type DoctorProfile, EMPTY_PROFILE } from "@/lib/ordonnancier";
 
 const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol";
@@ -90,6 +91,13 @@ export function ProfileModal({ initial, onClose, onSave }: {
               <input type="file" accept="image/png,image/jpeg" onChange={(e) => handleImage("cachetDataUrl", e.target.files?.[0] || null)} className="text-xs" />
             </div>
           </div>
+
+          <Link href="/dashboard/medecin/parametres/ordonnancier"
+            className="flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm transition-colors hover:bg-petrol/5"
+            style={{ border: "1px solid rgba(15,91,87,0.2)" }}>
+            <span className="text-petrol font-medium">🎨 Personnaliser la mise en page complète (logo, filigrane, positions)</span>
+            <span className="text-petrol shrink-0">→</span>
+          </Link>
 
           <div className="border border-gray-100 rounded-xl p-3 bg-gray-50">
             <p className="text-xs text-gray-400 mb-2">Aperçu de l&apos;en-tête tel qu&apos;il apparaîtra sur le PDF :</p>

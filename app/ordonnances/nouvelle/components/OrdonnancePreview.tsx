@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { type DoctorProfile, type SavedOrdonnance, posologieLabel, dureeLabel, buildWhatsAppLink, buildSummaryText } from "@/lib/ordonnancier";
+import { readTemplate } from "@/lib/prescriptionTemplate";
+import { generateOrdonnancePDF } from "@/lib/generateOrdonnancePDF";
 
 const VOIES_LABEL: Record<string, string> = {
   orale: "Orale", IV: "Intraveineuse", SC: "Sous-cutanée", IM: "Intramusculaire",
@@ -27,46 +29,11 @@ export function OrdonnancePreview({ ordonnance, doctorName, specialite, profile,
   const validiteLabel = `${ordonnance.validite} mois`;
 
   async function handleDownload() {
-    if (!pdfRef.current) return;
     setDownloading(true);
     try {
-      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-        import("jspdf"), import("html2canvas"),
-      ]);
-
-      const el = pdfRef.current;
-      const prevBorderRadius = el.style.borderRadius;
-      const prevBorder = el.style.border;
-      el.style.borderRadius = "0";
-      el.style.border = "none";
-
-      const canvas = await html2canvas(el, {
-        scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false,
-      });
-
-      el.style.borderRadius = prevBorderRadius;
-      el.style.border = prevBorder;
-
-      const img = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 15;
-      const usableWidth = pageWidth - margin * 2;
-      const usableHeight = pageHeight - margin * 2;
-      const imgHeight = (canvas.height * usableWidth) / canvas.width;
-
-      let y = margin;
-      pdf.addImage(img, "PNG", margin, y, usableWidth, imgHeight);
-      let heightLeft = imgHeight - usableHeight;
-      while (heightLeft > 0) {
-        y -= usableHeight;
-        pdf.addPage();
-        pdf.addImage(img, "PNG", margin, y, usableWidth, imgHeight);
-        heightLeft -= usableHeight;
-      }
-
-      pdf.save(`${ordonnance.numero}_${ordonnance.patient.nom.replace(/\s+/g, "_")}.pdf`);
+      // PDF natif : texte sélectionnable + images de marque placées aux coordonnées
+      // du modèle enregistré (ou modèle MAI DAWA par défaut). Plus d'image plate.
+      await generateOrdonnancePDF(ordonnance, profile, readTemplate());
     } catch {
       window.print();
     } finally {
