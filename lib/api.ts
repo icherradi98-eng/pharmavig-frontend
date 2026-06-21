@@ -219,6 +219,25 @@ export const api = {
     }),
 
   adminListUsers: () => adminRequest<AdminUser[]>("/admin/users"),
+
+  // Validation des monographies cliniques (statut éditorial persisté serveur)
+  listMonographValidations: () => request<MonographValidationOut[]>("/monographs/validations"),
+
+  validateMonograph: (payload: { monograph_id: string; dci: string; status: MonographValidationStatus; note?: string }) =>
+    request<MonographValidationOut>("/monographs/validations", { method: "POST", body: JSON.stringify(payload) }),
+};
+
+// ── Validation des monographies ───────────────────────────────────────────────
+
+export type MonographValidationStatus = "draft" | "physician_reviewed" | "pharmacist_reviewed" | "published";
+
+export type MonographValidationOut = {
+  monograph_id: string;
+  dci: string;
+  status: MonographValidationStatus;
+  reviewer_name: string;
+  note?: string | null;
+  validated_at: string;
 };
 
 // ── Types partagés ────────────────────────────────────────────────────────────

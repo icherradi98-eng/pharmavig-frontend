@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { unslugify, slugify } from "@/lib/drugApi";
 import { referentielData } from "@/lib/referentiel/index";
 import {
   getMonographByDci, getInteractionsForSubstanceId, editorialStatusMeta,
 } from "@/lib/referentiel/clinical";
-import type { DrugInteraction } from "@/lib/referentiel/types";
+import type { DrugInteraction, EditorialStatus } from "@/lib/referentiel/types";
+import { api, type MonographValidationStatus } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 import { EditorialBadge, ClinicalDisclaimer } from "../../_components/badges";
 
 const norm = (s: string) =>
@@ -39,6 +41,22 @@ export default function MonographPage() {
 
   const title = substance?.dci_fr ?? (dciName.charAt(0).toUpperCase() + dciName.slice(1));
 
+  // Statut validé côté serveur (override le statut du fichier versionné).
+  const [override, setOverride] = useState<MonographValidationStatus | null>(null);
+  const [reviewerName, setReviewerName] = useState<string | null>(null);
+  useEffect(() => {
+    if (!mono) return;
+    api.listMonographValidations()
+      .then((list) => {
+        const v = list.find((x) => x.monograph_id === mono.id);
+        if (v) { setOverride(v.status); setReviewerName(v.reviewer_name); }
+      })
+      .catch(() => {});
+  }, [mono]);
+
+  const effectiveStatus: EditorialStatus = (override ?? mono?.status ?? "draft") as EditorialStatus;
+  const meta = editorialStatusMeta(effectiveStatus);
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 md:px-10 py-4 flex items-center justify-between">
@@ -55,7 +73,7 @@ export default function MonographPage() {
               <h1 className="text-2xl font-bold text-petrol">{title}</h1>
               {mono?.therapeutic_class && <p className="text-sm text-gray-500 mt-1">{mono.therapeutic_class}</p>}
             </div>
-            {mono && <EditorialBadge status={mono.status} />}
+            {mono && <EditorialBadge status={effectiveStatus} />}
           </div>
           <Link
             href={`/medicaments/${slugify(title)}`}
@@ -70,7 +88,16 @@ export default function MonographPage() {
         {mono && (
           <>
             <div className="mb-5">
-              <ClinicalDisclaimer isDemo={mono.is_demo} isValidated={editorialStatusMeta(mono.status).isValidated} />
+              <ClinicalDisclaimer isDemo={mono.is_demo} isValidated={meta.isValidated} />
+            </div>
+
+            <div className="mb-5">
+              <ValidationPanel
+                monographId={mono.id}
+                dci={mono.dci}
+                status={effectiveStatus}
+                onValidated={(s, who) => { setOverride(s); setReviewerName(who); }}
+              />
             </div>
 
             <div className="space-y-3">
@@ -91,10 +118,10 @@ export default function MonographPage() {
             {/* Sources & métadonnées qualité */}
             <div className="mt-6 bg-white border border-gray-200 rounded-xl p-5 text-xs text-gray-500 space-y-1.5">
               <p className="font-bold uppercase tracking-wide text-[10px] text-gray-400 mb-2">Sources & traçabilité</p>
-              <MetaRow label="Statut éditorial" value={editorialStatusMeta(mono.status).label} />
+              <MetaRow label="Statut éditorial" value={meta.label} />
               <MetaRow label="Source" value={mono.source_name ?? "—"} />
               <MetaRow label="Version" value={mono.version} />
-              <MetaRow label="Revu par" value={mono.reviewed_by ?? "Non revu"} />
+              <MetaRow label="Revu par" value={reviewerName ?? mono.reviewed_by ?? "Non revu"} />
               <MetaRow label="Dernière révision" value={mono.reviewed_at ?? "—"} />
               <MetaRow label="Dernière vérification" value={mono.last_verified_at ?? "—"} />
               {mono.is_demo && <p className="pt-2 text-gold font-medium">⚠️ Donnée de démonstration — non validée médicalement.</p>}
@@ -102,6 +129,79 @@ export default function MonographPage() {
           </>
         )}
       </main>
+    </div>
+  );
+}
+
+function ValidationPanel({ monographId, dci, status, onValidated }: {
+  monographId: string;
+  dci: string;
+  status: EditorialStatus;
+  onValidated: (status: MonographValidationStatus, reviewerName: string) => void;
+}) {
+  const { user } = useAuth();
+  const [note, setNote] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  if (!user) {
+    return (
+      <div className="rounded-xl px-4 py-3 text-sm flex items-center justify-between gap-3" style={{ background: "rgba(15,91,87,0.04)", border: "1px solid rgba(15,91,87,0.15)" }}>
+        <span className="text-gray-600">Vous êtes médecin ? Connectez-vous pour valider cette fiche.</span>
+        <Link href="/login?redirect=/referentiel" className="text-sm font-semibold text-petrol shrink-0 hover:underline">Se connecter →</Link>
+      </div>
+    );
+  }
+  if (user.role !== "medecin") {
+    return (
+      <p className="text-xs text-gray-400 px-1">La validation des monographies est réservée aux médecins.</p>
+    );
+  }
+
+  const isPublished = status === "published";
+
+  async function submit(next: MonographValidationStatus) {
+    setSaving(true); setError("");
+    try {
+      const res = await api.validateMonograph({ monograph_id: monographId, dci, status: next, note: note.trim() || undefined });
+      onValidated(res.status, res.reviewer_name);
+      setNote("");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors de la validation.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="rounded-xl p-4" style={{ background: "rgba(15,91,87,0.04)", border: "1px solid rgba(15,91,87,0.18)" }}>
+      <p className="text-xs font-bold uppercase tracking-wide text-petrol mb-2">Validation médecin</p>
+      {isPublished ? (
+        <p className="text-sm text-gray-600 mb-3">✅ Fiche validée et publiée — le bandeau « à valider » a disparu pour tous les utilisateurs.</p>
+      ) : (
+        <p className="text-sm text-gray-600 mb-3">En tant que médecin référent, votre validation publie cette fiche (le bandeau disparaît pour tous).</p>
+      )}
+      <textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="Note de validation (optionnel)…"
+        rows={note ? 2 : 1}
+        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol resize-y mb-3"
+      />
+      {error && <p className="text-xs text-red-600 mb-2">⚠️ {error}</p>}
+      <div className="flex flex-wrap gap-2">
+        {!isPublished ? (
+          <button onClick={() => submit("published")} disabled={saving}
+            className="text-sm font-semibold px-4 py-2 rounded-lg text-white disabled:opacity-60" style={{ background: "#0F5B57" }}>
+            {saving ? "Validation…" : "✓ Valider et publier"}
+          </button>
+        ) : (
+          <button onClick={() => submit("draft")} disabled={saving}
+            className="text-sm font-medium px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-60">
+            {saving ? "…" : "Repasser en brouillon"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

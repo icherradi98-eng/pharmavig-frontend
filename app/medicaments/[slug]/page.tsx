@@ -8,7 +8,7 @@ import {
   type BdpmDrug,
   type LocalProductContext,
 } from "@/lib/drugApi";
-import { fetchTerrain, type TerrainOut } from "@/lib/api";
+import { fetchTerrain, api, type TerrainOut } from "@/lib/api";
 import { getProductView, searchProducts, type ProductView } from "@/lib/referentiel/index";
 import { listAlternativesByProductId, getMonographByDci } from "@/lib/referentiel/clinical";
 import { detectInconsistencies } from "@/lib/referentiel/inconsistencies";
@@ -92,6 +92,19 @@ function DrugProfileContent({ slug }: { slug: string }) {
   const inconsistencies = useMemo(() => detectInconsistencies(productView, monograph), [productView, monograph]);
   const monoDciSlug = slugify(substanceNames[0] ?? dci);
 
+  // Statut de validation serveur (le bandeau « à valider » disparaît si publié)
+  const [validatedStatus, setValidatedStatus] = useState<string | null>(null);
+  useEffect(() => {
+    if (!monograph) return;
+    api.listMonographValidations()
+      .then((list) => {
+        const v = list.find((x) => x.monograph_id === monograph.id);
+        if (v) setValidatedStatus(v.status);
+      })
+      .catch(() => {});
+  }, [monograph]);
+  const effectiveMonoStatus = validatedStatus ?? monograph?.status;
+
   const form = productView?.presentation?.pharmaceutical_form;
   const route = productView?.presentation?.route;
   const isCombination = substanceNames.length > 1;
@@ -168,7 +181,7 @@ function DrugProfileContent({ slug }: { slug: string }) {
             </div>
 
             {tab === "referentiel" && <TabReferentiel view={productView} alternatives={alternatives} inconsistencies={inconsistencies} />}
-            {tab === "clinique" && <TabClinique monograph={monograph} substanceNames={substanceNames} dciSlug={monoDciSlug} bdpm={bdpm} />}
+            {tab === "clinique" && <TabClinique monograph={monograph} substanceNames={substanceNames} dciSlug={monoDciSlug} bdpm={bdpm} effectiveStatus={effectiveMonoStatus} />}
             {tab === "terrain" && <TabTerrain terrain={terrain} dci={dci} onDeclare={declareWithDrug} />}
           </>
         )}

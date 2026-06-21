@@ -125,14 +125,16 @@ function AlternativesCard({ alternatives }: { alternatives: AlternativeProduct[]
 // ═════════════════════════════════════════════════════════════════════════════
 
 export function TabClinique({
-  monograph, substanceNames, dciSlug, bdpm,
+  monograph, substanceNames, dciSlug, bdpm, effectiveStatus,
 }: {
   monograph: ClinicalMonograph | null;
   substanceNames: string[];
   dciSlug: string;
   bdpm: BdpmDrug | null | undefined;
+  effectiveStatus?: string;
 }) {
   const isCombination = substanceNames.length > 1;
+  const status = effectiveStatus ?? monograph?.status;
 
   return (
     <div className="space-y-4">
@@ -151,7 +153,7 @@ export function TabClinique({
       ) : (
         <>
           {/* Statut éditorial — wording professionnel (pas « Généré par IA ») */}
-          {monograph.status !== "published" && (
+          {status !== "published" && (
             <div className="rounded-xl px-4 py-2.5 text-xs flex items-center gap-2" style={{ background: "rgba(15,91,87,0.05)", border: "1px solid rgba(15,91,87,0.15)", color: "#0a3f3c" }}>
               <span>📝</span>
               <span><strong>Contenu structuré — validation médicale requise.</strong> Synthèse à valider par un médecin puis un pharmacien.</span>
@@ -174,7 +176,7 @@ export function TabClinique({
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1.5 text-xs">
               <DataRow label="Source" value={monograph.source_name} />
               <DataRow label="Version" value={monograph.version} />
-              <DataRow label="Statut" value={monograph.status === "published" ? "Validé · publié" : "À valider"} />
+              <DataRow label="Statut" value={status === "published" ? "Validé · publié" : "À valider"} />
               <DataRow label="Revu par" value={monograph.reviewed_by ?? "Non revu"} />
             </dl>
             <div className="mt-3"><BdpmExternalLinks /></div>
