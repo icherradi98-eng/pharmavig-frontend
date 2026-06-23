@@ -24,6 +24,22 @@ const SEVERITY_META: Record<string, { label: string; bg: string; color: string }
   unknown:         { label: "À préciser",     bg: "rgba(107,114,128,0.1)", color: "#6b7280" },
 };
 
+// Champs cliniques éditables (mêmes clés que le modèle ClinicalMonograph côté serveur).
+const EDIT_FIELDS: { key: string; label: string }[] = [
+  { key: "indications", label: "Indications" },
+  { key: "posology_adult", label: "Posologie adulte" },
+  { key: "renal_adjustment", label: "Adaptation rénale" },
+  { key: "hepatic_adjustment", label: "Adaptation hépatique" },
+  { key: "contraindications", label: "Contre-indications" },
+  { key: "precautions", label: "Précautions d'emploi" },
+  { key: "adverse_effects_common", label: "Effets indésirables fréquents" },
+  { key: "adverse_effects_serious", label: "Effets indésirables graves" },
+  { key: "key_interactions", label: "Interactions importantes" },
+  { key: "pregnancy_lactation", label: "Grossesse / allaitement" },
+  { key: "monitoring", label: "Surveillance recommandée" },
+  { key: "patient_advice", label: "Conseils patients" },
+];
+
 export default function MonographPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug || "";
@@ -41,21 +57,60 @@ export default function MonographPage() {
 
   const title = substance?.dci_fr ?? (dciName.charAt(0).toUpperCase() + dciName.slice(1));
 
-  // Statut validé côté serveur (override le statut du fichier versionné).
+  const { user } = useAuth();
+  const canEdit = user?.role === "medecin";
+
+  // Statut + contenu validés côté serveur (override le fichier versionné).
   const [override, setOverride] = useState<MonographValidationStatus | null>(null);
   const [reviewerName, setReviewerName] = useState<string | null>(null);
+  const [serverContent, setServerContent] = useState<Record<string, string | null> | null>(null);
   useEffect(() => {
     if (!mono) return;
     api.listMonographValidations()
       .then((list) => {
         const v = list.find((x) => x.monograph_id === mono.id);
-        if (v) { setOverride(v.status); setReviewerName(v.reviewer_name); }
+        if (v) { setOverride(v.status); setReviewerName(v.reviewer_name); setServerContent(v.content ?? null); }
       })
       .catch(() => {});
   }, [mono]);
 
   const effectiveStatus: EditorialStatus = (override ?? mono?.status ?? "draft") as EditorialStatus;
   const meta = editorialStatusMeta(effectiveStatus);
+
+  // Valeur effective d'un champ : édition serveur si présente, sinon brouillon versionné.
+  const eff = (key: string): string | null => {
+    const ov = serverContent?.[key];
+    if (ov != null && String(ov).trim() !== "") return String(ov);
+    return mono ? ((mono as unknown as Record<string, string | null>)[key] ?? null) : null;
+  };
+
+  // Mode édition (médecin)
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState<Record<string, string>>({});
+  const [savingContent, setSavingContent] = useState(false);
+  const [editErr, setEditErr] = useState("");
+
+  function startEditing() {
+    const d: Record<string, string> = {};
+    for (const f of EDIT_FIELDS) d[f.key] = eff(f.key) ?? "";
+    setDraft(d);
+    setEditErr("");
+    setEditing(true);
+  }
+  async function saveContent() {
+    if (!mono) return;
+    setSavingContent(true); setEditErr("");
+    try {
+      const res = await api.validateMonograph({ monograph_id: mono.id, dci: mono.dci, content: draft });
+      setServerContent(res.content ?? draft);
+      if (res.reviewer_name) setReviewerName(res.reviewer_name);
+      setEditing(false);
+    } catch (e) {
+      setEditErr(e instanceof Error ? e.message : "Erreur lors de l'enregistrement.");
+    } finally {
+      setSavingContent(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -100,20 +155,58 @@ export default function MonographPage() {
               />
             </div>
 
-            <div className="space-y-3">
-              <Section title="Indications" body={mono.indications} />
-              <Section title="Posologie adulte" body={mono.posology_adult} />
-              <Section title="Adaptation rénale" body={mono.renal_adjustment} />
-              <Section title="Adaptation hépatique" body={mono.hepatic_adjustment} />
-              <Section title="Contre-indications" body={mono.contraindications} accent="danger" />
-              <Section title="Précautions d'emploi" body={mono.precautions} />
-              <Section title="Effets indésirables fréquents" body={mono.adverse_effects_common} />
-              <Section title="Effets indésirables graves" body={mono.adverse_effects_serious} accent="danger" />
-              <InteractionsSection text={mono.key_interactions} rules={interactions} currentSubstanceId={substance?.id ?? null} />
-              <Section title="Grossesse / allaitement" body={mono.pregnancy_lactation} />
-              <Section title="Surveillance recommandée" body={mono.monitoring} />
-              <Section title="Conseils patients" body={mono.patient_advice} accent="advice" />
-            </div>
+            {canEdit && (
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs text-gray-400">{serverContent ? "Contenu édité (serveur)." : "Contenu issu du brouillon initial."}</p>
+                {!editing && (
+                  <button onClick={startEditing} className="text-sm font-semibold text-petrol hover:underline">✏️ Éditer le contenu</button>
+                )}
+              </div>
+            )}
+
+            {editing ? (
+              <div className="space-y-3">
+                {EDIT_FIELDS.map((f) => (
+                  <div key={f.key} className="bg-white rounded-xl p-4 border border-gray-200">
+                    <label className="block text-[11px] font-bold uppercase tracking-wide mb-1.5 text-night">{f.label}</label>
+                    <textarea
+                      value={draft[f.key] ?? ""}
+                      onChange={(e) => setDraft((d) => ({ ...d, [f.key]: e.target.value }))}
+                      rows={3}
+                      placeholder="Non renseigné — ajoutez le contenu…"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-petrol resize-y leading-relaxed"
+                    />
+                  </div>
+                ))}
+                {editErr && <p className="text-sm text-red-600">⚠️ {editErr}</p>}
+                <div className="flex gap-2 sticky bottom-3">
+                  <button onClick={saveContent} disabled={savingContent}
+                    className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-60" style={{ background: "#0F5B57" }}>
+                    {savingContent ? "Enregistrement…" : "Enregistrer le contenu"}
+                  </button>
+                  <button onClick={() => setEditing(false)} disabled={savingContent}
+                    className="py-2.5 px-4 rounded-xl text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-50">
+                    Annuler
+                  </button>
+                </div>
+                <p className="text-[11px] text-gray-400">L&apos;enregistrement ne change pas le statut de validation — pense à valider la fiche ensuite si elle est prête.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <Section title="Indications" body={eff("indications")} />
+                <Section title="Posologie adulte" body={eff("posology_adult")} />
+                <Section title="Adaptation rénale" body={eff("renal_adjustment")} />
+                <Section title="Adaptation hépatique" body={eff("hepatic_adjustment")} />
+                <Section title="Contre-indications" body={eff("contraindications")} accent="danger" />
+                <Section title="Précautions d'emploi" body={eff("precautions")} />
+                <Section title="Effets indésirables fréquents" body={eff("adverse_effects_common")} />
+                <Section title="Effets indésirables graves" body={eff("adverse_effects_serious")} accent="danger" />
+                <InteractionsSection text={eff("key_interactions")} rules={interactions} currentSubstanceId={substance?.id ?? null} />
+                <Section title="Grossesse / allaitement" body={eff("pregnancy_lactation")} />
+                <Section title="Surveillance recommandée" body={eff("monitoring")} />
+                <Section title="Conseils patients" body={eff("patient_advice")} accent="advice" />
+              </div>
+            )}
 
             {/* Sources & métadonnées qualité */}
             <div className="mt-6 bg-white border border-gray-200 rounded-xl p-5 text-xs text-gray-500 space-y-1.5">

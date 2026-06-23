@@ -223,11 +223,15 @@ export const api = {
   // Validation des monographies cliniques (statut éditorial persisté serveur)
   listMonographValidations: () => request<MonographValidationOut[]>("/monographs/validations"),
 
-  validateMonograph: (payload: { monograph_id: string; dci: string; status: MonographValidationStatus; note?: string }) =>
+  validateMonograph: (payload: {
+    monograph_id: string; dci: string;
+    status?: MonographValidationStatus; note?: string;
+    content?: Record<string, string>;
+  }) =>
     request<MonographValidationOut>("/monographs/validations", { method: "POST", body: JSON.stringify(payload) }),
 };
 
-// ── Validation des monographies ───────────────────────────────────────────────
+// ── Validation / édition des monographies ─────────────────────────────────────
 
 export type MonographValidationStatus = "draft" | "physician_reviewed" | "pharmacist_reviewed" | "published";
 
@@ -237,6 +241,7 @@ export type MonographValidationOut = {
   status: MonographValidationStatus;
   reviewer_name: string;
   note?: string | null;
+  content?: Record<string, string | null> | null;
   validated_at: string;
 };
 
