@@ -170,12 +170,16 @@ export function emptyMedRx(id: number): MedicamentRx {
 }
 
 export function posologieLabel(m: MedicamentRx): string {
-  return `${m.quantite} — ${m.frequenceNombre} fois par ${m.frequenceUnite}`;
+  const parts: string[] = [];
+  if (m.quantite?.trim()) parts.push(m.quantite.trim());
+  if (m.frequenceNombre?.trim()) parts.push(`${m.frequenceNombre.trim()} fois par ${m.frequenceUnite}`);
+  return parts.join(" — ") || "Posologie à préciser";
 }
 
 export function dureeLabel(m: MedicamentRx): string {
   if (m.dureeChronique) return "Traitement chronique (sans limite de durée)";
-  return `${m.dureeValeur} ${m.dureeUnite}`;
+  if (m.dureeValeur?.trim()) return `${m.dureeValeur.trim()} ${m.dureeUnite}`;
+  return "Durée à préciser";
 }
 
 // ── Historique des ordonnances ────────────────────────────────────────────────
