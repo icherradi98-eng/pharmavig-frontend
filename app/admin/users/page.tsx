@@ -47,7 +47,12 @@ export default function AdminUsers() {
         </div>
 
         <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-          {loading && <div className="py-16 text-center text-gray-500 text-sm">Chargement...</div>}
+          {loading && (
+            <div className="py-16 flex flex-col items-center gap-3 text-gray-500 text-sm">
+              <div className="w-6 h-6 border-2 border-[#7ed3cf]/30 border-t-[#7ed3cf] rounded-full animate-spin" />
+              Chargement…
+            </div>
+          )}
 
           {!loading && filtered.map((u) => {
             const date = new Date(u.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });

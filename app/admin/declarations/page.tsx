@@ -94,7 +94,12 @@ export default function AdminDeclarations() {
             <span className="text-gray-400 text-xs">{reports.length} déclaration(s)</span>
           </div>
 
-          {loading && <div className="py-16 text-center text-gray-500 text-sm">Chargement...</div>}
+          {loading && (
+            <div className="py-16 flex flex-col items-center gap-3 text-gray-500 text-sm">
+              <div className="w-6 h-6 border-2 border-[#7ed3cf]/30 border-t-[#7ed3cf] rounded-full animate-spin" />
+              Chargement…
+            </div>
+          )}
 
           {!loading && reports.length === 0 && (
             <div className="py-16 text-center text-gray-500 text-sm">Aucune déclaration trouvée</div>

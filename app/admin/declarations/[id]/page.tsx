@@ -82,8 +82,9 @@ export default function AdminDeclarationDetail() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center text-gray-400 text-sm">
-      Chargement...
+    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center gap-3 text-gray-400 text-sm">
+      <div className="w-6 h-6 border-2 border-[#7ed3cf]/30 border-t-[#7ed3cf] rounded-full animate-spin" />
+      Chargement…
     </div>
   );
 

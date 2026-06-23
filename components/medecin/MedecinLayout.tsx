@@ -312,9 +312,9 @@ export function DemoBanner() {
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
       <div className="flex-1">
-        <p className="text-sm font-semibold" style={{ color: "var(--md-night)" }}>Données de démonstration</p>
+        <p className="text-sm font-semibold" style={{ color: "var(--md-night)" }}>Éléments illustratifs</p>
         <p className="text-xs mt-0.5" style={{ color: "var(--md-text-secondary)" }}>
-          Cet aperçu est peuplé d&apos;exemples. Il sera remplacé par vos données réelles au fur et à mesure de vos déclarations.
+          Certains éléments sont illustratifs (comparaison nationale, alertes de démonstration). Vos déclarations réelles s&apos;affichent au fur et à mesure.
         </p>
       </div>
       <button

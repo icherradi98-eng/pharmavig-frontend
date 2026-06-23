@@ -143,7 +143,12 @@ export default function AdminDashboard() {
             </Link>
           </div>
 
-          {loading && <div className="px-5 py-10 text-center text-gray-500 text-sm">Chargement...</div>}
+          {loading && (
+            <div className="px-5 py-10 flex flex-col items-center gap-3 text-gray-500 text-sm">
+              <div className="w-6 h-6 border-2 border-[#7ed3cf]/30 border-t-[#7ed3cf] rounded-full animate-spin" />
+              Chargement…
+            </div>
+          )}
 
           {!loading && stats?.recent.map((r) => {
             const date = new Date(r.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
