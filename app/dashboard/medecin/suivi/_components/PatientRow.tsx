@@ -51,8 +51,9 @@ export function PatientRow({
 
   return (
     <div className={`bg-white rounded-xl overflow-hidden ${cfg.row} shadow-sm hover:shadow-md transition-shadow`}>
-      <div className="px-5 py-4 flex items-center gap-4">
+      <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
 
+       <div className="flex items-center gap-4 flex-1 min-w-0">
         {/* Avatar initiales */}
         <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 text-white"
           style={{ background: status === "alerte" ? "#ef4444" : status === "en_attente" ? "#f59e0b" : status === "repondu" ? "#2FA88F" : "#9ca3af" }}>
@@ -98,9 +99,10 @@ export function PatientRow({
             )}
           </div>
         </div>
+       </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 flex-wrap shrink-0 sm:pl-0 pl-14">
           {/* Renvoyer le questionnaire au patient (copie du lien) */}
           {nextPending && (
             <button

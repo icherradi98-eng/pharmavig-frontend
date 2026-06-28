@@ -170,7 +170,7 @@ export default function SuiviActifPage() {
       />
 
       {/* ── Cartes KPI ── */}
-      <div className="grid grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         {(["alerte", "en_attente", "repondu", "termine"] as const).map((s) => {
           const cfg = STATUS_CONFIG[s];
           const count = stats[s];
