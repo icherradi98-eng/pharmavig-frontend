@@ -14,7 +14,7 @@ import { useAuth } from "@/context/AuthContext";
 import { api, type PrescriptionOut, type CheckInOut } from "@/lib/api";
 import { type ImputScore } from "../nouvelle-declaration/ImputabiliteBegaud";
 import {
-  symptomToSoc, getPatientStatus, STATUS_CONFIG,
+  getPatientStatus, STATUS_CONFIG, writeSignalPrefill,
   type SortKey, type FilterKey,
 } from "./_components/helpers";
 import { PatientRow } from "./_components/PatientRow";
@@ -72,23 +72,7 @@ export default function SuiviActifPage() {
 
   // Pré-remplit le formulaire de déclaration depuis un signal patient
   function declareFromSignal(rx: PrescriptionOut, signal: CheckInOut) {
-    const symptoms = signal.symptoms ?? [];
-    let eiMeddraSoc = "";
-    for (const s of symptoms) { const soc = symptomToSoc(s); if (soc) { eiMeddraSoc = soc; break; } }
-    const symptomsList = symptoms.length ? symptoms.join(", ") : (signal.symptoms_other || "symptômes signalés");
-    const prefill = {
-      medicamentDCI: rx.drug_dci ?? "",
-      medicamentPosologie: rx.drug_dose ?? "",
-      medicamentFrequence: rx.drug_frequence ?? "",
-      medicamentIndication: rx.indication ?? "",
-      medicamentDateDebut: rx.date_debut ?? "",
-      patientAge: rx.patient_age ?? "",
-      patientSexe: rx.patient_sexe ?? "",
-      eiDescription: `Le patient ${rx.patient_initiales} signale : ${symptomsList}, à J${signal.day_offset ?? "?"} du traitement par ${rx.drug_dci}.${signal.stopped_treatment ? " Traitement arrêté par le patient." : ""}`,
-      eiMeddraSoc,
-      eiDateDebut: signal.responded_at ? signal.responded_at.slice(0, 10) : "",
-    };
-    try { sessionStorage.setItem("pharmavig_prefill_declaration", JSON.stringify(prefill)); } catch {}
+    writeSignalPrefill(rx, signal);
     router.push("/dashboard/medecin/nouvelle-declaration");
   }
 

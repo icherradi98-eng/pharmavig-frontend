@@ -1,5 +1,6 @@
 import { type PrescriptionOut, type CheckInOut } from "@/lib/api";
 import { MEDDRA_TERMS } from "@/lib/meddraTerms";
+import { PREFILL_KEY } from "@/lib/declaration/constants";
 
 // ─── S5.1 : symptôme → SOC MedDRA via la base des 250 termes ────────────────
 // Remplace le mappage figé de 20 entrées par une recherche dans meddraTerms.ts
@@ -71,3 +72,30 @@ export const STATUS_CONFIG: Record<PatientStatus, {
 
 export type SortKey = "urgence" | "date" | "nom";
 export type FilterKey = "tous" | "alerte" | "en_attente" | "repondu" | "termine";
+
+// ─── Pré-remplissage d'une déclaration à partir d'un signal patient ──────────
+// Partagé entre le tableau de suivi et la fiche prescription.
+
+export function buildSignalPrefill(rx: PrescriptionOut, signal: CheckInOut): Record<string, string> {
+  const symptoms = signal.symptoms ?? [];
+  let eiMeddraSoc = "";
+  for (const s of symptoms) { const soc = symptomToSoc(s); if (soc) { eiMeddraSoc = soc; break; } }
+  const symptomsList = symptoms.length ? symptoms.join(", ") : (signal.symptoms_other || "symptômes signalés");
+  return {
+    medicamentDCI: rx.drug_dci ?? "",
+    medicamentPosologie: rx.drug_dose ?? "",
+    medicamentFrequence: rx.drug_frequence ?? "",
+    medicamentIndication: rx.indication ?? "",
+    medicamentDateDebut: rx.date_debut ?? "",
+    patientAge: rx.patient_age ?? "",
+    patientSexe: rx.patient_sexe ?? "",
+    eiDescription: `Le patient ${rx.patient_initiales} signale : ${symptomsList}, à J${signal.day_offset ?? "?"} du traitement par ${rx.drug_dci}.${signal.stopped_treatment ? " Traitement arrêté par le patient." : ""}`,
+    eiMeddraSoc,
+    eiDateDebut: signal.responded_at ? signal.responded_at.slice(0, 10) : "",
+  };
+}
+
+/** Écrit le pré-remplissage en sessionStorage (lu par le formulaire de déclaration). */
+export function writeSignalPrefill(rx: PrescriptionOut, signal: CheckInOut): void {
+  try { sessionStorage.setItem(PREFILL_KEY, JSON.stringify(buildSignalPrefill(rx, signal))); } catch {}
+}
