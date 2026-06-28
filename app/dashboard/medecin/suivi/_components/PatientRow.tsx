@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { type PrescriptionOut, type CheckInOut } from "@/lib/api";
 import { formatDate, daysSince, daysUntil, type PatientStatus, STATUS_CONFIG } from "./helpers";
@@ -7,13 +10,16 @@ export function PatientRow({
   checkins,
   status,
   onBegaud,
+  onDeclareAlert,
 }: {
   rx: PrescriptionOut;
   checkins: CheckInOut[];
   status: PatientStatus;
   onBegaud: () => void;
+  onDeclareAlert: (signal: CheckInOut) => void;
 }) {
   const cfg = STATUS_CONFIG[status];
+  const [copied, setCopied] = useState(false);
 
   const lastReplied = [...checkins]
     .filter((c) => c.status === "repondu" && c.responded_at)
@@ -26,8 +32,22 @@ export function PatientRow({
   const alertCheckins = checkins.filter(
     (c) => c.status === "repondu" && (c.severity === "urgent" || c.has_symptoms)
   );
+  // Signal le plus pertinent pour pré-remplir une déclaration (urgent d'abord, puis le plus récent)
+  const declarableSignal = [...alertCheckins].sort((a, b) => {
+    const sev = (b.severity === "urgent" ? 1 : 0) - (a.severity === "urgent" ? 1 : 0);
+    if (sev !== 0) return sev;
+    return new Date(b.responded_at ?? 0).getTime() - new Date(a.responded_at ?? 0).getTime();
+  })[0];
 
   const daysSinceStart = daysSince(rx.date_debut);
+
+  function copyPatientLink() {
+    const link = `${window.location.origin}/suivi/${rx.access_token}`;
+    navigator.clipboard?.writeText(link).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {});
+  }
 
   return (
     <div className={`bg-white rounded-xl overflow-hidden ${cfg.row} shadow-sm hover:shadow-md transition-shadow`}>
@@ -81,18 +101,17 @@ export function PatientRow({
 
         {/* Actions */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Lien vers questionnaire patient (via token public) */}
+          {/* Renvoyer le questionnaire au patient (copie du lien) */}
           {nextPending && (
-            <a
-              href={`/suivi/${rx.access_token}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={copyPatientLink}
               className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-50 transition-colors"
+              title="Copier le lien du questionnaire à envoyer au patient"
             >
-              📋 Questionnaire
-            </a>
+              {copied ? "✓ Lien copié" : "🔗 Lien patient"}
+            </button>
           )}
-          {/* Imputabilité Bégaud — accessible depuis chaque fiche patient */}
+          {/* Imputabilité Bégaud */}
           <button
             onClick={onBegaud}
             className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-violet-300 text-violet-700 hover:bg-violet-50 transition-colors"
@@ -107,15 +126,16 @@ export function PatientRow({
           >
             Voir fiche →
           </Link>
-          {/* Déclarer si alerte */}
-          {status === "alerte" && (
-            <Link
-              href="/dashboard/medecin/nouvelle-declaration"
+          {/* Déclarer si alerte — PRÉ-REMPLI depuis le signal patient */}
+          {status === "alerte" && declarableSignal && (
+            <button
+              onClick={() => onDeclareAlert(declarableSignal)}
               className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition-colors"
               style={{ background: "#0F5B57" }}
+              title="Ouvrir une déclaration pré-remplie à partir de ce signal"
             >
               Déclarer ⚡
-            </Link>
+            </button>
           )}
         </div>
       </div>
@@ -126,9 +146,8 @@ export function PatientRow({
           <p className="text-xs text-red-700">
             <span className="font-semibold">Symptômes signalés :</span>{" "}
             {alertCheckins
-              .flatMap((c) => c.symptoms ?? [])
-              .filter(Boolean)
-              .join(", ") || "Voir détail"}
+              .flatMap((c) => [...(c.symptoms ?? []), c.symptoms_other].filter(Boolean) as string[])
+              .join(", ") || "Voir détail dans la fiche"}
             {alertCheckins.some((c) => c.stopped_treatment) && (
               <span className="ml-2 font-bold">· Traitement arrêté</span>
             )}

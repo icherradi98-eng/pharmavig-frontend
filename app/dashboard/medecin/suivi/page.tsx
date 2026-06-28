@@ -303,6 +303,7 @@ export default function SuiviActifPage() {
             checkins={checkins}
             status={status}
             onBegaud={() => { setBegaudRx(rx); setBegaudScore(null); }}
+            onDeclareAlert={(signal) => declareFromSignal(rx, signal)}
           />
         ))}
       </div>
